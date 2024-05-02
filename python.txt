@@ -1,0 +1,54 @@
+
+■Pythonプログラミング入門
+https://utokyo-ipp.github.io/index.html
+
+
+
+pip install -r requirements.txt(カレントディレクトリで)
+pip freeze > requirements.txt
+
+
+■venv(標準ライブラリ)
+仮想環境の作成
+exe化したいファイルがあるディレクトリで
+python -m venv env
+仮想環境の有効化
+env\scripts\activate.ps1
+仮想環境の無効化
+deactivate
+モジュールをファイルに記載して管理
+pip freeze > requirements.txt
+モジュールのインストール
+pip install -r requirements.txt
+仮想環境の削除
+envフォルダを削除するだけ
+
+
+
+■スクリプトの実行を許可。ExecutionPolicy
+
+"terminal.integrated.env.windows": {
+  "PSExecutionPolicyPreference": "RemoteSigned"
+},
+
+
+★スクレイピングでよく使うもの
+
+■メソッド
+find_elements()
+execute_script()
+get()
+close()
+quit()
+window_handles()
+switch_to.window()
+
+■プロパティ
+current_url 
+
+
+既存のリモートURLの設定を確認する
+git remote -v
+
+新しいリモートURLに変更する
+git remote set-url origin 変更したいURL

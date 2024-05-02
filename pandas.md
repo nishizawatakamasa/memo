@@ -1,0 +1,62 @@
+# pandas覚書
+
+## 基本
+|||
+|-|-|
+|df['col_2']|※ 列名で選択した列をSeriesとして取得(更新、追加)。|
+|df[['col_2', 'col_0']]|※ 列名のリストで選択した列を、選択した順番でDataFrameとして取得。|
+|df[2:9]|※ 行番号のスライスで該当した行をDataFrameとして取得。|
+|df[boolのSeries]|※ bool値を要素とするSeriesでTrueの行をDataFrameとして取得。<br>※ ブールインデックスと言う。|
+|df[boolのSeries \| boolのSeries]|※ 複数のboolのSeriesに~&\|を適用し、複数条件でDataFrameを取得<br>※ 優先順位が高い順から、~(not)、&(and)、\|(or)<br>※ 比較演算子を使うときは括弧で括る。<br>※ 優先したい処理も括弧で括る。<br>|
+
+## boolのSeriesを得る方法の例
+|||
+|-|-|
+|Series >= 数値||
+|Series == '文字列'||
+|Series != '文字列'||
+|Series.isin(['文字列1', '文字列2'])|※ 指定した複数の文字列のいずれかと完全一致。|
+|Series.isnull()||
+|Series.notnull()||
+|Series.str.contains(pat, flags=0, na=?)|※ na(欠損値)をTrueかFalse。デフォルトではNone(行抽出時はエラー)。|
+|DataFrame.duplicated(subset=['列名'], keep=False)|※ 重複行がTrue。|
+
+## 文字列操作
+|||
+|-|-|
+|Series.str.strip()||
+|Series.str[2]||
+|Series.str[2:9]||
+|Series.str.normalize('NFKC')||
+|Series.str.join(sep)||
+
+## 文字列操作(正規表現関連)
+|||
+|-|-|
+|Series.str.extract(pat, flags=0, expand=False)|※ 最初の一つのキャプチャ|
+|Series.str.findall(pat, flags=0)||
+|Series.str.replace(pat, repl, flags=0, regex=True)|※ DataFrame.replace, Series.replaceのほうが便利。|
+|Series.str.split(pat, regex=True)|※ 初期値空白|
+
+## その他
+
+|||
+|-|-|
+|df['str1'] + ' in ' + df['str2']||
+|df['num1'] * 3 / df['num2']||
+|df.drop(columns=['state', 'point'])||
+|pd.concat([df1, df2])||
+|Series.astype(str)||
+|df.transpose()|※ 転置|
+|DataFrame.fillna(value)<br>Series.fillna(value)|※ 欠損値をvalueに置換|
+|DataFrame.drop_duplicates(subset=['列名'])|※ 指定した列の重複行を、最初の行だけを残して削除|
+|DataFrame.sample(n=30)|※ n行だけランダムサンプリング|
+|DataFrame.sample(frac=0.1)|※ 行を指定割合だけランダムサンプリング|
+|DataFrame.map(lambda x: hex(int(x)))<br>Series.map(lambda x: func(x, 5))|※ na_actionを'ignore'とすると、NaNは関数に渡されずに結果がそのままNaNとなる。|
+|df.sort_values(by='列名', ascending=False, ignore_index=True)|※ デフォルトは昇順。降順にするには引数ascendingをFalseにする。<br>※ na_position='first'とすると、欠損値NaNが先頭に並べられる。デフォルトでは末尾。<br>※ ignore_index=Trueとするとインデックスが振り直される。|
+|DataFrame.replace({<br>'列名1': {r'^あ': 'aa', r'\d{4}': '8888'},<br>'列名2': {r'(\d+)分': r'\1年'},<br>}, regex=True)<br><br>Series.replace(r'(.+)abc(.*)', r'\2xx\1', regex=True)|※便利な置換手段。<br>※DataFrameにもSeriesにも使える。|
+
+
+* 追加予定？の項目
+    * グループ化
+    * マージ
