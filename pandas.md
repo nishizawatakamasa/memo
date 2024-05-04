@@ -3,9 +3,9 @@
 ## 基本
 |||
 |-|-|
-|df['col_2']|※ 列名で選択した列をSeriesとして取得(更新、追加)。|
-|df[['col_2', 'col_0']]|※ 列名のリストで選択した列を、選択した順番でDataFrameとして取得。|
-|df[2:9]|※ 行番号のスライスで該当した行をDataFrameとして取得。|
+|df.at['行名', '列名']|※ 選択した要素の値を取得・変更。<br>※ 変更時にはスカラー値を代入。|
+|df['列名']|※ 選択した列をSeriesとして取得・変更・追加。<br>※ 変更、追加時にはスカラー値やリスト、Series等を代入。|
+|df.loc[行名のリストかスライス, 列名のリストかスライス]|※ 選択した範囲をDataFrameとして取得・変更。<br>※ 行や列をリストで指定した場合はその順番で選択される。<br>※ 変更時にはスカラー値や二次元リスト等を代入。|
 |df[boolのSeries]|※ bool値を要素とするSeriesでTrueの行をDataFrameとして取得。<br>※ ブールインデックスと言う。|
 |df[boolのSeries \| boolのSeries]|※ 複数のboolのSeriesに~&\|を適用し、複数条件でDataFrameを取得<br>※ 優先順位が高い順から、~(not)、&(and)、\|(or)<br>※ 比較演算子を使うときは括弧で括る。<br>※ 優先したい処理も括弧で括る。<br>|
 
@@ -50,6 +50,7 @@
 |df.transpose()|※ 転置|
 |DataFrame.fillna(value)<br>Series.fillna(value)|※ 欠損値をvalueに置換|
 |DataFrame.drop_duplicates(subset=['列名'])|※ 指定した列の重複行を、最初の行だけを残して削除|
+|df[2:9]|※ 行番号のスライスで該当した行をDataFrameとして取得。|
 |DataFrame.sample(n=30)|※ n行だけランダムサンプリング|
 |DataFrame.sample(frac=0.1)|※ 行を指定割合だけランダムサンプリング|
 |DataFrame.map(lambda x: hex(int(x)))<br>Series.map(lambda x: func(x, 5))|※ na_actionを'ignore'とすると、NaNは関数に渡されずに結果がそのままNaNとなる。|
