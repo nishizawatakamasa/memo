@@ -3,7 +3,9 @@
 ## Web
 * フロントエンド
     * HTML/CSS
+        * [全般](./html_css.md)
     * JavaScript
+        * <a href="https://share.kokoronoki.net/nszw/summary/lang_spec/" target="_blank">全般</a>
         * 全般
 * バックエンド
     * PHP
