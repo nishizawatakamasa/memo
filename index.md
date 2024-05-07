@@ -4,13 +4,15 @@
 * フロントエンド
     * HTML/CSS
         * [全般](./html_css.md)
+        * [CSSセレクタ](./css_selector.md)
     * JavaScript
         * [全般](https://share.kokoronoki.net/nszw/summary/lang_spec/)
 * バックエンド
     * PHP
-        * 全般
+        * [全般](https://share.kokoronoki.net/nszw/summary/lang_spec/)
         * WordPress
         * Laravel
+            * [全般](./laravel.md)
         * phpMyAdmin
     * SQL
         * MariaDB(MySQL)
@@ -20,10 +22,10 @@
     * Google スプレッドシート(GAS)
 * 高度な処理
     * Python
-        * 全般
+        * [全般](https://share.kokoronoki.net/nszw/summary/lang_spec/)
         * Selenium
         * NumPy
-        * pandas
+        * [pandas](./pandas.md)
         * matplotlib
         * plotly.express
         * scikit-learn
@@ -38,6 +40,8 @@
 
 ## エンジニアリング全般
 * Git/GitHub
+    * [ssh接続](./how_to_ssh_to_github.md)
+    * [コミットメッセージ、ブランチ](./branch.md)
 * Linux
 * Docker
 * クラウド
