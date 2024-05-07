@@ -13,6 +13,7 @@
         * WordPress
         * Laravel
             * [全般](./laravel.md)
+            * [図解](./laravel_diagram.md)
         * phpMyAdmin
     * SQL
         * MariaDB(MySQL)
