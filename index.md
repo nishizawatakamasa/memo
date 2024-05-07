@@ -5,8 +5,7 @@
     * HTML/CSS
         * [全般](./html_css.md)
     * JavaScript
-        * <a href="https://share.kokoronoki.net/nszw/summary/lang_spec/" target="_blank">全般</a>
-        * 全般
+        * [全般](https://share.kokoronoki.net/nszw/summary/lang_spec/)
 * バックエンド
     * PHP
         * 全般
