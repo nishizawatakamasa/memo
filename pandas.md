@@ -16,20 +16,20 @@
 |Series == '文字列'||
 |Series != '文字列'||
 |Series.isin(['文字列1', '文字列2'])|※ 指定した複数の文字列のいずれかと完全一致。|
+|Series.str.contains(pat, na=?)|※ na(欠損値)をTrueかFalse。デフォルトではNone(行抽出時はエラー)。|
 |Series.isnull()||
 |Series.notnull()||
-|Series.str.contains(pat, flags=0, na=?)|※ na(欠損値)をTrueかFalse。デフォルトではNone(行抽出時はエラー)。|
-|DataFrame.duplicated(subset=['列名'], keep=False)|※ 重複行がTrue。|
+|DataFrame.duplicated(subset=['列名'], keep=False)|※ keep=Falseで重複行全てがTrue。|
 
 ## 2. 文字列操作
 ### 基本
 |||
 |-|-|
-|Series.str.strip()||
 |Series.str[2]||
 |Series.str[2:9]||
-|Series.str.normalize('NFKC')||
+|Series.str.strip()||
 |Series.str.join(sep)||
+|Series.str.normalize('NFKC')||
 
 ### 正規表現関連
 |||
