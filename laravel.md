@@ -132,17 +132,26 @@ return new class extends Migration
 <a id="モデル"></a>
 ## モデル
 
-Modelクラス一つがテーブル一つに対応。  
-デフォルトでは、クラスはクラス名の複数形が名前になっているテーブルと紐づく。  
-テーブル名を明示的に指定することもできる。  
+### データベースにおける用語
+* テーブル
+* レコード(一行分のデータ)
+* カラム(一列分のデータ)
+* フィールド(１つのデータ)
+
+### モデルの概要
+* Modelクラス1つがテーブル1つに相当。
+* Modelインスタンスはレコードに相当。
+* Modelインスタンスの各インスタンス変数は、その行のフィールドデータに相当。
+* Collectionクラスは複数行分のデータに相当(Modelインスタンスを複数格納する配列のようなクラス)。  
+* テーブルの各レコードをModelインスタンスとして操作する。  
+
+
+※デフォルトでは、クラスはクラス名の複数形が名前になっているテーブルと紐づく。  
+※テーブル名を明示的に指定することもできる。  
 例：  
 ```php
 protected $table = 'folders';  
 ```
-Modelインスタンスは一行分のデータ、Collectionクラスは複数行分のデータに相当。  
-CollectionクラスはModelインスタンスを複数格納する配列のようなクラス。  
-データベースの各レコードをModelインスタンスとして操作する。  
-Modelインスタンスの各インスタンス変数は、その行のフィールドデータに対応する。  
 
 ### モデルの新規作成コマンド  
 `php artisan make:model モデル名`  
@@ -150,126 +159,79 @@ Modelインスタンスの各インスタンス変数は、その行のフィー
 `php artisan make:model Folder`  
 
 
+### インスタンスメソッドとクラスメソッドの違い
+```php
+// インスタンスメソッドは、Modelインスタンス(レコード)から呼び出す。つまり、レコードに対しての処理。
+$modelInstance->method();
+// クラスメソッドはModelクラス(テーブル)から呼び出す。つまり、テーブルに対しての処理。
+ModelClass::method();
+```
 
+### インスタンスメソッド
+```php
+// new演算子で新しいインスタンス(レコード)を作成。
+// 編集(例としてタイトルに入力値を代入)
+// レコードの追加や変更を保存(既存のデータと異なる場合のみ更新処理を行う)。
+$modelInstance = new ModelClass();
+$modelInstance->title = $request->title;
+$modelInstance->save();
 
-データ取得時の返り値はModelインスタンスかCollectionクラス。
+// レコードを削除
+$modelInstance->delete();
+```
 
-取得したデータがModelオブジェクトの場合、そのメソッドを使用できます。
+### クラスメソッド
+```php
+// 全レコードを取得
+ModelClass::all(); // 戻り値はCollectionクラス
 
-インスタンスメソッドと静的メソッドがある
+// 主キーで指定したレコードを取得
+ModelClass::find(1); // 戻り値はModelインスタンス。無いときはnullなのでissetで判定。
+ModelClass::find([1, 2, 3]); // 戻り値はCollectionクラス。
 
+// 全レコードを取得
+ModelClass::get(); // 戻り値はCollectionクラス。
+// 最初のレコードを取得
+ModelClass::first(); // 戻り値はModelインスタンス。無いときはnullなのでissetで判定。
 
-
-
-
-データベース
-
-テーブル
-レコード(一行分のデータ)
-カラム(一列分のデータ)
-フィールド(１つのデータ)
-
-new演算子で新しいインスタンス(レコード)を作成し、編集してsave()でレコードを追加できる。  
-### インスタンスメソッド：
-これらのメソッドは、Eloquentモデルのインスタンス（レコード）ごとに使用されます。
-
-* ★save(): モデルの変更をデータベースに保存します。既存のデータと異なるかチェックをし、異なる場合のみに更新処理を行う。
-* update(array $attributes): モデルの属性を更新し、データベースに保存します。
-* ★delete(): モデルをデータベースから削除します。
-* refresh(): モデルの属性をデータベースから再取得します。
-* toArray(): モデルを配列に変換します。
-* getAttribute($key): 指定された属性の値を取得します。
-* setAttribute($key, $value): 指定された属性に値を設定します。
-* getAttributeValue($key): 指定された属性の値を取得します。
-* getAttributeFromArray($key): 指定された属性の値を配列から取得します。
-* getOriginal($key = null, $default = null): オリジナルの属性値を取得します（更新前の値）。
-
-### 静的メソッド：
-これらのメソッドは、Eloquentモデルクラス自体に対して呼び出されます。
-* delete(): モデルをデータベースから削除します。
-#### Modelインスタンスを返すメソッド：
-* ★find($id): 指定されたIDのモデルインスタンスを取得。
-* findOrFail($id): 指定されたIDのモデルインスタンスを取得しますが、見つからない場合は例外をスローします。
-* where($column, $value): 指定された条件でモデルインスタンスを検索します。
-* findOrNew($id): 指定されたIDのモデルインスタンスを取得しますが、見つからない場合は新しいインスタンスを作成します。
-* first(): 最初のモデルインスタンスを取得します。
-* firstOrFail(): 最初のモデルインスタンスを取得しますが、見つからない場合は例外をスローします。
-* create(array $attributes): 新しいモデルインスタンスを作成し、データベースに保存します。
-* updateOrCreate(array $attributes, array $values = []): 指定された条件でモデルを検索し、見つからない場合は新しいモデルを作成します。
-
-#### Collectionクラスを返すメソッド：
-* ★all(): 全てのモデルインスタンスを取得
-* where($column, $value): 指定された条件でモデルインスタンスを検索し、その結果をCollectionクラスのインスタンスとして返します。
-* ★get(): モデルインスタンスのコレクションを取得します。
-* pluck($column): 指定されたカラムの値を配列として取得します。
-* count(): モデルの数を取得します。
-* orderBy($column, $direction): 指定されたカラムでモデルインスタンスをソートし、その結果をCollectionクラスのインスタンスとして返します。
-
-------------------------------------
+// 条件を指定してフィルタをかける
+ModelClass::where($column, $value)->get(); // 戻り値はCollectionクラス。
+ModelClass::where($column, $value)->first(); // 戻り値はModelインスタンス。無いときはnullなのでissetで判定。
+```
 
 
 
 
-first(): 最初のレコードを取得します。
+
+
+
+### リレーションは関数として定義する。
+```php
+// 主→従の1対1。
+// 引数は従テーブル、従キー、主キー
+return $this->hasOne(Task::class, 'folder_id', 'id');
+
+// 主→従の1対多。
+// 引数は従テーブル、従キー、主キー
+return $this->hasMany(Task::class, 'folder_id', 'id');
+
+// 従→主の1対1、1対多。
+// 引数は主テーブル、従キー、主キー
+return $this->belongsTo(Folder::class, 'folder_id', 'id');
+
+// hasOne()、hasMany()、belongsTo()の第二、第三引数は省略可能。省略した場合は従キーが「モデル名_id」、主キーが「id」となる。
+
+// hasOne()、hasMany()、belongsTo()、belongsToMany()の戻り値からレコードを取得するには、get()メソッドやfirst()メソッドが必要。
+
+
+// 多対多を定義するには、belongsToManyメソッドを使用します。
+// 第一引数に関連づけたいeloquentモデル、第二引数に中間テーブル名、第三引数に自分に向けられた外部テーブル、第四引数に相手に向けられた外部テーブルを定義します。
+// 第二引数以降は、省略可能です。
+```
 
 https://bonoponz.hatenablog.com/entry/2020/10/06/%E3%80%90Laravel%E3%80%91Eloquent%E3%82%92%E4%BD%BF%E3%81%A3%E3%81%9F%E3%83%A2%E3%83%87%E3%83%AB%E3%82%92%E7%90%86%E8%A7%A3%E3%81%99%E3%82%8B
 
-
 https://tobilog.net/10364/
-
-
-
-
-Modelクラス一つがテーブル一つに対応。  
-
-Modelインスタンス
-Collectionクラス
-
-
-allメソッド（全件取得）
-Modelクラス::all() ※戻り値はCollectionクラス
-
-findメソッド（プライマリキーで指定したレコードを取得）
-Modelクラス::find(1) ※戻り値はModelインスタンス
-Modelクラス::find([1, 2, 3]) ※戻り値はCollectionクラス
-
-
-Modelクラス::where($column, $value)->get(); ※戻り値はCollectionクラス
-Modelクラス::where($column, $value)->first(); ※戻り値はModelインスタンス
-
-
-
-
-①リレーションは関数として定義します。
-②１対１の主→従の関係はhasoneメソッドを用いることで定義できます。第一引数に従テーブル、第二引数に外部キー、第三引数に内部キーを指定します。
-なお、第二引数、第三引数は省略可能で、省略した場合は外部キーに「モデル名_id」内部キーに「id」が使用されます。
-
-
-①１対１の従→主の関係はbelongsToメソッドを用いることで定義できます。第一引数に主テーブル、第二引数に内部キー、第三引数に外部キーを指定します。
-第二引数、第三引数は省略可能で、省略した場合は外部キーに「モデル名_id」内部キーに「id」が使用されます。
-
-①１対多の主→従の関係では、hasManyメソッドを使用します。第一引数に従テーブル、第二引数に参照先テーブルの外部キー、第三引数に参照元テーブルの内部キーを指定します。
-第二・第三引数は、hasOneメソッドと同様のルールで省略が可能です。
-
-①１対多の従→主のリレーションは、１対１で使用したbelongToメソッドを使用します。
-使い方も１対１と全く同じなのでそちらをご参照ください。
-
-
-①多対多を定義するには、belongsToManyメソッドを使用します。
-第一引数に関連づけたいeloquentモデル、第二引数に中間テーブル名、第三引数に自分に向けられた外部テーブル、第四引数に相手に向けられた外部テーブルを定義します。
-第二引数以降は、省略可能です。
-
-hasoneメソッド、belongsToメソッド、hasManyメソッド、belongsToManyメソッドの戻り値からレコードを取得するには、getメソッドやfirstメソッドが必要。
-
-
-
-
-
-
-
-
-
-Laravelでは、関係メソッドの命名に一貫性がありません。
 
 <a id="シーダー"></a>
 ## シーダー
@@ -306,13 +268,10 @@ class FoldersTableSeeder extends Seeder
         foreach ($titles as $title) {
             // モデルクラスのクラスメソッドcreate()を使用。
             // 新しいモデルインスタンスを作成し、データベースに保存する。
+            // 'created_at'(作成日)と'updated_at'(更新日)は自動的に追加される。
             Folder::create([
                 // 配列$titlesの値をtitleに代入する
                 'title' => $title,
-                // Carbonライブラリで現在の日時を取得してcreated_atに作成日として代入する
-                'created_at' => Carbon::now(),
-                // Carbonライブラリで現在の日時を取得してupdated_atに更新日として代入する
-                'updated_at' => Carbon::now(),
             ]);
         }
     }
@@ -322,8 +281,10 @@ class FoldersTableSeeder extends Seeder
 DatabaseSeeder.phpから呼び出して使用できるよう、DatabaseSeederクラスに下記を追加。
 ```php
 // runメソッド内に追加する
-
-$this->call(TasksTableSeeder::class);
+$this->call([
+    FoldersTableSeeder::class,
+    TasksTableSeeder::class,
+]);
 ```
 
 ### シーダーの実行コマンド  
