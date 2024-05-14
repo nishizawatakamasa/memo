@@ -172,6 +172,7 @@ ModelClass::method();
 // new演算子で新しいインスタンス(レコード)を作成。
 // 編集(例としてタイトルに入力値を代入)
 // レコードの追加や変更を保存(既存のデータと異なる場合のみ更新処理を行う)。
+// 'created_at'(作成日)と'updated_at'(更新日)は自動的に追加される。
 $modelInstance = new ModelClass();
 $modelInstance->title = $request->title;
 $modelInstance->save();
@@ -197,29 +198,34 @@ ModelClass::first(); // 戻り値はModelインスタンス。無いときはnul
 // 条件を指定してフィルタをかける
 ModelClass::where($column, $value)->get(); // 戻り値はCollectionクラス。
 ModelClass::where($column, $value)->first(); // 戻り値はModelインスタンス。無いときはnullなのでissetで判定。
+
+// 新しいインスタンス(レコード)の作成、追加、保存を簡潔に書く方法。
+// 'created_at'(作成日)と'updated_at'(更新日)は自動的に追加される。
+ModelClass::create([
+    'folder_id' => 1,
+    'title' => "サンプルタスク {$num}",
+]);
 ```
-
-
-
-
-
-
 
 ### リレーションは関数として定義する。
 ```php
 // 主→従の1対1。
-// 引数は従テーブル、従キー、主キー
+// 引数は従テーブル(Modelクラス)、従キー、主キー
 return $this->hasOne(Task::class, 'folder_id', 'id');
 
-// 主→従の1対多。
-// 引数は従テーブル、従キー、主キー
-return $this->hasMany(Task::class, 'folder_id', 'id');
+// メソッド化の参考
+public function tasks()
+{
+    // 主→従の1対多。
+    // 引数は従テーブル(Modelクラス)、従キー、主キー
+    return $this->hasMany(Task::class, 'folder_id', 'id');
+}
 
 // 従→主の1対1、1対多。
-// 引数は主テーブル、従キー、主キー
+// 引数は主テーブル(Modelクラス)、従キー、主キー
 return $this->belongsTo(Folder::class, 'folder_id', 'id');
 
-// hasOne()、hasMany()、belongsTo()の第二、第三引数は省略可能。省略した場合は従キーが「モデル名_id」、主キーが「id」となる。
+// hasOne()、hasMany()、belongsTo()の第二、第三引数は省略可能。省略した場合は従キーが「主Modelクラス名_id」、主キーが「id」となる。
 
 // hasOne()、hasMany()、belongsTo()、belongsToMany()の戻り値からレコードを取得するには、get()メソッドやfirst()メソッドが必要。
 
@@ -228,6 +234,94 @@ return $this->belongsTo(Folder::class, 'folder_id', 'id');
 // 第一引数に関連づけたいeloquentモデル、第二引数に中間テーブル名、第三引数に自分に向けられた外部テーブル、第四引数に相手に向けられた外部テーブルを定義します。
 // 第二引数以降は、省略可能です。
 ```
+
+
+
+### アクセサとミューテタ
+|||
+|:-|:-|
+|Accessor(アクセサ)|データベースからデータを取得する際に自動的に呼び出される処理(メソッド)。|
+|Mutator(ミューテタ)|データをデータベースに保存する際に自動的に呼び出される処理(メソッド)。|
+```php
+<?php
+
+namespace App\Models;
+// Attributeクラスをインポート
+use Illuminate\Database\Eloquent\Casts\Attribute;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Carbon\Carbon;
+
+class Task extends Model
+{
+    use HasFactory;
+
+    protected $table = 'tasks';
+
+    const STATUS = [
+        1 => [ 'label' => '未着手', 'class' => 'label-danger' ],
+        2 => [ 'label' => '着手中', 'class' => 'label-info' ],
+        3 => [ 'label' => '完了', 'class' => '' ],
+    ];
+
+    // アクセサやミューテータのメソッド名をスネークケースにしたものが、Modelインスタンスのインスタンス変数としてアクセス可能になる。
+    // インスタンス変数status_labelとしてアクセス可能。
+    protected function statusLabel(): Attribute
+    {
+        // make()メソッドで新しいAttributeインスタンスを生成。その時にget引数を与えるとアクセサを定義でき、set引数を与えるとミューテタを定義できる。
+        return Attribute::make(
+            // get引数に無名関数を渡す。
+            // アロー関数でも可。
+            // setでも同様。
+            get: function ()
+            {
+                $status = $this->status;
+                // PHPのnull合体演算子
+                return self::STATUS[$status]['label'] ?? '';
+            }
+        );
+    }
+
+    // インスタンス変数status_classとしてアクセス可能。
+    protected function statusClass(): Attribute
+    {
+        return Attribute::make(
+            get: function ()
+            {
+                $status = $this->status;
+                return self::STATUS[$status]['class'] ?? '';
+            }
+        );
+    }
+
+    // インスタンス変数formatted_due_dateとしてアクセス可能。
+    protected function formattedDueDate(): Attribute
+    {
+        return Attribute::make(
+            // get引数にアロー関数を渡す。
+            get: fn () => Carbon::createFromFormat('Y-m-d', $this->due_date)->format('Y/m/d')
+        );
+    }
+}
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 https://bonoponz.hatenablog.com/entry/2020/10/06/%E3%80%90Laravel%E3%80%91Eloquent%E3%82%92%E4%BD%BF%E3%81%A3%E3%81%9F%E3%83%A2%E3%83%87%E3%83%AB%E3%82%92%E7%90%86%E8%A7%A3%E3%81%99%E3%82%8B
 
