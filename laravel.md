@@ -227,7 +227,20 @@ return $this->belongsTo(Folder::class, 'folder_id', 'id');
 
 // hasOne()、hasMany()、belongsTo()の第二、第三引数は省略可能。省略した場合は従キーが「主Modelクラス名_id」、主キーが「id」となる。
 
-// hasOne()、hasMany()、belongsTo()、belongsToMany()の戻り値からレコードを取得するには、get()メソッドやfirst()メソッドが必要。
+// hasMany()の戻り値はIlluminate\Database\Eloquent\Relations\HasManyのインスタンス。
+// hasOne()の戻り値はIlluminate\Database\Eloquent\Relations\HasOneのインスタンス。
+
+// hasOne()、hasMany()、belongsTo()、belongsToMany()の戻り値からレコードを取得するには、->get()メソッドや->first()メソッドが必要(HasManyインスタンス等のメソッド)。
+
+// 新しいModelインスタンスを、主Modelインスタンスに関連付けて従テーブルに保存する(保存時に従キーが適切に設定される)。
+$hasManyInstance->save($modelInstance);
+// 主Modelインスタンスに関連するすべてのModelインスタンスを削除する。
+$hasManyInstance->delete();
+
+// 新しいModelインスタンスを、主Modelインスタンスに関連付けて従テーブルに保存する(保存時に従キーが適切に設定される)。
+$hasOneInstance->save($modelInstance);
+// 主Modelインスタンスに関連するModelインスタンスを削除する。
+$hasOneInstance->delete();
 
 
 // 多対多を定義するには、belongsToManyメソッドを使用します。
