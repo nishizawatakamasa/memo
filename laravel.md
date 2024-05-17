@@ -7,9 +7,11 @@
     * [サーバー起動](#サーバー起動)
     * [データベース等の設定](#データベース等の設定)
     * [XAMPPでMySQLが起動しない時の対処法](#XAMPPでMySQLが起動しない時の対処法)
+    * [lang](#lang)
     * [マイグレーション](#マイグレーション)
     * [モデル](#モデル)
     * [シーダー](#シーダー)
+    * [ルーティング](#ルーティング)
 
 
 
@@ -62,6 +64,15 @@ DB_COLLATION=utf8mb4_general_ci   # 追記：照合順序
 管理者として実行したPowerShellで以下のコマンドを実行。   
 `net stop mysql82`  
 ※82はmysqlのバージョンが8.2の場合。
+
+<a id="lang"></a>
+## lang
+
+lang/が無い場合、以下のコマンドを打って作成  
+`php artisan lang:publish`  
+
+resources/lang/en  
+resources/lang/ja  
 
 
 <a id="マイグレーション"></a>
@@ -402,33 +413,75 @@ Seederを実行すると、対象のテーブルにデータがインサート�
 `composer dump-autoload`
 
 
+<a id="ルーティング"></a>
+## ルーティング
+
+```php
+
+// ルーティングの基本的な書き方
+// 第一引数：URL
+// 第二引数：第一引数で指定したURLにアクセスした際に実行したい処理。
+Route::get('/', function () {
+    return view('welcome');
+});
+
+// Routeクラスのクラスメソッド
+Route::get() // データを取得。
+Route::post() // データを新規追加。
+Route::put() // データを更新。
+Route::patch() // ほぼPUTと同じだが、ごく一部を更新。
+Route::delete() // データを削除。
+Route::middleware()
 
 
 
 
+// ルーティング定義の例
+// URLの{id}や{task_id}のような部分はルートパラメータという。
+// ルートパラメータには任意の値が入り、第二引数で指定されたメソッドが実行される際に引数として渡される(例えば{id}の値は$idとして、{task_id}の値は$task_idとして)。
+// 第二引数に、実行されるコントローラー(クラス)とそのメソッドを配列で指定している。
+// コントローラーは完全修飾クラス名で指定する必要がある(::classというclassキーワードを使えば一発で取得できる)。
+// name()メソッドでルートに名前を付けられる。
+// ルートの名前を定義すると、route関数でURLを生成できるようになる。
+// ルートの名前に特定のルールや制約はないが、ドット区切りでリソースとアクションを表現するのが一般的。
+Route::get('/folders/{id}/tasks/{task_id}/edit', [TaskController::class,"showEditForm"])->name('tasks.edit');
+
+// これも一応ルーティング定義の例
+Route::get('/folders/create', [FolderController::class,"showCreateForm"])->name('folders.create');
+Route::post('/folders/create', [FolderController::class,"create"]);
+
+// ルートパラメータの値が引数として渡される例。
+public function showEditForm(int $id, int $task_id)
+{
+    // 中略
+}
+
+// route関数でURLを生成する例。
+// 基本：第一引数にルートの名前を指定すると、ルートのURLそのものが生成される。
+$url = route('folders.create');
+echo $url; // 'http://127.0.0.1:8000/folders/create'
+// 応用：ルートのURLにルートパラメータの指定がある場合は、第二引数に連想配列で指定する。
+$url = route('tasks.edit', [
+    'id' => 11,
+    'task_id' => 22,
+]);
+echo $url; // 'http://127.0.0.1:8000/folders/11/tasks/22/edit'
 
 
+// リダイレクトをする際に使用するredirect関数にもrouteは使える。
+return redirect()->route('tasks.index', [
+    'id' => $id
+]);
+
+// ※redirect関数の基本的な一番使い方(固定URLにリダイレクト)。
+return redirect('URL');
 
 
+// Bladeテンプレート内でリンクを生成する場合は次のように使用する。
+<a href="{{ route('folders.edit', ['id' => $folder->id]) }}">編集</a>
 
 
-
-
-
-## コントローラーにロジックを記述
-$folders = Folder::all();
-
-
-最強版↓
-$folder->tasks()->get();
-
-
-lang/が無い場合、以下のコマンドを打って作成
-[コマンド]php artisan lang:publish
-
-resources/lang/en
-resources/lang/ja
-
+```
 
 
 ---------------------------------------------
