@@ -12,6 +12,7 @@
     * [モデル](#モデル)
     * [シーダー](#シーダー)
     * [ルーティング](#ルーティング)
+    * [コントローラー](#コントローラー)
 
 
 
@@ -161,6 +162,7 @@ return new class extends Migration
 ※テーブル名を明示的に指定することもできる。  
 例：  
 ```php
+<?php
 protected $table = 'folders';  
 ```
 
@@ -172,6 +174,7 @@ protected $table = 'folders';
 
 ### インスタンスメソッドとクラスメソッドの違い
 ```php
+<?php
 // インスタンスメソッドは、Modelインスタンス(レコード)から呼び出す。つまり、レコードに対しての処理。
 $modelInstance->method();
 // クラスメソッドはModelクラス(テーブル)から呼び出す。つまり、テーブルに対しての処理。
@@ -180,6 +183,7 @@ ModelClass::method();
 
 ### インスタンスメソッド
 ```php
+<?php
 // new演算子で新しいインスタンス(レコード)を作成。
 // 編集(例としてタイトルに入力値を代入)
 // レコードの追加や変更を保存(既存のデータと異なる場合のみ更新処理を行う)。
@@ -194,6 +198,7 @@ $modelInstance->delete();
 
 ### クラスメソッド
 ```php
+<?php
 // 全レコードを取得
 ModelClass::all(); // 戻り値はCollectionクラス
 
@@ -210,6 +215,9 @@ ModelClass::first(); // 戻り値はModelインスタンス。無いときはnul
 ModelClass::where($column, $value)->get(); // 戻り値はCollectionクラス。
 ModelClass::where($column, $value)->first(); // 戻り値はModelインスタンス。無いときはnullなのでissetで判定。
 
+// テーブルのレコード数を取得する。戻り値は整数値(int)。
+ModelClass::count();
+
 // 新しいインスタンス(レコード)の作成、追加、保存を簡潔に書く方法。
 // 'created_at'(作成日)と'updated_at'(更新日)は自動的に追加される。
 ModelClass::create([
@@ -220,6 +228,7 @@ ModelClass::create([
 
 ### リレーションは関数として定義する。
 ```php
+<?php
 // 主→従の1対1。
 // 引数は従テーブル(Modelクラス)、従キー、主キー
 return $this->hasOne(Task::class, 'folder_id', 'id');
@@ -398,6 +407,7 @@ class FoldersTableSeeder extends Seeder
 
 DatabaseSeeder.phpから呼び出して使用できるよう、DatabaseSeederクラスに下記を追加。
 ```php
+<?php
 // runメソッド内に追加する
 $this->call([
     FoldersTableSeeder::class,
@@ -417,6 +427,7 @@ Seederを実行すると、対象のテーブルにデータがインサート�
 ## ルーティング
 
 ```php
+<?php
 
 // ルーティングの基本的な書き方
 // 第一引数：URL
@@ -425,15 +436,35 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+
+// Laravelでは以下６つのHTTPメソッドをルーティングに指定できる。
+// GET・・・データを取得。
+// POST・・・データを新規追加。
+// PUT・・・データの全体を更新。
+// PATCH・・・データの一部を更新(ほぼPUTと同じ)。
+// DELETE・・・データを削除。
+// OPTIONS・・・使えるメソッド一覧を表示。
+
+// ただし、HTMLフォームで許可されているのはGET(データ取得)とPOST(データ送信)のみ。
+// そのため、フォームのPUT,PATCH,DELETE,OPTIONSリクエストを使う場合はPOST送信のフォームの中で@method関数を使用し、擬似的にリクエストを実現させる。
+
+// @method関数の使用例
+<form action="{{ route('hoges.destroy', ['id' => $id]) }}" method="POST">
+    @csrf
+    // これを認識したlaravelは、「<input type="hidden" name="_method" value="DELETE">」を生成し、実際のHTTPリクエストメソッドをオーバーライドする。
+    @method('DELETE')
+    <button type="submit">削除</button>
+</form>
+
+
 // Routeクラスのクラスメソッド
-Route::get() // データを取得。
-Route::post() // データを新規追加。
-Route::put() // データを更新。
-Route::patch() // ほぼPUTと同じだが、ごく一部を更新。
-Route::delete() // データを削除。
+Route::get() // GETに対応。
+Route::post() // POSTに対応。
+Route::put() // PUTに対応。
+Route::patch() // PATCHに対応。
+Route::delete() // DELETEに対応。
+Route::options() // OPTIONSに対応。
 Route::middleware()
-
-
 
 
 // ルーティング定義の例
@@ -453,7 +484,7 @@ Route::post('/folders/create', [FolderController::class,"create"]);
 // ルートパラメータの値が引数として渡される例。
 public function showEditForm(int $id, int $task_id)
 {
-    // 中略
+    //
 }
 
 // route関数でURLを生成する例。
@@ -468,7 +499,7 @@ $url = route('tasks.edit', [
 echo $url; // 'http://127.0.0.1:8000/folders/11/tasks/22/edit'
 
 
-// リダイレクトをする際に使用するredirect関数にもrouteは使える。
+// リダイレクトをする際に使用するredirect関数にもrouteは使える(その時redirect関数には何も引数を入れない)。
 return redirect()->route('tasks.index', [
     'id' => $id
 ]);
@@ -480,8 +511,70 @@ return redirect('URL');
 // Bladeテンプレート内でリンクを生成する場合は次のように使用する。
 <a href="{{ route('folders.edit', ['id' => $folder->id]) }}">編集</a>
 
-
 ```
+
+<a id="コントローラー"></a>
+## コントローラー
+
+### リソースコントローラ
+(必ず使うというわけではないが、命名規則等を参考にしようかな。)
+```php
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
+
+class SampleController extends Controller
+{
+    // サイトのTOPページ、投稿一覧などを表示するためのメソッドを書く。
+    public function index()
+    {
+        //
+    }
+
+    // 新規投稿作成ページを表示するためのメソッドを書く。
+    public function create()
+    {
+        //
+    }
+
+    // 新規投稿をデータベースに保存するためのメソッドを書く。
+    public function store(Request $request)
+    {
+        //
+    }
+
+    // 投稿の個別ページを表示するためのメソッドを書く。
+    public function show(string $id)
+    {
+        //
+    }
+
+    // 投稿の編集ページを表示するメソッドを書く。
+    public function edit(string $id)
+    {
+        //
+    }
+
+    // 編集した投稿をデータベースに上書き保存するメソッドを書く。
+    public function update(Request $request, string $id)
+    {
+        //
+    }
+
+    // 投稿を削除するメソッドを書く。
+    public function destroy(string $id)
+    {
+        //
+    }
+}
+```
+
+
+
+
 
 
 ---------------------------------------------
