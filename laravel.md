@@ -8,11 +8,13 @@
     * [データベース等の設定](#データベース等の設定)
     * [XAMPPでMySQLが起動しない時の対処法](#XAMPPでMySQLが起動しない時の対処法)
     * [lang](#lang)
+    * [enum（列挙型）](#enum（列挙型）)
     * [マイグレーション](#マイグレーション)
     * [モデル](#モデル)
     * [シーダー](#シーダー)
     * [ルーティング](#ルーティング)
     * [コントローラー](#コントローラー)
+    * [リクエスト](#リクエスト)
 
 
 
@@ -76,6 +78,12 @@ resources/lang/en
 resources/lang/ja  
 
 
+<a id="enum（列挙型）"></a>
+## enum（列挙型）
+
+(仮)複数の定数をまとめて管理できる機能。
+
+
 <a id="マイグレーション"></a>
 ## マイグレーション
 
@@ -108,9 +116,9 @@ return new class extends Migration
     public function up(): void
     {
         // Schemaクラスのクラスメソッドcreate()を使用して、テーブルの作成とテーブル構造の定義を行う。
-        // Schema::create()の第一引数は作成するテーブルの名前
-        // Schema::create()の第二引数はテーブルの構造を定義するための無名関数
-        // その無名関数はBlueprintクラスのインスタンスを引数として受け取る(通常は$tableという変数名)
+        // Schema::createメソッドの第一引数は作成するテーブルの名前
+        // Schema::createメソッドの第二引数はテーブルの構造を定義するためのコールバック関数(無名関数)
+        // そのコールバック関数は、Schema::createメソッドが内部で生成したBlueprintクラスのインスタンスを引数として受け取る(通常は$tableという変数名)
         // 無名関数内でそのインスタンスからインスタンスメソッドにアクセスし、カラムを作成する
         // $table->型名になっているインスタンスメソッド('カラム名');という書き方が基本。
         // 例外として、$table->timestamps();は、1行でcreated_atとupdated_atの2列を作成する。
@@ -526,6 +534,7 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
+// $idをキーとして使うなら、とりあえず整数型(int)にしておく。
 class SampleController extends Controller
 {
     // サイトのTOPページ、投稿一覧などを表示するためのメソッドを書く。
@@ -547,33 +556,144 @@ class SampleController extends Controller
     }
 
     // 投稿の個別ページを表示するためのメソッドを書く。
-    public function show(string $id)
+    public function show(int $id)
     {
         //
     }
 
     // 投稿の編集ページを表示するメソッドを書く。
-    public function edit(string $id)
+    public function edit(int $id)
     {
         //
     }
 
     // 編集した投稿をデータベースに上書き保存するメソッドを書く。
-    public function update(Request $request, string $id)
+    public function update(Request $request, int $id)
     {
         //
     }
 
     // 投稿を削除するメソッドを書く。
-    public function destroy(string $id)
+    public function destroy(int $id)
     {
         //
     }
 }
 ```
+<a id="リクエスト"></a>
+## リクエスト
+
+### Request
+LaravelはHTTPリクエストが来ると、このリクエストの情報をIlluminate\Http\Requestクラスのインスタンスにラップし、コントローラーメソッドの引数として依存性注入する。
+
+例：  
+```php
+<?php
+// ルートに紐づいたコントローラに対し、クラス名がタイプヒントされた引数を指定すると、そのクラスのインスタンスを自動的に生成し、引数として渡してくれるようになる。
+// Laravelに組み込まれたサービスコンテナが担う機能の一つで、 依存性注入と言う。
+// サービスコンテナとは、 便利な「自動インスタンス化マシン」のようなもの。
+
+namespace App\Http\Controllers;
+
+use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
+
+class SampleController extends Controller
+{
+    // 「Request $request」の部分が依存性注入
+    public function store(Request $request)
+    {
+        //
+    }
+}
+```
+「Request $request」は、HTTPリクエストに関するすべての情報を持つオブジェクト。  
+ユーザーが送信したデータ、リクエストメソッド、ファイル、ヘッダー情報などを取得、操作するために使用される。  
+Requestオブジェクトを使うことで、リクエストに関する情報を簡単かつ効率的に扱うことができる。  
 
 
+### FormRequest
+FormRequestクラスはIlluminate\Http\Requestクラスを継承している。    
+そのFormRequestクラスを継承したクラスを利用することで、簡単に認可・バリデーションを行える。    
+コントローラーからバリデーション処理を完全に切り離し、Fat Controller化を防ぐ効果もある。  
 
+FormRequestの子クラスを作成するコマンド  
+`php artisan make:request [任意のクラス名]`  
+例：  
+`php artisan make:request SampleRequest`  
+これにより、app/Http/Requests/SampleRequest.phpが作成されます。  
+
+作成されるコードの例:  
+```php
+<?php
+
+namespace App\Http\Requests;
+
+use Illuminate\Foundation\Http\FormRequest;
+
+
+class SampleRequest extends FormRequest
+{
+    // リクエストが認可されるかどうかを決定するためのメソッド。
+    // 戻り値はbool
+    // falseが返った場合、バリデーションすら行わず403 Forbiddenを返しリクエストが拒否される。
+    // trueが返った場合はバリデーションに処理が進む。つまり認可・許可されたことになる。
+    // 条件によってtrueにしたり、falseにしたりと、便利な使い方もできる。
+    public function authorize(): bool
+    {
+        return true;
+    }
+
+    // バリデーションルールを配列として定義し、返すメソッド。
+    // 定義したルールに基づいてバリデーションが実行される。
+    // バリデーションが通らなければ、直前の画面にリダイレクトされる。
+    // バリデーションが通れば、コントローラー内部へと処理が移る。
+    public function rules(): array
+    {
+        return [
+            // name：必須入力で最大20文字
+            'name'  => 'required|max:20',
+            // tel：入力任意、入力された時はハイフン区切りの電話番号の形式で
+            'tel'   => 'nullable|regex:/^[0-9]{2,4}-[0-9]{2,4}-[0-9]{3,4}$/',
+            // email：必須入力でメールアドレスの形式
+            'email' => 'required|email',
+            // body：必須入力で最大1000文字まで
+            'body'  => 'required|max:1000',
+            // date：値を日付形式に指定
+            // after_or_equal：特定の日付（この場合はtoday）以前の日付の入力を不可に（制限）する
+            'due_date' => 'required|date|after_or_equal:today',
+        ];
+    }
+
+}
+```
+
+FormRequestの子クラスを利用するのはとても簡単。  
+コントローラの使いたいメソッドに、Requestの代わりに依存性注入するだけ。  
+
+例：  
+```php
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Http\Controllers\Controller;
+// SampleRequestを読み込む。
+use app\Http\Requests\SampleRequest;
+
+class SampleController extends Controller
+{
+    // 「SampleRequest $request」の部分が依存性注入
+    public function store(SampleRequest $request)
+    {
+        //
+    }
+}
+```
+たったのこれだけで、コントローラのメソッド（ここではstore()）が呼び出される前にauthorize()、通った場合はrules()の処理が実行される。  
+
+#### その他基本的な使い方＆設定
+参考サイト：[LaravelのFormRequestをちゃんと理解する](https://laranote.jp/understanding-laravel-formrequest/)
 
 
 
