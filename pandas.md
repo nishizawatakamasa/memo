@@ -54,7 +54,7 @@
 |(?ms:)|複数フラグを部分適用|
 
 ## 3. その他
-
+### 基本
 |||
 |-|-|
 |pd.concat([df1, df2])||
@@ -74,6 +74,6 @@
 |DataFrame.values<br>Series.values|データ値属性(NumPy配列)。|
 
 
-* 追加予定？の項目
-    * グループ化
-    * マージ
+### マージとグルーピング
+マージの参考サイト：[pandas.DataFrameを結合するmerge, join（列・インデックス基準）](https://note.nkmk.me/python-pandas-merge-join/)  
+グルーピングの参考サイト：[pandasのgroupby()でグルーピングし統計量を算出](https://note.nkmk.me/python-pandas-groupby-statistics/)  
