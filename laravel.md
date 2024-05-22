@@ -3,6 +3,7 @@
 
 
 * 目次
+    * [参考サイト](#参考サイト)
     * [インストール](#インストール)
     * [サーバー起動](#サーバー起動)
     * [データベース等の設定](#データベース等の設定)
@@ -15,8 +16,12 @@
     * [ルーティング](#ルーティング)
     * [コントローラー](#コントローラー)
     * [リクエスト](#リクエスト)
+    * [ビュー](#ビュー)
 
 
+<a id="参考サイト"></a>
+## 参考サイト
+[ベストプラクティス](https://github.com/alexeymezenin/laravel-best-practices/blob/master/japanese.md)
 
 <a id="インストール"></a>
 ## インストール
@@ -347,23 +352,6 @@ class Task extends Model
 
 ```
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 https://bonoponz.hatenablog.com/entry/2020/10/06/%E3%80%90Laravel%E3%80%91Eloquent%E3%82%92%E4%BD%BF%E3%81%A3%E3%81%9F%E3%83%A2%E3%83%87%E3%83%AB%E3%82%92%E7%90%86%E8%A7%A3%E3%81%99%E3%82%8B
 
 https://tobilog.net/10364/
@@ -483,7 +471,7 @@ Route::middleware()
 // name()メソッドでルートに名前を付けられる。
 // ルートの名前を定義すると、route関数でURLを生成できるようになる。
 // ルートの名前に特定のルールや制約はないが、ドット区切りでリソースとアクションを表現するのが一般的。
-Route::get('/folders/{id}/tasks/{task_id}/edit', [TaskController::class,"showEditForm"])->name('tasks.edit');
+Route::get('/folders/{id}/tasks/{task_id}/edit', [TaskController::class,"edit"])->name('tasks.edit');
 
 // これも一応ルーティング定義の例
 Route::get('/folders/create', [FolderController::class,"showCreateForm"])->name('folders.create');
@@ -524,7 +512,56 @@ return redirect('URL');
 <a id="コントローラー"></a>
 ## コントローラー
 
+### 参考サイト
+[Laravel 11.x コントローラ](https://readouble.com/laravel/11.x/ja/controllers.html)
+
+
+### 基本
+* コントローラーの役割
+    1. リクエストを受け取る
+    1. Modelへの処理指示
+    1. Viewを表示
+
+※※重要！※※  
+**コントローラーは指示役に徹する。自分自身で一切処理は行わない。**
+
+作成コマンド  
+`php artisan make:controller SampleController`  
+アプリケーションのすべてのコントローラは、デフォルトでapp/Http/Controllersディレクトリへ設置される。
+
+
+#### Viewを表示
+view関数を使う
+```php
+<?php
+// 第一引数に、表示したいビューの名前を指定。
+// 通常、resources/viewsディレクトリ配下からのパス(「.blade.php」は不要)。
+return view('folders/create');
+
+// ビューにデータを渡す場合は、第二引数に連想配列として指定。
+// 渡したデータはビュー内で使用され、HTMLを動的に生成するために利用されます。
+return view('folders/edit', [
+    'folder_id' => $folder->id,
+    'folder_title' => $folder->title,
+]);
+
+// ビューの変数とコントローラで定義した変数の名前が一致している場合は、compact関数を利用してスッキリ書くこともできる。
+// ※compact関数とは、変数名とその値から配列を作成するPHPの関数。
+// compact関数使用例
+return view('tasks/edit', compact('hoge', 'fuga', 'piyo'));
+// ※以下と同義
+return view('tasks/edit', [
+    'hoge' => $hoge,
+    'fuga' => $fuga,
+    'piyo' => $piyo,
+]);
+
+```
+
+
 ### リソースコントローラ
+作成コマンド  
+`php artisan make:controller SampleController  --resource`  
 (必ず使うというわけではないが、命名規則等を参考にしようかな。)
 ```php
 <?php
@@ -580,6 +617,18 @@ class SampleController extends Controller
     }
 }
 ```
+### コントローラーミドルウェア
+ルーターとコントローラーの間でログイン処理等を実装できるもの。
+
+ミドルウェアはルートファイルの中で、コントローラのルートに対して指定する。※他の方法もある。
+```php
+<?php
+
+Route::get('profile', [UserController::class, 'show'])->middleware(['auth', 'verified'])->name('profile.show');
+// 'auth'だの'verified'だのは、「bootstrap\app.php」と「Illuminate\Foundation\Configuration\Middleware;」を参考。
+```
+
+
 <a id="リクエスト"></a>
 ## リクエスト
 
@@ -692,42 +741,107 @@ class SampleController extends Controller
 ```
 たったのこれだけで、コントローラのメソッド（ここではstore()）が呼び出される前にauthorize()、通った場合はrules()の処理が実行される。  
 
-#### その他基本的な使い方＆設定
-参考サイト：[LaravelのFormRequestをちゃんと理解する](https://laranote.jp/understanding-laravel-formrequest/)
+
+#### 追加処理
+```php
+<?php
+// バリデーション前に処理を行う
+// prepareForValidationメソッドをオーバーライド
+protected function prepareForValidation()
+{
+    //
+}
+
+// バリデーション成功時に処理を行う
+// passedValidation メソッドを追加
+protected function passedValidation()
+{
+    //
+}
+
+// バリデーション失敗時に処理を行う
+// failedValidationメソッドをオーバーライド
+protected function failedValidation(Validator $validator)
+{
+    //
+}
+
+// 追加バリデーションの実行
+// 方法の一つとしてwithValidatorメソッドが用意されている。
+public function withValidator(Validator $validator): void
+{
+    //
+}
+```
+
+#### エラーメッセージの日本語化＆カスタマイズ
+* 2つの方法がある。
+    1. Laravelの言語ファイルを作成＆設定する。
+    1. FormRequestの子クラスで定義する(messagesメソッドをオーバーライドする)。
+
+#### 参考サイト
+[LaravelのFormRequestをちゃんと理解する](https://laranote.jp/understanding-laravel-formrequest/)
+
+
+<a id="ビュー"></a>
+## ビュー
+
+### 参考サイト
+[Laravel 11.x Bladeテンプレート](https://readouble.com/laravel/11.x/ja/blade.html)
+
+
+### asset関数
+publicディレクトリ配下へのURLを生成する。
+例：  
+```php
+<?php
+
+asset('css/styles.css')
+
+// ビューの中で呼び出す場合は、{{ }}をつける。
+{{ asset('css/styles.css') }}
+```
+
+
+
+### レイアウト(仮)
+レイアウトは、「テンプレート継承」を介して作成することもできる。
+これは、コンポーネントの導入前にアプリケーションを構築するための主な方法だった。
+
+
+親ビュー
+yield()：子ビューで定義したデータを表示する
+セクション名：scripts を指定
+@yield('scripts')
+
+子ビュー
+extends：親ビューを継承する（読み込む）
+親ビュー名：layout を指定
+@extends('layout')
+
+section：子ビューにsectionでデータを定義する
+セクション名：styles を指定
+@section('styles')
+@endsection
+
+別のビュー内からBladeビューを読み込めます。
+@include('share.flatpickr.scripts')
+
+
+
+テンプレート継承とコンポーネントではどちらが好ましい手段ですか？
+
+@yield()、@extends()、@section()、@include()等を使うテンプレート継承
+
+
+
+
+
+
 
 
 
 ---------------------------------------------
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
