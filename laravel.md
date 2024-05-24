@@ -804,42 +804,59 @@ asset('css/styles.css')
 
 
 
-### レイアウト(仮)
-レイアウトは、「テンプレート継承」を介して作成することもできる。
-これは、コンポーネントの導入前にアプリケーションを構築するための主な方法だった。
+### レイアウト
 
+#### コンポーネント
+独立したUI要素を管理したり、複数のビューで再利用する場合に適している。  
+※ユーザー認証システムのBreezeでも使う。
 
-親ビュー
-yield()：子ビューで定義したデータを表示する
-セクション名：scripts を指定
-@yield('scripts')
+#### テンプレート継承
+各ページが同じレイアウトや構造を共有し、一部だけを変更する場合に適している。  
+※コンポーネントの導入前にアプリケーションを構築するための主な方法だった。
 
-子ビュー
-extends：親ビューを継承する（読み込む）
-親ビュー名：layout を指定
-@extends('layout')
+```php
+<?php
+// 親ビューに設定
+// 子ビューにsectionで定義したデータを表示する
+@yield('セクション名')
 
-section：子ビューにsectionでデータを定義する
-セクション名：styles を指定
-@section('styles')
+// 子ビューに設定
+// 親ビューを継承する（読み込む）
+@extends('親ビュー名')
+// sectionでデータを定義する
+// 読み込んだ親ビューの@yield('セクション名')部分にはめ込む用。
+// ※同じセクション名の@yield()部分に表示される。
+// パターン1
+@section('セクション名', '文字列')
+// パターン2
+@section('セクション名')
+    <h1>Welcome to the Home Page</h1>
+    <p>This is the home page content.</p>
 @endsection
 
-別のビュー内からBladeビューを読み込めます。
-@include('share.flatpickr.scripts')
+// 別のビュー内からBladeビューを読み込む。
+@include('読み込むビュー名')
+
+```
+* @extends()、@include()で読み込むビュー名について。
+    1. resources/viewsディレクトリ配下からのパス。
+    1. .blade.phpの拡張子は省略することができる。
+    1. ディレクトリの階層をドットで区切った形式でビュー名を指定。
 
 
+### CSRFフィールド、Methodフィールド
+* CSRFフィールド：formの内部に@csrfと記述するだけでCSRF攻撃を防げる。  
+* Methodフィールド：HTMLフォームで許可されているのはGETリクエスト(データ取得)とPOSTリクエスト(データ送信)のみのため、フォームのPUT, PATCH, DELETE, OPTIONSリクエストを使う場合はPOST送信のフォームの中で@method関数を使用し、擬似的にリクエストを実現させる。
 
-テンプレート継承とコンポーネントではどちらが好ましい手段ですか？
-
-@yield()、@extends()、@section()、@include()等を使うテンプレート継承
-
-
-
-
-
-
-
-
+例：  
+```php
+<?php
+<form action="{{ route('hoges.destroy', ['id' => $id]) }}" method="POST">
+    @csrf
+    @method('DELETE')
+    <button type="submit">削除</button>
+</form>
+```
 
 ---------------------------------------------
 
