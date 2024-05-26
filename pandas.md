@@ -74,6 +74,9 @@
 |DataFrame.values<br>Series.values|データ値属性(NumPy配列)。|
 
 
-### マージとグルーピング
-マージの参考サイト：[pandas.DataFrameを結合するmerge, join（列・インデックス基準）](https://note.nkmk.me/python-pandas-merge-join/)  
-グルーピングの参考サイト：[pandasのgroupby()でグルーピングし統計量を算出](https://note.nkmk.me/python-pandas-groupby-statistics/)  
+### マージ、グルーピング
+#### マージの参考サイト
+* [pandas.DataFrameを結合するmerge, join（列・インデックス基準）](https://note.nkmk.me/python-pandas-merge-join/)  
+#### グルーピングの参考サイト
+* [pandasのgroupby()でグルーピングし統計量を算出](https://note.nkmk.me/python-pandas-groupby-statistics/)  
+* [pandas groupbyでグループ化｜図解でわかりやすく解説](https://www.yutaka-note.com/entry/pandas_groupby)

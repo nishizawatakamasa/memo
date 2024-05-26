@@ -7,6 +7,9 @@
         * [CSSセレクタ](./css_selector.md)
     * JavaScript
         * [全般](https://share.kokoronoki.net/nszw/summary/lang_spec/)
+        * [処理の実行タイミング](./js_execution_timing.md)
+        * React
+            * [参考サイト集](./react_reference_site.md)
 * バックエンド
     * PHP
         * [全般](https://share.kokoronoki.net/nszw/summary/lang_spec/)
@@ -14,6 +17,7 @@
         * Laravel
             * [全般](./laravel.md)
             * [図解](./laravel_diagram.md)
+            * [参考サイト集](./laravel_reference_site.md)
         * phpMyAdmin
     * SQL
         * MariaDB(MySQL)
