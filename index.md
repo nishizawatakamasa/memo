@@ -9,7 +9,7 @@
         * [全般](https://share.kokoronoki.net/nszw/summary/lang_spec/)
         * [処理の実行タイミング](./js_execution_timing.md)
         * React
-            * [参考サイト集](./react_reference_site.md)
+            * [全般](./react.md)
 * バックエンド
     * PHP
         * [全般](https://share.kokoronoki.net/nszw/summary/lang_spec/)

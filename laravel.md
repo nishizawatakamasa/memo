@@ -13,6 +13,7 @@
     * [マイグレーション](#マイグレーション)
     * [モデル](#モデル)
     * [シーダー](#シーダー)
+    * [ファクトリー](#ファクトリー)
     * [ルーティング](#ルーティング)
     * [コントローラー](#コントローラー)
     * [リクエスト](#リクエスト)
@@ -126,11 +127,11 @@ return new class extends Migration
         // そのコールバック関数は、Schema::createメソッドが内部で生成したBlueprintクラスのインスタンスを引数として受け取る(通常は$tableという変数名)
         // 無名関数内でそのインスタンスからインスタンスメソッドにアクセスし、カラムを作成する
         // $table->型名になっているインスタンスメソッド('カラム名');という書き方が基本。
-        // 例外として、$table->timestamps();は、1行でcreated_atとupdated_atの2列を作成する。
+        // 例外として、$table->datetimes();は、1行でcreated_atとupdated_atの2列を作成する。
         Schema::create('folders', function (Blueprint $table) {
             $table->increments('id');
             $table->string('title', 20);
-            $table->timestamps();
+            $table->datetimes();
         });
     }
 
@@ -144,6 +145,66 @@ return new class extends Migration
         Schema::dropIfExists('folders');
     }
 };
+```
+
+### Blueprintクラスのインスタンスメソッドのうち、よく使われるもの
+```php
+<?php
+// Blueprintクラスには、テーブルやカラムを定義するためのさまざまなインスタンスメソッドが用意されている。
+
+// カラム定義 整数型
+$table->bigInteger('column_name'); // 8バイトの整数カラム
+$table->integer('column_name'); // 4バイトの整数カラム
+$table->mediumInteger('column_name'); // 3バイトの整数カラム
+$table->smallInteger('column_name'); // 2バイトの整数カラム
+$table->tinyInteger('column_name'); // 1バイトの整数カラム
+$table->unsignedBigInteger('column_name'); // 符号なしの8バイト整数カラム
+$table->unsignedInteger('column_name'); // 符号なしの4バイト整数カラム
+
+// カラム定義 文字列型
+$table->string('column_name', 255); // 255文字までの文字列カラム
+$table->text('column_name'); // 大きなテキストカラム
+$table->mediumText('column_name'); // 中程度のテキストカラム
+$table->longText('column_name'); // 大きなテキストカラム
+
+// カラム定義 日時型
+$table->date('column_name'); // 日付カラム
+$table->dateTime('column_name', $precision = 0); // 日時カラム
+$table->time('column_name', $precision = 0); // 時間カラム
+$table->timestamp('column_name', $precision = 0); // タイムスタンプカラム
+$table->timestamps($precision = 0); // created_at と updated_at カラムを追加
+$table->softDeletes($precision = 0); // deleted_at カラムを追加
+
+// カラム定義 ブール型
+$table->boolean('column_name'); // ブールカラム
+
+// カラム定義 その他
+$table->binary('column_name'); // バイナリデータカラム
+$table->float('column_name', $total = 8, $places = 2); // 浮動小数点カラム
+$table->decimal('column_name', $total = 8, $places = 2); // 固定小数点カラム
+$table->json('column_name'); // JSONデータカラム
+$table->jsonb('column_name'); // JSONBデータカラム
+
+// インデックスを定義するメソッド
+$table->primary('column_name'); // 主キーを定義
+$table->unique('column_name'); // ユニークインデックスを定義
+$table->index('column_name'); // 標準インデックスを定義
+
+// 外部キーを定義するメソッド
+// 子テーブルのfolder_idカラムが、常にfoldersテーブルの有効なidを参照することを強制
+// 子テーブルにある各レコードのfolder_idは、必ずfoldersテーブルに存在するidでなければならなくなる。
+$table->foreign('folder_id')->references('id')->on('folders');
+
+// その他の便利なメソッド
+$table->increments('column_name'); // 自動増分の主キーを定義（整数）
+$table->bigIncrements('column_name'); // 自動増分の主キーを定義（大きな整数）
+$table->rememberToken(); // remember_tokenカラムを追加（Laravel認証用）
+$table->nullableMorphs('morphable'); // typeとidカラムを追加（多形関係用）
+$table->uuid('column_name'); // UUIDカラムを追加
+
+// カラムの属性を変更するメソッド
+$table->nullable(); // カラムをNULL許可にする
+$table->default($value); // デフォルト値を設定する
 ```
 
 ### マイグレーションの実行コマンド  
@@ -237,6 +298,18 @@ ModelClass::create([
     'folder_id' => 1,
     'title' => "サンプルタスク {$num}",
 ]);
+// createの別バリエーション
+ModelClass::firstOrCreat([]); // レコードが存在しなければ作成
+ModelClass::updateOrCreate([]); // 存在するレコードを更新し、存在しない場合は作成
+
+// 指定したIDのレコードを削除
+ModelClass::destroy(1);
+ModelClass::destroy([1, 2, 3]);
+
+// レコードが存在するかどうかをチェック。戻り値は真偽値(bool)。
+ModelClass::where('email', 'john@example.com')->exists();
+// レコードが存在しないかどうかをチェック。戻り値は真偽値(bool)。
+ModelClass::where('email', 'john@example.com')->doesntExist();
 ```
 
 ### リレーションは関数として定義する。
@@ -417,6 +490,112 @@ Seederを実行すると、対象のテーブルにデータがインサート�
 実行コマンドがうまくいかない場合はComposerをオートロードしてから実行し直す。 
 ### Composerをオートロードしてシーダーを認識させるコマンド
 `composer dump-autoload`
+
+
+<a id="ファクトリー"></a>
+## ファクトリー
+
+参考サイト：[ファクトリーの使い方](https://office54.net/iot/laravel/factory-test-data-create)
+
+Factoryを使うと、Seederよりも簡単に大量のテストデータを生成できる。
+
+### ファクトリーファイルの新規作成コマンド  
+`php artisan make:factory モデル名Factory`  
+例：  
+`php artisan make:factory FolderFactory`  
+※database/factories内にFolderFactory.phpというファクトリーファイルが作成される。
+
+### ファクトリーファイルの解説
+```php
+<?php
+
+namespace Database\Factories;
+
+use Illuminate\Database\Eloquent\Factories\Factory;
+
+// Factoryクラスを継承している
+class TaskFactory extends Factory
+{
+    // 戻り値は配列(レコード)
+    public function definition(): array
+    {
+        return [
+            // どのようなデータを生成するかをここに定義する。
+            'title'=>fake()->text(15),
+            'due_date'=>fake()->dateTime(),
+            'status'=>fake()->numberBetween(1, 2),
+            // Folderモデルへのリレーションを定義
+            'folder_id'=>\App\Models\Folder::factory(),
+        ];
+    }
+}
+```
+### fake()メソッド
+fake()メソッドは、Laravelが提供するFakerライブラリを使って、さまざまな種類のダミーデータを生成するために使用される。  
+※Fakerは、名前、住所、電話番号、テキスト、日付などのリアルなダミーデータを生成するライブラリ。
+
+利用できるメソッド一覧
+```php
+<?php
+fake()->text($maxNumOfChara) // テキスト（日本語非対応）
+fake()->realText() // テキスト（日本語対応）
+fake()->word() // 単語
+fake()->paragraph() // 複数の文章
+fake()->address() // 住所
+fake()->country() // 国
+fake()->postcode() // 郵便番号
+fake()->prefecture() // 都道府県
+fake()->city() // 市
+fake()->company() // 会社名
+fake()->phoneNumber() // 電話番号
+fake()->email() // メールアドレス
+fake()->name() // 人名
+fake()->lastName() // 性
+fake()->firstName() // 名
+fake()->numberBetween($min=〇, $max=〇)	// 指定した範囲内の数値
+fake()->date() // 年月日
+fake()->dateTime() // 年月日　時分秒
+fake()->year() // 年
+fake()->month() // 月
+fake()->dayOfMonth() // 日
+fake()->time() // 時分秒
+```
+
+### ファクトリーの実行
+```php
+<?php
+// DatabaseSeeder.php
+// シーダーで利用されるファイルだが、ファクトリーでも利用される。
+// そのため、実行コマンドはシーダーと同じphp artisan db:seed
+
+namespace Database\Seeders;
+
+use App\Models\User;
+use App\Models\Folder;
+use App\Models\Task;
+use Illuminate\Database\Seeder;
+
+class DatabaseSeeder extends Seeder
+{
+    public function run(): void
+    {
+        User::factory()->create([
+            'name' => 'Test User',
+            'email' => 'test@example.com',
+        ]);
+
+        // ファクトリーを使ってテストデータを100個作成。
+        Task::factory(100)->create();
+        // ※ModelClass::factory()はEloquentモデルのクラスメソッドではなく、Laravelが提供するマジックメソッド。
+        // ※このメソッドはHasFactoryトレイトを使用して実現され、各モデルに対して対応するファクトリクラスを動的に解決する。
+
+        // $this->call([
+        //     FoldersTableSeeder::class,
+        //     TasksTableSeeder::class,
+        // ]);
+    }
+}
+```
 
 
 <a id="ルーティング"></a>
