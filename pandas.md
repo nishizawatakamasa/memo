@@ -57,7 +57,7 @@
 ### 基本
 |||
 |-|-|
-|pd.concat([df1, df2])||
+|pd.concat([df1, df2])|※ axis=1とすると横方向に連結される。|
 |df['str1'] + ' in ' + df['str2']||
 |df['num1'] * 3 / df['num2']||
 |df[2:9]|※ 行番号のスライスで該当した行をDataFrameとして取得。|
@@ -72,9 +72,13 @@
 |DataFrame.transpose()|※ 転置|
 |DataFrame.map(lambda x: hex(int(x)))<br>Series.map(lambda x: func(x, 5))|※ na_action='ignore'とすると、NaNは関数に渡されずに結果がそのままNaNとなる。|
 |DataFrame.values<br>Series.values|データ値属性(NumPy配列)。|
+|DataFrame.index.to_list()|行名属性をリスト化したもの。|
+|DataFrame.columns.to_list()|列名属性をリスト化したもの。|
 
 
-### マージ、グルーピング
+### 基礎集計関数、マージ、グルーピング
+#### 基礎集計関数の参考サイト
+* [Pythonのpandas基礎集計関数を初心者向けに図解！](https://pythonbunseki.com/python-basic-function/)
 #### マージの参考サイト
 * [pandas.DataFrameを結合するmerge, join（列・インデックス基準）](https://note.nkmk.me/python-pandas-merge-join/)  
 #### グルーピングの参考サイト
