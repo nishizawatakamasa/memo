@@ -5,6 +5,7 @@
 * 目次
     * [参考サイト](#参考サイト)
     * [インストール](#インストール)
+    * [gitからcloneする時](#gitからcloneする時)
     * [サーバー起動](#サーバー起動)
     * [データベース等の設定](#データベース等の設定)
     * [XAMPPでMySQLが起動しない時の対処法](#XAMPPでMySQLが起動しない時の対処法)
@@ -32,6 +33,40 @@
 (プロジェクトを作るたびにlaravelをインストールする必要がある)  
 (基本的にはC:\xampp\htdocs内でコマンドを実行)  
 
+<a id="gitからcloneする時"></a>
+## gitからcloneする時
+
+### 概要
+git cloneしてきたLaravelプロジェクトにはvendorディレクトリと.envファイルが含まれていないので、作成する必要がある。
+※vendorディレクトリと.envファイルは、通常Gitの管理下におかない(初期状態で.gitignoreに入っている)。
+
+### vendorディレクトリを作る
+手順でいうと、下記のコマンドを実行するだけです。
+`composer install`
+
+### .envファイルを作る
+では次の手順ですが、.envファイルを作成します。
+git cloneしてきたプロジェクトには、.env.exampleというファイルが入っているはずです。
+これを下記のコマンドでリネームして.envファイルを作成します。
+
+`cp .env.example .env`
+
+
+### アプリケーションキーを初期化する
+.env.exampleをコピーして.envを作っただけでは、アプリケーションキーが設定されていませんので、下記のコマンドで初期化を行います。
+`php artisan key:generate`
+
+
+
+
+
+
+
+
+
+
+
+
 <a id="サーバー起動"></a>
 ## サーバー起動
 
@@ -55,7 +90,7 @@ DB_COLLATION=utf8mb4_general_ci   # 追記：照合順序
 ### .env.exampleの設定を.envにコピーする。  
 `cp .env.example .env`
 
-### C:\xampp\htdocs\test-laravel\config\database.php
+### config\database.php
 ```
 'charset' => env('DB_CHARSET', 'utf8mb4'),
 'collation' => env('DB_COLLATION', 'utf8mb4_general_ci'),
