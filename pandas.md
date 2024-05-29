@@ -30,6 +30,7 @@
 |Series.str.strip()||
 |Series.str.join(sep)||
 |Series.str.normalize('NFKC')||
+|Series.str.zfill(6)|左側をゼロ埋めし、指定した文字数にする|
 
 ### 正規表現関連
 |||
