@@ -19,6 +19,7 @@
     * [コントローラー](#コントローラー)
     * [リクエスト](#リクエスト)
     * [ビュー](#ビュー)
+    * [Breeze](#Breeze)
 
 
 <a id="参考サイト"></a>
@@ -41,23 +42,18 @@ git cloneしてきたLaravelプロジェクトにはvendorディレクトリと.
 ※vendorディレクトリと.envファイルは、通常Gitの管理下におかない(初期状態で.gitignoreに入っている)。
 
 ### vendorディレクトリを作る
-手順でいうと、下記のコマンドを実行するだけです。
+下記のコマンドを実行する。  
 `composer install`
 
 ### .envファイルを作る
-では次の手順ですが、.envファイルを作成します。
-git cloneしてきたプロジェクトには、.env.exampleというファイルが入っているはずです。
-これを下記のコマンドでリネームして.envファイルを作成します。
-
+.env.exampleファイルを下記のコマンドでコピーして.envファイルを作成する。  
 `cp .env.example .env`
 
-
 ### アプリケーションキーを初期化する
-.env.exampleをコピーして.envを作っただけでは、アプリケーションキーが設定されていませんので、下記のコマンドで初期化を行います。
+.env.exampleをコピーして.envを作成してもアプリケーションキーは設定されていないので、下記コマンドで設定する。  
 `php artisan key:generate`
-
-
-
+#### ※アプリケーションキーとは？
+.envファイルのAPP_KEY=の項目。暗号化された値を安全に扱うためのもの。
 
 
 
@@ -1000,6 +996,7 @@ public function withValidator(Validator $validator): void
 <a id="ビュー"></a>
 ## ビュー
 
+
 ### 参考サイト
 [Laravel 11.x Bladeテンプレート](https://readouble.com/laravel/11.x/ja/blade.html)
 
@@ -1071,6 +1068,34 @@ asset('css/styles.css')
     <button type="submit">削除</button>
 </form>
 ```
+
+
+
+
+<a id="Breeze"></a>
+## Breeze
+
+
+`composer require laravel/breeze --dev`
+
+`php artisan breeze:install`
+
+Which testing framework do you prefer?
+
+
+Pest
+シンプル、初心者にも優しい。
+PHPUnit
+多機能、習得には多少の時間がかかる
+複雑なテストや高度なカスタマイズが必要な場合
+
+
+
+
+
+
+
+
 
 ---------------------------------------------
 
