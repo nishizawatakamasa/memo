@@ -160,7 +160,7 @@ return new class extends Migration
         // $table->型名になっているインスタンスメソッド('カラム名');という書き方が基本。
         // 例外として、$table->datetimes();は、1行でcreated_atとupdated_atの2列を作成する。
         Schema::create('folders', function (Blueprint $table) {
-            $table->increments('id');
+            $table->id();
             $table->string('title', 20);
             $table->datetimes();
         });
@@ -184,6 +184,7 @@ return new class extends Migration
 // Blueprintクラスには、テーブルやカラムを定義するためのさまざまなインスタンスメソッドが用意されている。
 
 // カラム定義 整数型
+$table->id(); // 自動増分ID。ショートカットメソッド。内部的には$table->bigIncrements('id')と同じ。
 $table->bigInteger('column_name'); // 8バイトの整数カラム
 $table->integer('column_name'); // 4バイトの整数カラム
 $table->mediumInteger('column_name'); // 3バイトの整数カラム
@@ -194,9 +195,9 @@ $table->unsignedInteger('column_name'); // 符号なしの4バイト整数カラ
 
 // カラム定義 文字列型
 $table->string('column_name', 255); // 255文字までの文字列カラム
-$table->text('column_name'); // 大きなテキストカラム
-$table->mediumText('column_name'); // 中程度のテキストカラム
-$table->longText('column_name'); // 大きなテキストカラム
+$table->text('column_name'); // 通常のテキストデータ。最大おおよそ2万文字
+$table->mediumText('column_name'); // 大きめのテキストデータ。最大おおよそ500万文字
+$table->longText('column_name'); // 非常に大きなテキストデータ。最大おおよそ14億文字
 
 // カラム定義 日時型
 $table->date('column_name'); // 日付カラム
@@ -268,7 +269,14 @@ $table->default($value); // デフォルト値を設定する
 例：  
 ```php
 <?php
-protected $table = 'folders';  
+
+class Folder extends Model
+{
+    use HasFactory;
+
+    // テーブル名を明示的に指定する
+    protected $table = 'folders';
+}
 ```
 
 ### モデルの新規作成コマンド  
@@ -1075,69 +1083,71 @@ asset('css/styles.css')
 <a id="Breeze"></a>
 ## Breeze
 
-
-`composer require laravel/breeze --dev`
-
-`php artisan breeze:install`
-
-Which testing framework do you prefer?
+### カレントディレクトリにLaravel Breezeをインストールするコマンド 
+`composer require laravel/breeze --dev`  
+`php artisan breeze:install`  
 
 
-Pest
-シンプル、初心者にも優しい。
-PHPUnit
-多機能、習得には多少の時間がかかる
-複雑なテストや高度なカスタマイズが必要な場合
+#### ※質問：Which testing framework do you prefer?
+テストに使用するフレームワークを選択する
+
+* Pest (シンプル。初心者にも優しい。)
+* PHPUnit (多機能。習得には多少の時間がかかる。複雑なテストや高度なカスタマイズが必要な場合。)
 
 
-----
+### gitからcloneする時
 
-はい、node_modules ディレクトリがバージョン管理下にない場合（これが標準的なやり方です）、リポジトリをクローンした後に node モジュールを再度インストールする必要があります。node_modules にはプロジェクトに必要な依存関係がすべて含まれており、これがないとフロントエンドアセットがコンパイルできず、正しく機能しないからです。
+#### 概要
+node_modulesディレクトリは通常Gitの管理下におかないため、リポジトリをクローンした後に再度インストールする必要がある。  
+※node_modulesにはプロジェクトに必要な依存関係がすべて含まれており、これがないとフロントエンドアセットがコンパイルできず、正しく機能しない。
 
-ここでは、Laravel Breezeを使用しているLaravelプロジェクトをクローンした後、node_modulesディレクトリをインストールする方法を説明します：  
-  
-  
-1プロジェクトディレクトリに移動する：  
-ターミナルを開き、Laravelプロジェクトのルートディレクトリに移動します。  
-`cd /path/to/your/laravel-project`  
-  
-2Node.jsの依存関係をインストールする：  
-以下のコマンドを実行して、必要なnodeモジュールをすべてインストールします。このコマンドはpackage.jsonファイルを読み込み、指定された依存関係をnode_modulesディレクトリにインストールします。  
+#### node_modulesディレクトリをインストールする方法
+以下のコマンドを実行して、必要なnodeモジュールをすべてインストールする。  
 `npm install`  
-  
-  
-3アセットをコンパイルする（オプションですが、通常は必要です）:   
-nodeモジュールをインストールした後、多くの場合フロントエンドのアセットをコンパイルする必要があります。  
-これは以下のコマンドで実行できます：  
+
+フロントエンドアセットをコンパイルする（オプションだが、通常は必要）  
 `npm run dev`  
-本番環境であれば、これを使った方がいいだろう：  
+※本番環境の場合  
 `npm run production`  
   
-  
-ステップ・バイ・ステップで説明しよう：  
-ステップ1：リポジトリのクローン  
-`git clone https://github.com/your-username/your-repository.git`  
-`cd your-repository`  
-ステップ2：Composerの依存関係をインストールする  
-`composer install`  
-ステップ3：Node.jsの依存関係をインストールする  
-`npm install`  
-ステップ4：環境変数の設定  
-  
-サンプルの環境ファイルをコピーし、新しいアプリケーション・キーを生成します。  
-`cp .env.example .env`  
-`php artisan key:generate`  
-  
-ステップ5：データベース移行の実行（必要な場合）  
-`php artisan migrate`  
-  
-ステップ6：フロントエンドアセットのコンパイル  
-`npm run dev`  
-  
-これらの手順を実行すると、必要な依存関係がすべてインストールされ、フロントエンドのアセットがコンパイルされ、Laravel Breezeアプリケーションが実行できるようになります。  
+これらの手順を実行すると、Laravel Breezeアプリケーションが実行できるようになる。  
 
 
 
+### 特定のルートグループにミドルウェアを適用する方法
+```php
+<?php
+// ※ミドルウェアは、リクエストがコントローラーやルートに到達する前に実行されるフィルターのようなもの。
+// ユーザーがページにアクセスする前に、認証の有無などがチェックされる。
+
+// Route::middleware()メソッドを使用し、ルートグループにguestミドルウェアを適用。
+// ->group(function () { ... })メソッドは複数のルートをグループ化する。
+// ※group()メソッドの引数は無名関数で、その中に個々のルート定義を記述する。
+// ※グループ内のすべてのルートに対して、共通の設定が適用される。
+Route::middleware('guest')->group(function () {
+    // 認証されていないユーザーのみがアクセスできるルート
+    
+    Route::get('register', [RegisteredUserController::class, 'create'])
+                ->name('register');
+
+    Route::post('register', [RegisteredUserController::class, 'store']);
+});
+
+// Route::middleware()メソッドを使用し、ルートグループにauthミドルウェアを適用。
+Route::middleware('auth')->group(function () {
+    // 認証されているユーザーのみがアクセスできるルート
+
+    Route::get('verify-email', EmailVerificationPromptController::class)
+                ->name('verification.notice');
+});
+```
+### 単一のルートにミドルウェアを適用する場合
+```php
+<?php
+Route::get('/dashboard', function () {
+    return view('dashboard');
+})->middleware(['auth', 'verified'])->name('dashboard');
+```
 
 
 ---------------------------------------------
