@@ -9,7 +9,7 @@
     * [サーバー起動](#サーバー起動)
     * [データベース等の設定](#データベース等の設定)
     * [XAMPPでMySQLが起動しない時の対処法](#XAMPPでMySQLが起動しない時の対処法)
-    * [lang](#lang)
+    * [Breezejp](#Breezejp)
     * [enum（列挙型）](#enum（列挙型）)
     * [マイグレーション](#マイグレーション)
     * [モデル](#モデル)
@@ -105,10 +105,16 @@ DB_COLLATION=utf8mb4_general_ci   # 追記：照合順序
 `net stop mysql82`  
 ※82はmysqlのバージョンが8.2の場合。
 
-<a id="lang"></a>
-## lang
+<a id="Breezejp"></a>
+## Breezejp
 
-lang/が無い場合、以下のコマンドを打って作成  
+Breezejpをインストールするコマンド  
+`composer require askdkc/breezejp --dev`  
+必要な言語ファイルの出力を実行するコマンド  
+`php artisan breezejp`
+
+### (仮)lang
+lang/作成コマンド
 `php artisan lang:publish`  
 
 resources/lang/en  
@@ -327,6 +333,11 @@ ModelClass::first(); // 戻り値はModelインスタンス。無いときはnul
 // 条件を指定してフィルタをかける
 ModelClass::where($column, $value)->get(); // 戻り値はCollectionクラス。
 ModelClass::where($column, $value)->first(); // 戻り値はModelインスタンス。無いときはnullなのでissetで判定。
+
+// 日付単位の条件を指定してフィルタをかける。
+// whereDateはwhereの日付特化版。
+// この場合、dateカラムが今日の日付のものだけを取得。
+ModelClass::whereDate('date', Carbon::now())->get(); 
 
 // テーブルのレコード数を取得する。戻り値は整数値(int)。
 ModelClass::count();
@@ -594,6 +605,7 @@ fake()->firstName() // 名
 fake()->numberBetween($min=〇, $max=〇)	// 指定した範囲内の数値
 fake()->date() // 年月日
 fake()->dateTime() // 年月日　時分秒
+fake()->dateTimeBetween($startDate=〇, $endDate=〇) // 'now' '+2 week' '-1 years'
 fake()->year() // 年
 fake()->month() // 月
 fake()->dayOfMonth() // 日
@@ -810,6 +822,7 @@ class SampleController extends Controller
         //
     }
 
+    // あんまり使わないかも？
     // 投稿の個別ページを表示するためのメソッドを書く。
     public function show(int $id)
     {
@@ -824,6 +837,13 @@ class SampleController extends Controller
 
     // 編集した投稿をデータベースに上書き保存するメソッドを書く。
     public function update(Request $request, int $id)
+    {
+        //
+    }
+
+    // ※自作
+    // 投稿の削除ページを表示するメソッドを書く。
+    public function showDestroy(int $id)
     {
         //
     }
@@ -877,7 +897,22 @@ class SampleController extends Controller
 「Request $request」は、HTTPリクエストに関するすべての情報を持つオブジェクト。  
 ユーザーが送信したデータ、リクエストメソッド、ファイル、ヘッダー情報などを取得、操作するために使用される。  
 Requestオブジェクトを使うことで、リクエストに関する情報を簡単かつ効率的に扱うことができる。  
+例：  
+```php
+<?php
+public function store(Request $request)
+{
+    $folder = new Folder();
 
+    // ※$request->のあとにある変数名は、HTMLのタグのname属性で付けた名前。
+    $folder->title = $request->title;
+
+    $folder->save();
+    return redirect()->route('tasks.index', [
+        'id' => $folder->id,
+    ]);
+}
+```
 
 ### FormRequest
 FormRequestクラスはIlluminate\Http\Requestクラスを継承している。    
