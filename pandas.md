@@ -58,14 +58,14 @@
 ### 基本
 |||
 |-|-|
-|pd.concat([df1, df2])|※ axis=1とすると横方向に連結される。|
+|pd.concat([df1, df2])|※ ignore_index=Trueとするとインデックスが振り直される(0からの連番)。<br>※ axis=1とすると横方向に連結される。|
 |df['str1'] + ' in ' + df['str2']||
 |df['num1'] * 3 / df['num2']||
 |df[2:9]|※ 行番号のスライスで該当した行をDataFrameとして取得。|
 |DataFrame.drop(columns=['列名1', '列名2'])<br>DataFrame.drop(index=['行名1', '行名2'])||
 |DataFrame.reset_index(drop=True)|※ indexを振り直す。drop=Trueとすると、元のindexは削除され残らない。|
 |DataFrame.drop_duplicates(subset=['列名'])|※ 指定した列の重複行を、最初の行だけを残して削除|
-|DataFrame.sort_values(by='列名', ascending=False, ignore_index=True)|※ デフォルトは昇順。降順にするには引数ascendingをFalseにする。<br>※ na_position='first'とすると、欠損値NaNが先頭に並べられる。デフォルトでは末尾。<br>※ ignore_index=Trueとするとインデックスが振り直される。|
+|DataFrame.sort_values(by='列名', ascending=False, ignore_index=True)|※ デフォルトは昇順。降順にするには引数ascendingをFalseにする。<br>※ na_position='first'とすると、欠損値NaNが先頭に並べられる。デフォルトでは末尾。<br>※ ignore_index=Trueとするとインデックスが振り直される(0からの連番)。|
 |Series.astype(str)||
 |DataFrame.fillna(value)<br>Series.fillna(value)|※ 欠損値をvalueに置換|
 |DataFrame.sample(n=30)|※ n行だけランダムサンプリング|
