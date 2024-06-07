@@ -6,18 +6,17 @@
         * [全般](./html_css.md)
         * [CSSセレクタ](./css_selector.md)
     * JavaScript
-        * [全般](https://share.kokoronoki.net/nszw/summary/lang_spec/)
+        * [全般(外部サイト)](https://share.kokoronoki.net/nszw/summary/lang_spec/)
         * [処理の実行タイミング](./js_execution_timing.md)
         * React
             * [全般](./react.md)
 * バックエンド
     * PHP
-        * [全般](https://share.kokoronoki.net/nszw/summary/lang_spec/)
+        * [全般(外部サイト)](https://share.kokoronoki.net/nszw/summary/lang_spec/)
         * WordPress
         * Laravel
             * [全般](./laravel.md)
             * [図解](./laravel_diagram.md)
-            * [参考サイト集](./laravel_reference_site.md)
         * phpMyAdmin
     * SQL
         * MariaDB(MySQL)
@@ -27,7 +26,8 @@
     * Google スプレッドシート(GAS)
 * 高度な処理
     * Python
-        * [全般](https://share.kokoronoki.net/nszw/summary/lang_spec/)
+        * [全般](./python.md)
+        * [全般(外部サイト)](https://share.kokoronoki.net/nszw/summary/lang_spec/)
         * Selenium
         * NumPy
         * [pandas](./pandas.md)
@@ -46,7 +46,7 @@
 ## エンジニアリング全般
 * Git/GitHub
     * [ssh接続](./how_to_ssh_to_github.md)
-    * [コミットメッセージ、ブランチ](./branch.md)
+    * [コミットメッセージ、ブランチ、リモートURL](./branch.md)
 * Linux
 * Docker
 * クラウド
