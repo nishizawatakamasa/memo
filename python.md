@@ -19,8 +19,8 @@ exe化したいファイルがあるディレクトリで
 仮想環境の削除  
 envフォルダを削除するだけ  
 
-スクリプトの実行を許可。ExecutionPolicy
-settings.json設定
+スクリプトの実行を許可。ExecutionPolicy  
+settings.jsonに設定
 ```json:settings.json
 "terminal.integrated.env.windows": {
   "PSExecutionPolicyPreference": "RemoteSigned"
@@ -28,7 +28,7 @@ settings.json設定
 ```
 
 ## settings.jsonにモジュールの検索パスを追加する
-自動取得の対象とならない場合、明示的な設定が必要となる。
+自動取得の対象とならない場合、明示的な設定が必要となる。  
 設定例
 ```json:settings.json
 "python.analysis.extraPaths": ["/Users/user/AppData/Local/programs/Python/Python312/lib/site-packages"]

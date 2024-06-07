@@ -16,10 +16,10 @@
 |Series == '文字列'||
 |Series != '文字列'||
 |Series.isin(['文字列1', '文字列2'])|※ 指定した複数の文字列のいずれかと完全一致。|
-|Series.str.contains(pat, na=?)|※ na(欠損値)をTrueかFalse。デフォルトではNone(行抽出時はエラー)。|
+|Series.str.contains(r'pat', na=?)|※ na(欠損値)をTrueかFalse。デフォルトではNone(行抽出時はエラー)。|
 |Series.isnull()||
 |Series.notnull()||
-|DataFrame.duplicated(subset=['列名'], keep=False)|※ keep=Falseで重複行全てがTrue。|
+|DataFrame.duplicated(subset=['列名1', '列名2'], keep=False)|※ 指定した全ての列の要素が重複している行について。<br>※ keep=Falseで重複行全てがTrue。|
 
 ## 2. 文字列操作
 ### 基本
@@ -42,7 +42,7 @@
 
 |||
 |-|-|
-|DataFrame.replace({<br>'列名1': {r'^あ': 'aa', r'\d{4}': '8888'},<br>'列名2': {r'(\d+)分': r'\1年'},<br>}, regex=True)<br><br>DataFrame.replace(pat, repl, regex=True)<br>Series.replace(pat, repl, regex=True)|※便利な置換手段。<br>※DataFrameにもSeriesにも使える。|
+|DataFrame.replace({<br>'列名1': {r'^あ': 'aa', r'\d{4}': '8888'},<br>'列名2': {r'(\d+)分': r'\1年'},<br>}, regex=True)<br><br>DataFrame.replace({r'pat1': '', r'pat2': ''}, regex=True)<br>Series.replace({r'pat1': '', r'pat2': ''}, regex=True)|※便利な置換手段。<br>※DataFrameにもSeriesにも使える。|
 
 #### インラインフラグ
 |||
@@ -64,7 +64,7 @@
 |df[2:9]|※ 行番号のスライスで該当した行をDataFrameとして取得。|
 |DataFrame.drop(columns=['列名1', '列名2'])<br>DataFrame.drop(index=['行名1', '行名2'])||
 |DataFrame.reset_index(drop=True)|※ indexを振り直す。drop=Trueとすると、元のindexは削除され残らない。|
-|DataFrame.drop_duplicates(subset=['列名'])|※ 指定した列の重複行を、最初の行だけを残して削除|
+|DataFrame.drop_duplicates(subset=['列名1', '列名2'], ignore_index=True)|※ 指定した全ての列の要素が重複している行を、最初の行だけを残して削除|
 |DataFrame.sort_values(by='列名', ascending=False, ignore_index=True)|※ デフォルトは昇順。降順にするには引数ascendingをFalseにする。<br>※ na_position='first'とすると、欠損値NaNが先頭に並べられる。デフォルトでは末尾。<br>※ ignore_index=Trueとするとインデックスが振り直される(0からの連番)。|
 |Series.astype(str)||
 |DataFrame.fillna(value)<br>Series.fillna(value)|※ 欠損値をvalueに置換|
