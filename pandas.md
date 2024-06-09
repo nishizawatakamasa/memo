@@ -1,11 +1,36 @@
 # pandas覚書
 
-## 1. 選択操作
+* 目次
+    * [基本的なこと](#基本的なこと)
+    * [選択操作](#選択操作)
+    * [文字列操作](#文字列操作)
+    * [基礎集計メソッド](#基礎集計メソッド)
+    * [グルーピング](#グルーピング)
+    * [マージ](#マージ)
+    * [ファイル読み込み](#ファイル読み込み)
+    * [その他](#その他)
+
+<a id="基本的なこと"></a>
+## 基本的なこと
+
+|||
+|-|-|
+|pd.DataFrame({<br>'hoge': [1, 2, 3],<br>'fuga': [4, 5, 6],<br>'piyo': [7, 8, 9]<br>})|データフレーム。<br>二次元のデータ構造。<br>※代表的な作り方。|
+|pd.Series(['hoge', 'fuga', 'piyo'])|シリーズ。<br>一次元のデータ構造。<br>※代表的な作り方。|
+|DataFrame.values<br>Series.values|データ値属性(NumPy配列)。|
+|DataFrame.index.to_list()|行名属性をリスト化したもの。|
+|DataFrame.columns.to_list()|列名属性をリスト化したもの。|
+|DataFrame.index = ['行名1', '行名2', '行名3']|行名属性へ値を代入。|
+|DataFrame.columns = ['列名1', '列名2', '列名3']|列名属性へ値を代入。|
+
+<a id="選択操作"></a>
+## 選択操作
+
 ### 基本
 |||
 |-|-|
 |df.loc[<br>boolのSeriesか行名リストか行名スライス,<br>列名か列名リストか列名スライス<br>]|※ 行名や列名がint型の場合は、指定もint型で。※index値の行名はint型。<br>■第二引数が列名の場合、選択した列をSeriesとして取得・変更・追加できる。<br>・ 変更、追加時にはスカラー値、リスト、NumPy配列、Series(indexを合わせて代入されることに注意)を代入。<br>■第二引数が列名リストか列名スライスの場合、選択した範囲をDataFrameとして取得・変更できる。<br>・ 変更時にはスカラー値、二次元リスト、二次元NumPy配列を代入。<br>■行や列をリストで指定した場合はその順番で選択される。<br>■第一引数がbool値を要素とするSeriesの場合、Trueの行が選択される。<br>・ 複数のboolのSeriesに~&\|を適用し、複数条件で選択することも可能。<br>・ 優先順位が高い順から、~(not)、&(and)、\|(or)<br>・ 比較演算子を使うときは括弧で括る。<br>・ 優先したい処理も括弧で括る。|
-|df.at['行名', '列名']|※ 選択した要素の値を取得・変更。<br>※ 変更時にはスカラー値を代入。|
+|df.at['行名', '列名']|選択した要素の値を取得・変更。<br>変更時にはスカラー値を代入。|
 |df['列名']|df.loc[:, '列名']の簡潔な書き方(全行選択)。|
 |df[boolのSeries]|df.loc[boolのSeries]の簡潔な書き方(全列選択)。|
 
@@ -15,13 +40,26 @@
 |Series >= 数値||
 |Series == '文字列'||
 |Series != '文字列'||
-|Series.isin(['文字列1', '文字列2'])|※ 指定した複数の文字列のいずれかと完全一致。|
-|Series.str.contains(r'pat', na=?)|※ na(欠損値)をTrueかFalse。デフォルトではNone(行抽出時はエラー)。|
+|Series.isin(['文字列1', '文字列2'])|指定した複数の文字列のいずれかと完全一致。|
+|Series.str.contains(r'pat', na=?)|na(欠損値)をTrueかFalse。デフォルトではNone(行抽出時はエラー)。|
 |Series.isnull()||
 |Series.notnull()||
-|DataFrame.duplicated(subset=['列名1', '列名2'], keep=False)|※ 指定した全ての列の要素が重複している行について。<br>※ keep=Falseで重複行全てがTrue。|
+|DataFrame.duplicated(subset=['列名1', '列名2'], keep=False)|指定した全ての列の要素が重複している行について。<br>keep=Falseで重複行全てがTrue。|
 
-## 2. 文字列操作
+### ※boolのDataFrameを得る方法の例
+|||
+|-|-|
+|DataFrame >= 数値||
+|DataFrame == '文字列'||
+|DataFrame != '文字列'||
+|DataFrame.isin(['文字列1', '文字列2'])|指定した複数の文字列のいずれかと完全一致。|
+|DataFrame.isnull()||
+|DataFrame.notnull()||
+
+
+<a id="文字列操作"></a>
+## 文字列操作
+
 ### 基本
 |||
 |-|-|
@@ -38,11 +76,11 @@
 |Series.str.extract(pat, expand=False)|※ 最初の一つのキャプチャ|
 |Series.str.findall(pat)||
 |Series.str.replace(pat, repl, regex=True)|※ DataFrame.replace, Series.replaceのほうが便利。|
-|Series.str.split(pat, regex=True)|※ 初期値空白|
+|Series.str.split(pat, regex=True)|patが初期値のままなら空白で分割される。<br>expand=Trueとすると複数の列に分割。|
 
 |||
 |-|-|
-|DataFrame.replace({<br>'列名1': {r'^あ': 'aa', r'\d{4}': '8888'},<br>'列名2': {r'(\d+)分': r'\1年'},<br>}, regex=True)<br><br>DataFrame.replace({r'pat1': '', r'pat2': ''}, regex=True)<br>Series.replace({r'pat1': '', r'pat2': ''}, regex=True)|※便利な置換手段。<br>※DataFrameにもSeriesにも使える。|
+|DataFrame.replace({<br>'列名1': {r'^あ': 'aa', r'\d{4}': '8888'},<br>'列名2': {r'(\d+)分': r'\1年'},<br>}, regex=True)<br><br>DataFrame.replace({r'pat1': '', r'pat2': ''}, regex=True)<br>Series.replace({r'pat1': '', r'pat2': ''}, regex=True)|便利な置換手段。<br>DataFrameにもSeriesにも使える。|
 
 #### インラインフラグ
 |||
@@ -53,6 +91,39 @@
 |r'hoge(?s:fuga)piyo'|部分適用|
 |(?im)|複数フラグ|
 |(?ms:)|複数フラグを部分適用|
+
+<a id="基礎集計メソッド"></a>
+## 基礎集計メソッド
+
+### 重要なメソッド
+
+|||
+|-|-|
+|DataFrame.sum()|列方向の合計を算出。<br>※axis=1とすると行方向。<br>Seriesを返す。|
+|Series.sum()|合計を算出。<br>スカラー値を返す。|
+|DataFrame.sum().sum()|DataFrame.sum()が返したSeriesのsum()を呼ぶことで、総数を得られる。|
+
+|||
+|-|-|
+|Series.value_counts()|ユニークな要素の値をインデックス、その個数を要素とするSeriesを返す。<br>dropna=FalseとするとNaNもカウント対象となる。<br>normalize=Trueとすると、合計が1になるように規格化した値となる。|
+|DataFrame.value_counts(subset=['列名1', '列名2'])|基本はSeries.value_counts()と同じだが、subsetで指定した列要素の組み合わせ単位でユニークカウントされる。<br>subsetを指定しなければ、全ての列要素の組み合わせ単位になる。|
+
+### 参考サイト
+* [Pythonのpandas基礎集計関数を初心者向けに図解！](https://pythonbunseki.com/python-basic-function/)
+
+
+<a id="グルーピング"></a>
+## グルーピング
+
+<a id="マージ"></a>
+## マージ
+
+<a id="ファイル読み込み"></a>
+## ファイル読み込み
+
+<a id="その他"></a>
+## その他
+
 
 ## 3. その他
 ### 基本
@@ -72,12 +143,8 @@
 |DataFrame.sample(frac=0.1)|※ 行を指定割合だけランダムサンプリング|
 |DataFrame.transpose()|※ 転置|
 |DataFrame.map(lambda x: hex(int(x)))<br>Series.map(lambda x: func(x, 5))|※ na_action='ignore'とすると、NaNは関数に渡されずに結果がそのままNaNとなる。|
-|DataFrame.values<br>Series.values|データ値属性(NumPy配列)。|
-|DataFrame.index.to_list()|行名属性をリスト化したもの。|
-|DataFrame.columns.to_list()|列名属性をリスト化したもの。|
-|DataFrame.index = ['行名1', '行名2', '行名3']|行名属性へ値を代入。|
-|DataFrame.columns = ['列名1', '列名2', '列名3']|列名属性へ値を代入。|
-|DataFrame.rename(index={'元の行名': '新しい行名'}, columns={'元の列名': '新しい列名'})|行名・列名のいずれかのみを変更したい場合は、引数indexとcolumnsのどちらか一方だけを指定すればよい。
+|DataFrame.rename(index={'元の行名': '新しい行名'}, columns={'元の列名': '新しい列名'})|行名・列名のいずれかのみを変更したい場合は、引数indexとcolumnsのどちらか一方だけを指定すればよい。|
+
 
 ### pd.read_csv 
 
@@ -109,9 +176,7 @@
 #### 参考サイト
 * [【保存版】Pandas2.0のread_csv関数の全引数、パフォーマンス、活用テクニックを完全解説する！](https://qiita.com/fujine/items/dbe2f5e4101d6299ff12#encoding)
 
-### 基礎集計関数
-#### 参考サイト
-* [Pythonのpandas基礎集計関数を初心者向けに図解！](https://pythonbunseki.com/python-basic-function/)
+
 
 ### マージ
 |||
