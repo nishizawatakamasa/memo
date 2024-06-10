@@ -108,25 +108,79 @@
 |Series.value_counts()|ユニークな要素の値をインデックス、その個数を要素とするSeriesを返す。<br>dropna=FalseとするとNaNもカウント対象となる。<br>normalize=Trueとすると、合計が1になるように規格化した値となる。|
 |DataFrame.value_counts(subset=['列名1', '列名2'])|基本はSeries.value_counts()と同じだが、subsetで指定した列要素の組み合わせ単位でユニークカウントされる。<br>subsetを指定しなければ、全ての列要素の組み合わせ単位になる。|
 
-### 参考サイト
-* [Pythonのpandas基礎集計関数を初心者向けに図解！](https://pythonbunseki.com/python-basic-function/)
-
 
 <a id="グルーピング"></a>
 ## グルーピング
 
+### 基本的なグルーピング
+|||
+|-|-|
+|DataFrame.groupby('列名')|列名で指定した列の値ごとにグルーピングされる。<br>返されるのはGroupByオブジェクト。<br>デフォルトでは指定した列が結果のインデックスになるが、as_index=Falseとするとインデックスにならない。<br>デフォルトでは指定した列に含まれる欠損値NaNは無視されるが、dropna=FalseとするとNaNも一つのキーとして扱われる。|
+
+### GroupByオブジェクトの主なメソッド
+|||
+|-|-|
+|df.groupby('列名').sum()|合計|
+|df.groupby('列名').mean()|平均|
+|df.groupby('列名').max()|最大|
+|df.groupby('列名').min()|最小|
+|df.groupby('列名').median()|中央値|
+|df.groupby('列名').std()|標準偏差|
+|df.groupby('列名').count()|欠損値ではない要素数|
+|df.groupby('列名').describe()|主要な統計量を一括算出|
+|df.groupby('列名').agg(func)|任意の関数適用<br>※自作関数(def or lambda)を指定する場合は、引数がarray-likeとなるように作成。 |
+
+### 参考サイト
+* [pandasのgroupby()でグルーピングし統計量を算出](https://note.nkmk.me/python-pandas-groupby-statistics/)  
+* [pandas groupbyでグループ化｜図解でわかりやすく解説](https://www.yutaka-note.com/entry/pandas_groupby)
+
+
 <a id="マージ"></a>
 ## マージ
+
+### 基本
+|||
+|-|-|
+|df3 = df1.merge(df2, on='キーとする列名', how='left')|標準的なマージ|
+### 参考サイト
+* [pandas.DataFrameを結合するmerge, join（列・インデックス基準）](https://note.nkmk.me/python-pandas-merge-join/)  
+
+
 
 <a id="ファイル読み込み"></a>
 ## ファイル読み込み
 
+### pd.read_csv 
+※read_clipboard()の内部でもread_csv()が動いており、同じ引数が指定できる。
+|主な引数|引数の説明|
+|-|-|
+|filepath_or_buffer|※重要！ CSVファイルのパスを指定。唯一の必須引数。位置引数でもある。|
+|sep='\s+'|※重要！ 区切り文字を指定。デフォルトはカンマ。|
+|header=None|※重要！ 列名(columns)の設定。デフォルトでは一行目。Noneにすると0始まりの連番。|
+|usecols=[2, 6, 7, 8]|※重要！ 読み込む列を、列名のリストで指定(読み込む列を限定するため、メモリの節約にもなる)。|
+|dtype=str|※重要！ カラムのデータ型を指定。|
+|nrows=2|読み込む行数（ヘッダー行数を除く）を指定。中身をざっと確認したい時用。|
+|encoding|文字コードを指定。|
+|index_col||
+|on_bad_lines||
+
+### pd.read_excel
+|主な引数|引数の説明|
+|-|-|
+|io|Excelファイルのパスを指定。|
+|sheet_name|読み込むシートを指定。0始まりの番号かシート名で指定。デフォルトは0。|
+|header=None|pd.read_csvと同様。|
+|usecols=[2, 6, 7, 8]|読み込む列をリストで指定する。intのリストの場合は列番号（0始まり）での指定となり、文字列のリストの場合は列名での指定となる。列名がintの場合、その列名を指定することはできない。|
+|dtype=str|pd.read_csvと同様。|
+|index_col||
+
+### 参考サイト
+* [【保存版】Pandas2.0のread_csv関数の全引数、パフォーマンス、活用テクニックを完全解説する！](https://qiita.com/fujine/items/dbe2f5e4101d6299ff12#encoding)
+
+
 <a id="その他"></a>
 ## その他
 
-
-## 3. その他
-### 基本
 |||
 |-|-|
 |pd.concat([df1, df2])|※ ignore_index=Trueとするとインデックスが振り直される(0からの連番)。<br>※ axis=1とすると横方向に連結される。|
@@ -142,50 +196,6 @@
 |DataFrame.sample(n=30)|※ n行だけランダムサンプリング|
 |DataFrame.sample(frac=0.1)|※ 行を指定割合だけランダムサンプリング|
 |DataFrame.transpose()|※ 転置|
-|DataFrame.map(lambda x: hex(int(x)))<br>Series.map(lambda x: func(x, 5))|※ na_action='ignore'とすると、NaNは関数に渡されずに結果がそのままNaNとなる。|
 |DataFrame.rename(index={'元の行名': '新しい行名'}, columns={'元の列名': '新しい列名'})|行名・列名のいずれかのみを変更したい場合は、引数indexとcolumnsのどちらか一方だけを指定すればよい。|
-
-
-### pd.read_csv 
-
-※read_clipboard()の内部でもread_csv()が動いており、同じ引数が指定できる。
-|主な引数|引数の説明|
-|-|-|
-|filepath_or_buffer|※重要！ CSVファイルのパスを指定。唯一の必須引数。位置引数でもある。|
-|sep='\s+'|※重要！ 区切り文字を指定。デフォルトはカンマ。|
-|header=None|※重要！ 列名(columns)の設定。デフォルトでは一行目。Noneにすると0始まりの連番。|
-|usecols=[2, 6, 7, 8]|※重要！ 読み込む列を、列名のリストで指定(読み込む列を限定するため、メモリの節約にもなる)。|
-|dtype=str|※重要！ カラムのデータ型を指定。|
-|nrows=2|読み込む行数（ヘッダー行数を除く）を指定。中身をざっと確認したい時用。|
-|encoding|文字コードを指定。|
-|index_col||
-|on_bad_lines||
-
-### pd.read_excel
-
-|主な引数|引数の説明|
-|-|-|
-|io|Excelファイルのパスを指定。|
-|sheet_name|読み込むシートを指定。0始まりの番号かシート名で指定。デフォルトは0。|
-|header=None|pd.read_csvと同様。|
-|usecols=[2, 6, 7, 8]|読み込む列をリストで指定する。intのリストの場合は列番号（0始まり）での指定となり、文字列のリストの場合は列名での指定となる。列名がintの場合、その列名を指定することはできない。|
-|dtype=str|pd.read_csvと同様。|
-|index_col||
-
-
-#### 参考サイト
-* [【保存版】Pandas2.0のread_csv関数の全引数、パフォーマンス、活用テクニックを完全解説する！](https://qiita.com/fujine/items/dbe2f5e4101d6299ff12#encoding)
-
-
-
-### マージ
-|||
-|-|-|
-|df3 = df1.merge(df2, on='キーとする列名', how='left')|標準的なマージ|
-#### 参考サイト
-* [pandas.DataFrameを結合するmerge, join（列・インデックス基準）](https://note.nkmk.me/python-pandas-merge-join/)  
-
-### グルーピング
-#### 参考サイト
-* [pandasのgroupby()でグルーピングし統計量を算出](https://note.nkmk.me/python-pandas-groupby-statistics/)  
-* [pandas groupbyでグループ化｜図解でわかりやすく解説](https://www.yutaka-note.com/entry/pandas_groupby)
+|DataFrame.map(lambda x: hex(int(x)))<br>Series.map(lambda x: func(x, 5))|na_action='ignore'とすると、NaNは関数に渡されずに結果がそのままNaNとなる。|
+|Series.apply(pd.Series)|Seriesの各要素のリストにpd.Series()を適用したDataFrameを返す。<br>※Series.map()はDataFrameを返すことができないため、Series.apply()を使う。|
