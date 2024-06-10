@@ -1,240 +1,278 @@
-<svg host="65bd71144e" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" width="1873px" height="1135px" viewBox="-0.5 -0.5 1873 1135" content="&lt;mxfile&gt;&lt;diagram id=&quot;oMJVlU2LMCASCD3lPs_q&quot; name=&quot;ページ1&quot;&gt;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&lt;/diagram&gt;&lt;/mxfile&gt;" style="background-color: rgb(204, 255, 230);">
+<svg host="65bd71144e" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" width="1302px" height="742px" viewBox="-0.5 -0.5 1302 742" content="&lt;mxfile&gt;&lt;diagram id=&quot;oMJVlU2LMCASCD3lPs_q&quot; name=&quot;ページ1&quot;&gt;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&lt;/diagram&gt;&lt;/mxfile&gt;" style="background-color: rgb(255, 255, 255);">
     <defs/>
     <g>
-        <path d="M 2 32 L 2 2 L 1727 2 L 1727 32" fill="rgb(255, 255, 255)" stroke="#000000" stroke-width="5" stroke-miterlimit="10" pointer-events="all"/>
-        <path d="M 2 32 L 2 932 L 1727 932 L 1727 32" fill="none" stroke="#000000" stroke-width="5" stroke-miterlimit="10" pointer-events="none"/>
-        <path d="M 2 32 L 1727 32" fill="none" stroke="#000000" stroke-width="5" stroke-miterlimit="10" pointer-events="none"/>
+        <path d="M 1 31 L 1 1 L 1301 1 L 1301 31" fill="#b3b3b3" stroke="#000000" stroke-width="2" stroke-miterlimit="10" pointer-events="all"/>
+        <path d="M 1 31 L 1 561 L 1301 561 L 1301 31" fill="#b3b3b3" stroke="#000000" stroke-width="2" stroke-miterlimit="10" pointer-events="all"/>
+        <path d="M 1 31 L 1301 31" fill="none" stroke="#000000" stroke-width="2" stroke-miterlimit="10" pointer-events="all"/>
         <g transform="translate(-0.5 -0.5)">
             <switch>
                 <foreignObject pointer-events="none" width="100%" height="100%" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility" style="overflow: visible; text-align: left;">
-                    <div xmlns="http://www.w3.org/1999/xhtml" style="display: flex; align-items: unsafe center; justify-content: unsafe center; width: 1723px; height: 1px; padding-top: 17px; margin-left: 3px;">
+                    <div xmlns="http://www.w3.org/1999/xhtml" style="display: flex; align-items: unsafe center; justify-content: unsafe center; width: 1298px; height: 1px; padding-top: 16px; margin-left: 2px;">
                         <div data-drawio-colors="color: rgb(0, 0, 0); " style="box-sizing: border-box; font-size: 0px; text-align: center;">
-                            <div style="display: inline-block; font-size: 12px; font-family: Helvetica; color: rgb(0, 0, 0); line-height: 1.2; pointer-events: none; font-weight: bold; white-space: normal; overflow-wrap: normal;">
-                                <font style="font-size: 20px;">
+                            <div style="display: inline-block; font-size: 12px; font-family: Helvetica; color: rgb(0, 0, 0); line-height: 1.2; pointer-events: all; font-weight: bold; white-space: normal; overflow-wrap: normal;">
+                                <font style="font-size: 20px;" color="#000000">
                                     server
                                 </font>
                             </div>
                         </div>
                     </div>
                 </foreignObject>
-                <text x="865" y="21" fill="rgb(0, 0, 0)" font-family="Helvetica" font-size="12px" text-anchor="middle" font-weight="bold">
+                <text x="651" y="20" fill="rgb(0, 0, 0)" font-family="Helvetica" font-size="12px" text-anchor="middle" font-weight="bold">
                     server
                 </text>
             </switch>
         </g>
-        <path d="M 32 102 L 32 72 L 1112 72 L 1112 102" fill="rgb(255, 255, 255)" stroke="#000000" stroke-width="2" stroke-miterlimit="10" pointer-events="none"/>
-        <path d="M 32 102 L 32 912 L 1112 912 L 1112 102" fill="none" stroke="#000000" stroke-width="2" stroke-miterlimit="10" pointer-events="none"/>
-        <path d="M 32 102 L 1112 102" fill="none" stroke="#000000" stroke-width="2" stroke-miterlimit="10" pointer-events="none"/>
+        <path d="M 31 91 L 31 61 L 851 61 L 851 91" fill="#fb503b" stroke="#000000" stroke-width="2" stroke-miterlimit="10" pointer-events="all"/>
+        <path d="M 31 91 L 31 531 L 851 531 L 851 91" fill="#fb503b" stroke="#000000" stroke-width="2" stroke-miterlimit="10" pointer-events="all"/>
+        <path d="M 31 91 L 851 91" fill="none" stroke="#000000" stroke-width="2" stroke-miterlimit="10" pointer-events="all"/>
         <g transform="translate(-0.5 -0.5)">
             <switch>
                 <foreignObject pointer-events="none" width="100%" height="100%" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility" style="overflow: visible; text-align: left;">
-                    <div xmlns="http://www.w3.org/1999/xhtml" style="display: flex; align-items: unsafe center; justify-content: unsafe center; width: 1078px; height: 1px; padding-top: 87px; margin-left: 33px;">
+                    <div xmlns="http://www.w3.org/1999/xhtml" style="display: flex; align-items: unsafe center; justify-content: unsafe center; width: 818px; height: 1px; padding-top: 76px; margin-left: 32px;">
                         <div data-drawio-colors="color: rgb(0, 0, 0); " style="box-sizing: border-box; font-size: 0px; text-align: center;">
-                            <div style="display: inline-block; font-size: 12px; font-family: Helvetica; color: rgb(0, 0, 0); line-height: 1.2; pointer-events: none; font-weight: bold; white-space: normal; overflow-wrap: normal;">
-                                <font style="font-size: 20px;">
+                            <div style="display: inline-block; font-size: 12px; font-family: Helvetica; color: rgb(0, 0, 0); line-height: 1.2; pointer-events: all; font-weight: bold; white-space: normal; overflow-wrap: normal;">
+                                <font style="font-size: 20px;" color="#000000">
                                     Laravel
                                 </font>
                             </div>
                         </div>
                     </div>
                 </foreignObject>
-                <text x="572" y="91" fill="rgb(0, 0, 0)" font-family="Helvetica" font-size="12px" text-anchor="middle" font-weight="bold">
+                <text x="441" y="80" fill="rgb(0, 0, 0)" font-family="Helvetica" font-size="12px" text-anchor="middle" font-weight="bold">
                     Laravel
                 </text>
             </switch>
         </g>
-        <path d="M 402 525 L 402 502 L 702 502 L 702 525" fill="rgb(255, 255, 255)" stroke="#000000" stroke-width="2" stroke-miterlimit="10" pointer-events="none"/>
-        <path d="M 402 525 L 402 712 L 702 712 L 702 525" fill="none" stroke="#000000" stroke-width="2" stroke-miterlimit="10" pointer-events="none"/>
-        <path d="M 402 525 L 702 525" fill="none" stroke="#000000" stroke-width="2" stroke-miterlimit="10" pointer-events="none"/>
+        <path d="M 81 384 L 81 361 L 571 361 L 571 384" fill="#fb503b" stroke="#000000" stroke-width="2" stroke-miterlimit="10" pointer-events="all"/>
+        <path d="M 81 384 L 81 491 L 571 491 L 571 384" fill="#fb503b" stroke="#000000" stroke-width="2" stroke-miterlimit="10" pointer-events="all"/>
+        <path d="M 81 384 L 571 384" fill="none" stroke="#000000" stroke-width="2" stroke-miterlimit="10" pointer-events="all"/>
         <g transform="translate(-0.5 -0.5)">
             <switch>
                 <foreignObject pointer-events="none" width="100%" height="100%" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility" style="overflow: visible; text-align: left;">
-                    <div xmlns="http://www.w3.org/1999/xhtml" style="display: flex; align-items: unsafe center; justify-content: unsafe center; width: 298px; height: 1px; padding-top: 514px; margin-left: 403px;">
+                    <div xmlns="http://www.w3.org/1999/xhtml" style="display: flex; align-items: unsafe center; justify-content: unsafe center; width: 488px; height: 1px; padding-top: 373px; margin-left: 82px;">
                         <div data-drawio-colors="color: rgb(0, 0, 0); " style="box-sizing: border-box; font-size: 0px; text-align: center;">
-                            <div style="display: inline-block; font-size: 20px; font-family: Helvetica; color: rgb(0, 0, 0); line-height: 1.2; pointer-events: none; font-weight: bold; white-space: normal; overflow-wrap: normal;">
-                                Controller
+                            <div style="display: inline-block; font-size: 20px; font-family: Helvetica; color: rgb(0, 0, 0); line-height: 1.2; pointer-events: all; font-weight: bold; white-space: normal; overflow-wrap: normal;">
+                                <font color="#000000">
+                                    Controller
+                                </font>
                             </div>
                         </div>
                     </div>
                 </foreignObject>
-                <text x="552" y="520" fill="rgb(0, 0, 0)" font-family="Helvetica" font-size="20px" text-anchor="middle" font-weight="bold">
+                <text x="326" y="379" fill="rgb(0, 0, 0)" font-family="Helvetica" font-size="20px" text-anchor="middle" font-weight="bold">
                     Controller
                 </text>
             </switch>
         </g>
-        <path d="M 437 202 L 437 172 L 667 172 L 667 202" fill="rgb(255, 255, 255)" stroke="#000000" stroke-width="2" stroke-miterlimit="10" pointer-events="none"/>
-        <path d="M 437 202 L 437 262 L 667 262 L 667 202" fill="none" stroke="#000000" stroke-width="2" stroke-miterlimit="10" pointer-events="none"/>
-        <path d="M 437 202 L 667 202" fill="none" stroke="#000000" stroke-width="2" stroke-miterlimit="10" pointer-events="none"/>
+        <path d="M 291 171 L 291 141 L 461 141 L 461 171" fill="#fb503b" stroke="#000000" stroke-width="2" stroke-miterlimit="10" pointer-events="all"/>
+        <path d="M 291 171 L 291 221 L 461 221 L 461 171" fill="none" stroke="#000000" stroke-width="2" stroke-miterlimit="10" pointer-events="none"/>
+        <path d="M 291 171 L 461 171" fill="none" stroke="#000000" stroke-width="2" stroke-miterlimit="10" pointer-events="none"/>
         <g transform="translate(-0.5 -0.5)">
             <switch>
                 <foreignObject pointer-events="none" width="100%" height="100%" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility" style="overflow: visible; text-align: left;">
-                    <div xmlns="http://www.w3.org/1999/xhtml" style="display: flex; align-items: unsafe center; justify-content: unsafe center; width: 228px; height: 1px; padding-top: 187px; margin-left: 438px;">
+                    <div xmlns="http://www.w3.org/1999/xhtml" style="display: flex; align-items: unsafe center; justify-content: unsafe center; width: 168px; height: 1px; padding-top: 156px; margin-left: 292px;">
                         <div data-drawio-colors="color: rgb(0, 0, 0); " style="box-sizing: border-box; font-size: 0px; text-align: center;">
                             <div style="display: inline-block; font-size: 20px; font-family: Helvetica; color: rgb(0, 0, 0); line-height: 1.2; pointer-events: none; font-weight: bold; white-space: normal; overflow-wrap: normal;">
-                                Model
+                                <font color="#000000">
+                                    Model
+                                </font>
                             </div>
                         </div>
                     </div>
                 </foreignObject>
-                <text x="552" y="193" fill="rgb(0, 0, 0)" font-family="Helvetica" font-size="20px" text-anchor="middle" font-weight="bold">
+                <text x="376" y="162" fill="rgb(0, 0, 0)" font-family="Helvetica" font-size="20px" text-anchor="middle" font-weight="bold">
                     Model
                 </text>
             </switch>
         </g>
-        <path d="M 82 575 L 82 552 L 282 552 L 282 575" fill="rgb(255, 255, 255)" stroke="#000000" stroke-width="2" stroke-miterlimit="10" pointer-events="none"/>
-        <path d="M 82 575 L 82 662 L 282 662 L 282 575" fill="none" stroke="#000000" stroke-width="2" stroke-miterlimit="10" pointer-events="none"/>
-        <path d="M 82 575 L 282 575" fill="none" stroke="#000000" stroke-width="2" stroke-miterlimit="10" pointer-events="none"/>
+        <path d="M 101 164 L 101 141 L 271 141 L 271 164" fill="#fb503b" stroke="#000000" stroke-width="2" stroke-miterlimit="10" pointer-events="none"/>
+        <path d="M 101 164 L 101 221 L 271 221 L 271 164" fill="#fb503b" stroke="#000000" stroke-width="2" stroke-miterlimit="10" pointer-events="none"/>
+        <path d="M 101 164 L 271 164" fill="none" stroke="#000000" stroke-width="2" stroke-miterlimit="10" pointer-events="none"/>
         <g transform="translate(-0.5 -0.5)">
             <switch>
                 <foreignObject pointer-events="none" width="100%" height="100%" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility" style="overflow: visible; text-align: left;">
-                    <div xmlns="http://www.w3.org/1999/xhtml" style="display: flex; align-items: unsafe center; justify-content: unsafe center; width: 198px; height: 1px; padding-top: 564px; margin-left: 83px;">
+                    <div xmlns="http://www.w3.org/1999/xhtml" style="display: flex; align-items: unsafe center; justify-content: unsafe center; width: 168px; height: 1px; padding-top: 153px; margin-left: 102px;">
                         <div data-drawio-colors="color: rgb(0, 0, 0); " style="box-sizing: border-box; font-size: 0px; text-align: center;">
                             <div style="display: inline-block; font-size: 20px; font-family: Helvetica; color: rgb(0, 0, 0); line-height: 1.2; pointer-events: none; font-weight: bold; white-space: normal; overflow-wrap: normal;">
-                                Routing
+                                <font color="#000000">
+                                    View
+                                </font>
                             </div>
                         </div>
                     </div>
                 </foreignObject>
-                <text x="182" y="570" fill="rgb(0, 0, 0)" font-family="Helvetica" font-size="20px" text-anchor="middle" font-weight="bold">
-                    Routing
-                </text>
-            </switch>
-        </g>
-        <path d="M 812 550 L 812 527 L 1092 527 L 1092 550" fill="rgb(255, 255, 255)" stroke="#000000" stroke-width="2" stroke-miterlimit="10" pointer-events="none"/>
-        <path d="M 812 550 L 812 687 L 1092 687 L 1092 550" fill="none" stroke="#000000" stroke-width="2" stroke-miterlimit="10" pointer-events="none"/>
-        <path d="M 812 550 L 1092 550" fill="none" stroke="#000000" stroke-width="2" stroke-miterlimit="10" pointer-events="none"/>
-        <g transform="translate(-0.5 -0.5)">
-            <switch>
-                <foreignObject pointer-events="none" width="100%" height="100%" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility" style="overflow: visible; text-align: left;">
-                    <div xmlns="http://www.w3.org/1999/xhtml" style="display: flex; align-items: unsafe center; justify-content: unsafe center; width: 278px; height: 1px; padding-top: 539px; margin-left: 813px;">
-                        <div data-drawio-colors="color: rgb(0, 0, 0); " style="box-sizing: border-box; font-size: 0px; text-align: center;">
-                            <div style="display: inline-block; font-size: 20px; font-family: Helvetica; color: rgb(0, 0, 0); line-height: 1.2; pointer-events: none; font-weight: bold; white-space: normal; overflow-wrap: normal;">
-                                View
-                            </div>
-                        </div>
-                    </div>
-                </foreignObject>
-                <text x="952" y="545" fill="rgb(0, 0, 0)" font-family="Helvetica" font-size="20px" text-anchor="middle" font-weight="bold">
+                <text x="186" y="159" fill="rgb(0, 0, 0)" font-family="Helvetica" font-size="20px" text-anchor="middle" font-weight="bold">
                     View
                 </text>
             </switch>
         </g>
-        <path d="M 282.5 612 L 282.5 602 L 382.5 602 L 382.5 591.5 L 401.5 607 L 382.5 622.5 L 382.5 612 Z" fill="#000000" stroke="#000000" stroke-linejoin="round" stroke-miterlimit="10" pointer-events="none"/>
-        <path d="M 557 482.5 L 567.5 482.5 L 552 501.5 L 536.5 482.5 L 547 482.5 L 547 281.5 L 536.5 281.5 L 552 262.5 L 567.5 281.5 L 557 281.5 Z" fill="#000000" stroke="#000000" stroke-linejoin="round" stroke-miterlimit="10" pointer-events="none"/>
-        <path d="M 702.5 612 L 702.5 602 L 792.5 602 L 792.5 591.5 L 811.5 607 L 792.5 622.5 L 792.5 612 Z" fill="#000000" stroke="#000000" stroke-linejoin="round" stroke-miterlimit="10" pointer-events="none"/>
-        <path d="M 452 815 L 452 792 L 652 792 L 652 815" fill="rgb(255, 255, 255)" stroke="#000000" stroke-width="2" stroke-miterlimit="10" pointer-events="none"/>
-        <path d="M 452 815 L 452 852 L 652 852 L 652 815" fill="none" stroke="#000000" stroke-width="2" stroke-miterlimit="10" pointer-events="none"/>
-        <path d="M 452 815 L 652 815" fill="none" stroke="#000000" stroke-width="2" stroke-miterlimit="10" pointer-events="none"/>
+        <path d="M 621 421.5 L 621 398.5 L 784 398.5 L 784 421.5" fill="#fb503b" stroke="#000000" stroke-width="2" stroke-miterlimit="10" pointer-events="none"/>
+        <path d="M 621 421.5 L 621 453.5 L 784 453.5 L 784 421.5" fill="#fb503b" stroke="#000000" stroke-width="2" stroke-miterlimit="10" pointer-events="none"/>
+        <path d="M 621 421.5 L 784 421.5" fill="none" stroke="#000000" stroke-width="2" stroke-miterlimit="10" pointer-events="none"/>
         <g transform="translate(-0.5 -0.5)">
             <switch>
                 <foreignObject pointer-events="none" width="100%" height="100%" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility" style="overflow: visible; text-align: left;">
-                    <div xmlns="http://www.w3.org/1999/xhtml" style="display: flex; align-items: unsafe center; justify-content: unsafe center; width: 198px; height: 1px; padding-top: 804px; margin-left: 453px;">
+                    <div xmlns="http://www.w3.org/1999/xhtml" style="display: flex; align-items: unsafe center; justify-content: unsafe center; width: 161px; height: 1px; padding-top: 410px; margin-left: 622px;">
                         <div data-drawio-colors="color: rgb(0, 0, 0); " style="box-sizing: border-box; font-size: 0px; text-align: center;">
                             <div style="display: inline-block; font-size: 20px; font-family: Helvetica; color: rgb(0, 0, 0); line-height: 1.2; pointer-events: none; font-weight: bold; white-space: normal; overflow-wrap: normal;">
-                                Request
+                                <font color="#000000">
+                                    Routing
+                                </font>
                             </div>
                         </div>
                     </div>
                 </foreignObject>
-                <text x="552" y="810" fill="rgb(0, 0, 0)" font-family="Helvetica" font-size="20px" text-anchor="middle" font-weight="bold">
+                <text x="703" y="416" fill="rgb(0, 0, 0)" font-family="Helvetica" font-size="20px" text-anchor="middle" font-weight="bold">
+                    Routing
+                </text>
+            </switch>
+        </g>
+        <path d="M 411 294 L 411 271 L 521 271 L 521 294" fill="#fb503b" stroke="#000000" stroke-width="2" stroke-miterlimit="10" pointer-events="none"/>
+        <path d="M 411 294 L 411 311 L 521 311 L 521 294" fill="#fb503b" stroke="#000000" stroke-width="2" stroke-miterlimit="10" pointer-events="none"/>
+        <path d="M 411 294 L 521 294" fill="none" stroke="#000000" stroke-width="2" stroke-miterlimit="10" pointer-events="none"/>
+        <g transform="translate(-0.5 -0.5)">
+            <switch>
+                <foreignObject pointer-events="none" width="100%" height="100%" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility" style="overflow: visible; text-align: left;">
+                    <div xmlns="http://www.w3.org/1999/xhtml" style="display: flex; align-items: unsafe center; justify-content: unsafe center; width: 108px; height: 1px; padding-top: 283px; margin-left: 412px;">
+                        <div data-drawio-colors="color: rgb(0, 0, 0); " style="box-sizing: border-box; font-size: 0px; text-align: center;">
+                            <div style="display: inline-block; font-size: 20px; font-family: Helvetica; color: rgb(0, 0, 0); line-height: 1.2; pointer-events: none; font-weight: bold; white-space: normal; overflow-wrap: normal;">
+                                <font color="#000000">
+                                    Request
+                                </font>
+                            </div>
+                        </div>
+                    </div>
+                </foreignObject>
+                <text x="466" y="289" fill="rgb(0, 0, 0)" font-family="Helvetica" font-size="20px" text-anchor="middle" font-weight="bold">
                     Request
                 </text>
             </switch>
         </g>
-        <path d="M 557 772.5 L 567.5 772.5 L 552 791.5 L 536.5 772.5 L 547 772.5 L 547 731.5 L 536.5 731.5 L 552 712.5 L 567.5 731.5 L 557 731.5 Z" fill="#000000" stroke="#000000" stroke-linejoin="round" stroke-miterlimit="10" pointer-events="none"/>
-        <path d="M 752 815 L 752 792 L 952 792 L 952 815" fill="rgb(255, 255, 255)" stroke="#000000" stroke-width="2" stroke-miterlimit="10" pointer-events="none"/>
-        <path d="M 752 815 L 752 852 L 952 852 L 952 815" fill="none" stroke="#000000" stroke-width="2" stroke-miterlimit="10" pointer-events="none"/>
-        <path d="M 752 815 L 952 815" fill="none" stroke="#000000" stroke-width="2" stroke-miterlimit="10" pointer-events="none"/>
+        <path d="M 611 281 L 611 201 L 811 201 L 811 281" fill="#fb503b" stroke="#000000" stroke-width="2" stroke-miterlimit="10" pointer-events="none"/>
+        <path d="M 611 281 L 611 311 L 811 311 L 811 281" fill="#fb503b" stroke="#000000" stroke-width="2" stroke-miterlimit="10" pointer-events="none"/>
+        <path d="M 611 281 L 811 281" fill="none" stroke="#000000" stroke-width="2" stroke-miterlimit="10" pointer-events="none"/>
         <g transform="translate(-0.5 -0.5)">
             <switch>
                 <foreignObject pointer-events="none" width="100%" height="100%" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility" style="overflow: visible; text-align: left;">
-                    <div xmlns="http://www.w3.org/1999/xhtml" style="display: flex; align-items: unsafe center; justify-content: unsafe center; width: 198px; height: 1px; padding-top: 804px; margin-left: 753px;">
+                    <div xmlns="http://www.w3.org/1999/xhtml" style="display: flex; align-items: unsafe center; justify-content: unsafe center; width: 198px; height: 1px; padding-top: 241px; margin-left: 612px;">
                         <div data-drawio-colors="color: rgb(0, 0, 0); " style="box-sizing: border-box; font-size: 0px; text-align: center;">
                             <div style="display: inline-block; font-size: 20px; font-family: Helvetica; color: rgb(0, 0, 0); line-height: 1.2; pointer-events: none; font-weight: bold; white-space: normal; overflow-wrap: normal;">
-                                public/
+                                <font color="#000000">
+                                    Migration
+                                    <br/>
+                                    Seeder
+                                    <br/>
+                                    Factory
+                                </font>
                             </div>
                         </div>
                     </div>
                 </foreignObject>
-                <text x="852" y="810" fill="rgb(0, 0, 0)" font-family="Helvetica" font-size="20px" text-anchor="middle" font-weight="bold">
-                    public/
-                </text>
-            </switch>
-        </g>
-        <path d="M 862.16 774.62 L 872.26 777.51 L 852.14 791.52 L 842.45 768.99 L 852.55 771.88 L 871.84 704.38 L 861.74 701.49 L 881.86 687.48 L 891.55 710.01 L 881.45 707.12 Z" fill="#000000" stroke="#000000" stroke-linejoin="round" stroke-miterlimit="10" pointer-events="none"/>
-        <path d="M 812 362 L 812 282 L 1012 282 L 1012 362" fill="rgb(255, 255, 255)" stroke="#000000" stroke-width="2" stroke-miterlimit="10" pointer-events="none"/>
-        <path d="M 812 362 L 812 392 L 1012 392 L 1012 362" fill="none" stroke="#000000" stroke-width="2" stroke-miterlimit="10" pointer-events="none"/>
-        <path d="M 812 362 L 1012 362" fill="none" stroke="#000000" stroke-width="2" stroke-miterlimit="10" pointer-events="none"/>
-        <g transform="translate(-0.5 -0.5)">
-            <switch>
-                <foreignObject pointer-events="none" width="100%" height="100%" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility" style="overflow: visible; text-align: left;">
-                    <div xmlns="http://www.w3.org/1999/xhtml" style="display: flex; align-items: unsafe center; justify-content: unsafe center; width: 198px; height: 1px; padding-top: 322px; margin-left: 813px;">
-                        <div data-drawio-colors="color: rgb(0, 0, 0); " style="box-sizing: border-box; font-size: 0px; text-align: center;">
-                            <div style="display: inline-block; font-size: 20px; font-family: Helvetica; color: rgb(0, 0, 0); line-height: 1.2; pointer-events: none; font-weight: bold; white-space: normal; overflow-wrap: normal;">
-                                Migration
-                                <br/>
-                                Seeder
-                                <br/>
-                                Factory
-                            </div>
-                        </div>
-                    </div>
-                </foreignObject>
-                <text x="912" y="328" fill="rgb(0, 0, 0)" font-family="Helvetica" font-size="20px" text-anchor="middle" font-weight="bold">
+                <text x="711" y="247" fill="rgb(0, 0, 0)" font-family="Helvetica" font-size="20px" text-anchor="middle" font-weight="bold">
                     Migration...
                 </text>
             </switch>
         </g>
-        <path d="M 1152 157 L 1152 127 L 1502 127 L 1502 157" fill="rgb(255, 255, 255)" stroke="#000000" stroke-width="2" stroke-miterlimit="10" pointer-events="none"/>
-        <path d="M 1152 157 L 1152 397 L 1502 397 L 1502 157" fill="none" stroke="#000000" stroke-width="2" stroke-miterlimit="10" pointer-events="none"/>
-        <path d="M 1152 157 L 1502 157" fill="none" stroke="#000000" stroke-width="2" stroke-miterlimit="10" pointer-events="none"/>
+        <path d="M 233.67 403.98 L 237.72 403.98 L 231 430.5 L 224.28 403.98 L 228.33 403.98 L 228.33 248.02 L 224.28 248.02 L 231 221.5 L 237.72 248.02 L 233.67 248.02 Z" fill="#000000" stroke="#000000" stroke-linejoin="round" stroke-miterlimit="10" pointer-events="none"/>
+        <path d="M 91 299 L 91 276 L 201 276 L 201 299" fill="#fb503b" stroke="#000000" stroke-width="2" stroke-miterlimit="10" pointer-events="none"/>
+        <path d="M 91 299 L 91 316 L 201 316 L 201 299" fill="#fb503b" stroke="#000000" stroke-width="2" stroke-miterlimit="10" pointer-events="none"/>
+        <path d="M 91 299 L 201 299" fill="none" stroke="#000000" stroke-width="2" stroke-miterlimit="10" pointer-events="none"/>
         <g transform="translate(-0.5 -0.5)">
             <switch>
                 <foreignObject pointer-events="none" width="100%" height="100%" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility" style="overflow: visible; text-align: left;">
-                    <div xmlns="http://www.w3.org/1999/xhtml" style="display: flex; align-items: unsafe center; justify-content: unsafe center; width: 348px; height: 1px; padding-top: 142px; margin-left: 1153px;">
+                    <div xmlns="http://www.w3.org/1999/xhtml" style="display: flex; align-items: unsafe center; justify-content: unsafe center; width: 108px; height: 1px; padding-top: 288px; margin-left: 92px;">
+                        <div data-drawio-colors="color: rgb(0, 0, 0); " style="box-sizing: border-box; font-size: 0px; text-align: center;">
+                            <div style="display: inline-block; font-size: 20px; font-family: Helvetica; color: rgb(0, 0, 0); line-height: 1.2; pointer-events: none; font-weight: bold; white-space: normal; overflow-wrap: normal;">
+                                <font color="#000000">
+                                    public/
+                                </font>
+                            </div>
+                        </div>
+                    </div>
+                </foreignObject>
+                <text x="146" y="294" fill="rgb(0, 0, 0)" font-family="Helvetica" font-size="20px" text-anchor="middle" font-weight="bold">
+                    public/
+                </text>
+            </switch>
+        </g>
+        <path d="M 335.96 415.02 L 341.8 415 L 334 430.5 L 326.13 415.04 L 331.96 415.02 L 331.54 236.98 L 325.7 237 L 333.5 221.5 L 341.37 236.96 L 335.54 236.98 Z" fill="#000000" stroke="#000000" stroke-linejoin="round" stroke-miterlimit="10" pointer-events="none"/>
+        <path d="M 468 415.02 L 473.83 415.02 L 466 430.5 L 458.17 415.02 L 464 415.02 L 464 326.98 L 458.17 326.98 L 466 311.5 L 473.83 326.98 L 468 326.98 Z" fill="#000000" stroke="#000000" stroke-linejoin="round" stroke-miterlimit="10" pointer-events="none"/>
+        <path d="M 147.27 259.95 L 153.1 259.68 L 145.98 275.5 L 137.45 260.39 L 143.28 260.13 L 142.23 237.05 L 136.4 237.32 L 143.52 221.5 L 152.05 236.61 L 146.22 236.87 Z" fill="#000000" stroke="#000000" stroke-linejoin="round" stroke-miterlimit="10" pointer-events="none"/>
+        <path d="M 620.5 424 L 620.5 428 L 591.5 428 L 591.5 433.17 L 571.5 426 L 591.5 418.83 L 591.5 424 Z" fill="#000000" stroke="#000000" stroke-linejoin="round" stroke-miterlimit="10" pointer-events="none"/>
+        <path d="M 570.5 421 L 570.5 431 L 156 431 L 156 471.5 L 166.5 471.5 L 151 490.5 L 135.5 471.5 L 146 471.5 L 146 431 Q 146 421 156 421 Z" fill="none" stroke="#000000" stroke-linejoin="round" stroke-miterlimit="10" pointer-events="none"/>
+        <path d="M 156 471.5 L 166.5 471.5 L 151 490.5 L 135.5 471.5 L 146 471.5" fill="none" stroke="#000000" stroke-linejoin="flat" stroke-miterlimit="4" pointer-events="none"/>
+        <path d="M 872.5 101 L 872.5 71 L 1272.5 71 L 1272.5 101" fill="#7171bd" stroke="#000000" stroke-width="2" stroke-miterlimit="10" pointer-events="none"/>
+        <path d="M 872.5 101 L 872.5 261 L 1272.5 261 L 1272.5 101" fill="#7171bd" stroke="#000000" stroke-width="2" stroke-miterlimit="10" pointer-events="none"/>
+        <path d="M 872.5 101 L 1272.5 101" fill="none" stroke="#000000" stroke-width="2" stroke-miterlimit="10" pointer-events="none"/>
+        <g transform="translate(-0.5 -0.5)">
+            <switch>
+                <foreignObject pointer-events="none" width="100%" height="100%" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility" style="overflow: visible; text-align: left;">
+                    <div xmlns="http://www.w3.org/1999/xhtml" style="display: flex; align-items: unsafe center; justify-content: unsafe center; width: 398px; height: 1px; padding-top: 86px; margin-left: 874px;">
                         <div data-drawio-colors="color: rgb(0, 0, 0); " style="box-sizing: border-box; font-size: 0px; text-align: center;">
                             <div style="display: inline-block; font-size: 12px; font-family: Helvetica; color: rgb(0, 0, 0); line-height: 1.2; pointer-events: none; font-weight: bold; white-space: normal; overflow-wrap: normal;">
-                                <font style="font-size: 20px;">
+                                <font style="font-size: 20px;" color="#000000">
                                     MariaDB（MySQL）
                                 </font>
                             </div>
                         </div>
                     </div>
                 </foreignObject>
-                <text x="1327" y="146" fill="rgb(0, 0, 0)" font-family="Helvetica" font-size="12px" text-anchor="middle" font-weight="bold">
+                <text x="1073" y="90" fill="rgb(0, 0, 0)" font-family="Helvetica" font-size="12px" text-anchor="middle" font-weight="bold">
                     MariaDB（MySQL）
                 </text>
             </switch>
         </g>
-        <path d="M 1202 312 C 1202 303.72 1215.43 297 1232 297 C 1239.96 297 1247.59 298.58 1253.21 301.39 C 1258.84 304.21 1262 308.02 1262 312 L 1262 362 C 1262 370.28 1248.57 377 1232 377 C 1215.43 377 1202 370.28 1202 362 Z" fill="rgb(255, 255, 255)" stroke="rgb(0, 0, 0)" stroke-miterlimit="10" pointer-events="none"/>
-        <path d="M 1262 312 C 1262 320.28 1248.57 327 1232 327 C 1215.43 327 1202 320.28 1202 312" fill="none" stroke="rgb(0, 0, 0)" stroke-miterlimit="10" pointer-events="none"/>
-        <path d="M 1392 192 C 1392 183.72 1405.43 177 1422 177 C 1429.96 177 1437.59 178.58 1443.21 181.39 C 1448.84 184.21 1452 188.02 1452 192 L 1452 242 C 1452 250.28 1438.57 257 1422 257 C 1405.43 257 1392 250.28 1392 242 Z" fill="rgb(255, 255, 255)" stroke="rgb(0, 0, 0)" stroke-miterlimit="10" pointer-events="none"/>
-        <path d="M 1452 192 C 1452 200.28 1438.57 207 1422 207 C 1405.43 207 1392 200.28 1392 192" fill="none" stroke="rgb(0, 0, 0)" stroke-miterlimit="10" pointer-events="none"/>
-        <path d="M 1297 192 C 1297 183.72 1310.43 177 1327 177 C 1334.96 177 1342.59 178.58 1348.21 181.39 C 1353.84 184.21 1357 188.02 1357 192 L 1357 242 C 1357 250.28 1343.57 257 1327 257 C 1310.43 257 1297 250.28 1297 242 Z" fill="rgb(255, 255, 255)" stroke="rgb(0, 0, 0)" stroke-miterlimit="10" pointer-events="none"/>
-        <path d="M 1357 192 C 1357 200.28 1343.57 207 1327 207 C 1310.43 207 1297 200.28 1297 192" fill="none" stroke="rgb(0, 0, 0)" stroke-miterlimit="10" pointer-events="none"/>
-        <path d="M 1202 192 C 1202 183.72 1215.43 177 1232 177 C 1239.96 177 1247.59 178.58 1253.21 181.39 C 1258.84 184.21 1262 188.02 1262 192 L 1262 242 C 1262 250.28 1248.57 257 1232 257 C 1215.43 257 1202 250.28 1202 242 Z" fill="rgb(255, 255, 255)" stroke="rgb(0, 0, 0)" stroke-miterlimit="10" pointer-events="none"/>
-        <path d="M 1262 192 C 1262 200.28 1248.57 207 1232 207 C 1215.43 207 1202 200.28 1202 192" fill="none" stroke="rgb(0, 0, 0)" stroke-miterlimit="10" pointer-events="none"/>
-        <path d="M 1392 312 C 1392 303.72 1405.43 297 1422 297 C 1429.96 297 1437.59 298.58 1443.21 301.39 C 1448.84 304.21 1452 308.02 1452 312 L 1452 362 C 1452 370.28 1438.57 377 1422 377 C 1405.43 377 1392 370.28 1392 362 Z" fill="rgb(255, 255, 255)" stroke="rgb(0, 0, 0)" stroke-miterlimit="10" pointer-events="none"/>
-        <path d="M 1452 312 C 1452 320.28 1438.57 327 1422 327 C 1405.43 327 1392 320.28 1392 312" fill="none" stroke="rgb(0, 0, 0)" stroke-miterlimit="10" pointer-events="none"/>
-        <path d="M 1297 312 C 1297 303.72 1310.43 297 1327 297 C 1334.96 297 1342.59 298.58 1348.21 301.39 C 1353.84 304.21 1357 308.02 1357 312 L 1357 362 C 1357 370.28 1343.57 377 1327 377 C 1310.43 377 1297 370.28 1297 362 Z" fill="rgb(255, 255, 255)" stroke="rgb(0, 0, 0)" stroke-miterlimit="10" pointer-events="none"/>
-        <path d="M 1357 312 C 1357 320.28 1343.57 327 1327 327 C 1310.43 327 1297 320.28 1297 312" fill="none" stroke="rgb(0, 0, 0)" stroke-miterlimit="10" pointer-events="none"/>
-        <path d="M 1147 582 L 1147 552 L 1727 552 L 1727 582" fill="rgb(255, 255, 255)" stroke="#000000" stroke-width="2" stroke-miterlimit="10" pointer-events="none"/>
-        <path d="M 1147 582 L 1147 752 L 1727 752 L 1727 582" fill="none" stroke="#000000" stroke-width="2" stroke-miterlimit="10" pointer-events="none"/>
-        <path d="M 1147 582 L 1727 582" fill="none" stroke="#000000" stroke-width="2" stroke-miterlimit="10" pointer-events="none"/>
+        <path d="M 1092.5 121 C 1092.5 112.72 1130.22 106 1176.75 106 C 1199.09 106 1220.52 107.58 1236.32 110.39 C 1252.12 113.21 1261 117.02 1261 121 L 1261 241 C 1261 249.28 1223.28 256 1176.75 256 C 1130.22 256 1092.5 249.28 1092.5 241 Z" fill="rgb(255, 255, 255)" stroke="rgb(0, 0, 0)" stroke-miterlimit="10" pointer-events="none"/>
+        <path d="M 1261 121 C 1261 129.28 1223.28 136 1176.75 136 C 1130.22 136 1092.5 129.28 1092.5 121" fill="none" stroke="rgb(0, 0, 0)" stroke-miterlimit="10" pointer-events="none"/>
+        <path d="M 911 121 C 911 112.72 948.72 106 995.25 106 C 1017.59 106 1039.02 107.58 1054.82 110.39 C 1070.62 113.21 1079.5 117.02 1079.5 121 L 1079.5 241 C 1079.5 249.28 1041.78 256 995.25 256 C 948.72 256 911 249.28 911 241 Z" fill="rgb(255, 255, 255)" stroke="rgb(0, 0, 0)" stroke-miterlimit="10" pointer-events="none"/>
+        <path d="M 1079.5 121 C 1079.5 129.28 1041.78 136 995.25 136 C 948.72 136 911 129.28 911 121" fill="none" stroke="rgb(0, 0, 0)" stroke-miterlimit="10" pointer-events="none"/>
+        <rect x="921" y="141" width="100" height="50" fill="#ffffff" stroke="none" pointer-events="none"/>
+        <path d="M 921 141 L 1021 141 L 1021 191 L 921 191 L 921 141" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="square" stroke-miterlimit="10" pointer-events="none"/>
+        <path d="M 921 157 L 954 157 L 988 157 L 1021 157" fill="none" stroke="#000000" stroke-width="2" stroke-miterlimit="10" pointer-events="none"/>
+        <path d="M 921 175 L 954 175 L 988 175 L 1021 175" fill="none" stroke="#000000" stroke-width="2" stroke-miterlimit="10" pointer-events="none"/>
+        <path d="M 954 141 L 954 157 L 954 175 L 954 191" fill="none" stroke="#000000" stroke-width="2" stroke-miterlimit="10" pointer-events="none"/>
+        <path d="M 988 141 L 988 157 L 988 175 L 988 191" fill="none" stroke="#000000" stroke-width="2" stroke-miterlimit="10" pointer-events="none"/>
+        <path d="M 921 141 M 954 141 M 954 157 M 921 157" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="square" stroke-miterlimit="10" pointer-events="none"/>
+        <path d="M 954 141 M 988 141 M 988 157 M 954 157" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="square" stroke-miterlimit="10" pointer-events="none"/>
+        <path d="M 988 141 M 1021 141 M 1021 157 M 988 157" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="square" stroke-miterlimit="10" pointer-events="none"/>
+        <path d="M 921 157 M 954 157 M 954 175 M 921 175" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="square" stroke-miterlimit="10" pointer-events="none"/>
+        <path d="M 954 157 M 988 157 M 988 175 M 954 175" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="square" stroke-miterlimit="10" pointer-events="none"/>
+        <path d="M 988 157 M 1021 157 M 1021 175 M 988 175" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="square" stroke-miterlimit="10" pointer-events="none"/>
+        <path d="M 921 175 M 954 175 M 954 191 M 921 191" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="square" stroke-miterlimit="10" pointer-events="none"/>
+        <path d="M 954 175 M 988 175 M 988 191 M 954 191" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="square" stroke-miterlimit="10" pointer-events="none"/>
+        <path d="M 988 175 M 1021 175 M 1021 191 M 988 191" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="square" stroke-miterlimit="10" pointer-events="none"/>
+        <rect x="1101" y="141" width="100" height="50" fill="#ffffff" stroke="none" pointer-events="none"/>
+        <path d="M 1101 141 L 1201 141 L 1201 191 L 1101 191 L 1101 141" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="square" stroke-miterlimit="10" pointer-events="none"/>
+        <path d="M 1101 157 L 1134 157 L 1168 157 L 1201 157" fill="none" stroke="#000000" stroke-width="2" stroke-miterlimit="10" pointer-events="none"/>
+        <path d="M 1101 175 L 1134 175 L 1168 175 L 1201 175" fill="none" stroke="#000000" stroke-width="2" stroke-miterlimit="10" pointer-events="none"/>
+        <path d="M 1134 141 L 1134 157 L 1134 175 L 1134 191" fill="none" stroke="#000000" stroke-width="2" stroke-miterlimit="10" pointer-events="none"/>
+        <path d="M 1168 141 L 1168 157 L 1168 175 L 1168 191" fill="none" stroke="#000000" stroke-width="2" stroke-miterlimit="10" pointer-events="none"/>
+        <path d="M 1101 141 M 1134 141 M 1134 157 M 1101 157" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="square" stroke-miterlimit="10" pointer-events="none"/>
+        <path d="M 1134 141 M 1168 141 M 1168 157 M 1134 157" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="square" stroke-miterlimit="10" pointer-events="none"/>
+        <path d="M 1168 141 M 1201 141 M 1201 157 M 1168 157" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="square" stroke-miterlimit="10" pointer-events="none"/>
+        <path d="M 1101 157 M 1134 157 M 1134 175 M 1101 175" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="square" stroke-miterlimit="10" pointer-events="none"/>
+        <path d="M 1134 157 M 1168 157 M 1168 175 M 1134 175" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="square" stroke-miterlimit="10" pointer-events="none"/>
+        <path d="M 1168 157 M 1201 157 M 1201 175 M 1168 175" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="square" stroke-miterlimit="10" pointer-events="none"/>
+        <path d="M 1101 175 M 1134 175 M 1134 191 M 1101 191" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="square" stroke-miterlimit="10" pointer-events="none"/>
+        <path d="M 1134 175 M 1168 175 M 1168 191 M 1134 191" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="square" stroke-miterlimit="10" pointer-events="none"/>
+        <path d="M 1168 175 M 1201 175 M 1201 191 M 1168 191" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="square" stroke-miterlimit="10" pointer-events="none"/>
+        <path d="M 869.5 341 L 869.5 311 L 1272.5 311 L 1272.5 341" fill="#ffe099" stroke="#000000" stroke-width="2" stroke-miterlimit="10" pointer-events="none"/>
+        <path d="M 869.5 341 L 869.5 521 L 1272.5 521 L 1272.5 341" fill="#ffe099" stroke="#000000" stroke-width="2" stroke-miterlimit="10" pointer-events="none"/>
+        <path d="M 869.5 341 L 1272.5 341" fill="none" stroke="#000000" stroke-width="2" stroke-miterlimit="10" pointer-events="none"/>
         <g transform="translate(-0.5 -0.5)">
             <switch>
                 <foreignObject pointer-events="none" width="100%" height="100%" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility" style="overflow: visible; text-align: left;">
-                    <div xmlns="http://www.w3.org/1999/xhtml" style="display: flex; align-items: unsafe center; justify-content: unsafe center; width: 578px; height: 1px; padding-top: 567px; margin-left: 1148px;">
+                    <div xmlns="http://www.w3.org/1999/xhtml" style="display: flex; align-items: unsafe center; justify-content: unsafe center; width: 401px; height: 1px; padding-top: 326px; margin-left: 871px;">
                         <div data-drawio-colors="color: rgb(0, 0, 0); " style="box-sizing: border-box; font-size: 0px; text-align: center;">
                             <div style="display: inline-block; font-size: 12px; font-family: Helvetica; color: rgb(0, 0, 0); line-height: 1.2; pointer-events: none; font-weight: bold; white-space: normal; overflow-wrap: normal;">
-                                <font style="font-size: 20px;">
+                                <font style="font-size: 20px;" color="#000000">
                                     phpMyAdmin
                                 </font>
                             </div>
                         </div>
                     </div>
                 </foreignObject>
-                <text x="1437" y="571" fill="rgb(0, 0, 0)" font-family="Helvetica" font-size="12px" text-anchor="middle" font-weight="bold">
+                <text x="1071" y="330" fill="rgb(0, 0, 0)" font-family="Helvetica" font-size="12px" text-anchor="middle" font-weight="bold">
                     phpMyAdmin
                 </text>
             </switch>
@@ -242,71 +280,223 @@
         <g transform="translate(-0.5 -0.5)">
             <switch>
                 <foreignObject pointer-events="none" width="100%" height="100%" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility" style="overflow: visible; text-align: left;">
-                    <div xmlns="http://www.w3.org/1999/xhtml" style="display: flex; align-items: unsafe center; justify-content: unsafe center; width: 1px; height: 1px; padding-top: 647px; margin-left: 1432px;">
-                        <div data-drawio-colors="color: rgb(0, 0, 0); " style="box-sizing: border-box; font-size: 0px; text-align: center;">
-                            <div style="display: inline-block; font-size: 12px; font-family: Helvetica; color: rgb(0, 0, 0); line-height: 1.2; pointer-events: none; white-space: nowrap;">
-                                <div>
-                                    <font color="#000000">
-                                        <span style="font-size: 18px;">
-                                            MySQLをブラウザ上で管理するためのツール。
-                                        </span>
-                                    </font>
-                                </div>
-                                <div>
-                                    <font color="#000000">
-                                        <span style="font-size: 18px;">
-                                            データベースの作成・削除、レコードの作成・編集といった基本的な作業を、GUI上で行えるようになる。
-                                        </span>
-                                    </font>
-                                </div>
-                                <div>
-                                    <font color="#000000">
-                                        <span style="font-size: 18px;">
-                                            PHPで実装されている。
-                                        </span>
-                                    </font>
-                                </div>
+                    <div xmlns="http://www.w3.org/1999/xhtml" style="display: flex; align-items: unsafe flex-start; justify-content: unsafe flex-start; width: 364px; height: 1px; padding-top: 351px; margin-left: 887px;">
+                        <div data-drawio-colors="color: #000000; background-color: #FFE099; " style="box-sizing: border-box; font-size: 0px; text-align: left; max-height: 160px; overflow: hidden;">
+                            <div style="display: inline-block; font-size: 12px; font-family: Helvetica; color: rgb(0, 0, 0); line-height: 1.2; pointer-events: none; background-color: rgb(255, 224, 153); white-space: normal; overflow-wrap: normal;">
+                                <h1>
+                                    <div style="color: rgb(240, 240, 240); font-size: 12px; font-weight: 400; line-height: 22.8px;">
+                                        <font color="#000000" style="">
+                                            <span style="font-size: 18px; background-color: rgb(255, 224, 153);">
+                                                MySQLをブラウザ上で管理するためのツール。
+                                            </span>
+                                        </font>
+                                    </div>
+                                    <div style="color: rgb(240, 240, 240); font-size: 12px; font-weight: 400; line-height: 22.8px;">
+                                        <font color="#000000">
+                                            <span style="font-size: 18px; background-color: rgb(255, 224, 153);">
+                                                データベースの作成・削除、レコードの作成・編集といった基本的な作業を、GUI上で行えるようになる。
+                                            </span>
+                                        </font>
+                                    </div>
+                                    <div style="color: rgb(240, 240, 240); font-size: 12px; font-weight: 400; line-height: 22.8px;">
+                                        <font color="#000000" style="">
+                                            <span style="font-size: 18px; background-color: rgb(255, 224, 153);">
+                                                PHPで実装されている。
+                                            </span>
+                                        </font>
+                                    </div>
+                                </h1>
                             </div>
                         </div>
                     </div>
                 </foreignObject>
-                <text x="1432" y="651" fill="rgb(0, 0, 0)" font-family="Helvetica" font-size="12px" text-anchor="middle">
+                <text x="887" y="363" fill="#000000" font-family="Helvetica" font-size="12px">
                     MySQLをブラウザ上で管理するためのツール。...
                 </text>
             </switch>
         </g>
-        <path d="M 1429.79 533.2 L 1438.35 527.13 L 1436.71 551.59 L 1413.07 545.07 L 1421.64 538.99 L 1334.21 415.8 L 1325.65 421.87 L 1327.29 397.41 L 1350.93 403.93 L 1342.36 410.01 Z" fill="#000000" stroke="#000000" stroke-linejoin="round" stroke-miterlimit="10" pointer-events="none"/>
-        <path d="M 686.5 199.5 L 686.5 210 L 667.5 194.5 L 686.5 179 L 686.5 189.5 L 1132.5 189.5 L 1132.5 179 L 1151.5 194.5 L 1132.5 210 L 1132.5 199.5 Z" fill="#000000" stroke="#000000" stroke-linejoin="round" stroke-miterlimit="10" pointer-events="none"/>
-        <path d="M 1012.77 341.97 L 1012.23 331.98 L 1132.26 325.55 L 1131.7 315.07 L 1151.5 329.53 L 1133.36 346.02 L 1132.8 335.54 Z" fill="#000000" stroke="#000000" stroke-linejoin="round" stroke-miterlimit="10" pointer-events="none"/>
-        <path d="M 709 992 L 709 962 L 1029 962 L 1029 992" fill="rgb(255, 255, 255)" stroke="#000000" stroke-width="5" stroke-miterlimit="10" pointer-events="none"/>
-        <path d="M 709 992 L 709 1132 L 1029 1132 L 1029 992" fill="none" stroke="#000000" stroke-width="5" stroke-miterlimit="10" pointer-events="none"/>
-        <path d="M 709 992 L 1029 992" fill="none" stroke="#000000" stroke-width="5" stroke-miterlimit="10" pointer-events="none"/>
+        <path d="M 1073.48 295.09 L 1079.31 295.26 L 1071.01 310.5 L 1063.65 294.79 L 1069.48 294.97 L 1070.02 276.91 L 1064.19 276.74 L 1072.49 261.5 L 1079.85 277.21 L 1074.02 277.03 Z" fill="#000000" stroke="#000000" stroke-linejoin="round" stroke-miterlimit="10" pointer-events="none"/>
+        <path d="M 477.03 162.57 L 477.19 168.4 L 461.5 160.99 L 476.76 152.74 L 476.92 158.57 L 904.97 146.93 L 904.81 141.1 L 920.5 148.51 L 905.24 156.76 L 905.08 150.93 Z" fill="#000000" stroke="#000000" stroke-linejoin="round" stroke-miterlimit="10" pointer-events="none"/>
+        <path d="M 812.69 257.19 L 810.07 254.16 L 904.18 172.89 L 900.8 168.98 L 920.62 161.33 L 910.17 179.82 L 906.79 175.91 Z" fill="#000000" stroke="#000000" stroke-linejoin="round" stroke-miterlimit="10" pointer-events="none"/>
+        <path d="M 544 611 L 544 581 L 784 581 L 784 611" fill="#4d4d4d" stroke="#000000" stroke-width="2" stroke-miterlimit="10" pointer-events="none"/>
+        <path d="M 544 611 L 544 741 L 784 741 L 784 611" fill="#4d4d4d" stroke="#000000" stroke-width="2" stroke-miterlimit="10" pointer-events="none"/>
+        <path d="M 544 611 L 784 611" fill="none" stroke="#000000" stroke-width="2" stroke-miterlimit="10" pointer-events="none"/>
         <g transform="translate(-0.5 -0.5)">
             <switch>
                 <foreignObject pointer-events="none" width="100%" height="100%" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility" style="overflow: visible; text-align: left;">
-                    <div xmlns="http://www.w3.org/1999/xhtml" style="display: flex; align-items: unsafe center; justify-content: unsafe center; width: 318px; height: 1px; padding-top: 977px; margin-left: 710px;">
-                        <div data-drawio-colors="color: rgb(0, 0, 0); " style="box-sizing: border-box; font-size: 0px; text-align: center;">
-                            <div style="display: inline-block; font-size: 12px; font-family: Helvetica; color: rgb(0, 0, 0); line-height: 1.2; pointer-events: none; font-weight: bold; white-space: normal; overflow-wrap: normal;">
-                                <font style="font-size: 20px;">
+                    <div xmlns="http://www.w3.org/1999/xhtml" style="display: flex; align-items: unsafe center; justify-content: unsafe center; width: 238px; height: 1px; padding-top: 596px; margin-left: 545px;">
+                        <div data-drawio-colors="color: #ffffff; " style="box-sizing: border-box; font-size: 0px; text-align: center;">
+                            <div style="display: inline-block; font-size: 12px; font-family: Helvetica; color: rgb(255, 255, 255); line-height: 1.2; pointer-events: none; font-weight: bold; white-space: normal; overflow-wrap: normal;">
+                                <font style="font-size: 20px;" color="#000000">
                                     client
                                 </font>
                             </div>
                         </div>
                     </div>
                 </foreignObject>
-                <text x="869" y="981" fill="rgb(0, 0, 0)" font-family="Helvetica" font-size="12px" text-anchor="middle" font-weight="bold">
+                <text x="664" y="600" fill="#ffffff" font-family="Helvetica" font-size="12px" text-anchor="middle" font-weight="bold">
                     client
                 </text>
             </switch>
         </g>
-        <ellipse cx="869" cy="1024.5" rx="12.5" ry="12.5" fill="rgb(255, 255, 255)" stroke="#000000" pointer-events="none"/>
-        <path d="M 869 1037 L 869 1078.67 M 869 1045.33 L 844 1045.33 M 869 1045.33 L 894 1045.33 M 869 1078.67 L 844 1112 M 869 1078.67 L 894 1112" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="none"/>
-        <path d="M 708.48 1084.5 L 708.52 1094.5 L 187.05 1096.98 Q 177 1097.02 177 1086.98 L 177 681.5 L 166.5 681.5 L 182 662.5 L 197.5 681.5 L 187 681.5 L 187 1086.98 Z" fill="#000000" stroke="#000000" stroke-linejoin="round" stroke-miterlimit="10" pointer-events="none"/>
-        <path d="M 177 681.5 L 166.5 681.5 L 182 662.5 L 197.5 681.5 L 187 681.5" fill="none" stroke="#000000" stroke-linejoin="flat" stroke-miterlimit="4" pointer-events="none"/>
-        <path d="M 1048.49 1094.53 L 1048.47 1105.03 L 1029.5 1089.5 L 1048.53 1074.03 L 1048.51 1084.53 L 1323.37 1084.99 L 1426.21 769 L 1416.23 765.75 L 1436.85 752.48 L 1445.7 775.34 L 1435.72 772.09 L 1332.88 1088.09 Q 1330.63 1095.01 1323.35 1094.99 Z" fill="#000000" stroke="#000000" stroke-linejoin="round" stroke-miterlimit="10" pointer-events="none"/>
-        <path d="M 1048.49 1094.53 L 1048.47 1105.03 L 1029.5 1089.5 L 1048.53 1074.03 L 1048.51 1084.53" fill="none" stroke="#000000" stroke-linejoin="flat" stroke-miterlimit="4" pointer-events="none"/>
-        <path d="M 1426.21 769 L 1416.23 765.75 L 1436.85 752.48 L 1445.7 775.34 L 1435.72 772.09" fill="none" stroke="#000000" stroke-linejoin="flat" stroke-miterlimit="4" pointer-events="none"/>
-        <path d="M 1017.04 686.2 L 1026.7 688.77 L 958.84 944.44 L 968.98 947.13 L 949.13 961.52 L 939.02 939.18 L 949.17 941.87 Z" fill="#000000" stroke="#000000" stroke-linejoin="round" stroke-miterlimit="10" pointer-events="none"/>
+        <ellipse cx="664" cy="643.5" rx="12.5" ry="12.5" fill="#000000" stroke="#000000" stroke-width="3" pointer-events="none"/>
+        <path d="M 664 656 L 664 697.67 M 664 664.33 L 639 664.33 M 664 664.33 L 689 664.33 M 664 697.67 L 639 731 M 664 697.67 L 689 731" fill="none" stroke="#000000" stroke-width="3" stroke-miterlimit="10" pointer-events="none"/>
+        <path d="M 705.36 576.17 L 701.36 576.19 L 700.64 474.01 L 695.48 474.05 L 702.5 454 L 709.81 473.95 L 704.64 473.99 Z" fill="#000000" stroke="#000000" stroke-linejoin="round" stroke-miterlimit="10" pointer-events="none"/>
+        <path d="M 799.98 623 L 799.98 628.83 L 784.5 621 L 799.98 613.17 L 799.98 619 L 969.96 619 L 968.53 537.01 L 962.7 537.11 L 970.26 521.5 L 978.36 536.84 L 972.53 536.94 L 973.96 618.93 Q 974.04 623 969.96 623 Z" fill="#000000" stroke="#000000" stroke-linejoin="round" stroke-miterlimit="10" pointer-events="none"/>
+        <path d="M 799.98 623 L 799.98 628.83 L 784.5 621 L 799.98 613.17 L 799.98 619" fill="none" stroke="#000000" stroke-linejoin="flat" stroke-miterlimit="4" pointer-events="none"/>
+        <path d="M 968.53 537.01 L 962.7 537.11 L 970.26 521.5 L 978.36 536.84 L 972.53 536.94" fill="none" stroke="#000000" stroke-linejoin="flat" stroke-miterlimit="4" pointer-events="none"/>
+        <path d="M 149 491.5 L 153 491.5 L 153 619 L 523.5 619 L 523.5 613.83 L 543.5 621 L 523.5 628.17 L 523.5 623 L 153 623 Q 149 623 149 619 Z" fill="#000000" stroke="#000000" stroke-linejoin="round" stroke-miterlimit="10" pointer-events="none"/>
+        <path d="M 523.5 619 L 523.5 613.83 L 543.5 621 L 523.5 628.17 L 523.5 623" fill="none" stroke="#000000" stroke-linejoin="flat" stroke-miterlimit="4" pointer-events="none"/>
+        <rect x="931" y="151" width="100" height="50" fill="#ffffff" stroke="none" pointer-events="none"/>
+        <path d="M 931 151 L 1031 151 L 1031 201 L 931 201 L 931 151" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="square" stroke-miterlimit="10" pointer-events="none"/>
+        <path d="M 931 167 L 964 167 L 998 167 L 1031 167" fill="none" stroke="#000000" stroke-width="2" stroke-miterlimit="10" pointer-events="none"/>
+        <path d="M 931 185 L 964 185 L 998 185 L 1031 185" fill="none" stroke="#000000" stroke-width="2" stroke-miterlimit="10" pointer-events="none"/>
+        <path d="M 964 151 L 964 167 L 964 185 L 964 201" fill="none" stroke="#000000" stroke-width="2" stroke-miterlimit="10" pointer-events="none"/>
+        <path d="M 998 151 L 998 167 L 998 185 L 998 201" fill="none" stroke="#000000" stroke-width="2" stroke-miterlimit="10" pointer-events="none"/>
+        <path d="M 931 151 M 964 151 M 964 167 M 931 167" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="square" stroke-miterlimit="10" pointer-events="none"/>
+        <path d="M 964 151 M 998 151 M 998 167 M 964 167" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="square" stroke-miterlimit="10" pointer-events="none"/>
+        <path d="M 998 151 M 1031 151 M 1031 167 M 998 167" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="square" stroke-miterlimit="10" pointer-events="none"/>
+        <path d="M 931 167 M 964 167 M 964 185 M 931 185" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="square" stroke-miterlimit="10" pointer-events="none"/>
+        <path d="M 964 167 M 998 167 M 998 185 M 964 185" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="square" stroke-miterlimit="10" pointer-events="none"/>
+        <path d="M 998 167 M 1031 167 M 1031 185 M 998 185" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="square" stroke-miterlimit="10" pointer-events="none"/>
+        <path d="M 931 185 M 964 185 M 964 201 M 931 201" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="square" stroke-miterlimit="10" pointer-events="none"/>
+        <path d="M 964 185 M 998 185 M 998 201 M 964 201" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="square" stroke-miterlimit="10" pointer-events="none"/>
+        <path d="M 998 185 M 1031 185 M 1031 201 M 998 201" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="square" stroke-miterlimit="10" pointer-events="none"/>
+        <rect x="941" y="161" width="100" height="50" fill="#ffffff" stroke="none" pointer-events="none"/>
+        <path d="M 941 161 L 1041 161 L 1041 211 L 941 211 L 941 161" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="square" stroke-miterlimit="10" pointer-events="none"/>
+        <path d="M 941 177 L 974 177 L 1008 177 L 1041 177" fill="none" stroke="#000000" stroke-width="2" stroke-miterlimit="10" pointer-events="none"/>
+        <path d="M 941 195 L 974 195 L 1008 195 L 1041 195" fill="none" stroke="#000000" stroke-width="2" stroke-miterlimit="10" pointer-events="none"/>
+        <path d="M 974 161 L 974 177 L 974 195 L 974 211" fill="none" stroke="#000000" stroke-width="2" stroke-miterlimit="10" pointer-events="none"/>
+        <path d="M 1008 161 L 1008 177 L 1008 195 L 1008 211" fill="none" stroke="#000000" stroke-width="2" stroke-miterlimit="10" pointer-events="none"/>
+        <path d="M 941 161 M 974 161 M 974 177 M 941 177" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="square" stroke-miterlimit="10" pointer-events="none"/>
+        <path d="M 974 161 M 1008 161 M 1008 177 M 974 177" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="square" stroke-miterlimit="10" pointer-events="none"/>
+        <path d="M 1008 161 M 1041 161 M 1041 177 M 1008 177" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="square" stroke-miterlimit="10" pointer-events="none"/>
+        <path d="M 941 177 M 974 177 M 974 195 M 941 195" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="square" stroke-miterlimit="10" pointer-events="none"/>
+        <path d="M 974 177 M 1008 177 M 1008 195 M 974 195" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="square" stroke-miterlimit="10" pointer-events="none"/>
+        <path d="M 1008 177 M 1041 177 M 1041 195 M 1008 195" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="square" stroke-miterlimit="10" pointer-events="none"/>
+        <path d="M 941 195 M 974 195 M 974 211 M 941 211" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="square" stroke-miterlimit="10" pointer-events="none"/>
+        <path d="M 974 195 M 1008 195 M 1008 211 M 974 211" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="square" stroke-miterlimit="10" pointer-events="none"/>
+        <path d="M 1008 195 M 1041 195 M 1041 211 M 1008 211" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="square" stroke-miterlimit="10" pointer-events="none"/>
+        <rect x="951" y="171" width="100" height="50" fill="#ffffff" stroke="none" pointer-events="none"/>
+        <path d="M 951 171 L 1051 171 L 1051 221 L 951 221 L 951 171" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="square" stroke-miterlimit="10" pointer-events="none"/>
+        <path d="M 951 187 L 984 187 L 1018 187 L 1051 187" fill="none" stroke="#000000" stroke-width="2" stroke-miterlimit="10" pointer-events="none"/>
+        <path d="M 951 205 L 984 205 L 1018 205 L 1051 205" fill="none" stroke="#000000" stroke-width="2" stroke-miterlimit="10" pointer-events="none"/>
+        <path d="M 984 171 L 984 187 L 984 205 L 984 221" fill="none" stroke="#000000" stroke-width="2" stroke-miterlimit="10" pointer-events="none"/>
+        <path d="M 1018 171 L 1018 187 L 1018 205 L 1018 221" fill="none" stroke="#000000" stroke-width="2" stroke-miterlimit="10" pointer-events="none"/>
+        <path d="M 951 171 M 984 171 M 984 187 M 951 187" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="square" stroke-miterlimit="10" pointer-events="none"/>
+        <path d="M 984 171 M 1018 171 M 1018 187 M 984 187" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="square" stroke-miterlimit="10" pointer-events="none"/>
+        <path d="M 1018 171 M 1051 171 M 1051 187 M 1018 187" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="square" stroke-miterlimit="10" pointer-events="none"/>
+        <path d="M 951 187 M 984 187 M 984 205 M 951 205" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="square" stroke-miterlimit="10" pointer-events="none"/>
+        <path d="M 984 187 M 1018 187 M 1018 205 M 984 205" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="square" stroke-miterlimit="10" pointer-events="none"/>
+        <path d="M 1018 187 M 1051 187 M 1051 205 M 1018 205" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="square" stroke-miterlimit="10" pointer-events="none"/>
+        <path d="M 951 205 M 984 205 M 984 221 M 951 221" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="square" stroke-miterlimit="10" pointer-events="none"/>
+        <path d="M 984 205 M 1018 205 M 1018 221 M 984 221" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="square" stroke-miterlimit="10" pointer-events="none"/>
+        <path d="M 1018 205 M 1051 205 M 1051 221 M 1018 221" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="square" stroke-miterlimit="10" pointer-events="none"/>
+        <rect x="961" y="181" width="100" height="50" fill="#ffffff" stroke="none" pointer-events="none"/>
+        <path d="M 961 181 L 1061 181 L 1061 231 L 961 231 L 961 181" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="square" stroke-miterlimit="10" pointer-events="none"/>
+        <path d="M 961 197 L 994 197 L 1028 197 L 1061 197" fill="none" stroke="#000000" stroke-width="2" stroke-miterlimit="10" pointer-events="none"/>
+        <path d="M 961 215 L 994 215 L 1028 215 L 1061 215" fill="none" stroke="#000000" stroke-width="2" stroke-miterlimit="10" pointer-events="none"/>
+        <path d="M 994 181 L 994 197 L 994 215 L 994 231" fill="none" stroke="#000000" stroke-width="2" stroke-miterlimit="10" pointer-events="none"/>
+        <path d="M 1028 181 L 1028 197 L 1028 215 L 1028 231" fill="none" stroke="#000000" stroke-width="2" stroke-miterlimit="10" pointer-events="none"/>
+        <path d="M 961 181 M 994 181 M 994 197 M 961 197" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="square" stroke-miterlimit="10" pointer-events="none"/>
+        <path d="M 994 181 M 1028 181 M 1028 197 M 994 197" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="square" stroke-miterlimit="10" pointer-events="none"/>
+        <path d="M 1028 181 M 1061 181 M 1061 197 M 1028 197" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="square" stroke-miterlimit="10" pointer-events="none"/>
+        <path d="M 961 197 M 994 197 M 994 215 M 961 215" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="square" stroke-miterlimit="10" pointer-events="none"/>
+        <path d="M 994 197 M 1028 197 M 1028 215 M 994 215" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="square" stroke-miterlimit="10" pointer-events="none"/>
+        <path d="M 1028 197 M 1061 197 M 1061 215 M 1028 215" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="square" stroke-miterlimit="10" pointer-events="none"/>
+        <path d="M 961 215 M 994 215 M 994 231 M 961 231" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="square" stroke-miterlimit="10" pointer-events="none"/>
+        <path d="M 994 215 M 1028 215 M 1028 231 M 994 231" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="square" stroke-miterlimit="10" pointer-events="none"/>
+        <path d="M 1028 215 M 1061 215 M 1061 231 M 1028 231" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="square" stroke-miterlimit="10" pointer-events="none"/>
+        <rect x="1111" y="151" width="100" height="50" fill="#ffffff" stroke="none" pointer-events="none"/>
+        <path d="M 1111 151 L 1211 151 L 1211 201 L 1111 201 L 1111 151" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="square" stroke-miterlimit="10" pointer-events="none"/>
+        <path d="M 1111 167 L 1144 167 L 1178 167 L 1211 167" fill="none" stroke="#000000" stroke-width="2" stroke-miterlimit="10" pointer-events="none"/>
+        <path d="M 1111 185 L 1144 185 L 1178 185 L 1211 185" fill="none" stroke="#000000" stroke-width="2" stroke-miterlimit="10" pointer-events="none"/>
+        <path d="M 1144 151 L 1144 167 L 1144 185 L 1144 201" fill="none" stroke="#000000" stroke-width="2" stroke-miterlimit="10" pointer-events="none"/>
+        <path d="M 1178 151 L 1178 167 L 1178 185 L 1178 201" fill="none" stroke="#000000" stroke-width="2" stroke-miterlimit="10" pointer-events="none"/>
+        <path d="M 1111 151 M 1144 151 M 1144 167 M 1111 167" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="square" stroke-miterlimit="10" pointer-events="none"/>
+        <path d="M 1144 151 M 1178 151 M 1178 167 M 1144 167" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="square" stroke-miterlimit="10" pointer-events="none"/>
+        <path d="M 1178 151 M 1211 151 M 1211 167 M 1178 167" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="square" stroke-miterlimit="10" pointer-events="none"/>
+        <path d="M 1111 167 M 1144 167 M 1144 185 M 1111 185" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="square" stroke-miterlimit="10" pointer-events="none"/>
+        <path d="M 1144 167 M 1178 167 M 1178 185 M 1144 185" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="square" stroke-miterlimit="10" pointer-events="none"/>
+        <path d="M 1178 167 M 1211 167 M 1211 185 M 1178 185" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="square" stroke-miterlimit="10" pointer-events="none"/>
+        <path d="M 1111 185 M 1144 185 M 1144 201 M 1111 201" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="square" stroke-miterlimit="10" pointer-events="none"/>
+        <path d="M 1144 185 M 1178 185 M 1178 201 M 1144 201" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="square" stroke-miterlimit="10" pointer-events="none"/>
+        <path d="M 1178 185 M 1211 185 M 1211 201 M 1178 201" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="square" stroke-miterlimit="10" pointer-events="none"/>
+        <rect x="1121" y="161" width="100" height="50" fill="#ffffff" stroke="none" pointer-events="none"/>
+        <path d="M 1121 161 L 1221 161 L 1221 211 L 1121 211 L 1121 161" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="square" stroke-miterlimit="10" pointer-events="none"/>
+        <path d="M 1121 177 L 1154 177 L 1188 177 L 1221 177" fill="none" stroke="#000000" stroke-width="2" stroke-miterlimit="10" pointer-events="none"/>
+        <path d="M 1121 195 L 1154 195 L 1188 195 L 1221 195" fill="none" stroke="#000000" stroke-width="2" stroke-miterlimit="10" pointer-events="none"/>
+        <path d="M 1154 161 L 1154 177 L 1154 195 L 1154 211" fill="none" stroke="#000000" stroke-width="2" stroke-miterlimit="10" pointer-events="none"/>
+        <path d="M 1188 161 L 1188 177 L 1188 195 L 1188 211" fill="none" stroke="#000000" stroke-width="2" stroke-miterlimit="10" pointer-events="none"/>
+        <path d="M 1121 161 M 1154 161 M 1154 177 M 1121 177" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="square" stroke-miterlimit="10" pointer-events="none"/>
+        <path d="M 1154 161 M 1188 161 M 1188 177 M 1154 177" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="square" stroke-miterlimit="10" pointer-events="none"/>
+        <path d="M 1188 161 M 1221 161 M 1221 177 M 1188 177" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="square" stroke-miterlimit="10" pointer-events="none"/>
+        <path d="M 1121 177 M 1154 177 M 1154 195 M 1121 195" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="square" stroke-miterlimit="10" pointer-events="none"/>
+        <path d="M 1154 177 M 1188 177 M 1188 195 M 1154 195" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="square" stroke-miterlimit="10" pointer-events="none"/>
+        <path d="M 1188 177 M 1221 177 M 1221 195 M 1188 195" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="square" stroke-miterlimit="10" pointer-events="none"/>
+        <path d="M 1121 195 M 1154 195 M 1154 211 M 1121 211" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="square" stroke-miterlimit="10" pointer-events="none"/>
+        <path d="M 1154 195 M 1188 195 M 1188 211 M 1154 211" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="square" stroke-miterlimit="10" pointer-events="none"/>
+        <path d="M 1188 195 M 1221 195 M 1221 211 M 1188 211" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="square" stroke-miterlimit="10" pointer-events="none"/>
+        <rect x="1131" y="171" width="100" height="50" fill="#ffffff" stroke="none" pointer-events="none"/>
+        <path d="M 1131 171 L 1231 171 L 1231 221 L 1131 221 L 1131 171" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="square" stroke-miterlimit="10" pointer-events="none"/>
+        <path d="M 1131 187 L 1164 187 L 1198 187 L 1231 187" fill="none" stroke="#000000" stroke-width="2" stroke-miterlimit="10" pointer-events="none"/>
+        <path d="M 1131 205 L 1164 205 L 1198 205 L 1231 205" fill="none" stroke="#000000" stroke-width="2" stroke-miterlimit="10" pointer-events="none"/>
+        <path d="M 1164 171 L 1164 187 L 1164 205 L 1164 221" fill="none" stroke="#000000" stroke-width="2" stroke-miterlimit="10" pointer-events="none"/>
+        <path d="M 1198 171 L 1198 187 L 1198 205 L 1198 221" fill="none" stroke="#000000" stroke-width="2" stroke-miterlimit="10" pointer-events="none"/>
+        <path d="M 1131 171 M 1164 171 M 1164 187 M 1131 187" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="square" stroke-miterlimit="10" pointer-events="none"/>
+        <path d="M 1164 171 M 1198 171 M 1198 187 M 1164 187" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="square" stroke-miterlimit="10" pointer-events="none"/>
+        <path d="M 1198 171 M 1231 171 M 1231 187 M 1198 187" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="square" stroke-miterlimit="10" pointer-events="none"/>
+        <path d="M 1131 187 M 1164 187 M 1164 205 M 1131 205" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="square" stroke-miterlimit="10" pointer-events="none"/>
+        <path d="M 1164 187 M 1198 187 M 1198 205 M 1164 205" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="square" stroke-miterlimit="10" pointer-events="none"/>
+        <path d="M 1198 187 M 1231 187 M 1231 205 M 1198 205" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="square" stroke-miterlimit="10" pointer-events="none"/>
+        <path d="M 1131 205 M 1164 205 M 1164 221 M 1131 221" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="square" stroke-miterlimit="10" pointer-events="none"/>
+        <path d="M 1164 205 M 1198 205 M 1198 221 M 1164 221" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="square" stroke-miterlimit="10" pointer-events="none"/>
+        <path d="M 1198 205 M 1231 205 M 1231 221 M 1198 221" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="square" stroke-miterlimit="10" pointer-events="none"/>
+        <rect x="1141" y="181" width="100" height="50" fill="#ffffff" stroke="none" pointer-events="none"/>
+        <path d="M 1141 181 L 1241 181 L 1241 231 L 1141 231 L 1141 181" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="square" stroke-miterlimit="10" pointer-events="none"/>
+        <path d="M 1141 197 L 1174 197 L 1208 197 L 1241 197" fill="none" stroke="#000000" stroke-width="2" stroke-miterlimit="10" pointer-events="none"/>
+        <path d="M 1141 215 L 1174 215 L 1208 215 L 1241 215" fill="none" stroke="#000000" stroke-width="2" stroke-miterlimit="10" pointer-events="none"/>
+        <path d="M 1174 181 L 1174 197 L 1174 215 L 1174 231" fill="none" stroke="#000000" stroke-width="2" stroke-miterlimit="10" pointer-events="none"/>
+        <path d="M 1208 181 L 1208 197 L 1208 215 L 1208 231" fill="none" stroke="#000000" stroke-width="2" stroke-miterlimit="10" pointer-events="none"/>
+        <path d="M 1141 181 M 1174 181 M 1174 197 M 1141 197" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="square" stroke-miterlimit="10" pointer-events="none"/>
+        <path d="M 1174 181 M 1208 181 M 1208 197 M 1174 197" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="square" stroke-miterlimit="10" pointer-events="none"/>
+        <path d="M 1208 181 M 1241 181 M 1241 197 M 1208 197" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="square" stroke-miterlimit="10" pointer-events="none"/>
+        <path d="M 1141 197 M 1174 197 M 1174 215 M 1141 215" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="square" stroke-miterlimit="10" pointer-events="none"/>
+        <path d="M 1174 197 M 1208 197 M 1208 215 M 1174 215" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="square" stroke-miterlimit="10" pointer-events="none"/>
+        <path d="M 1208 197 M 1241 197 M 1241 215 M 1208 215" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="square" stroke-miterlimit="10" pointer-events="none"/>
+        <path d="M 1141 215 M 1174 215 M 1174 231 M 1141 231" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="square" stroke-miterlimit="10" pointer-events="none"/>
+        <path d="M 1174 215 M 1208 215 M 1208 231 M 1174 231" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="square" stroke-miterlimit="10" pointer-events="none"/>
+        <path d="M 1208 215 M 1241 215 M 1241 231 M 1208 231" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="square" stroke-miterlimit="10" pointer-events="none"/>
+        <rect x="971" y="191" width="100" height="50" fill="#ffffff" stroke="none" pointer-events="none"/>
+        <path d="M 971 191 L 1071 191 L 1071 241 L 971 241 L 971 191" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="square" stroke-miterlimit="10" pointer-events="none"/>
+        <path d="M 971 207 L 1004 207 L 1038 207 L 1071 207" fill="none" stroke="#000000" stroke-width="2" stroke-miterlimit="10" pointer-events="none"/>
+        <path d="M 971 225 L 1004 225 L 1038 225 L 1071 225" fill="none" stroke="#000000" stroke-width="2" stroke-miterlimit="10" pointer-events="none"/>
+        <path d="M 1004 191 L 1004 207 L 1004 225 L 1004 241" fill="none" stroke="#000000" stroke-width="2" stroke-miterlimit="10" pointer-events="none"/>
+        <path d="M 1038 191 L 1038 207 L 1038 225 L 1038 241" fill="none" stroke="#000000" stroke-width="2" stroke-miterlimit="10" pointer-events="none"/>
+        <path d="M 971 191 M 1004 191 M 1004 207 M 971 207" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="square" stroke-miterlimit="10" pointer-events="none"/>
+        <path d="M 1004 191 M 1038 191 M 1038 207 M 1004 207" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="square" stroke-miterlimit="10" pointer-events="none"/>
+        <path d="M 1038 191 M 1071 191 M 1071 207 M 1038 207" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="square" stroke-miterlimit="10" pointer-events="none"/>
+        <path d="M 971 207 M 1004 207 M 1004 225 M 971 225" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="square" stroke-miterlimit="10" pointer-events="none"/>
+        <path d="M 1004 207 M 1038 207 M 1038 225 M 1004 225" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="square" stroke-miterlimit="10" pointer-events="none"/>
+        <path d="M 1038 207 M 1071 207 M 1071 225 M 1038 225" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="square" stroke-miterlimit="10" pointer-events="none"/>
+        <path d="M 971 225 M 1004 225 M 1004 241 M 971 241" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="square" stroke-miterlimit="10" pointer-events="none"/>
+        <path d="M 1004 225 M 1038 225 M 1038 241 M 1004 241" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="square" stroke-miterlimit="10" pointer-events="none"/>
+        <path d="M 1038 225 M 1071 225 M 1071 241 M 1038 241" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="square" stroke-miterlimit="10" pointer-events="none"/>
+        <rect x="1151" y="191" width="100" height="50" fill="#ffffff" stroke="none" pointer-events="none"/>
+        <path d="M 1151 191 L 1251 191 L 1251 241 L 1151 241 L 1151 191" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="square" stroke-miterlimit="10" pointer-events="none"/>
+        <path d="M 1151 207 L 1184 207 L 1218 207 L 1251 207" fill="none" stroke="#000000" stroke-width="2" stroke-miterlimit="10" pointer-events="none"/>
+        <path d="M 1151 225 L 1184 225 L 1218 225 L 1251 225" fill="none" stroke="#000000" stroke-width="2" stroke-miterlimit="10" pointer-events="none"/>
+        <path d="M 1184 191 L 1184 207 L 1184 225 L 1184 241" fill="none" stroke="#000000" stroke-width="2" stroke-miterlimit="10" pointer-events="none"/>
+        <path d="M 1218 191 L 1218 207 L 1218 225 L 1218 241" fill="none" stroke="#000000" stroke-width="2" stroke-miterlimit="10" pointer-events="none"/>
+        <path d="M 1151 191 M 1184 191 M 1184 207 M 1151 207" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="square" stroke-miterlimit="10" pointer-events="none"/>
+        <path d="M 1184 191 M 1218 191 M 1218 207 M 1184 207" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="square" stroke-miterlimit="10" pointer-events="none"/>
+        <path d="M 1218 191 M 1251 191 M 1251 207 M 1218 207" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="square" stroke-miterlimit="10" pointer-events="none"/>
+        <path d="M 1151 207 M 1184 207 M 1184 225 M 1151 225" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="square" stroke-miterlimit="10" pointer-events="none"/>
+        <path d="M 1184 207 M 1218 207 M 1218 225 M 1184 225" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="square" stroke-miterlimit="10" pointer-events="none"/>
+        <path d="M 1218 207 M 1251 207 M 1251 225 M 1218 225" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="square" stroke-miterlimit="10" pointer-events="none"/>
+        <path d="M 1151 225 M 1184 225 M 1184 241 M 1151 241" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="square" stroke-miterlimit="10" pointer-events="none"/>
+        <path d="M 1184 225 M 1218 225 M 1218 241 M 1184 241" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="square" stroke-miterlimit="10" pointer-events="none"/>
+        <path d="M 1218 225 M 1251 225 M 1251 241 M 1218 241" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="square" stroke-miterlimit="10" pointer-events="none"/>
     </g>
     <switch>
         <g requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"/>

@@ -1,15 +1,14 @@
 
 # Laravel覚書
 
-
 * 目次
+    * [図解](#図解)
     * [参考サイト](#参考サイト)
     * [インストール](#インストール)
     * [gitからcloneする時](#gitからcloneする時)
     * [サーバー起動](#サーバー起動)
     * [データベース等の設定](#データベース等の設定)
     * [XAMPPでMySQLが起動しない時の対処法](#XAMPPでMySQLが起動しない時の対処法)
-    * [Breezejp](#Breezejp)
     * [enum（列挙型）](#enum（列挙型）)
     * [マイグレーション](#マイグレーション)
     * [モデル](#モデル)
@@ -20,6 +19,14 @@
     * [リクエスト](#リクエスト)
     * [ビュー](#ビュー)
     * [Breeze](#Breeze)
+    * [Breezejp](#Breezejp)
+    * [TailwindCSS](#TailwindCSS)
+
+
+
+<a id="図解"></a>
+## 図解
+![図解](./laravel.drawio.svg)
 
 
 <a id="参考サイト"></a>
@@ -54,12 +61,6 @@ git cloneしてきたLaravelプロジェクトにはvendorディレクトリと.
 `php artisan key:generate`
 #### ※アプリケーションキーとは？
 .envファイルのAPP_KEY=の項目。暗号化された値を安全に扱うためのもの。
-
-
-
-
-
-
 
 
 
@@ -104,21 +105,6 @@ DB_COLLATION=utf8mb4_general_ci   # 追記：照合順序
 管理者として実行したPowerShellで以下のコマンドを実行。   
 `net stop mysql82`  
 ※82はmysqlのバージョンが8.2の場合。
-
-<a id="Breezejp"></a>
-## Breezejp
-
-Breezejpをインストールするコマンド  
-`composer require askdkc/breezejp --dev`  
-必要な言語ファイルの出力を実行するコマンド  
-`php artisan breezejp`
-
-### (仮)lang
-lang/作成コマンド
-`php artisan lang:publish`  
-
-resources/lang/en  
-resources/lang/ja  
 
 
 <a id="enum（列挙型）"></a>
@@ -1183,6 +1169,49 @@ Route::get('/dashboard', function () {
     return view('dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 ```
+
+
+
+
+<a id="Breezejp"></a>
+## Breezejp
+
+Breezejpをインストールするコマンド  
+`composer require askdkc/breezejp --dev`  
+必要な言語ファイルの出力を実行するコマンド  
+`php artisan breezejp`
+
+### (仮)lang
+lang/作成コマンド
+`php artisan lang:publish`  
+
+resources/lang/en  
+resources/lang/ja  
+
+
+
+
+
+<a id="TailwindCSS"></a>
+## TailwindCSS
+
+### 基本
+
+```html
+<head>
+    @vite('resources/css/app.css')
+</head>
+```
+
+
+
+PostCSS Language Support
+
+
+### 参考サイト
+[Laravel 11.x Bladeテンプレート](https://readouble.com/laravel/11.x/ja/blade.html)
+
+
 
 
 ---------------------------------------------
