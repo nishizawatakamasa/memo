@@ -316,14 +316,6 @@ ModelClass::get(); // 戻り値はCollectionクラス。
 // 最初のレコードを取得
 ModelClass::first(); // 戻り値はModelインスタンス。無いときはnullなのでissetで判定。
 
-// 条件を指定してフィルタをかける
-ModelClass::where($column, $value)->get(); // 戻り値はCollectionクラス。
-ModelClass::where($column, $value)->first(); // 戻り値はModelインスタンス。無いときはnullなのでissetで判定。
-
-// 日付単位の条件を指定してフィルタをかける。
-// whereDateはwhereの日付特化版。
-// この場合、dateカラムが今日の日付のものだけを取得。
-ModelClass::whereDate('date', Carbon::now())->get(); 
 
 // テーブルのレコード数を取得する。戻り値は整数値(int)。
 ModelClass::count();
@@ -341,11 +333,85 @@ ModelClass::updateOrCreate([]); // 存在するレコードを更新し、存在
 // 指定したIDのレコードを削除
 ModelClass::destroy(1);
 ModelClass::destroy([1, 2, 3]);
+```
 
-// レコードが存在するかどうかをチェック。戻り値は真偽値(bool)。
-ModelClass::where('email', 'john@example.com')->exists();
-// レコードが存在しないかどうかをチェック。戻り値は真偽値(bool)。
-ModelClass::where('email', 'john@example.com')->doesntExist();
+### クエリビルダーメソッド
+```php
+<?php
+// 戻り値はクエリビルダーインスタンス（具体的にはIlluminate\Database\Eloquent\Builderのインスタンス）。
+// クエリビルダーメソッドはModelClassからも$queryBuilderInstanceからも呼べる。
+
+// クエリビルダーインスタンスを呼び出して返すだけのメソッド。
+// 可読性を高めるために使う
+ModelClass::query()
+
+// ※query()の使用例
+$users = User::query()
+    ->select('name', 'email')
+    ->whereIn('address', request('address'))
+    ->oldest()
+    ->take(10)
+    ->toArray()
+
+// 条件を指定してフィルタをかける
+// 比較演算子は文字列で、'=', '>', '<', '>=', '<=', '!=', 'LIKE', 'IN'などを指定。
+// 比較演算子の省略は'='の使用と同義。
+ModelClass::where('カラム名', '比較演算子', '比較する値')
+$queryBuilderInstance->where('カラム名', '比較演算子', '比較する値')
+
+// 複数の条件を指定してフィルタをかける
+ModelClass::where([
+    ['カラム名1', '比較演算子1', '比較する値1'],
+    ['カラム名2', '比較演算子2', '比較する値2'],
+    // 他の条件...
+])
+
+// 条件：指定した値のリストのいずれかに一致するレコード。
+ModelClass::whereIn('カラム名', [1, 2, 3])
+// 条件：指定した値のリストに含まれないレコード。
+ModelClass::whereNotIn('カラム名', [1, 2, 3])
+
+// 条件：カラムがNULLのレコード。
+ModelClass::whereNull('カラム名')
+// 条件：カラムがNULLでないレコード。
+ModelClass::whereNotNull('カラム名')
+
+// 特定のカラムのみを取得するために使用。
+ModelClas::select('カラム名1', 'カラム名2')
+// where()の条件が満たされない場合に適用される条件を追加
+ModelClas::where('カラム名', '比較演算子', '比較する値')->orWhere('カラム名', '比較演算子', '比較する値')
+
+// 日付単位の条件を指定してフィルタをかける。
+// whereDateはwhereの日付特化版。
+// ※この場合の条件は、dateカラムが今日の日付のレコード。
+ModelClass::whereDate('date', Carbon::now())
+
+
+
+
+
+// 下の三つをちゃんと調べる
+// 指定されたカラムでレコードを並び替えます。
+ModelClass::orderBy('created_at', 'desc')
+// 指定されたカラムでレコードをグループ化します。
+ModelClass::groupBy('role')
+// グループ化された結果に条件を適用します。
+ModelClass::having('total', '>', 5)
+
+
+
+
+
+```
+### クエリ実行メソッド
+```php
+<?php
+// クエリビルダーインスタンスからクエリを実行して、実際の結果を取得するために使用する。
+
+$queryBuilderInstance->get(); // 全てのレコードを取得。戻り値はCollectionクラス。
+$queryBuilderInstance->first(); // 最初のレコードを取得。戻り値はModelインスタンス。無いときはnull
+$queryBuilderInstance->count(); // レコードの件数を取得。
+$queryBuilderInstance->exists(); // レコードが存在するかどうかをチェック。戻り値は真偽値(bool)。
 ```
 
 ### リレーションは関数として定義する。
@@ -1189,9 +1255,6 @@ resources/lang/en
 resources/lang/ja  
 
 
-
-
-
 <a id="TailwindCSS"></a>
 ## TailwindCSS
 
@@ -1199,18 +1262,35 @@ resources/lang/ja
 
 ```html
 <head>
+    <!-- スタイルを適用したいbladeファイル（レイアウトを共通化するためのファイル）に以下を追記。 -->
     @vite('resources/css/app.css')
 </head>
 ```
 
+```css
+@tailwind base;
+@tailwind components;
 
+/* 独自クラス（コンポーネント）を作成することもできる。 */
+.my-bgc{
+    @apply bg-green-300
+}
 
-PostCSS Language Support
+@tailwind utilities;
+```
 
+### VSCodeの便利な拡張機能
+
+|||
+|-|-|
+|Tailwind CSS IntelliSense|コードのutility classにカーソルを当てるとCSSの設定を確認することができる。|
+|PostCSS Language Support|エディタが@tailwindを正しく認識してくれるようになり、「Unknown at rule @tailwind」という警告と黄色い波線が消える。|
 
 ### 参考サイト
-[Laravel 11.x Bladeテンプレート](https://readouble.com/laravel/11.x/ja/blade.html)
-
+* [Tailwind CSS Cheat Sheet](https://tailwindcomponents.com/cheatsheet/)
+* [Tailwind CSSで独自クラス（コンポーネント）を作成する](https://zenn.dev/takashi5816/articles/7d9d14a17a3ec0)
+* [初めてでもわかるTailwind CSS入門 基礎編](https://reffect.co.jp/html/tailwindcss-for-beginners)
+* [Vite + Tailwind CSS + Laravel Breezeを使った開発環境の構築](https://zenn.dev/nenenemo/articles/46d43854cd01c5)
 
 
 
