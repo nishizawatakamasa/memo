@@ -4,6 +4,7 @@
 * 目次
     * [図解](#図解)
     * [参考サイト](#参考サイト)
+    * [便利なVSCodeの拡張機能](#便利なVSCodeの拡張機能)
     * [インストール](#インストール)
     * [gitからcloneする時](#gitからcloneする時)
     * [サーバー起動](#サーバー起動)
@@ -32,6 +33,12 @@
 <a id="参考サイト"></a>
 ## 参考サイト
 [ベストプラクティス](https://github.com/alexeymezenin/laravel-best-practices/blob/master/japanese.md)
+
+<a id="便利なVSCodeの拡張機能"></a>
+## 便利なVSCodeの拡張機能
+
+* PHP Intelephense
+* laravel extension pack
 
 <a id="インストール"></a>
 ## インストール
@@ -286,6 +293,15 @@ $modelInstance->method();
 ModelClass::method();
 ```
 
+### VS Codeでメソッド補完
+VSCodeの拡張機能「PHP Intelephense」によって、モデルの基本メソッドが補完される。
+
+以下のコマンドを実行することで、自作モデルのメソッドも補完される  
+`composer require --dev barryvdh/laravel-ide-helper`  
+`php artisan clear-compiled`  
+`php artisan ide-helper:generate`  
+`php artisan ide-helper:models --nowrite`  
+
 ### インスタンスメソッド
 ```php
 <?php
@@ -336,6 +352,8 @@ ModelClass::destroy([1, 2, 3]);
 ```
 
 ### クエリビルダーメソッド
+ドキュメント：[Laravel 11.x データベース：クエリビルダ](https://readouble.com/laravel/11.x/ja/queries.html)
+
 ```php
 <?php
 // 戻り値はクエリビルダーインスタンス（具体的にはIlluminate\Database\Eloquent\Builderのインスタンス）。
@@ -377,31 +395,17 @@ ModelClass::whereNull('カラム名')
 ModelClass::whereNotNull('カラム名')
 
 // 特定のカラムのみを取得するために使用。
-ModelClas::select('カラム名1', 'カラム名2')
+ModelClass::select('カラム名1', 'カラム名2')
 // where()の条件が満たされない場合に適用される条件を追加
-ModelClas::where('カラム名', '比較演算子', '比較する値')->orWhere('カラム名', '比較演算子', '比較する値')
+ModelClass::where('カラム名', '比較演算子', '比較する値')->orWhere('カラム名', '比較演算子', '比較する値')
 
 // 日付単位の条件を指定してフィルタをかける。
 // whereDateはwhereの日付特化版。
 // ※この場合の条件は、dateカラムが今日の日付のレコード。
 ModelClass::whereDate('date', Carbon::now())
 
-
-
-
-
-// 下の三つをちゃんと調べる
-// 指定されたカラムでレコードを並び替えます。
-ModelClass::orderBy('created_at', 'desc')
-// 指定されたカラムでレコードをグループ化します。
-ModelClass::groupBy('role')
-// グループ化された結果に条件を適用します。
-ModelClass::having('total', '>', 5)
-
-
-
-
-
+// 指定されたカラムでレコードを並び替える。
+ModelClass::orderBy('カラム名', 'ascまたはdesc')
 ```
 ### クエリ実行メソッド
 ```php
