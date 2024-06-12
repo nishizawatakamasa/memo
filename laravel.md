@@ -354,6 +354,48 @@ ModelClass::destroy([1, 2, 3]);
 ### クエリビルダーメソッド
 ドキュメント：[Laravel 11.x データベース：クエリビルダ](https://readouble.com/laravel/11.x/ja/queries.html)
 
+
+
+```php
+<?php
+// WHERE句
+where
+orWhere
+whereNot
+whereAny
+whereAll
+
+whereJsonContains
+whereJsonLength
+
+whereBetween / orWhereBetween
+whereNotBetween / orWhereNotBetween
+whereBetweenColumns / whereNotBetweenColumns / orWhereBetweenColumns / orWhereNotBetweenColumns
+whereIn / whereNotIn / orWhereIn / orWhereNotIn
+whereNull / whereNotNull / orWhereNull / orWhereNotNull
+whereDate / whereMonth / whereDay / whereYear / whereTime
+whereColumn / orWhereColumn
+whereExists
+whereFullTextとorWhereFullText
+
+論理グループ化
+
+
+// 順序
+orderBy
+latest / oldest
+inRandomOrder
+reorder
+
+// グループ化
+groupBy / having
+havingBetween
+havingRaw
+```
+
+
+
+
 ```php
 <?php
 // 戻り値はクエリビルダーインスタンス（具体的にはIlluminate\Database\Eloquent\Builderのインスタンス）。
