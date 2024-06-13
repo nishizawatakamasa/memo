@@ -13,6 +13,7 @@
 <a id="基本的なこと"></a>
 ## 基本的なこと
 
+### 基本
 |||
 |-|-|
 |pd.DataFrame({<br>'hoge': [1, 2, 3],<br>'fuga': [4, 5, 6],<br>'piyo': [7, 8, 9]<br>})|データフレーム。<br>二次元のデータ構造。<br>※代表的な作り方。|
@@ -22,6 +23,15 @@
 |DataFrame.columns.to_list()|列名属性をリスト化したもの。|
 |DataFrame.index = ['行名1', '行名2', '行名3']|行名属性へ値を代入。|
 |DataFrame.columns = ['列名1', '列名2', '列名3']|列名属性へ値を代入。|
+
+### データ型
+pandasにはデータ型(dtype)が存在するが、int,str,floatのようなPythonの型を指定することもできる。  
+この場合、等価なdtypeに自動的に変換される(Python3、64ビット環境での例は以下の通り)。
+|Pythonの型|等価なdtypeの例|
+|-|-|
+|int|int64|
+|float|float64|
+|str|object（各要素がstr型）|
 
 <a id="選択操作"></a>
 ## 選択操作
@@ -141,10 +151,34 @@
 ### 基本
 |||
 |-|-|
-|df3 = df1.merge(df2, on='キーとする列名', how='left')|標準的なマージ|
+|df = df_left.merge(df_right, on='キーとする列の名前', how='left', copy=False)|標準的なマージ|
+
+### 結合処理の基本的な挙動。
+共通するキーを持つ行同士の全組み合わせが生成される。
+
+### 引数on
+キーとする列を指定
+
+* デフォルトでは、すべての同名の列がキーとして処理される。
+* キーとする列を明示的に指定する場合は、引数onに列名を指定する(複数の場合はリスト)。
+* ※キーとする列を省略して問題ない場合でも、明示しておいたほうが分かりやすい。
+* キーにする列以外の列名が重複している場合、デフォルトでは_x(left側), _y(right側)というサフィックスがつけられる。
+
+### 引数how
+結合方法を指定
+
+|||
+|-|-|
+|how='inner'|leftとright両方に共通するキーを持つ行のみが残る。<br>これがデフォルト。|
+|how='left'|innerに加えて、leftにしかキーが存在しない行も残る。|
+|how='right'|innerに加えて、rightにしかキーが存在しない行も残る。|
+|how='outer'|innerに加えて、leftにしかキーが存在しない行とrightにしかキーが存在しない行が残る。<br>(要するにleftとrightのすべての行が残る。)|
+
+### 引数copy
+copy=Falseとするとcopyが生成されず、メモリを節約できる。
+
 ### 参考サイト
 * [pandas.DataFrameを結合するmerge, join（列・インデックス基準）](https://note.nkmk.me/python-pandas-merge-join/)  
-
 
 
 <a id="ファイル読み込み"></a>
@@ -158,7 +192,7 @@
 |sep='\s+'|※重要！ 区切り文字を指定。デフォルトはカンマ。|
 |header=None|※重要！ 列名(columns)の設定。デフォルトでは一行目。Noneにすると0始まりの連番。|
 |usecols=[2, 6, 7, 8]|※重要！ 読み込む列を、列名のリストで指定(読み込む列を限定するため、メモリの節約にもなる)。|
-|dtype=str|※重要！ カラムのデータ型を指定。|
+|dtype=str|※重要！ カラムのデータ型を指定。<br>引数に{'列名': str}のような辞書も指定でき、任意の列のデータ型を個別に指定できる。|
 |nrows=2|読み込む行数（ヘッダー行数を除く）を指定。中身をざっと確認したい時用。|
 |encoding|文字コードを指定。|
 |index_col||
@@ -191,7 +225,7 @@
 |DataFrame.reset_index(drop=True)|※ indexを振り直す。drop=Trueとすると、元のindexは削除され残らない。|
 |DataFrame.drop_duplicates(subset=['列名1', '列名2'], ignore_index=True)|※ 指定した全ての列の要素が重複している行を、最初の行だけを残して削除|
 |DataFrame.sort_values(by='列名', ascending=False, ignore_index=True)|※ デフォルトは昇順。降順にするには引数ascendingをFalseにする。<br>※ na_position='first'とすると、欠損値NaNが先頭に並べられる。デフォルトでは末尾。<br>※ ignore_index=Trueとするとインデックスが振り直される(0からの連番)。|
-|Series.astype(str)||
+|DataFrame.astype(int)<br>Series.astype(float)|データ型を一括で変更する。<br>DataFrame.astypeの場合は引数に{'列名': str}のような辞書も指定でき、任意の列のデータ型を個別に変更できる。|
 |DataFrame.fillna(value)<br>Series.fillna(value)|※ 欠損値をvalueに置換|
 |DataFrame.sample(n=30)|※ n行だけランダムサンプリング|
 |DataFrame.sample(frac=0.1)|※ 行を指定割合だけランダムサンプリング|
