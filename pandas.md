@@ -223,7 +223,7 @@ copy=Falseとするとcopyが生成されず、メモリを節約できる。
 |df[2:9]|※ 行番号のスライスで該当した行をDataFrameとして取得。|
 |DataFrame.drop(index=['行名1', '行名2'], columns=['列名1', '列名2'])||
 |DataFrame.reset_index(drop=True)|※ indexを振り直す。drop=Trueとすると、元のindexは削除され残らない。|
-|DataFrame.drop_duplicates(subset=['列名1', '列名2'], ignore_index=True)|※ 指定した全ての列の要素が重複している行を、最初の行だけを残して削除|
+|DataFrame.drop_duplicates(subset=['列名1', '列名2'], ignore_index=True)<br>Series.drop_duplicates(ignore_index=True)|※ 指定した全ての列の要素が重複している行を、最初の行だけを残して削除|
 |DataFrame.sort_values(by='列名', ascending=False, ignore_index=True)|※ デフォルトは昇順。降順にするには引数ascendingをFalseにする。<br>※ na_position='first'とすると、欠損値NaNが先頭に並べられる。デフォルトでは末尾。<br>※ ignore_index=Trueとするとインデックスが振り直される(0からの連番)。|
 |DataFrame.astype(int)<br>Series.astype(float)|データ型を一括で変更する。<br>DataFrame.astypeの場合は引数に{'列名': str}のような辞書も指定でき、任意の列のデータ型を個別に変更できる。|
 |DataFrame.fillna(value)<br>Series.fillna(value)|※ 欠損値をvalueに置換|

@@ -16,7 +16,6 @@
         * WordPress
         * Laravel
             * [全般](./laravel.md)
-            * [図解](./laravel_diagram.md)
         * phpMyAdmin
     * SQL
         * MariaDB(MySQL)
@@ -42,6 +41,7 @@
         * 統計
     * 英語
         * リーディング
+
 
 ## エンジニアリング全般
 * Git/GitHub
