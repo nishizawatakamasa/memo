@@ -7,6 +7,7 @@
     * [基礎集計メソッド](#基礎集計メソッド)
     * [グルーピング](#グルーピング)
     * [マージ](#マージ)
+    * [メルト](#メルト)
     * [ファイル読み込み](#ファイル読み込み)
     * [その他](#その他)
 
@@ -179,6 +180,17 @@ copy=Falseとするとcopyが生成されず、メモリを節約できる。
 
 ### 参考サイト
 * [pandas.DataFrameを結合するmerge, join（列・インデックス基準）](https://note.nkmk.me/python-pandas-merge-join/)  
+
+
+<a id="メルト"></a>
+## メルト
+
+### 基本
+対象のDataFrameを、三種類のカラム(id_vars, variable, value)で再構築する。
+
+### 参考サイト
+* [pandas.melt — pandas 2.2.2 documentation](https://pandas.pydata.org/docs/reference/api/pandas.melt.html)
+* [データフレームを再構築するPandasのMelt()関数のお話し](https://www.salesanalytics.co.jp/datascience/datascience021/)
 
 
 <a id="ファイル読み込み"></a>
