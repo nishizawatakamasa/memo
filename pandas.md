@@ -19,6 +19,7 @@
 |-|-|
 |pd.DataFrame({<br>'hoge': [1, 2, 3],<br>'fuga': [4, 5, 6],<br>'piyo': [7, 8, 9]<br>})|データフレーム。<br>二次元のデータ構造。<br>※代表的な作り方。|
 |pd.Series(['hoge', 'fuga', 'piyo'])|シリーズ。<br>一次元のデータ構造。<br>※代表的な作り方。|
+|Series.to_list()|シリーズをリストに変換。|
 |DataFrame.values<br>Series.values|データ値属性(NumPy配列)。|
 |DataFrame.index.to_list()|行名属性をリスト化したもの。|
 |DataFrame.columns.to_list()|列名属性をリスト化したもの。|
