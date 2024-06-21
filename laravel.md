@@ -22,6 +22,7 @@
     * [Breeze](#Breeze)
     * [Breezejp](#Breezejp)
     * [TailwindCSS](#TailwindCSS)
+    * [ユーザーアクションの認可](#ユーザーアクションの認可)
 
 
 
@@ -1337,6 +1338,165 @@ resources/lang/ja
 * [Tailwind CSSで独自クラス（コンポーネント）を作成する](https://zenn.dev/takashi5816/articles/7d9d14a17a3ec0)
 * [初めてでもわかるTailwind CSS入門 基礎編](https://reffect.co.jp/html/tailwindcss-for-beginners)
 * [Vite + Tailwind CSS + Laravel Breezeを使った開発環境の構築](https://zenn.dev/nenenemo/articles/46d43854cd01c5)
+
+
+
+
+<a id="ユーザーアクションの認可"></a>
+## ユーザーアクションの認可
+
+### 参考サイト
+[Laravel 11.x 認可](https://readouble.com/laravel/11.x/ja/authorization.html)
+
+### 基本
+主要な方法として、ゲートとポリシーがある。
+* ゲートは単独で制限をかけたいときに使う。
+* ポリシーはモデルごと、リソースコントローラーごとなど、まとめて制限をかけたいときに使う。
+2つの方法を組み合わせながら、ユーザー単位での情報アクセス制限を柔軟に実現することができる。
+
+※おまけ：ミドルウェアという手段もあり、ルート設定の段階で制限をかけたいときに使う。
+
+
+### ゲート
+Gate::defineメソッド  
+```php
+<?php
+// app/Providers/AuthServiceProvider.php
+
+use Illuminate\Support\Facades\Gate;
+use App\Models\User;
+use App\Models\Post;
+
+public function boot(): void
+{
+    $this->registerPolicies();
+
+    // Gate::defineメソッド
+    // 特定のアクションに対する認可ロジックを定義するために使用される。
+    // 通常、AuthServiceProviderのbootメソッド内で定義される。
+    // 第一引数は文字列で、定義する認可アクションの名前を指定する。
+    // 認可アクションの名前について↓
+    // 一意である必要がある。
+    // 後でGate::allowsやGate::deniesメソッドを使って認可チェックを行うときに使用される。
+    // 投稿の閲覧権限を定義するなら'view-post'、投稿の編集権限を定義するなら'edit-post'といったように、説明的でわかりやすい名前を付ける。
+    Gate::define('view-post', function (User $user, Post $post) {
+        // 認可ロジック
+        return $user->id === $post->user_id; // trueまたはfalse
+    });
+}
+```
+Gate::allowsメソッド  
+Gate::deniesメソッド  
+```php
+<?php
+
+public function show(Post $post)
+{
+    // Gate::allowsメソッド  
+    // 認証されているユーザーが特定のアクションを実行できるかどうかを確認するために使用される。
+    // 第一引数：アクション名
+    // 第二引数：モデルインスタンス
+    // 認可アクションが許可されている場合にtrueを返す。
+    // ※Gate::deniesメソッドは逆に、認可アクションが拒否されている場合にtrueを返す。
+    // 認可が必要なアクションを実行する前に、コントローラ内でゲート認可メソッドを呼び出すのが一般的
+    if (Gate::allows('view-post', $post)) {
+        // 認可されている場合の処理
+        return view('posts.show', compact('post'));
+    } else {
+        // 認可されていない場合の処理
+        abort(403, 'Unauthorized action.');
+    }
+}
+```
+
+
+### ポリシー
+
+#### ポリシーの生成
+* コマンドを使用してポリシーを生成できる。
+* 生成するポリシーはapp/Policiesディレクトリへ配置される。
+* ※app/Policiesディレクトリが存在しない場合、Laravelが作成する。
+* 命名例：Postモデルは、PostPolicyポリシークラスに対応する。
+
+生成コマンド
+`php artisan make:policy PostPolicy --model=Post`
+
+#### ポリシーの登録
+* 作成したPolicyをAuthServiceProviderに登録する。  
+* Gate::policyメソッドを使用し、AppServiceProviderのbootメソッド内で、ポリシーと対応するモデルを登録できる。
+
+```php
+<?php
+
+use App\Models\Post;
+use App\Policies\PostPolicy;
+use Illuminate\Support\Facades\Gate;
+
+/**
+ * アプリケーションの全サービスの初期起動処理
+ */
+public function boot(): void
+{
+    Gate::policy(Post::class, PostPolicy::class);
+}
+```
+
+#### ポリシーの作成
+
+* ポリシークラスを登録したら、認可するアクションごとにメソッドを追加できる。
+* メソッドは、権限があるかどうかを示すbool値を返す必要がある。
+* ポリシーが認可するさまざまなアクションの必要に合わせ、ポリシーに追加のメソッドをどんどん定義できる。
+* ポリシーメソッドには任意の名前を付けることができる。
+* ポリシーを生成するときに--modelオプションを使用した場合、はじめからviewAny、view、create、update、delete、restore、forceDeleteアクションのメソッドが用意される。
+
+```php
+<?php
+
+namespace App\Policies;
+
+use App\Models\Post;
+use App\Models\User;
+
+class PostPolicy
+{
+    /**
+     * 指定した投稿をユーザーが更新可能かを判定
+     */
+    public function update(User $user, Post $post): bool
+    {
+        return $user->id === $post->user_id;
+    }
+}
+```
+
+#### モデルのないメソッド
+一部のポリシーメソッドは、現在認証済みユーザーのインスタンスのみを受け取る。  
+この状況は、createアクションを認可するばあいに頻繁に見かける。  
+たとえば、ブログを作成している場合、ユーザーが投稿の作成を認可されているかを確認したい場合がある。  
+このような状況では、ポリシーメソッドはユーザーインスタンスのみを受け取る必要がある。  
+
+```php
+<?php
+/**
+ * 指定ユーザーが投稿を作成可能か確認
+ */
+public function create(User $user): bool
+{
+    return $user->role == 'writer';
+}
+```
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
