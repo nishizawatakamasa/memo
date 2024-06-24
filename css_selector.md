@@ -10,10 +10,10 @@
     * [attr] (attr属性を持つ)
     * [attr="value"] (attr属性の値が正確にvalueと一致)
     * [attr~="value"] (空白区切りの内の1つが正確にvalueと一致)
-    * [attr|="value"] (正確にvalueと一致するか、 valueで始まり直後にハイフンが続く)
+    * [attr*="value"] (文字列中にvalueを1つ以上含む)
     * [attr^="value"] (valueで始まる)
     * [attr$="value"] (valueで終わる)
-    * [attr*="value"] (文字列中にvalueを1つ以上含む)
+    * [attr|="value"] (正確にvalueと一致するか、 valueで始まり直後にハイフンが続く)
     * [attr operator value i] (大文字と小文字を区別しなくなる。incensitive(鈍感)のi。)
 * 疑似クラスセレクタ
     * ツリー構造疑似クラス
