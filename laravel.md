@@ -368,31 +368,147 @@ ModelClass::destroy([1, 2, 3]);
 ```
 
 ### クエリビルダーメソッド
-ドキュメント：[Laravel 11.x データベース：クエリビルダ](https://readouble.com/laravel/11.x/ja/queries.html)
-
-
+[Laravel 11.x データベース：クエリビルダ](https://readouble.com/laravel/11.x/ja/queries.html)  
+[Laravel クエリビルダ記法まとめ](https://www.ritolab.com/posts/93)
 
 ```php
 <?php
-// WHERE句
-where
-orWhere
-whereNot
-whereAny
-whereAll
+// 戻り値はクエリビルダーインスタンス（具体的にはIlluminate\Database\Eloquent\Builderのインスタンス）。
+// クエリビルダーメソッドはModelClassからも$queryBuilderInstanceからも呼べる。
 
-whereJsonContains
-whereJsonLength
+// クエリビルダーインスタンスを呼び出して返すだけのメソッド。
+// まずModelClassからquery()メソッドを呼び、戻り値の$queryBuilderInstanceからクエリビルダーメソッドを呼び出していくと可読性が高まる。
+ModelClass::query()
 
-whereBetween / orWhereBetween
-whereNotBetween / orWhereNotBetween
-whereBetweenColumns / whereNotBetweenColumns / orWhereBetweenColumns / orWhereNotBetweenColumns
-whereIn / whereNotIn / orWhereIn / orWhereNotIn
-whereNull / whereNotNull / orWhereNull / orWhereNotNull
-whereDate / whereMonth / whereDay / whereYear / whereTime
+// query()メソッドの使用例
+$users = User::query()
+    ->select('name', 'email')
+    ->whereIn('address', request('address'))
+    ->oldest()
+    ->take(10)
+    ->toArray();
+
+// SQLの実行クエリを出力
+$queryBuilderInstance->dd()
+
+// 特定のカラムのみを取得するために使用。エイリアスも書ける。
+$queryBuilderInstance->select('カラム名', 'カラム名 as エイリアス')
+// select()メソッドで取得カラムを指定した後に、さらに追加で取得カラムを指定。
+$queryBuilderInstance->addSelect('カラム名')
+
+// 重複行を除去した結果を取得。
+$queryBuilderInstance->distinct();
+
+// JOIN
+// UNION
+// 結合
+
+// 条件を指定してフィルタをかける
+// 比較演算子は文字列で、データベースがサポートしている任意の演算子が指定できる。
+// ※MariaDBの場合、'=', '!=', '>', '<', '>=', '<=', 'LIKE', 'IN'など。
+// ※LIKE演算子はワイルドカード文字で曖昧検索ができる(%は0文字以上の任意の文字列で、_は任意の1文字)。
+// 比較演算子の省略は'='の使用と同義。
+// where()メソッドをチェーン化するとAND条件になる。
+$queryBuilderInstance->where('カラム名', '比較演算子', '比較する値')
+
+// 二次元配列を渡すことで、複数条件を指定することもできる。
+// ※AND条件が()でまとまることになる。
+$queryBuilderInstance->where([
+    ['カラム名1', '比較演算子1', '比較する値1'],
+    ['カラム名2', '比較演算子2', '比較する値2'],
+    // 他の条件...
+])
+
+// orWhere()メソッドは基本的にwhere()メソッドと同じだが、チェーン化するとOR条件になる。
+// 二次元配列を渡して複数条件を指定すると、OR条件が()でまとまることになる。
+$users = User::query()
+    ->where('votes', '>', 100)
+    ->orWhere('name', 'John')
+    ->get();
+
+// orWhereメソッドの最初の引数としてクロージャを渡しても、OR条件が()でまとまることになる。
+$users = User::query()
+    ->where('votes', '>', 100)
+    ->orWhere(function (Builder $query) {
+        $query->where('name', 'Abigail')
+              ->where('votes', '>', 50);
+    })
+    ->get();
+
+// whereAny()とwhereAll()
+// 第一引数にカラム名の配列を指定。
+// whereAny()は、指定カラムのいずれかが指定条件と一致するレコードを取得。
+// whereAll()は、指定カラムのすべてが指定条件と一致するレコードを取得。
+$users = User::query()
+    ->where('active', true)
+    ->whereAny([
+        'カラム名1',
+        'カラム名2',
+        'カラム名3',
+    ], 'LIKE', 'Example%')
+    ->get();
+
+// 「カラムの値が2つの値の間(以上と以下)にある」という条件を加えます。
+$queryBuilderInstance->whereBetween('カラム名', [1, 100])
+$queryBuilderInstance->orWhereBetween('カラム名', [1, 100])
+// 「カラムの値が2つの値の間(以上と以下)にない」という条件を加えます。
+$queryBuilderInstance->whereNotBetween('カラム名', [1, 100])
+$queryBuilderInstance->orWhereNotBetween('カラム名', [1, 100])
+
+// whereBetween()系メソッドの"2つの値"を、カラム名で指定するバージョン。
+$queryBuilderInstance->whereBetweenColumns('カラム名1', ['カラム名2', 'カラム名3'])
+$queryBuilderInstance->orWhereBetweenColumns('カラム名1', ['カラム名2', 'カラム名3'])
+$queryBuilderInstance->whereNotBetweenColumns('カラム名1', ['カラム名2', 'カラム名3'])
+$queryBuilderInstance->orWhereNotBetweenColumns('カラム名1', ['カラム名2', 'カラム名3'])
+
+// 「カラムの値が、指定した配列内に含まれる」という条件を加えます。
+$queryBuilderInstance->whereIn('カラム名', [1, 2, 3])
+$queryBuilderInstance->orWhereIn('カラム名', [1, 2, 3])
+// 「カラムの値が、指定した配列内に含まれない」という条件を加えます。
+$queryBuilderInstance->whereNotIn('カラム名', [1, 2, 3])
+$queryBuilderInstance->orWhereNotIn('カラム名', [1, 2, 3])
+
+// 「カラムの値がNULLである」という条件を加えます。
+$queryBuilderInstance->whereNull('カラム名')
+$queryBuilderInstance->orWhereNull('カラム名')
+// 「カラムの値がNULLではない」という条件を加えます。
+$queryBuilderInstance->whereNotNull('カラム名')
+$queryBuilderInstance->orWhereNotNull('カラム名')
+
+// カラムの値を日時と比較
+// 日付
+$queryBuilderInstance->whereDate('created_at', '<', '2023-12-31')
+// 年
+$queryBuilderInstance->whereYear('created_at', '=', '2023')
+// 月
+$queryBuilderInstance->whereMonth('created_at', '=', '12')
+// 日
+$queryBuilderInstance->whereDay('created_at', '=', '31')
+// 時間
+$queryBuilderInstance->whereTime('created_at', '<', '11:20:45')
+
+
+
+// 6/25 ここまでやった
+
+
 whereColumn / orWhereColumn
 whereExists
 whereFullTextとorWhereFullText
+
+
+
+
+
+
+
+
+$queryBuilderInstance->whereNot()
+$queryBuilderInstance->whereJsonContains()
+$queryBuilderInstance->whereJsonLength()
+
+
+
 
 論理グループ化
 
@@ -406,56 +522,13 @@ reorder
 // グループ化
 groupBy / having
 havingBetween
-havingRaw
 ```
-
-
-
 
 ```php
 <?php
-// 戻り値はクエリビルダーインスタンス（具体的にはIlluminate\Database\Eloquent\Builderのインスタンス）。
-// クエリビルダーメソッドはModelClassからも$queryBuilderInstanceからも呼べる。
 
-// クエリビルダーインスタンスを呼び出して返すだけのメソッド。
-// 可読性を高めるために使う
-ModelClass::query()
 
-// ※query()の使用例
-$users = User::query()
-    ->select('name', 'email')
-    ->whereIn('address', request('address'))
-    ->oldest()
-    ->take(10)
-    ->toArray()
 
-// 条件を指定してフィルタをかける
-// 比較演算子は文字列で、'=', '>', '<', '>=', '<=', '!=', 'LIKE', 'IN'などを指定。
-// 比較演算子の省略は'='の使用と同義。
-ModelClass::where('カラム名', '比較演算子', '比較する値')
-$queryBuilderInstance->where('カラム名', '比較演算子', '比較する値')
-
-// 複数の条件を指定してフィルタをかける
-ModelClass::where([
-    ['カラム名1', '比較演算子1', '比較する値1'],
-    ['カラム名2', '比較演算子2', '比較する値2'],
-    // 他の条件...
-])
-
-// 条件：指定した値のリストのいずれかに一致するレコード。
-ModelClass::whereIn('カラム名', [1, 2, 3])
-// 条件：指定した値のリストに含まれないレコード。
-ModelClass::whereNotIn('カラム名', [1, 2, 3])
-
-// 条件：カラムがNULLのレコード。
-ModelClass::whereNull('カラム名')
-// 条件：カラムがNULLでないレコード。
-ModelClass::whereNotNull('カラム名')
-
-// 特定のカラムのみを取得するために使用。
-ModelClass::select('カラム名1', 'カラム名2')
-// where()の条件が満たされない場合に適用される条件を追加
-ModelClass::where('カラム名', '比較演算子', '比較する値')->orWhere('カラム名', '比較演算子', '比較する値')
 
 // 日付単位の条件を指定してフィルタをかける。
 // whereDateはwhereの日付特化版。
@@ -472,8 +545,42 @@ ModelClass::orderBy('カラム名', 'ascまたはdesc')
 
 $queryBuilderInstance->get(); // 全てのレコードを取得。戻り値はCollectionクラス。
 $queryBuilderInstance->first(); // 最初のレコードを取得。戻り値はModelインスタンス。無いときはnull
+$queryBuilderInstance->value('カラム名'); // レコードから単一の値を取得。戻り値はカラムの値。
+$queryBuilderInstance->find(3); // id列の値で単一のレコードを取得。
+$queryBuilderInstance->pluck('カラム名(バリュー)', 'カラム名(キー)※省略可'); // 第一引数をバリュー、第二引数(省略可)をキーとした配列を作ることができる。
+
+
+
+
 $queryBuilderInstance->count(); // レコードの件数を取得。
+$queryBuilderInstance->max('カラム名'); // 指定カラムの最大値を取得。
+$queryBuilderInstance->min('カラム名'); // 指定カラムの最小値を取得。
+$queryBuilderInstance->avg('カラム名'); // 指定カラムの平均値を取得。
+$queryBuilderInstance->sum('カラム名'); // 指定カラムの合計値を取得。
+
+
+
+
 $queryBuilderInstance->exists(); // レコードが存在するかどうかをチェック。戻り値は真偽値(bool)。
+$queryBuilderInstance->doesntExist(); // exists()メソッドの逆。戻り値は真偽値(bool)。
+
+
+
+
+
+
+$queryBuilderInstance->chunk();
+$queryBuilderInstance->chunkById();
+$queryBuilderInstance->lazy();
+$queryBuilderInstance->lazyById();
+$queryBuilderInstance->lazyByIdDesc();
+$queryBuilderInstance->xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx();
+$queryBuilderInstance->xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx();
+$queryBuilderInstance->xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx();
+$queryBuilderInstance->xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx();
+$queryBuilderInstance->xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx();
+
+
 ```
 
 ### リレーションは関数として定義する。
