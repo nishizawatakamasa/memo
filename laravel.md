@@ -278,7 +278,6 @@ Laravelが提供するデータベース操作方法は以下の3つ。
 * Collectionクラスは複数行分のデータに相当(Modelインスタンスを複数格納する配列のようなクラス)。  
 * テーブルの各レコードをModelインスタンスとして操作する。  
 
-
 ※デフォルトでは、クラスはクラス名の複数形が名前になっているテーブルと紐づく。  
 ※テーブル名を明示的に指定することもできる。  
 例：  
@@ -294,10 +293,41 @@ class Folder extends Model
 }
 ```
 
+### モデルに定義できる代表的なプロパティ  
+```php
+<?php
+
+class Folder extends Model
+{
+    use HasFactory;
+
+    // id以外のカラムを主キーとして機能させたい場合に定義。
+    protected $primaryKey = 'カラム名';
+    // 非インクリメントまたは非数値の主キーを使用する場合に定義。
+    public $incrementing = false;
+    // モデルの主キーが整数でない場合に定義。このプロパティの値はstringにする必要がある。
+    protected $keyType = 'string';
+
+    // Eloquentはモデルが作成または更新されるときに、created_atとupdated_atを自動的にセットする。
+    // これらのカラムがEloquentによって自動的に管理されないようにする場合に定義。
+    public $timestamps = false;
+
+    // モデルクラスのインスタンス変数にデフォルト値を設定したい場合に定義。
+    protected $attributes = [
+        'options' => '[]',
+        'delayed' => false,
+    ];
+}
+
+
 ### モデルの新規作成コマンド  
 `php artisan make:model モデル名`  
 例：  
 `php artisan make:model Folder`  
+
+
+### モデルの全ての属性とリレーションを確認できるコマンド   
+`php artisan model:show ModelClass`
 
 
 ### インスタンスメソッドとクラスメソッドの違い
@@ -323,14 +353,34 @@ VSCodeの拡張機能「PHP Intelephense」によって、モデルの基本メ�
 <?php
 // new演算子で新しいインスタンス(レコード)を作成。
 // 編集(例としてタイトルに入力値を代入)
-// レコードの追加や変更を保存(既存のデータと異なる場合のみ更新処理を行う)。
-// 'created_at'(作成日)と'updated_at'(更新日)は自動的に追加される。
+// save()メソッドでレコードの追加や変更を保存(既存のデータと異なる場合のみ更新処理を行う)。
+// ※'created_at'(作成日)と'updated_at'(更新日)は、save()メソッドが呼び出されたときに自動的に設定される。
 $modelInstance = new ModelClass();
 $modelInstance->title = $request->title;
 $modelInstance->save();
 
+// saveメソッドを使用して、データベースにすでに存在するレコードを更新することもできる。
+// ※'updated_at'(更新日)は、save()メソッドが呼び出されたときに自動的に設定される。
+$user = User::query()
+    ->where('votes', '>', 100)
+    ->orWhere('name', 'John')
+    ->first(); 
+$user->name = 'hoge';
+$user->save();
+
 // レコードを削除
 $modelInstance->delete();
+
+
+// 保留
+$modelInstance->fresh();
+$modelInstance->refresh();
+$modelInstance->update();
+$modelInstance->isDirty();
+$modelInstance->isClean();
+$modelInstance->wasChanged();
+$modelInstance->getOriginal();
+$modelInstance->fill();
 ```
 
 ### クラスメソッド
@@ -343,28 +393,39 @@ ModelClass::all(); // 戻り値はCollectionクラス
 ModelClass::find(1); // 戻り値はModelインスタンス。無いときはnullなのでissetで判定。
 ModelClass::find([1, 2, 3]); // 戻り値はCollectionクラス。
 
-// 全レコードを取得
-ModelClass::get(); // 戻り値はCollectionクラス。
-// 最初のレコードを取得
-ModelClass::first(); // 戻り値はModelインスタンス。無いときはnullなのでissetで判定。
-
-
-// テーブルのレコード数を取得する。戻り値は整数値(int)。
-ModelClass::count();
-
 // 新しいインスタンス(レコード)の作成、追加、保存を簡潔に書く方法。
 // 'created_at'(作成日)と'updated_at'(更新日)は自動的に追加される。
 ModelClass::create([
     'folder_id' => 1,
     'title' => "サンプルタスク {$num}",
 ]);
-// createの別バリエーション
-ModelClass::firstOrCreat([]); // レコードが存在しなければ作成
-ModelClass::updateOrCreate([]); // 存在するレコードを更新し、存在しない場合は作成
+// create()メソッドを使用する前に、ModelClassにfillableまたはguardedプロパティを指定する必要がある。
+// ホワイトリストの設定は$fillable、ブラックリストの設定は$guardedで、カラム名の配列で定義する。
+// fillableとguardedを両方定義することはできない。
+// 基本的には$fillabでいいかな。
+protected $fillable = [
+    'folder_id',
+    'title',
+];
+// 一応、$guardedを空の配列として定義すると、すべての属性を一括割り当て可能にできる。
+protected $guarded = [];
 
-// 指定したIDのレコードを削除
+// モデルに関連しているすべてのデータベースレコードを削除する。
+// モデルの関連テーブルの自動増分IDはリセットされる。
+ModelClass::truncate();
+
+// 指定した主キーのレコードを削除
 ModelClass::destroy(1);
 ModelClass::destroy([1, 2, 3]);
+
+
+// 保留
+ModelClass::findOr();
+ModelClass::findOrFail();
+ModelClass::firstOrCreat();
+ModelClass::firstOrNew();
+ModelClass::updateOrCreate();
+ModelClass::upsert();
 ```
 
 ### クエリビルダーメソッド
@@ -377,9 +438,8 @@ ModelClass::destroy([1, 2, 3]);
 // クエリビルダーメソッドはModelClassからも$queryBuilderInstanceからも呼べる。
 
 // クエリビルダーインスタンスを呼び出して返すだけのメソッド。
-// まずModelClassからquery()メソッドを呼び、戻り値の$queryBuilderInstanceからクエリビルダーメソッドを呼び出していくと可読性が高まる。
+// まずModelClassからquery()メソッドを呼び、戻り値の$queryBuilderInstanceから他のクエリビルダーメソッドを呼び出していくと可読性が高まる。
 ModelClass::query()
-
 // query()メソッドの使用例
 $users = User::query()
     ->select('name', 'email')
@@ -399,10 +459,6 @@ $queryBuilderInstance->addSelect('カラム名')
 // 重複行を除去した結果を取得。
 $queryBuilderInstance->distinct();
 
-// JOIN
-// UNION
-// 結合
-
 // 条件を指定してフィルタをかける
 // 比較演算子は文字列で、データベースがサポートしている任意の演算子が指定できる。
 // ※MariaDBの場合、'=', '!=', '>', '<', '>=', '<=', 'LIKE', 'IN'など。
@@ -410,7 +466,6 @@ $queryBuilderInstance->distinct();
 // 比較演算子の省略は'='の使用と同義。
 // where()メソッドをチェーン化するとAND条件になる。
 $queryBuilderInstance->where('カラム名', '比較演算子', '比較する値')
-
 // 二次元配列を渡すことで、複数条件を指定することもできる。
 // ※AND条件が()でまとまることになる。
 $queryBuilderInstance->where([
@@ -418,21 +473,21 @@ $queryBuilderInstance->where([
     ['カラム名2', '比較演算子2', '比較する値2'],
     // 他の条件...
 ])
+// where()メソッドの最初の引数としてクロージャを渡しても、AND条件が()でまとまることになる。
+$users = User::query()
+    ->where('name', '=', 'John')
+    ->where(function (Builder $query) {
+        $query->where('votes', '>', 100)
+              ->orWhere('title', '=', 'Admin');
+    })
+    ->get();
 
 // orWhere()メソッドは基本的にwhere()メソッドと同じだが、チェーン化するとOR条件になる。
 // 二次元配列を渡して複数条件を指定すると、OR条件が()でまとまることになる。
+// 最初の引数としてクロージャを渡しても、OR条件が()でまとまることになる。
 $users = User::query()
     ->where('votes', '>', 100)
     ->orWhere('name', 'John')
-    ->get();
-
-// orWhereメソッドの最初の引数としてクロージャを渡しても、OR条件が()でまとまることになる。
-$users = User::query()
-    ->where('votes', '>', 100)
-    ->orWhere(function (Builder $query) {
-        $query->where('name', 'Abigail')
-              ->where('votes', '>', 50);
-    })
     ->get();
 
 // whereAny()とwhereAll()
@@ -478,6 +533,7 @@ $queryBuilderInstance->orWhereNotNull('カラム名')
 // カラムの値を日時と比較
 // 日付
 $queryBuilderInstance->whereDate('created_at', '<', '2023-12-31')
+$queryBuilderInstance->whereDate('date', Carbon::now())
 // 年
 $queryBuilderInstance->whereYear('created_at', '=', '2023')
 // 月
@@ -487,100 +543,85 @@ $queryBuilderInstance->whereDay('created_at', '=', '31')
 // 時間
 $queryBuilderInstance->whereTime('created_at', '<', '11:20:45')
 
+// 二つのカラムを比較。
+$queryBuilderInstance->whereColumn('created_at', '=', 'updated_at')
+$queryBuilderInstance->orWhereColumn('created_at', '=', 'updated_at')
+// where()メソッドと同様に、二次元配列を渡すこともできる。
+$users = User::query()
+    ->whereColumn([
+        ['first_name', '=', 'last_name'],
+        ['updated_at', '>', 'created_at'],
+    ])
+    ->get();
+
+// クエリの結果を特定のカラムで並べ替える。
+// 第一引数は並べ替えるカラム。
+// 第二引数は並べ替えの方向で、asc(昇順)かdesc(降順)。
+// 複数の列で並べ替えたい場合は、orderBy()メソッドをチェーン化する。
+$queryBuilderInstance->orderBy('カラム名', 'desc')
+// クエリの結果を特定のカラムで日付順に並べ替える。
+// oldest()メソッドは昇順。latest()メソッドは降順。
+// カラム名を省略すると、created_atカラムが適用される。
+$queryBuilderInstance->oldest('カラム名')
+$queryBuilderInstance->latest('カラム名')
+// ランダムに並べ替える。
+$queryBuilderInstance->inRandomOrder()
+// 既存の"order by"句をすべて削除する。
+$queryBuilderInstance->reorder()
+// orderBy()メソッドのようにカラムと方向を渡すと、既存の"order by"句をすべて削除してから、クエリにまったく新しい順序を適用できる。
+$queryBuilderInstance->reorder('カラム名', 'desc')
+
+// skip()、offset()は、何件目から取得するかを指定
+// take()、limit()は、最大何件取得するかを指定
+$queryBuilderInstance->skip(10)->take(5)
+$queryBuilderInstance->offset(5)->limit(10)
 
 
-// 6/25 ここまでやった
-
-
-whereColumn / orWhereColumn
-whereExists
-whereFullTextとorWhereFullText
-
-
-
-
-
-
-
-
+// ※保留
+// JOIN(結合)
+// UNION(結合)
 $queryBuilderInstance->whereNot()
 $queryBuilderInstance->whereJsonContains()
 $queryBuilderInstance->whereJsonLength()
-
-
-
-
-論理グループ化
-
-
-// 順序
-orderBy
-latest / oldest
-inRandomOrder
-reorder
-
-// グループ化
-groupBy / having
-havingBetween
+$queryBuilderInstance->whereExists()
+$queryBuilderInstance->whereFullText()
+$queryBuilderInstance->orWhereFullText()
+$queryBuilderInstance->groupBy()
+$queryBuilderInstance->having()
+$queryBuilderInstance->havingBetween()
+$queryBuilderInstance->when()
 ```
 
-```php
-<?php
-
-
-
-
-// 日付単位の条件を指定してフィルタをかける。
-// whereDateはwhereの日付特化版。
-// ※この場合の条件は、dateカラムが今日の日付のレコード。
-ModelClass::whereDate('date', Carbon::now())
-
-// 指定されたカラムでレコードを並び替える。
-ModelClass::orderBy('カラム名', 'ascまたはdesc')
-```
 ### クエリ実行メソッド
 ```php
 <?php
 // クエリビルダーインスタンスからクエリを実行して、実際の結果を取得するために使用する。
 
 $queryBuilderInstance->get(); // 全てのレコードを取得。戻り値はCollectionクラス。
-$queryBuilderInstance->first(); // 最初のレコードを取得。戻り値はModelインスタンス。無いときはnull
+$queryBuilderInstance->first(); // 最初のレコードを取得。戻り値はModelインスタンス。無いときはnullなのでissetで判定。
 $queryBuilderInstance->value('カラム名'); // レコードから単一の値を取得。戻り値はカラムの値。
 $queryBuilderInstance->find(3); // id列の値で単一のレコードを取得。
 $queryBuilderInstance->pluck('カラム名(バリュー)', 'カラム名(キー)※省略可'); // 第一引数をバリュー、第二引数(省略可)をキーとした配列を作ることができる。
 
-
-
-
-$queryBuilderInstance->count(); // レコードの件数を取得。
+$queryBuilderInstance->count(); // レコードの件数を取得。戻り値は整数値(int)。
 $queryBuilderInstance->max('カラム名'); // 指定カラムの最大値を取得。
 $queryBuilderInstance->min('カラム名'); // 指定カラムの最小値を取得。
 $queryBuilderInstance->avg('カラム名'); // 指定カラムの平均値を取得。
 $queryBuilderInstance->sum('カラム名'); // 指定カラムの合計値を取得。
 
-
-
-
 $queryBuilderInstance->exists(); // レコードが存在するかどうかをチェック。戻り値は真偽値(bool)。
 $queryBuilderInstance->doesntExist(); // exists()メソッドの逆。戻り値は真偽値(bool)。
 
 
-
-
-
-
+// ※保留
 $queryBuilderInstance->chunk();
 $queryBuilderInstance->chunkById();
 $queryBuilderInstance->lazy();
 $queryBuilderInstance->lazyById();
 $queryBuilderInstance->lazyByIdDesc();
-$queryBuilderInstance->xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx();
-$queryBuilderInstance->xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx();
-$queryBuilderInstance->xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx();
-$queryBuilderInstance->xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx();
-$queryBuilderInstance->xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx();
-
-
+$queryBuilderInstance->cursor();
+$queryBuilderInstance->firstOr();
+$queryBuilderInstance->firstOrFail();
 ```
 
 ### リレーションは関数として定義する。
@@ -624,7 +665,6 @@ $hasOneInstance->delete();
 // 第一引数に関連づけたいeloquentモデル、第二引数に中間テーブル名、第三引数に自分に向けられた外部テーブル、第四引数に相手に向けられた外部テーブルを定義します。
 // 第二引数以降は、省略可能です。
 ```
-
 
 
 ### アクセサとミューテタ
@@ -699,6 +739,16 @@ class Task extends Model
 https://bonoponz.hatenablog.com/entry/2020/10/06/%E3%80%90Laravel%E3%80%91Eloquent%E3%82%92%E4%BD%BF%E3%81%A3%E3%81%9F%E3%83%A2%E3%83%87%E3%83%AB%E3%82%92%E7%90%86%E8%A7%A3%E3%81%99%E3%82%8B
 
 https://tobilog.net/10364/
+
+
+
+### ソフトデリート
+### モデルの整理
+### モデルの複製
+### クエリスコープ
+### モデルの比較(isとisNotメソッド)
+### イベント
+
 
 <a id="シーダー"></a>
 ## シーダー
