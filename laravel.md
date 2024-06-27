@@ -1590,11 +1590,11 @@ public function show(Post $post)
 * ※app/Policiesディレクトリが存在しない場合、Laravelが作成する。
 * 命名例：Postモデルは、PostPolicyポリシークラスに対応する。
 
-生成コマンド
+生成コマンド  
 `php artisan make:policy PostPolicy --model=Post`
 
 #### ポリシーの登録
-* 作成したPolicyをAuthServiceProviderに登録する。  
+* 作成したPolicyをAppServiceProviderに登録する。  
 * Gate::policyメソッドを使用し、AppServiceProviderのbootメソッド内で、ポリシーと対応するモデルを登録できる。
 
 ```php
