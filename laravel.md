@@ -1522,18 +1522,18 @@ resources/lang/ja
 
 ### 基本
 主要な方法として、ゲートとポリシーがある。
-* ゲートは単独で制限をかけたいときに使う。
-* ポリシーはモデルごと、リソースコントローラーごとなど、まとめて制限をかけたいときに使う。
+* ゲートは主に、特定のモデルに関連していないユーザのアクションに関してアクセス制限を行う時に使用する。
+* ポリシーはある特定のモデルに対して行うアクション(作成、更新、削除、閲覧等）に関してアクセス制限を行う。そのため、モデルごとに個別の独立したPolicyファイルを作成する。
 2つの方法を組み合わせながら、ユーザー単位での情報アクセス制限を柔軟に実現することができる。
 
 ※おまけ：ミドルウェアという手段もあり、ルート設定の段階で制限をかけたいときに使う。
 
 
 ### ゲート
-Gate::defineメソッド  
+#### Gate::defineメソッド  
 ```php
 <?php
-// app/Providers/AuthServiceProvider.php
+// app\Providers\AppServiceProvider.php
 
 use Illuminate\Support\Facades\Gate;
 use App\Models\User;
@@ -1545,7 +1545,7 @@ public function boot(): void
 
     // Gate::defineメソッド
     // 特定のアクションに対する認可ロジックを定義するために使用される。
-    // 通常、AuthServiceProviderのbootメソッド内で定義される。
+    // 通常、AppServiceProviderクラスのbootメソッド内で定義される。
     // 第一引数は文字列で、定義する認可アクションの名前を指定する。
     // 認可アクションの名前について↓
     // 一意である必要がある。
@@ -1557,19 +1557,38 @@ public function boot(): void
     });
 }
 ```
-Gate::allowsメソッド  
-Gate::deniesメソッド  
+#### アビリティを認可するためのゲートメソッド。  
 ```php
 <?php
 
+// 第一引数：アクション名
+// 第二引数：モデルインスタンス
+
+// アビリティを認可するためのゲートメソッド（allows、denis、check、any、none、authorize、can、cannot）と認可Bladeディレクティブ（@can、@cannot、@canany）は、２番目の引数として配列を取れる。
+
+// 指定したアビリティが許可されているかどうかを確認する。
+// 許可されていればtrueを返す。
+Gate::allows('view-post', $post)
+// 指定したアビリティが拒否されているかどうかを確認する。
+// 拒否されていればtrueを返す。
+Gate::denies('view-post', $post)
+// 指定した一つ以上のアビリティが全て許可されているかどうかを確認する。
+// 全て許可されていればtrueを返す。
+Gate::check(['update-post', 'delete-post'], $post)
+// 指定した一つ以上のアビリティのうち、いずれかが許可されているかどうかを確認する。
+// 一つでも許可されていればtrueを返す。
+Gate::any(['update-post', 'delete-post'], $post)
+// 指定した一つ以上のアビリティが全て拒否されているかどうかを確認する。
+// 全て拒否されていればtrueを返す。
+Gate::none(['update-post', 'delete-post'], $post)
+// 指定したアビリティが許可されているかどうかを確認し、許可されていない場合は例外を投げる。
+// アクションが許可されていることを確実にする場合に便利。
+Gate::authorize('update', $post)
+
+// Gate::allowsメソッド()の使用例
 public function show(Post $post)
 {
-    // Gate::allowsメソッド  
     // 認証されているユーザーが特定のアクションを実行できるかどうかを確認するために使用される。
-    // 第一引数：アクション名
-    // 第二引数：モデルインスタンス
-    // 認可アクションが許可されている場合にtrueを返す。
-    // ※Gate::deniesメソッドは逆に、認可アクションが拒否されている場合にtrueを返す。
     // 認可が必要なアクションを実行する前に、コントローラ内でゲート認可メソッドを呼び出すのが一般的
     if (Gate::allows('view-post', $post)) {
         // 認可されている場合の処理
@@ -1580,6 +1599,8 @@ public function show(Post $post)
     }
 }
 ```
+#### ゲートチェックの割り込み
+特定のユーザーにすべての機能を付与したい場合がある。beforeメソッドを使用して、他のすべての認可チェックの前に実行するクロージャを定義できる。
 
 
 ### ポリシー
@@ -1658,16 +1679,71 @@ public function create(User $user): bool
 }
 ```
 
+#### ポリシーを使用したアクションの認可
+
+※とりあえずこの優先順位でやってみる
+
+##### 優先順位1.Gateファサード経由(authorizeメソッドを利用した制限)
+```php
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Http\Controllers\Controller;
+use App\Models\Post;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
+
+class PostController extends Controller
+{
+    public function update(Request $request, Post $post): RedirectResponse
+    {
+        // 通常、コントローラメソッド内で実行される。
+        // Gateファサードのauthorizeメソッドでいつでもアクションを認可できる。
+        // authorizeメソッドの第一引数はポリシーメソッド名に対応している。
+        // 第二引数には、モデルインスタンスを指定。
+        // アクションが認可されていない場合、authorizeメソッドはIlluminate\Auth\Access\AuthorizationException例外を投げ、Laravel例外ハンドラは自動的に403ステータスコードのHTTPレスポンスに変換する。
+        Gate::authorize('update', $post);
+
+        return redirect('/posts');
+    }
+
+    // ※モデルを必要としないアクション。
+    public function create(Request $request): RedirectResponse
+    {
+        // createなどの一部のポリシーメソッドはモデルインスタンスを必要としない。
+        // その場合、クラス名をauthorizeメソッドに渡す必要がある。
+        // クラス名は、アクションを認可するときに使用するポリシーを決定するために使用される。
+        Gate::authorize('create', Post::class);
+
+        return redirect('/posts');
+    }
+}
+```
 
 
 
+##### 優先順位2.ユーザーモデル経由
+２つの便利なメソッドcanとcannotが含まれています。
+canメソッドを利用した制限
+##### 優先順位3.ミドルウェア経由
+middleware(ミドルウェア)を利用した制限
+##### 優先順位4.Bladeテンプレート経由
+@canおよび@cannotディレクティブを使用
 
 
 
-
-
-
-
+※ControllerメソッドとPolicyメソッドは関連を持っており、自動で紐づけることもできるが、一旦保留。  
+|Controllerメソッド|Policyメソッド|
+|-|-|
+|index|viewAny|
+|show|view|
+|create|create|
+|store|create|
+|edit|update|
+|update|update|
+|delete|delete|
 
 
 
