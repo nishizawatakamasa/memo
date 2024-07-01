@@ -193,6 +193,12 @@ $table->tinyInteger('column_name'); // 1バイトの整数カラム
 $table->unsignedBigInteger('column_name'); // 符号なしの8バイト整数カラム
 $table->unsignedInteger('column_name'); // 符号なしの4バイト整数カラム
 
+// カラム定義 少数型
+// 合計○桁で小数点以下×桁の小数カラム
+// 合計桁数は初期値が10、最大値が65。
+// 小数点以下桁数は初期値が0、最大値が30。
+$table->decimal('column_name', 合計桁数int, 小数点以下桁数int); 
+
 // カラム定義 文字列型
 $table->string('column_name', 255); // 255文字までの文字列カラム
 $table->text('column_name'); // 通常のテキストデータ。最大おおよそ2万文字
@@ -318,12 +324,14 @@ class Folder extends Model
         'delayed' => false,
     ];
 }
+```
 
 
 ### モデルの新規作成コマンド  
 `php artisan make:model モデル名`  
 例：  
 `php artisan make:model Folder`  
+
 
 
 ### モデルの全ての属性とリレーションを確認できるコマンド   
@@ -403,6 +411,7 @@ ModelClass::create([
 // ホワイトリストの設定は$fillable、ブラックリストの設定は$guardedで、カラム名の配列で定義する。
 // fillableとguardedを両方定義することはできない。
 // 基本的には$fillabでいいかな。
+// 当然だが、idとcreated_atとupdated_atには不要
 protected $fillable = [
     'folder_id',
     'title',
@@ -759,6 +768,7 @@ Seederを使うと、データベースに初期データやテストデータ�
 `php artisan make:seeder シーダー名`  
 例：  
 `php artisan make:seeder FoldersTableSeeder`  
+`php artisan make:seeder UsersTableSeeder`  
 
 ### シーダーファイルの解説
 ```php
@@ -1313,21 +1323,34 @@ public function withValidator(Validator $validator): void
 
 ### 参考サイト
 [Laravel 11.x Bladeテンプレート](https://readouble.com/laravel/11.x/ja/blade.html)
+[Laravel 11.x ヘルパ](https://readouble.com/laravel/11.x/ja/helpers.html)
 
 
-### asset関数
-publicディレクトリ配下へのURLを生成する。
-例：  
+### ヘルパ関数
 ```php
 <?php
 
+// asset関数
+// publicディレクトリ配下へのURLを生成する。
 asset('css/styles.css')
 
-// ビューの中で呼び出す場合は、{{ }}をつける。
-{{ asset('css/styles.css') }}
+// url関数
+// ドメイン配下へのURLを生成する。
+url('/dashboard')
+
 ```
 
+### データの表示
+{{ }}で囲むことにより、Bladeビューに渡すデータを表示できる。  
+```php
+<?php
 
+// 変数の内容を表示
+{{ $name }}
+
+// 関数の結果をエコー
+{{ asset('css/styles.css') }}
+```
 
 ### レイアウト
 
@@ -1617,6 +1640,7 @@ public function show(Post $post)
 #### ポリシーの登録
 * 作成したPolicyをAppServiceProviderに登録する。  
 * Gate::policyメソッドを使用し、AppServiceProviderのbootメソッド内で、ポリシーと対応するモデルを登録できる。
+* AppServiceProvider.php中で紐付けされたPolicyは、自動検出される可能性のあるPolicyよりも優先的に扱われる。
 
 ```php
 <?php
