@@ -127,6 +127,10 @@ DB_COLLATION=utf8mb4_general_ci   # 追記：照合順序
 Migrationを使うと、テーブルの作成とテーブル構造の定義ができる。ただしデータを入れることはできない。  
 操作がコードとして残るので、データベースのバージョン管理のような役割も果たす。  
 
+### 参考サイト
+[Laravel 11.x マイグレーション](https://readouble.com/laravel/11.x/ja/migrations.html)
+
+
 ### マイグレーションファイルの新規作成コマンド  
 `php artisan make:migration create_テーブル名_table --create=テーブル名`  
 
@@ -135,7 +139,11 @@ Migrationを使うと、テーブルの作成とテーブル構造の定義が�
 `php artisan make:migration create_folders_table --create=folders`  
 
 
-### マイグレーションファイルの解説
+### マイグレーションの構造
+
+マイグレーションクラスには、upとdownの2つのメソッドを用意する。  
+upメソッドはデータベースに新しいテーブル、カラム、またはインデックスを追加するために使用する。  
+downメソッドでは、upメソッドによって実行する操作を逆にし、以前の状態へ戻す必要がある。  
 
 ```php
 <?php
@@ -164,6 +172,8 @@ return new class extends Migration
             $table->string('title', 20);
             $table->datetimes();
         });
+
+        // ※Schema::tableメソッドを使用すると既存のテーブルを更新できる。引数はSchema::createメソッドと同様。
     }
 
     // downメソッド
@@ -174,24 +184,40 @@ return new class extends Migration
         // Schema::dropIfExists()の引数は削除するテーブルの名前
         // 指定した名前のテーブルが存在する場合にそのテーブルを削除する。存在しない場合は何もしない。
         Schema::dropIfExists('folders');
+
+        // ※Schema::drop()でもいい。
+        // Schema::drop('folders');
     }
 };
 ```
 
 ### Blueprintクラスのインスタンスメソッドのうち、よく使われるもの
+
+※参考：「Laravel 11.x マイグレーション」ページの「利用可能なカラムタイプ」項目以降。
+
 ```php
 <?php
 // Blueprintクラスには、テーブルやカラムを定義するためのさまざまなインスタンスメソッドが用意されている。
 
 // カラム定義 整数型
-$table->id(); // 自動増分ID。ショートカットメソッド。内部的には$table->bigIncrements('id')と同じ。
-$table->bigInteger('column_name'); // 8バイトの整数カラム
-$table->integer('column_name'); // 4バイトの整数カラム
-$table->mediumInteger('column_name'); // 3バイトの整数カラム
-$table->smallInteger('column_name'); // 2バイトの整数カラム
-$table->tinyInteger('column_name'); // 1バイトの整数カラム
-$table->unsignedBigInteger('column_name'); // 符号なしの8バイト整数カラム
-$table->unsignedInteger('column_name'); // 符号なしの4バイト整数カラム
+$table->tinyInteger('column_name'); // TINYINT(-128~127)
+$table->smallInteger('column_name'); // SMALLINT(-32768~32767)
+$table->mediumInteger('column_name'); // MEDIUMINT(約-838万~約838万)
+$table->integer('column_name'); // INT(約-21億~約21億)
+$table->bigInteger('column_name'); // BIGINT(約-922京~約922京)
+
+$table->unsignedTinyInteger('column_name'); // UNSIGNED TINYINT(0~255)
+$table->unsignedSmallInteger('column_name'); // UNSIGNED SMALLINT(0~65535)
+$table->unsignedMediumInteger('column_name'); // UNSIGNED MEDIUMINT(0~約1677万)
+$table->unsignedInteger('column_name'); // UNSIGNED INT(0~約42億)
+$table->unsignedBigInteger('column_name'); // UNSIGNED BIGINT(0~約1844京)
+
+$table->tinyIncrements('id'); // 自動増分する主キーカラムを作成。UNSIGNED TINYINT
+$table->smallIncrements('id'); // 自動増分する主キーカラムを作成。UNSIGNED SMALLINT
+$table->mediumIncrements('id'); // 自動増分する主キーカラムを作成。UNSIGNED MEDIUMINT
+$table->increments('id'); // 自動増分する主キーカラムを作成。UNSIGNED INT
+$table->bigIncrements('id'); // 自動増分する主キーカラムを作成。UNSIGNED BIGINT
+$table->id(); // $table->bigIncrements('id')のエイリアス。簡潔に書ける。
 
 // カラム定義 少数型
 // 合計○桁で小数点以下×桁の小数カラム
@@ -200,49 +226,50 @@ $table->unsignedInteger('column_name'); // 符号なしの4バイト整数カラ
 $table->decimal('column_name', 合計桁数int, 小数点以下桁数int); 
 
 // カラム定義 文字列型
-$table->string('column_name', 255); // 255文字までの文字列カラム
-$table->text('column_name'); // 通常のテキストデータ。最大おおよそ2万文字
-$table->mediumText('column_name'); // 大きめのテキストデータ。最大おおよそ500万文字
-$table->longText('column_name'); // 非常に大きなテキストデータ。最大おおよそ14億文字
+
+// VARCHAR(0~65535バイト)。
+// 第二引数で最大文字数を指定(省略すると255)
+// 長い文にはあまり適さない。
+$table->string('column_name', $length = 100); 
+$table->tinyText('column_name'); // TINYTEXT(0~255バイト)
+$table->text('column_name'); // TEXT(0~65535バイト)
+$table->mediumText('column_name'); // MEDIUMTEXT(0~16777215バイト)
+$table->longText('column_name'); // LONGTEXT(0~4294967295バイト)
 
 // カラム定義 日時型
-$table->date('column_name'); // 日付カラム
+$table->time('column_name', $precision = 0); // TIME(時刻)
 $table->dateTime('column_name', $precision = 0); // 日時カラム
-$table->time('column_name', $precision = 0); // 時間カラム
-$table->timestamp('column_name', $precision = 0); // タイムスタンプカラム
-$table->timestamps($precision = 0); // created_at と updated_at カラムを追加
-$table->softDeletes($precision = 0); // deleted_at カラムを追加
+$table->date('column_name'); // 日付カラム
+$table->year('column_name'); // YEAR(年。フォーマットはYYYY)
+$table->datetimes(); // created_atとupdated_atの2列を作成する。
+$table->softDeletes('deleted_at', $precision = 0); // deleted_at カラムを追加
 
 // カラム定義 ブール型
-$table->boolean('column_name'); // ブールカラム
-
-// カラム定義 その他
-$table->binary('column_name'); // バイナリデータカラム
-$table->float('column_name', $total = 8, $places = 2); // 浮動小数点カラム
-$table->decimal('column_name', $total = 8, $places = 2); // 固定小数点カラム
-$table->json('column_name'); // JSONデータカラム
-$table->jsonb('column_name'); // JSONBデータカラム
-
-// インデックスを定義するメソッド
-$table->primary('column_name'); // 主キーを定義
-$table->unique('column_name'); // ユニークインデックスを定義
-$table->index('column_name'); // 標準インデックスを定義
+$table->boolean('column_name'); // 真偽値
 
 // 外部キーを定義するメソッド
-// 子テーブルのfolder_idカラムが、常にfoldersテーブルの有効なidを参照することを強制
-// 子テーブルにある各レコードのfolder_idは、必ずfoldersテーブルに存在するidでなければならなくなる。
-$table->foreign('folder_id')->references('id')->on('folders');
+// 子テーブルのuser_idカラムが、常にusersテーブルの有効なidを参照することを強制
+// 子テーブルにある各レコードのuser_idは、必ずusersテーブルに存在するidでなければならなくなる。
+$table->foreign('user_id')->references('id')->on('users');
+// 上記の外部キー定義メソッドを簡潔に書く方法
+// ※カラム修飾子は、constrainedメソッドの前に呼び出す必要がある。
+$table->foreignId('user_id')->constrained('users', 'id');
 
-// その他の便利なメソッド
-$table->increments('column_name'); // 自動増分の主キーを定義（整数）
-$table->bigIncrements('column_name'); // 自動増分の主キーを定義（大きな整数）
-$table->rememberToken(); // remember_tokenカラムを追加（Laravel認証用）
-$table->nullableMorphs('morphable'); // typeとidカラムを追加（多形関係用）
-$table->uuid('column_name'); // UUIDカラムを追加
+// カラム定義 その他
+$table->rememberToken(); // 現在の「ログイン持続」認証トークンを格納。NULL許容。最大100文字。
+$table->json('column_name'); // JSON
+$table->jsonb('column_name'); // JSONB
 
-// カラムの属性を変更するメソッド
-$table->nullable(); // カラムをNULL許可にする
-$table->default($value); // デフォルト値を設定する
+// カラム修飾子
+->comment('好きなコメント(日本語カラム名など)') // カラムへコメントを追加（MySQL／PostgreSQL）
+->default($value) // デフォルト値を設定する。
+->nullable() // カラムをNULL許容にする(デフォルトでは拒否)。
+
+// インデックスを作成するメソッド
+// インデックスを作成するとき、Laravelはテーブル、カラム名、およびインデックスタイプに基づいてインデックス名を自動的に生成する。
+$table->primary('column_name'); // 主キーを追加
+$table->unique('column_name'); // 一意のインデックスを追加
+$table->index('column_name'); // 標準インデックスを追加
 ```
 
 ### マイグレーションの実行コマンド  
@@ -1322,7 +1349,7 @@ public function withValidator(Validator $validator): void
 
 
 ### 参考サイト
-[Laravel 11.x Bladeテンプレート](https://readouble.com/laravel/11.x/ja/blade.html)
+[Laravel 11.x Bladeテンプレート](https://readouble.com/laravel/11.x/ja/blade.html)  
 [Laravel 11.x ヘルパ](https://readouble.com/laravel/11.x/ja/helpers.html)
 
 
@@ -1357,6 +1384,64 @@ url('/dashboard')
 #### コンポーネント
 独立したUI要素を管理したり、複数のビューで再利用する場合に適している。  
 ※ユーザー認証システムのBreezeでも使う。
+
+コンポーネントの作成には2つのアプローチがある。
+* クラスベースのコンポーネント(Bladeテンプレートとクラスを持つ)
+* 匿名コンポーネント(Bladeテンプレートのみを持つ)
+
+とりあえず匿名コンポーネントでやってみる。
+
+匿名コンポーネントを作成するコマンド  
+resources/views/components/forms/input.blade.phpへBladeファイルを作成するコマンド。  
+`php artisan make:component forms.input --view`  
+resources/views/components/button.blade.phpへBladeファイルを作成するコマンド。  
+`php artisan make:component button --view`  
+```php
+<?php
+
+// resources/views/components/forms/input.blade.phpファイルをコンポーネントとしてレンダするタグ
+<x-forms.input />
+// resources/views/components/button.blade.phpファイルをコンポーネントとしてレンダするタグ
+<x-button />
+
+// コンポーネントとしてレンダする時、タグで囲んだ中にコンテンツを挿入する場合がある。
+<x-forms.input>
+    あいうえお
+</x-forms.input>
+// そのコンテンツは、コンポーネントファイル内の{{ $slot }}部分に渡される。
+<div>
+    {{ $slot }} // あいうえお
+</div>
+
+
+// x-slotタグを使用して、名前付きスロットのコンテンツを定義できる。
+// 明示的にx-slotタグ内にないコンテンツは、通常通り$slot変数のコンポーネントに渡される。
+<x-forms.input>
+    <x-slot name="title">
+        タイトル?
+    </x-slot>
+    <x-slot:title>
+        タイトル
+    </x-slot>
+    あいうえお
+</x-forms.input>
+
+// コンポーネントファイル内
+<div>
+    {{ $title }} // タイトル
+    <br>
+    {{ $slot }} // あいうえお
+</div>
+```
+
+
+
+
+
+
+
+
+
 
 #### テンプレート継承
 各ページが同じレイアウトや構造を共有し、一部だけを変更する場合に適している。  
