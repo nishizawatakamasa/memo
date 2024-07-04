@@ -22,6 +22,7 @@
     * [Breeze](#Breeze)
     * [Breezejp](#Breezejp)
     * [TailwindCSS](#TailwindCSS)
+    * [ログイン中のユーザの情報を取得](#ログイン中のユーザの情報を取得)
     * [ユーザーアクションの認可](#ユーザーアクションの認可)
 
 
@@ -1618,6 +1619,45 @@ resources/lang/ja
 * [Tailwind CSSで独自クラス（コンポーネント）を作成する](https://zenn.dev/takashi5816/articles/7d9d14a17a3ec0)
 * [初めてでもわかるTailwind CSS入門 基礎編](https://reffect.co.jp/html/tailwindcss-for-beginners)
 * [Vite + Tailwind CSS + Laravel Breezeを使った開発環境の構築](https://zenn.dev/nenenemo/articles/46d43854cd01c5)
+
+
+
+<a id="ログイン中のユーザの情報を取得"></a>
+## ログイン中のユーザの情報を取得
+
+
+```php
+<?php
+
+use Illuminate\Support\Facades\Auth;
+
+
+Auth::user()はログインしているユーザのインスタンスを返す
+未ログイン時にはnullを返します。
+そのため未ログイン時の場合は、nullオブジェクトからidプロパティを取得しようとすることになるので、エラーが発生します。
+
+Auth::id()
+対してAuth::id()は未ログイン時にnullを返す点では同じですが、こちらは直接ログインユーザのidを返します。
+
+ログイン時はログインユーザのidを、未ログイン時はnullを返すだけなので、エラーが起こる心配はありません。（nullの場合の処理を行う必要性はあります）
+
+そのため、単にユーザのidを取得したいというケースであれば、Auth::id()の方が適切だと考えられます。
+
+Auth::user()->は完全なモデルインスタンスを返すので、id以外の他の属性（年齢や職業など）に同時にアクセスしたいときに便利です。
+
+
+
+```
+
+
+
+
+
+
+
+
+
+
 
 
 
