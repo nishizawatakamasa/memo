@@ -10,6 +10,7 @@
     * [サーバー起動](#サーバー起動)
     * [データベース等の設定](#データベース等の設定)
     * [XAMPPでMySQLが起動しない時の対処法](#XAMPPでMySQLが起動しない時の対処法)
+    * [CarbonImmutable（日付操作）](#CarbonImmutable（日付操作）)
     * [enum（列挙型）](#enum（列挙型）)
     * [マイグレーション](#マイグレーション)
     * [モデル](#モデル)
@@ -114,6 +115,16 @@ DB_COLLATION=utf8mb4_general_ci   # 追記：照合順序
 管理者として実行したPowerShellで以下のコマンドを実行。   
 `net stop mysql82`  
 ※82はmysqlのバージョンが8.2の場合。
+
+
+<a id="CarbonImmutable（日付操作）"></a>
+## CarbonImmutable（日付操作）
+
+### 参考サイト
+[Carbonではなく「CarbonImmutable」を使う](https://qiita.com/kbys-fumi/items/b923cdfb09c8f5c35fce)  
+[format()メソッドとフォーマット文字](https://techplay.jp/column/596)
+
+
 
 
 <a id="enum（列挙型）"></a>
