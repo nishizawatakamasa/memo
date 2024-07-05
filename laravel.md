@@ -120,6 +120,8 @@ DB_COLLATION=utf8mb4_general_ci   # 追記：照合順序
 <a id="CarbonImmutable（日付操作）"></a>
 ## CarbonImmutable（日付操作）
 
+CarbonPeriod
+
 ### 参考サイト
 [Carbonではなく「CarbonImmutable」を使う](https://qiita.com/kbys-fumi/items/b923cdfb09c8f5c35fce)  
 [format()メソッドとフォーマット文字](https://techplay.jp/column/596)
@@ -1226,6 +1228,8 @@ public function store(Request $request)
 
     // ※$request->のあとにある変数名は、HTMLのタグのname属性で付けた名前。
     $folder->title = $request->title;
+    // boolean()メソッドを使うと、真偽地に変換できる。
+    $folder->title = $request->boolean('title');
 
     $folder->save();
     return redirect()->route('tasks.index', [
