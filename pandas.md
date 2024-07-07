@@ -154,7 +154,7 @@ pandasにはデータ型(dtype)が存在するが、int,str,floatのようなPyt
 ### 基本
 |||
 |-|-|
-|df = df_left.merge(df_right, on='キーとする列の名前', how='left', copy=False)|標準的なマージ|
+|df = df_left.merge(df_right, on='キーとする列の名前', how='left')|標準的なマージ|
 
 ### 結合処理の基本的な挙動。
 共通するキーを持つ行同士の全組み合わせが生成される。
@@ -177,8 +177,6 @@ pandasにはデータ型(dtype)が存在するが、int,str,floatのようなPyt
 |how='right'|innerに加えて、rightにしかキーが存在しない行も残る。|
 |how='outer'|innerに加えて、leftにしかキーが存在しない行とrightにしかキーが存在しない行が残る。<br>(要するにleftとrightのすべての行が残る。)|
 
-### 引数copy
-copy=Falseとするとcopyが生成されず、メモリを節約できる。
 
 ### 参考サイト
 * [pandas.DataFrameを結合するmerge, join（列・インデックス基準）](https://note.nkmk.me/python-pandas-merge-join/)  
