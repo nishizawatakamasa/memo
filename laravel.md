@@ -11,6 +11,7 @@
     * [データベース等の設定](#データベース等の設定)
     * [XAMPPでMySQLが起動しない時の対処法](#XAMPPでMySQLが起動しない時の対処法)
     * [CarbonImmutable（日付操作）](#CarbonImmutable（日付操作）)
+    * [nullsafe演算子](#nullsafe演算子)
     * [enum（列挙型）](#enum（列挙型）)
     * [マイグレーション](#マイグレーション)
     * [モデル](#モデル)
@@ -120,13 +121,33 @@ DB_COLLATION=utf8mb4_general_ci   # 追記：照合順序
 <a id="CarbonImmutable（日付操作）"></a>
 ## CarbonImmutable（日付操作）
 
-CarbonPeriod
-
 ### 参考サイト
-[Carbonではなく「CarbonImmutable」を使う](https://qiita.com/kbys-fumi/items/b923cdfb09c8f5c35fce)  
-[format()メソッドとフォーマット文字](https://techplay.jp/column/596)
+[Carbonではなく「CarbonImmutable」を使う](https://qiita.com/kbys-fumi/items/b923cdfb09c8f5c35fce)
 
 
+```php
+<?php
+use Carbon\CarbonImmutable;
+
+// 現在の日時を'Y-m-d'の形式で取得する。例：'2024-07-09'
+CarbonImmutable::now()->toDateString()
+
+// 保留
+CarbonPeriod
+```
+
+
+<a id="nullsafe演算子"></a>
+## nullsafe演算子
+
+```php
+<?php
+
+// null評価のインスタンスから通常のアロー演算子でメソッドやプロパティを呼ぶと、エラーになる。
+$todayWorkLog->activities
+// nullsafe演算子を使用すると、エラーにはならずnullが返される。
+$todayWorkLog?->activities
+```
 
 
 <a id="enum（列挙型）"></a>
@@ -460,6 +481,28 @@ protected $fillable = [
 // 一応、$guardedを空の配列として定義すると、すべての属性を一括割り当て可能にできる。
 protected $guarded = [];
 
+
+// 新しいインスタンス(レコード)の「更新か作成」を簡潔に書く方法。
+// まず第一引数の配列で条件を指定。
+// 条件に一致するレコードが存在する場合：そのレコード(インスタンス)を第二引数の配列を元に更新。
+// 存在しない場合、第一引数の配列と第二引数の配列を元に新しいレコード(インスタンス)を作成。
+// 'created_at'(作成日)と'updated_at'(更新日)は自動的に追加される。
+ModelClass::updateOrCreate(
+    [
+        'date'=> $date, // 年月日
+        'user_id'=> $userId, // 投稿利用者ID
+    ],
+    [
+        'user_name' => $userName, // 利用者名
+        'visiting_time' => $request->visiting_time, // 来所時間
+        'leaving_time' => $request->leaving_time, // 退所時間
+        'activities' => $request->activities, // 活動内容
+        'physical_condition' => $request->physical_condition, // 体調
+        'mentality' => $request->mentality, // 情緒
+        'lunch' => $request->boolean('lunch'), // 昼食
+    ]
+);
+
 // モデルに関連しているすべてのデータベースレコードを削除する。
 // モデルの関連テーブルの自動増分IDはリセットされる。
 ModelClass::truncate();
@@ -583,7 +626,7 @@ $queryBuilderInstance->orWhereNotNull('カラム名')
 // カラムの値を日時と比較
 // 日付
 $queryBuilderInstance->whereDate('created_at', '<', '2023-12-31')
-$queryBuilderInstance->whereDate('date', Carbon::now())
+$queryBuilderInstance->whereDate('date', CarbonImmutable::now()->toDateString())
 // 年
 $queryBuilderInstance->whereYear('created_at', '=', '2023')
 // 月
