@@ -8,7 +8,7 @@
     * [インストール](#インストール)
     * [gitからcloneする時](#gitからcloneする時)
     * [サーバー起動](#サーバー起動)
-    * [データベース等の設定](#データベース等の設定)
+    * [.env.exampleの設定](#.env.exampleの設定)
     * [XAMPPでMySQLが起動しない時の対処法](#XAMPPでMySQLが起動しない時の対処法)
     * [CarbonImmutable（日付操作）](#CarbonImmutable（日付操作）)
     * [nullsafe演算子](#nullsafe演算子)
@@ -82,14 +82,21 @@ git cloneしてきたLaravelプロジェクトにはvendorディレクトリと.
 ### サーバー起動コマンド  
 `php artisan serve`
 
-<a id="データベース等の設定"></a>
-## データベース等の設定
-### .env.example
+<a id=".env.exampleの設定"></a>
+## .env.exampleの設定
+
+### .env.exampleファイル
 ```
-DB_CONNECTION=mysql
-DB_HOST=127.0.0.1
-DB_PORT=3306
-DB_DATABASE=first_db
+APP_TIMEZONE=Asia/Tokyo #タイムゾーン設定
+
+APP_LOCALE=ja #言語設定
+APP_FALLBACK_LOCALE=en
+APP_FAKER_LOCALE=ja_JP #フェイクデータの言語設定
+
+DB_CONNECTION=mysql #接続するRDBMS名
+DB_HOST=127.0.0.1 #使用するホスト名
+DB_PORT=3306 #使用するポート番号
+DB_DATABASE=first_db  #接続するデータベース名
 DB_USERNAME=root
 DB_PASSWORD=
 DB_CHARSE=utf8mb4          # 追記：文字コード設定
@@ -99,10 +106,20 @@ DB_COLLATION=utf8mb4_general_ci   # 追記：照合順序
 ### .env.exampleの設定を.envにコピーする。  
 `cp .env.example .env`
 
+### config/app.phpファイル
+```
+<!-- 解説 -->
+<!-- .envファイルのAPP_TIMEZONEに設定があればそちらを採用。なければ第二引数の'UTC'にする。 -->
+'timezone' => env('APP_TIMEZONE', 'UTC'),
+```
+
 ### config\database.php
 ```
-'charset' => env('DB_CHARSET', 'utf8mb4'),
-'collation' => env('DB_COLLATION', 'utf8mb4_general_ci'),
+'mysql' => [
+    'charset' => env('DB_CHARSET', 'utf8mb4'),
+    'collation' => env('DB_COLLATION', 'utf8mb4_general_ci'),
+
+],
 ```
 
 <a id="XAMPPでMySQLが起動しない時の対処法"></a>
@@ -118,6 +135,7 @@ DB_COLLATION=utf8mb4_general_ci   # 追記：照合順序
 `net stop mysql82`  
 ※82はmysqlのバージョンが8.2の場合。
 
+mysqld.exeが動いていた場合はタスクマネージャーで終了させる。
 
 <a id="CarbonImmutable（日付操作）"></a>
 ## CarbonImmutable（日付操作）
