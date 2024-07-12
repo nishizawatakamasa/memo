@@ -362,7 +362,7 @@ Laravelが提供するデータベース操作方法は以下の3つ。
 * Modelクラス1つがテーブル1つに相当。
 * Modelインスタンスはレコードに相当。
 * Modelインスタンスの各インスタンス変数は、その行のフィールドデータに相当。
-* Collectionクラスは複数行分のデータに相当(Modelインスタンスを複数格納する配列のようなクラス)。  
+* Collectionは複数行分のデータに相当(Modelインスタンスを複数格納する配列のようなもの)。  
 * テーブルの各レコードをModelインスタンスとして操作する。  
 
 ※デフォルトでは、クラスはクラス名の複数形が名前になっているテーブルと紐づく。  
@@ -476,11 +476,11 @@ $modelInstance->fill();
 ```php
 <?php
 // 全レコードを取得
-ModelClass::all(); // 戻り値はCollectionクラス
+ModelClass::all(); // 戻り値はCollection
 
 // 主キーで指定したレコードを取得
 ModelClass::find(1); // 戻り値はModelインスタンス。無いときはnullなのでissetで判定。
-ModelClass::find([1, 2, 3]); // 戻り値はCollectionクラス。
+ModelClass::find([1, 2, 3]); // 戻り値はCollection。
 
 // 新しいインスタンス(レコード)の作成、追加、保存を簡潔に書く方法。
 // 'created_at'(作成日)と'updated_at'(更新日)は自動的に追加される。
@@ -709,7 +709,7 @@ $queryBuilderInstance->when()
 <?php
 // クエリビルダーインスタンスからクエリを実行して、実際の結果を取得するために使用する。
 
-$queryBuilderInstance->get(); // 全てのレコードを取得。戻り値はCollectionクラス。
+$queryBuilderInstance->get(); // 全てのレコードを取得。戻り値はCollection。
 $queryBuilderInstance->first(); // 最初のレコードを取得。戻り値はModelインスタンス。無いときはnullなのでissetで判定。
 $queryBuilderInstance->value('カラム名'); // レコードから単一の値を取得。戻り値はカラムの値。
 $queryBuilderInstance->find(3); // id列の値で単一のレコードを取得。
@@ -734,6 +734,18 @@ $queryBuilderInstance->lazyByIdDesc();
 $queryBuilderInstance->cursor();
 $queryBuilderInstance->firstOr();
 $queryBuilderInstance->firstOrFail();
+```
+
+### Eloquent Collectionメソッド
+[Eloquent Collectionメソッド](https://readouble.com/laravel/11.x/ja/eloquent-collections.html)  
+[Laravelの基本Collectionから継承されるメソッド。](https://readouble.com/laravel/11.x/ja/collections.html#available-methods)
+```php
+<?php
+// クエリ実行等の手段で取得したCollectionから呼べるメソッド。
+
+// 指定したカラムの値ごとにレコードをグループ化
+// 戻り値は、指定したカラムの値をキーとし、その値に対応するレコードのCollectionを持つ連想配列のようなCollection
+$collection->groupBy('カラム名');
 ```
 
 ### リレーションは関数として定義する。
