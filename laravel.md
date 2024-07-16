@@ -874,6 +874,7 @@ $books = Book::with('author:id,name,book_id')->get();
 Warning! この機能を使用するときは、取得するカラムのリストで常にidカラムと関連する外部キーカラムを含める必要があります。
 
 ```
+[7/17参考サイトメモ](https://qiita.com/tomeito/items/d51ca717ca48786862ec)
 
 
 ### アクセサとミューテタ
