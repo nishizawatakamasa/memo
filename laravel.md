@@ -12,7 +12,7 @@
     * [XAMPPでMySQLが起動しない時の対処法](#XAMPPでMySQLが起動しない時の対処法)
     * [CarbonImmutable（日付操作）](#CarbonImmutable（日付操作）)
     * [nullsafe演算子](#nullsafe演算子)
-    * [enum（列挙型）](#enum（列挙型）)
+    * [Enum](#Enum)
     * [マイグレーション](#マイグレーション)
     * [モデル](#モデル)
     * [シーダー](#シーダー)
@@ -169,10 +169,43 @@ $todayWorkLog?->activities
 ```
 
 
-<a id="enum（列挙型）"></a>
-## enum（列挙型）
+<a id="Enum"></a>
+## Enum
 
-(仮)複数の定数をまとめて管理できる機能。
+### 基本
+複数の定数をまとめて管理できる機能。
+
+### Enumを作成するコマンド。
+`php artisan make:enum EnumName`  
+
+オプション  
+`--string`：string型のBacked Enumを作成  
+`--int`：int型のBacked Enumを作成  
+
+実行すると、app配下にEnumが作成される。  
+app/Enumsディレクトリを作っておくと、app/Enums配下に作成先が変わる。
+
+### Enumの例
+```php
+<?php
+
+namespace App\Enums;
+
+enum UserType: string
+{
+    case WELFARE_USER = '利用者';
+    case WELFARE_STAFF = '職員';
+}
+```
+### Enumの値を呼び出す
+```php
+<?php
+
+use App\Enums\UserType;
+
+UserType::WELFARE_USER->value // '利用者'
+UserType::WELFARE_STAFF->value // '職員'
+```
 
 
 <a id="マイグレーション"></a>
@@ -578,25 +611,20 @@ $queryBuilderInstance->distinct();
 // 比較演算子の省略は'='の使用と同義。
 // where()メソッドをチェーン化するとAND条件になる。
 $queryBuilderInstance->where('カラム名', '比較演算子', '比較する値')
-// 二次元配列を渡すことで、複数条件を指定することもできる。
-// ※AND条件が()でまとまることになる。
-$queryBuilderInstance->where([
-    ['カラム名1', '比較演算子1', '比較する値1'],
-    ['カラム名2', '比較演算子2', '比較する値2'],
-    // 他の条件...
-])
-// where()メソッドの最初の引数としてクロージャを渡しても、AND条件が()でまとまることになる。
+
+// where()メソッドの最初の引数として無名関数を渡すと、関数内の条件を()でまとめることができる。
+// use()を使用して関数内で使いたい変数を渡せる。※use()は定義された時の変数を参照することに注意！
 $users = User::query()
     ->where('name', '=', 'John')
-    ->where(function (Builder $query) {
+    ->where(function (Builder $query) use($hoge) {
         $query->where('votes', '>', 100)
               ->orWhere('title', '=', 'Admin');
     })
     ->get();
 
-// orWhere()メソッドは基本的にwhere()メソッドと同じだが、チェーン化するとOR条件になる。
-// 二次元配列を渡して複数条件を指定すると、OR条件が()でまとまることになる。
-// 最初の引数としてクロージャを渡しても、OR条件が()でまとまることになる。
+// orWhere()メソッド
+// チェーン化するとOR条件になること以外は、基本的にwhere()メソッドと同じ。
+// where()メソッド同様、最初の引数として無名関数を渡し、関数内の条件を()でまとめることができる。
 $users = User::query()
     ->where('votes', '>', 100)
     ->orWhere('name', 'John')
@@ -1507,9 +1535,6 @@ resources/views/components/button.blade.phpへBladeファイルを作成する�
 // x-slotタグを使用して、名前付きスロットのコンテンツを定義できる。
 // 明示的にx-slotタグ内にないコンテンツは、通常通り$slot変数のコンポーネントに渡される。
 <x-forms.input>
-    <x-slot name="title">
-        タイトル?
-    </x-slot>
     <x-slot:title>
         タイトル
     </x-slot>
@@ -1634,6 +1659,7 @@ node_modulesディレクトリは通常Gitの管理下におかないため、�
 // ->group(function () { ... })メソッドは複数のルートをグループ化する。
 // ※group()メソッドの引数は無名関数で、その中に個々のルート定義を記述する。
 // ※グループ内のすべてのルートに対して、共通の設定が適用される。
+// ※グループは入れ子にもできる。
 Route::middleware('guest')->group(function () {
     // 認証されていないユーザーのみがアクセスできるルート
     
@@ -1657,6 +1683,55 @@ Route::middleware('auth')->group(function () {
 Route::get('/dashboard', function () {
     return view('dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
+```
+
+### ミドルウェアを自作する
+ミドルウェアを作成するコマンド
+`php artisan make:middleware クラス名`
+
+実行するとapp/Http/Middleware配下にクラスが作られる。
+
+### ミドルウェアの例
+```php
+<?php
+
+namespace App\Http\Middleware;
+
+use Closure;
+use Illuminate\Http\Request;
+use Symfony\Component\HttpFoundation\Response;
+use App\Enums\UserType;
+use Illuminate\Support\Facades\Auth;
+
+class WelfareStaff
+{
+    // handleメソッド内にミドルウェアの条件を定義
+    public function handle(Request $request, Closure $next): Response
+    {
+        if (Auth::user()->user_type === UserType::WELFARE_STAFF->value) {
+            // 条件を満たしていた場合、ミドルウェアを通過させる。
+            // $requestを使用して$nextコールバックを呼び出す。
+            return $next($request);
+        }
+
+        // 条件を満たしていない場合、ミドルウェアを通過させない。
+        // 任意のページにリダイレクトする。
+        return redirect()->route('dashboard');
+    }
+}
+```
+
+### ミドルウェアの使い方
+```php
+<?php
+// Route::middleware()メソッドを使用
+
+// 単一のミドルウェアを適用
+Route::middleware('auth')
+// 自作のミドルウェアを適用
+Route::middleware(WelfareUser::class)
+// 複数のミドルウェアを適用(配列で指定)
+Route::middleware(['auth', 'verified', WelfareUser::class])
 ```
 
 
@@ -1775,31 +1850,66 @@ Auth::user()->は完全なモデルインスタンスを返すので、id以外�
 ### ゲート
 #### Gate::defineメソッド  
 ```php
-<?php
 // app\Providers\AppServiceProvider.php
+<?php
 
+namespace App\Providers;
+
+use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\Gate;
 use App\Models\User;
-use App\Models\Post;
+use App\Enums\UserType;
 
-public function boot(): void
+class AppServiceProvider extends ServiceProvider
 {
-    $this->registerPolicies();
 
-    // Gate::defineメソッド
-    // 特定のアクションに対する認可ロジックを定義するために使用される。
-    // 通常、AppServiceProviderクラスのbootメソッド内で定義される。
-    // 第一引数は文字列で、定義する認可アクションの名前を指定する。
-    // 認可アクションの名前について↓
-    // 一意である必要がある。
-    // 後でGate::allowsやGate::deniesメソッドを使って認可チェックを行うときに使用される。
-    // 投稿の閲覧権限を定義するなら'view-post'、投稿の編集権限を定義するなら'edit-post'といったように、説明的でわかりやすい名前を付ける。
-    Gate::define('view-post', function (User $user, Post $post) {
-        // 認可ロジック
-        return $user->id === $post->user_id; // trueまたはfalse
-    });
+    public function register(): void
+    {
+        //
+    }
+
+    public function boot(): void
+    {
+        // Gate::defineメソッド
+        // 特定のアクションに対する認可ロジックを定義するために使用される。
+        // 通常、AppServiceProviderクラスのbootメソッド内で定義される。
+        // 第一引数は文字列で、定義する認可アクションの名前を指定する。
+        // 認可アクションの名前について↓
+        // 一意である必要がある。
+        // 後でGate::allowsやGate::deniesメソッドを使って認可チェックを行うときに使用される。
+        // 投稿の閲覧権限を定義するなら'view-post'、投稿の編集権限を定義するなら'edit-post'といったように、説明的でわかりやすい名前を付ける。
+        Gate::define('welfare_user', function (User $user) {
+            // 認可ロジック
+            // 真偽値を返す
+            return ($user->user_type === UserType::WELFARE_USER->value);
+        });
+
+        Gate::define('welfare_staff', function (User $user) {
+            return ($user->user_type === UserType::WELFARE_STAFF->value);
+        });
+    }
 }
 ```
+#### Bladeテンプレートを経由した認可
+```php
+<?php
+// @canディレクティブを使用
+// 引数に使用したい認可アクションの名前を渡す
+@can('welfare-user')
+    //'welfare-user'の戻り値がtrueの場合の処理
+@elsecan('welfare-staff')
+    //'welfare-user'の戻り値がfalseで、'welfare-staff'の戻り値がtrueの場合の処理
+@else
+    //'welfare-user'の戻り値も'welfare-staff'の戻り値もfalseの場合の処理
+@endcan
+
+// 複数版
+@canany(['update', 'view', 'delete'])
+@elsecanany(['create'])
+@endcanany
+```
+
+
 #### アビリティを認可するためのゲートメソッド。  
 ```php
 <?php
