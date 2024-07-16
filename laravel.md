@@ -816,6 +816,63 @@ $hasOneInstance->delete();
 // 多対多を定義するには、belongsToManyメソッドを使用します。
 // 第一引数に関連づけたいeloquentモデル、第二引数に中間テーブル名、第三引数に自分に向けられた外部テーブル、第四引数に相手に向けられた外部テーブルを定義します。
 // 第二引数以降は、省略可能です。
+
+------------------------------------------------------------
+------------------------------------------------------------
+------------------------------------------------------------
+------------------------------------------------------------
+
+
+
+// すべての関係はクエリビルダとしても機能する
+
+// モデルのインスタンスメソッドとして定義
+public function comments(): HasMany
+{
+    return $this->hasMany(Comment::class, 'foreign_key', 'local_key');
+}
+
+// コントローラーのメソッド内
+$comment = Post::query()
+    ->where('id', 1)
+    ->comments()
+    ->where('title', 'foo')
+    ->first();
+
+
+
+// モデルのインスタンスメソッドとして定義
+public function workLogs(): HasMany
+{
+    return $this->hasMany(WorkLog::class, 'welfare_user_name', 'name');
+}
+
+// 戻り値はコレクション(複数の$userインスタンス)
+// それぞれの$userインスタンスのインスタンス変数(workLogs)として、コレクション(複数の$workLogインスタンス)を持つ。
+$welfareUsers = User::query()
+    ->where('user_type', UserType::WELFARE_USER->value)
+    ->with(['workLogs' => function ($query) use ($date) {
+        $query->whereDate('date', $date)
+            ->oldest('updated_at');
+    }])
+    ->get();
+
+モデル上で定義しているプロパティのように、リレーションメソッドへアクセスできます。
+リレーションメソッドを定義したら、commentsプロパティにアクセスして、関連するコメントのコレクションにアクセスできます。Eloquentは「動的リレーションプロパティ」を提供するため、モデルのプロパティとして定義されているかのようにリレーションメソッドにアクセスできることを思い出してください
+$user->workLogs
+
+
+
+
+
+with(['author', 'publisher'])->get();
+
+
+
+取得するリレーションのすべてのカラムが常に必要だとは限りません。このため、Eloquentはリレーションでどのカラムを取得するかを指定できます。
+$books = Book::with('author:id,name,book_id')->get();
+Warning! この機能を使用するときは、取得するカラムのリストで常にidカラムと関連する外部キーカラムを含める必要があります。
+
 ```
 
 
@@ -1686,7 +1743,7 @@ Route::get('/dashboard', function () {
 ```
 
 ### ミドルウェアを自作する
-ミドルウェアを作成するコマンド
+ミドルウェアを作成するコマンド  
 `php artisan make:middleware クラス名`
 
 実行するとapp/Http/Middleware配下にクラスが作られる。
