@@ -493,6 +493,15 @@ $user->save();
 // レコードを削除
 $modelInstance->delete();
 
+// 自分で好きなメソッドを定義して使うこともできる。
+$modelInstance->isSubmittedByUser();
+// ※Modelクラス内に定義。
+public function isSubmittedByUser(): bool
+{
+    return $this->submitter_type === UserType::WELFARE_USER->value;
+}
+
+
 
 // 保留
 $modelInstance->fresh();
@@ -569,7 +578,6 @@ ModelClass::findOr();
 ModelClass::findOrFail();
 ModelClass::firstOrCreat();
 ModelClass::firstOrNew();
-ModelClass::updateOrCreate();
 ModelClass::upsert();
 ```
 
@@ -616,7 +624,7 @@ $queryBuilderInstance->where('カラム名', '比較演算子', '比較する値
 // use()を使用して関数内で使いたい変数を渡せる。※use()は定義された時の変数を参照することに注意！
 $users = User::query()
     ->where('name', '=', 'John')
-    ->where(function (Builder $query) use($hoge) {
+    ->where(function ($query) use($hoge) {
         $query->where('votes', '>', 100)
               ->orWhere('title', '=', 'Admin');
     })
@@ -737,10 +745,18 @@ $queryBuilderInstance->when()
 <?php
 // クエリビルダーインスタンスからクエリを実行して、実際の結果を取得するために使用する。
 
-$queryBuilderInstance->get(); // 全てのレコードを取得。戻り値はCollection。
-$queryBuilderInstance->first(); // 最初のレコードを取得。戻り値はModelインスタンス。無いときはnullなのでissetで判定。
-$queryBuilderInstance->value('カラム名'); // レコードから単一の値を取得。戻り値はカラムの値。
-$queryBuilderInstance->find(3); // id列の値で単一のレコードを取得。
+// 全てのレコードを取得。
+// 戻り値はCollection(要素が見つからなかった場合は空のCollection)。
+$queryBuilderInstance->get();
+// 最初のレコードを取得。
+// 戻り値はModelインスタンス(要素が見つからなかった場合はnull)。
+$queryBuilderInstance->first();
+// レコードから単一の値を取得。
+// 戻り値はカラムの値(要素が見つからなかった場合はnull)。
+$queryBuilderInstance->value('カラム名');
+// id列の値で単一のレコードを取得(要素が見つからなかった場合はnull)。
+$queryBuilderInstance->find(3);
+
 $queryBuilderInstance->pluck('カラム名(バリュー)', 'カラム名(キー)※省略可'); // 第一引数をバリュー、第二引数(省略可)をキーとした配列を作ることができる。
 
 $queryBuilderInstance->count(); // レコードの件数を取得。戻り値は整数値(int)。
@@ -776,9 +792,89 @@ $queryBuilderInstance->firstOrFail();
 $collection->groupBy('カラム名');
 ```
 
-### リレーションは関数として定義する。
+### リレーションはメソッドとして定義する。
 ```php
 <?php
+
+// Modelクラスのインスタンスメソッドとして定義
+public function workLogs(): HasMany
+{
+    // 主→従の1対多。
+    // 引数は従テーブル(Modelクラス)、従キー、主キー
+    return $this->hasMany(WorkLog::class, 'welfare_user_name', 'name');
+}
+
+// モデル上で定義しているプロパティのようにリレーションメソッドへアクセスできる。
+// ※内部的には結局定義したメソッドを呼んでいる。
+// つまり、Modelインスタンスのインスタンス変数のように、関連するCollectionやModelインスタンスにアクセスできる。
+// ※この場合は1対多なので、Collectionを返す。
+$user->workLogs
+
+// with()メソッド
+// クエリビルダーメソッドとしても機能する
+// リレーション先のデータも一括で取得するので、クエリの発行回数を減らせる(N+1問題を解決することができる)。
+// 引数には配列を渡す。※要素は指定したいリレーション(モデルに定義したメソッド名)。
+// リレーションにクエリ条件を追加指定したい場合、要素を「'リレーション' => 無名関数」とする。
+// 無名関数の引数として渡した「$query」にクエリ条件を追加指定する。
+// リレーション先のリレーションを指定したい場合、要素を「'リレーション' => 孫リレーションを指定する配列」とする。
+$queryBuilderInstance->with([
+    'posts' => [
+        'comments' => function ($query) use ($public) {
+            $query->where('public', $public);
+        },
+        'details',
+    ],
+    'target',
+])
+
+// ※例
+// 戻り値はコレクション(複数の$userインスタンス)
+// それぞれの$userインスタンスのインスタンス変数(workLogs)として、コレクション(複数の$workLogインスタンス)を持つ。
+$welfareUsers = User::query()
+    ->where('user_type', UserType::WELFARE_USER->value)
+    ->with([
+        'workLogs' => function ($query) use ($date) {
+            $query->whereDate('date', $date)
+                ->oldest('updated_at');
+        }
+    ])
+    ->get();
+
+
+// その他の書き方
+$queryBuilderInstance->with('posts')->get(); // 単独のリレーション
+$queryBuilderInstance->with('posts.comments')->get(); // ネストしたリレーション
+// 指定したカラムのみ取得したい場合。※外部キーカラムを必ず含める必要がある。
+$queryBuilderInstance->with('posts:id,user_id,title')->get();
+
+
+// こういう使い方もできることをとりあえず知っておく
+
+// モデルのインスタンスメソッドとして定義
+public function comments(): HasMany
+{
+    // 主→従の1対多。
+    // 引数は従テーブル(Modelクラス)、従キー、主キー
+    return $this->hasMany(Comment::class, 'foreign_key', 'local_key');
+}
+// コントローラーのメソッド内
+$comment = Post::query()
+    ->where('id', 1)
+    ->first()
+    ->comments()
+    ->where('title', 'foo')
+    ->first();
+
+$comment = Post::find(1)->comments()
+                    ->where('title', 'foo')
+                    ->first();
+
+```
+
+### 色々なリレーションメソッド。
+```php
+<?php
+
 // 主→従の1対1。
 // 引数は従テーブル(Modelクラス)、従キー、主キー
 return $this->hasOne(Task::class, 'folder_id', 'id');
@@ -816,66 +912,7 @@ $hasOneInstance->delete();
 // 多対多を定義するには、belongsToManyメソッドを使用します。
 // 第一引数に関連づけたいeloquentモデル、第二引数に中間テーブル名、第三引数に自分に向けられた外部テーブル、第四引数に相手に向けられた外部テーブルを定義します。
 // 第二引数以降は、省略可能です。
-
-------------------------------------------------------------
-------------------------------------------------------------
-------------------------------------------------------------
-------------------------------------------------------------
-
-
-
-// すべての関係はクエリビルダとしても機能する
-
-// モデルのインスタンスメソッドとして定義
-public function comments(): HasMany
-{
-    return $this->hasMany(Comment::class, 'foreign_key', 'local_key');
-}
-
-// コントローラーのメソッド内
-$comment = Post::query()
-    ->where('id', 1)
-    ->comments()
-    ->where('title', 'foo')
-    ->first();
-
-
-
-// モデルのインスタンスメソッドとして定義
-public function workLogs(): HasMany
-{
-    return $this->hasMany(WorkLog::class, 'welfare_user_name', 'name');
-}
-
-// 戻り値はコレクション(複数の$userインスタンス)
-// それぞれの$userインスタンスのインスタンス変数(workLogs)として、コレクション(複数の$workLogインスタンス)を持つ。
-$welfareUsers = User::query()
-    ->where('user_type', UserType::WELFARE_USER->value)
-    ->with(['workLogs' => function ($query) use ($date) {
-        $query->whereDate('date', $date)
-            ->oldest('updated_at');
-    }])
-    ->get();
-
-モデル上で定義しているプロパティのように、リレーションメソッドへアクセスできます。
-リレーションメソッドを定義したら、commentsプロパティにアクセスして、関連するコメントのコレクションにアクセスできます。Eloquentは「動的リレーションプロパティ」を提供するため、モデルのプロパティとして定義されているかのようにリレーションメソッドにアクセスできることを思い出してください
-$user->workLogs
-
-
-
-
-
-with(['author', 'publisher'])->get();
-
-
-
-取得するリレーションのすべてのカラムが常に必要だとは限りません。このため、Eloquentはリレーションでどのカラムを取得するかを指定できます。
-$books = Book::with('author:id,name,book_id')->get();
-Warning! この機能を使用するときは、取得するカラムのリストで常にidカラムと関連する外部キーカラムを含める必要があります。
-
 ```
-[7/17参考サイトメモ](https://qiita.com/tomeito/items/d51ca717ca48786862ec)
-
 
 ### アクセサとミューテタ
 |||
