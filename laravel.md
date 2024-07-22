@@ -324,10 +324,10 @@ $table->mediumText('column_name'); // MEDIUMTEXT(0~16777215バイト)
 $table->longText('column_name'); // LONGTEXT(0~4294967295バイト)
 
 // カラム定義 日時型
-$table->time('column_name', $precision = 0); // TIME(時刻)
-$table->dateTime('column_name', $precision = 0); // 日時カラム
-$table->date('column_name'); // 日付カラム
-$table->year('column_name'); // YEAR(年。フォーマットはYYYY)
+$table->date('column_name'); // YYYY-MM-DD
+$table->time('column_name', $precision = 0); // hh:mm:ss
+$table->dateTime('column_name', $precision = 0); // YYYY-MM-DD hh:mm:ss
+$table->year('column_name'); // YYYY
 $table->datetimes(); // created_atとupdated_atの2列を作成する。
 $table->softDeletes('deleted_at', $precision = 0); // deleted_at カラムを追加
 
