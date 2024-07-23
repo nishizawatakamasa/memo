@@ -790,11 +790,15 @@ $queryBuilderInstance->firstOrFail();
 // 指定したカラムの値ごとにレコードをグループ化
 // 戻り値は、指定したカラムの値をキーとし、その値に対応するレコードのCollectionを持つ連想配列のようなCollection
 $collection->groupBy('カラム名');
+
+$collection->first(); // コレクションの最初の要素を取得。コレクションが空の場合はnullを返す。
+$collection->last(); // コレクションの最後の要素を取得。コレクションが空の場合はnullを返す。
 ```
 
 ### リレーションはメソッドとして定義する。
 ```php
 <?php
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 // Modelクラスのインスタンスメソッドとして定義
 public function workLogs(): HasMany
