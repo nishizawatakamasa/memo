@@ -359,6 +359,12 @@ $table->unique('column_name'); // 一意のインデックスを追加
 $table->index('column_name'); // 標準インデックスを追加
 ```
 
+### マイグレーションの実行順序  
+
+外部キー制約を持つテーブルより先に、参照されるテーブルを作成する必要がある。  
+ファイル名の2023_03_04_215116_create_users_table.phpの数字部分が若い順にマイグレーションは実行される。  
+順序を変更したい場合は、このファイル名の数字部分を変更する。
+
 ### マイグレーションの実行コマンド  
 `php artisan migrate`
 
@@ -793,6 +799,9 @@ $collection->groupBy('カラム名');
 
 $collection->first(); // コレクションの最初の要素を取得。コレクションが空の場合はnullを返す。
 $collection->last(); // コレクションの最後の要素を取得。コレクションが空の場合はnullを返す。
+
+$collection->isEmpty(); // コレクションが空の場合にtrueを返す。そうでなければfalseを返す。
+$collection->isNotEmpty(); // コレクションが空でない場合にtrueを返す。そうでなければfalseを返す。
 ```
 
 ### リレーションはメソッドとして定義する。
@@ -840,6 +849,27 @@ $welfareUsers = User::query()
         'workLogs' => function ($query) use ($date) {
             $query->whereDate('date', $date)
                 ->oldest('updated_at');
+        }
+    ])
+    ->get();
+
+
+// リレーション先にクエリ条件を追加し、さらにその先のリレーションを指定するには、withメソッドをネストさせる。
+// ※例
+$outsideWorks = OutsideWork::query()
+    ->with([
+        'unitPrices' => function ($query) use ($date) {
+            $query->whereDate('start_date', '<', $date)
+                ->where(function ($query) use ($date) {
+                    $query->whereDate('end_date','>', $date)
+                        ->orWhereNull('end_date');
+                })
+                ->with([
+                    'outsideWorkLogs' => function ($query) use ($date) {
+                        $query->where('welfare_user_id', $this->loginUser->id)
+                            ->whereDate('date', $date);
+                    }
+                ]);
         }
     ])
     ->get();
@@ -1429,6 +1459,15 @@ public function store(Request $request)
 
     // ※$request->のあとにある変数名は、HTMLのタグのname属性で付けた名前。
     $folder->title = $request->title;
+
+    // name="quantity[]"のようにname属性の最後に[]を付けた場合、その値はリクエストを受け取ったときに配列として扱われる。
+    $quantities = $request->quantity;
+
+    $firstQuantity = $quantities[0];
+    $secondQuantity = $quantities[1];
+    $thirdQuantity = $quantities[2];
+
+
     // boolean()メソッドを使うと、真偽地に変換できる。
     $folder->title = $request->boolean('title');
 
