@@ -254,10 +254,12 @@ return new class extends Migration
         // 無名関数内でそのインスタンスからインスタンスメソッドにアクセスし、カラムを作成する
         // $table->型名になっているインスタンスメソッド('カラム名');という書き方が基本。
         // 例外として、$table->datetimes();は、1行でcreated_atとupdated_atの2列を作成する。
+        // table->unique()でユニーク制約をしておく。
         Schema::create('folders', function (Blueprint $table) {
             $table->id();
             $table->string('title', 20);
             $table->datetimes();
+            $table->unique(['unit_price_id', 'welfare_user_id', 'date']);
         });
 
         // ※Schema::tableメソッドを使用すると既存のテーブルを更新できる。引数はSchema::createメソッドと同様。
@@ -355,7 +357,8 @@ $table->jsonb('column_name'); // JSONB
 // インデックスを作成するメソッド
 // インデックスを作成するとき、Laravelはテーブル、カラム名、およびインデックスタイプに基づいてインデックス名を自動的に生成する。
 $table->primary('column_name'); // 主キーを追加
-$table->unique('column_name'); // 一意のインデックスを追加
+$table->unique('column_name'); // 一意のインデックスを追加(ユニーク制約)
+$table->unique(['column_name1', 'column_name2', 'column_name3']); // 複合ユニーク
 $table->index('column_name'); // 標準インデックスを追加
 ```
 
@@ -570,6 +573,21 @@ ModelClass::updateOrCreate(
     ]
 );
 
+// 複数のupdateOrCreate()を一括で実行できるメソッド。
+// 'created_at'(作成日)と'updated_at'(更新日)は自動的に追加される。
+// ※一意のキーとして使用するカラムは、マイグレーション時にユニーク制約しておく。
+// ※マイグレーション時のユニーク制約：$table->unique(['departure', 'destination']);
+ModelClass::upsert(
+    [
+        ['departure' => 'Oakland', 'destination' => 'San Diego', 'price' => 99],
+        ['departure' => 'Chicago', 'destination' => 'New York', 'price' => 150]
+    ],
+    ['departure', 'destination'], // 一意のキーとして使用するカラム
+    ['price'] // 更新するカラム
+);
+
+
+
 // モデルに関連しているすべてのデータベースレコードを削除する。
 // モデルの関連テーブルの自動増分IDはリセットされる。
 ModelClass::truncate();
@@ -584,7 +602,6 @@ ModelClass::findOr();
 ModelClass::findOrFail();
 ModelClass::firstOrCreat();
 ModelClass::firstOrNew();
-ModelClass::upsert();
 ```
 
 ### クエリビルダーメソッド
@@ -1418,6 +1435,8 @@ class SampleController extends Controller
 Route::get('profile', [UserController::class, 'show'])->middleware(['auth', 'verified'])->name('profile.show');
 // 'auth'だの'verified'だのは、「bootstrap\app.php」と「Illuminate\Foundation\Configuration\Middleware;」を参考。
 ```
+### 依存性注入
+コントローラーのメソッド(コンストラクタ含む)に対して依存性注入行うことができる。
 
 
 <a id="リクエスト"></a>
