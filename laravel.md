@@ -1529,7 +1529,9 @@ class SampleRequest extends FormRequest
         return true;
     }
 
-    // バリデーションルールを配列として定義し、返すメソッド。
+    // バリデーションルールを定義するメソッド。
+    // バリデーションルールは配列とパイプで定義してreturnする。
+    // ※フォーム項目名はinputのname属性。
     // 定義したルールに基づいてバリデーションが実行される。
     // バリデーションが通らなければ、直前の画面にリダイレクトされる。
     // バリデーションが通れば、コントローラー内部へと処理が移る。
@@ -1549,9 +1551,25 @@ class SampleRequest extends FormRequest
             'due_date' => 'required|date|after_or_equal:today',
         ];
     }
-
 }
 ```
+
+|バリデーションルール|意味|
+|-|-|
+|required|入力必須|
+|nullable|入力任意|
+|string|文字列|
+|integer|数値(少数不可)|
+|numeric|数値(少数可)|
+|min:3|3以上|
+|max:32|32以下|
+|between:0,9999|0～9999の間|
+|email|メールアドレスの形式|
+|url|URLの形式|
+|boolean|真偽値|
+|date|日付形式|
+
+
 
 FormRequestの子クラスを利用するのはとても簡単。  
 コントローラの使いたいメソッドに、Requestの代わりに依存性注入するだけ。  
@@ -1571,11 +1589,28 @@ class SampleController extends Controller
     // 「SampleRequest $request」の部分が依存性注入
     public function store(SampleRequest $request)
     {
-        //
+        // 以下全ての$validatedの中身は、['name' => 'nameの値', 'email' => 'emailの値']のような配列となる。
+        
+        // バリデーション済みデータを取得
+        $validated = $request->validated();
+
+        // バリデーション済みデータを取得(onlyで指定したパラメータのみ)
+        $validated = $request->safe()->only(['name', 'email']);
+        // バリデーション済みデータを取得(exceptで指定したパラメータ以外)
+        $validated = $request->safe()->except(['name', 'email']);
+
+        // ※safe()は、バリデーションをパスした値を抽出する
+        // mergeは値を追加できる。※必ずsafe()の直後に連結する。
+        $validated = $request->safe()->merge(['active_flag' => 'Y'])->except(['email']);
+
+        // 以下略
     }
 }
 ```
 たったのこれだけで、コントローラのメソッド（ここではstore()）が呼び出される前にauthorize()、通った場合はrules()の処理が実行される。  
+
+
+[バリデーションのための入力準備](https://readouble.com/laravel/11.x/ja/validation.html?header=%E3%83%95%E3%82%A9%E3%83%BC%E3%83%A0%E3%83%AA%E3%82%AF%E3%82%A8%E3%82%B9%E3%83%88%E3%83%90%E3%83%AA%E3%83%87%E3%83%BC%E3%82%B7%E3%83%A7%E3%83%B3#:~:text=email%20address%27%2C%0A%20%20%20%20%5D%3B%0A%7D-,%E3%83%90%E3%83%AA%E3%83%87%E3%83%BC%E3%82%B7%E3%83%A7%E3%83%B3%E3%81%AE%E3%81%9F%E3%82%81%E3%81%AE%E5%85%A5%E5%8A%9B%E6%BA%96%E5%82%99,-%E3%83%90%E3%83%AA%E3%83%87%E3%83%BC%E3%82%B7%E3%83%A7%E3%83%B3%E3%83%AB%E3%83%BC%E3%83%AB%E3%82%92)
 
 
 #### 追加処理
