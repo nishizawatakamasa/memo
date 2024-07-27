@@ -1529,6 +1529,18 @@ class SampleRequest extends FormRequest
         return true;
     }
 
+    // バリデーションルールを適用する前にリクエストからのデータをサニタイズする場合は、prepareForValidationメソッド使う。
+    protected function prepareForValidation(): void
+    {
+        // mergeメソッド
+        // リクエスト中の入力データを追加できる(キーがすでに存在している場合は値が上書きされる)。
+        $this->merge([
+            'lunch' => $this->boolean('lunch'), // 昼食
+            'onward_transportation' => $this->boolean('onward_transportation'), // 送迎往路
+            'return_transportation' => $this->boolean('return_transportation'), // 送迎復路
+        ]);
+    }
+
     // バリデーションルールを定義するメソッド。
     // バリデーションルールは配列とパイプで定義してreturnする。
     // ※フォーム項目名はinputのname属性。
@@ -1549,6 +1561,18 @@ class SampleRequest extends FormRequest
             // date：値を日付形式に指定
             // after_or_equal：特定の日付（この場合はtoday）以前の日付の入力を不可に（制限）する
             'due_date' => 'required|date|after_or_equal:today',
+        ];
+    }
+
+    // messagesメソッド内に、自分で作成したバリデーションルール毎のエラーメッセージを定義できる。
+    // ※FormRequestクラスで定義されているmessagesメソッドをオーバーライドしている。
+    public function messages(): array
+    {
+        return [
+          'name.required'  => 'お名前は必須項目です。',
+          'name.max'       => 'お名前は最大10文字以内で入力してください。', // max:10のパラメータ部分は含めない
+          'email.required' => 'Emailは必須項目です。',
+          'email.email'    => 'Emailを正しく入力してください。',
         ];
     }
 }
