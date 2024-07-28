@@ -1592,6 +1592,7 @@ class SampleRequest extends FormRequest
 |url|URLの形式|
 |boolean|真偽値|
 |date|日付形式|
+|array|配列形式|
 
 
 
