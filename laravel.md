@@ -1507,6 +1507,7 @@ FormRequestの子クラスを作成するコマンド
 例：  
 `php artisan make:request SampleRequest`  
 これにより、app/Http/Requests/SampleRequest.phpが作成されます。  
+※命名例：PostControllerのstoreメソッドで使用したい場合→StorePostRequest
 
 作成されるコードの例:  
 ```php
