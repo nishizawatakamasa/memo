@@ -821,7 +821,47 @@ $collection->isEmpty(); // コレクションが空の場合にtrueを返す。�
 $collection->isNotEmpty(); // コレクションが空でない場合にtrueを返す。そうでなければfalseを返す。
 ```
 
-### リレーションはメソッドとして定義する。
+### 基本のリレーションメソッド。
+```php
+<?php
+// リレーションはメソッドとして定義する。
+// メソッド化の例：
+
+// Folderモデルに定義
+// ※クエリ実行時には単一のモデルインスタンスが取得される。
+public function task()
+{
+    // 主→従
+    // 1対1。
+    // 引数は従テーブル(Modelクラス)、従キー、主キー
+    return $this->hasOne(Task::class, 'folder_id', 'id');
+}
+
+// Folderモデルに定義
+// ※クエリ実行時にはCollectionが取得される。
+public function tasks()
+{
+    // 主→従
+    // 1対多。
+    // 引数は従テーブル(Modelクラス)、従キー、主キー
+    return $this->hasMany(Task::class, 'folder_id', 'id');
+}
+
+// Taskモデルに定義
+// ※クエリ実行時には単一のモデルインスタンスが取得される。
+public function folder()
+{
+    // 従→主
+    // ※hasOne(1対1)とhasMany(1対多)を逆から辿る。
+    // 引数は主テーブル(Modelクラス)、従キー、主キー
+    return $this->belongsTo(Folder::class, 'folder_id', 'id');
+}
+
+// hasOne()、hasMany()、belongsTo()の第二、第三引数は省略可能。省略した場合は従キーが「主Modelクラス名_id」、主キーが「id」となる。
+
+```
+
+### リレーションの使い方。
 ```php
 <?php
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -922,30 +962,14 @@ $comment = Post::find(1)->comments()
 
 ```
 
-### 色々なリレーションメソッド。
+### その他リレーション関連。
 ```php
 <?php
 
-// 主→従の1対1。
-// 引数は従テーブル(Modelクラス)、従キー、主キー
-return $this->hasOne(Task::class, 'folder_id', 'id');
-
-// メソッド化の参考
-public function tasks()
-{
-    // 主→従の1対多。
-    // 引数は従テーブル(Modelクラス)、従キー、主キー
-    return $this->hasMany(Task::class, 'folder_id', 'id');
-}
-
-// 従→主の1対1、1対多。
-// 引数は主テーブル(Modelクラス)、従キー、主キー
-return $this->belongsTo(Folder::class, 'folder_id', 'id');
-
-// hasOne()、hasMany()、belongsTo()の第二、第三引数は省略可能。省略した場合は従キーが「主Modelクラス名_id」、主キーが「id」となる。
-
 // hasMany()の戻り値はIlluminate\Database\Eloquent\Relations\HasManyのインスタンス。
 // hasOne()の戻り値はIlluminate\Database\Eloquent\Relations\HasOneのインスタンス。
+
+// リレーションメソッドの戻り値はリレーションそのものの定義を含むオブジェクトであり、実際のモデルやコレクションを取得するにはリレーションを解決するプロセスが必要。
 
 // hasOne()、hasMany()、belongsTo()、belongsToMany()の戻り値からレコードを取得するには、->get()メソッドや->first()メソッドが必要(HasManyインスタンス等のメソッド)。
 
@@ -1543,11 +1567,28 @@ class SampleRequest extends FormRequest
     }
 
     // バリデーションルールを定義するメソッド。
-    // バリデーションルールは配列とパイプで定義してreturnする。
+    // バリデーションルールは2次元配列で定義してreturnする。
     // ※フォーム項目名はinputのname属性。
     // 定義したルールに基づいてバリデーションが実行される。
     // バリデーションが通らなければ、直前の画面にリダイレクトされる。
     // バリデーションが通れば、コントローラー内部へと処理が移る。
+    public function rules(): array
+    {
+        return [
+            // name：必須入力で最大20文字
+            'name'  => ['required', 'max:20'],
+            // tel：入力任意、入力された時はハイフン区切りの電話番号の形式で
+            'tel'   => ['nullable', 'regex:/^[0-9]{2,4}-[0-9]{2,4}-[0-9]{3,4}$/'],
+            // email：必須入力でメールアドレスの形式
+            'email' => ['required', 'email'],
+            // body：必須入力で最大1000文字まで
+            'body'  => ['required', 'max:1000'],
+            // date：値を日付形式に指定
+            // after_or_equal：特定の日付（この場合はtoday）以前の日付の入力を不可に（制限）する
+            'due_date' => ['required', 'date', 'after_or_equal:today'],
+        ];
+    }
+    // ※バリデーションルールは配列とパイプで定義することもできる。
     public function rules(): array
     {
         return [
