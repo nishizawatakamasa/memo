@@ -116,7 +116,7 @@ A. Webブラウザの表示領域のこと
 |左右のmargin|親要素(グリッドエリア)の幅基準|使用可能なスペースのすべて|
 |上下のmargin|親要素(グリッドエリア)の幅基準|0(親がflexかGridの場合は使用可能なスペースのすべて)|
 |width|親要素(グリッドエリア)の幅基準|**初期値** 親要素の幅いっぱい(display: inline-block;の時は子要素のコンテンツ分)|
-|height|親要素(グリッドエリア)の高さ基準|**初期値** 子要素のコンテンツ分**初期値**|
+|height|親要素(グリッドエリア)の高さ基準|**初期値** 子要素のコンテンツ分|
 
 ※width: fit-content;で子要素のコンテンツ分
 
@@ -164,7 +164,7 @@ A. Webブラウザの表示領域のこと
     * space-between
     * space-around
     * space-evenly
-* align-items
+* align-items(align-selfの同時指定)
     * start
     * center
     * end
