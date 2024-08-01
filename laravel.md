@@ -20,6 +20,7 @@
     * [ルーティング](#ルーティング)
     * [コントローラー](#コントローラー)
     * [リクエスト](#リクエスト)
+    * [サービス](#サービス)
     * [ビュー](#ビュー)
     * [Breeze](#Breeze)
     * [ミドルウェア](#ミドルウェア)
@@ -1719,6 +1720,75 @@ public function withValidator(Validator $validator): void
 
 #### 参考サイト
 [LaravelのFormRequestをちゃんと理解する](https://laranote.jp/understanding-laravel-formrequest/)
+
+
+<a id="サービス"></a>
+## サービス
+
+### 使い方
+app/Services ディレクトリを作成し、その配下にサービスファイルを作る。
+
+### 用途
+用途は幅広い。以下は一例。
+
+コントローラーやブレードの中で呼び出す関数やプロパティを定義できる。
+処理をServiceに移行することで、コントローラの肥大化を防止する。
+
+#### 例
+```php
+<?php
+
+// StoreWelfareUserFormatter.php
+// バリデーション後のデータを整形する用
+
+namespace App\Services;
+
+use App\Http\Requests\StoreWelfareUserRequest;
+use Illuminate\Support\Facades\Auth;
+
+class StoreWelfareUserFormatter
+{
+    public function formatDate(StoreWelfareUserRequest $request)
+    {
+        return date("Y年m月d日", strtotime($request->safe()->only(['date'])['date']));
+    }
+
+    public function formatWorkLog (StoreWelfareUserRequest $request)
+    {
+        $attributes = $request->safe()->merge(['welfare_user_id' => Auth::user()?->id])->only(['date', 'welfare_user_id']);
+        $values = $request->safe()->except(['date', 'welfare_user_id', 'unit_price_id', 'quantity']);
+
+        return [
+            $attributes,
+            $values,
+        ];
+    }
+
+    public function formatOutsideWorkLogs (StoreWelfareUserRequest $request)
+    {
+        $unitPriceQuantities = array_map(
+            null,
+            $request->safe()->only(['unit_price_id'])['unit_price_id'],
+            $request->safe()->only(['quantity'])['quantity'],
+        );
+
+        $formattedOutsideWorkLogs = [];
+        foreach ($unitPriceQuantities as $unitPriceQuantity){
+            [$unitPriceId, $quantity] = $unitPriceQuantity;
+
+            if ($quantity){
+                $formattedOutsideWorkLogs[] = [
+                    'unit_price_id' => $unitPriceId, // 外部就労単価ID
+                    'welfare_user_id' => Auth::user()?->id, // 利用者ID
+                    'date'=> $request->safe()->only(['date'])['date'], // 年月日
+                    'quantity' => $quantity, // 数量
+                ];
+            }
+        }
+        return $formattedOutsideWorkLogs;
+    }
+}
+```
 
 
 <a id="ビュー"></a>
