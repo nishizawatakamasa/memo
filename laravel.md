@@ -281,13 +281,9 @@ return new class extends Migration
 };
 ```
 
-### Blueprintクラスのインスタンスメソッドのうち、よく使われるもの
-
-※参考：「Laravel 11.x マイグレーション」ページの「利用可能なカラムタイプ」項目以降。
-
+### カラムを定義
 ```php
 <?php
-// Blueprintクラスには、テーブルやカラムを定義するためのさまざまなインスタンスメソッドが用意されている。
 
 // カラム定義 整数型
 $table->tinyInteger('column_name'); // TINYINT(-128~127)
@@ -349,18 +345,31 @@ $table->foreignId('user_id')->constrained('users', 'id');
 $table->rememberToken(); // 現在の「ログイン持続」認証トークンを格納。NULL許容。最大100文字。
 $table->json('column_name'); // JSON
 $table->jsonb('column_name'); // JSONB
+```
 
-// カラム修飾子
+### カラム修飾子
+```php
+<?php
+
 ->comment('好きなコメント(日本語カラム名など)') // カラムへコメントを追加（MySQL／PostgreSQL）
 ->default($value) // デフォルト値を設定する。
 ->nullable() // カラムをNULL許容にする(デフォルトでは拒否)。
+```
 
-// インデックスを作成するメソッド
-// インデックスを作成するとき、Laravelはテーブル、カラム名、およびインデックスタイプに基づいてインデックス名を自動的に生成する。
-$table->primary('column_name'); // 主キーを追加
-$table->unique('column_name'); // 一意のインデックスを追加(ユニーク制約)
-$table->unique(['column_name1', 'column_name2', 'column_name3']); // 複合ユニーク
-$table->index('column_name'); // 標準インデックスを追加
+### ユニーク制約
+```php
+<?php
+
+// カラムの値が一意であることを指定する。
+
+// カラム定義にuniqueメソッドをチェーンする。
+$table->string('email')->unique();
+
+// カラムを定義した後にユニーク制約をつけることもできる。
+// その場合、uniqueメソッドの引数にカラムの名前を渡す。
+$table->unique('email');
+// 複合ユニークの場合は引数にカラム名の配列を渡す。
+$table->unique(['column_name1', 'column_name2', 'column_name3']);
 ```
 
 ### マイグレーションの実行順序  
