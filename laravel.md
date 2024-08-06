@@ -224,7 +224,7 @@ Migrationを使うと、テーブルの作成とテーブル構造の定義が�
 
 ※テーブル名は「格納したい物の名前の複数形」にするのが一般的な慣習。  
 例：  
-`php artisan make:migration create_folders_table --create=folders`  
+`php artisan make:migration create_work_logs_table --create=work_logs`  
 
 
 ### マイグレーションの構造
@@ -1103,8 +1103,8 @@ Seederを使うと、データベースに初期データやテストデータ�
 ### シーダーファイルの新規作成コマンド  
 `php artisan make:seeder シーダー名`  
 例：  
-`php artisan make:seeder FoldersTableSeeder`  
-`php artisan make:seeder UsersTableSeeder`  
+`php artisan make:seeder FolderSeeder`  
+`php artisan make:seeder OutsideWorkLogSeeder`  
 
 ### シーダーファイルの解説
 ```php
@@ -1119,7 +1119,7 @@ use App\Models\Folder;
 // 日時を取得したいならCarbonクラスをインポートする
 use Carbon\Carbon;
 
-class FoldersTableSeeder extends Seeder
+class FolderSeeder extends Seeder
 {
     // runメソッド
     // Seederを実行したときに処理されるメソッド
@@ -1146,7 +1146,7 @@ DatabaseSeeder.phpから呼び出して使用できるよう、DatabaseSeederク
 <?php
 // runメソッド内に追加する
 $this->call([
-    FoldersTableSeeder::class,
+    FolderSeeder::class,
     TasksTableSeeder::class,
 ]);
 ```
@@ -1258,7 +1258,7 @@ class DatabaseSeeder extends Seeder
         // ※このメソッドはHasFactoryトレイトを使用して実現され、各モデルに対して対応するファクトリクラスを動的に解決する。
 
         // $this->call([
-        //     FoldersTableSeeder::class,
+        //     FolderSeeder::class,
         //     TasksTableSeeder::class,
         // ]);
     }
