@@ -2234,11 +2234,11 @@ class AppServiceProvider extends ServiceProvider
         // 常に最初の引数としてユーザーインスタンスを受け取る。
         // 関連するEloquentモデルなどの追加の引数を受け取ることもできる。
         // 真偽値を返す。
-        Gate::define('welfare_user', function (User $user) {
+        Gate::define('welfare-user', function (User $user) {
             return ($user->user_type === UserType::WELFARE_USER->value);
         });
 
-        Gate::define('welfare_staff', function (User $user) {
+        Gate::define('welfare-staff', function (User $user) {
             return ($user->user_type === UserType::WELFARE_STAFF->value);
         });
     }
