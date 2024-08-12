@@ -1381,23 +1381,25 @@ return redirect('URL');
 view関数を使う
 ```php
 <?php
-// 第一引数に、表示したいビューの名前を指定。
-// 通常、resources/viewsディレクトリ配下からのパス(「.blade.php」は不要)。
-return view('folders/create');
+
+// 第一引数に表示したいビューの名前を指定。
+// ネストしている場合はドット表記を使う。
+// ※ビューがresources/views/admin/profile.blade.phpに保存されている場合
+return view('admin.profile');
 
 // ビューにデータを渡す場合は、第二引数に連想配列として指定。
-// 渡したデータはビュー内で使用され、HTMLを動的に生成するために利用されます。
-return view('folders/edit', [
-    'folder_id' => $folder->id,
-    'folder_title' => $folder->title,
+// 渡したデータはビュー内で使用され、HTMLを動的に生成するために利用される。
+return view('folders.edit', [
+    'folderId' => $folder->id,
+    'folderTitle' => $folder->title,
 ]);
 
 // ビューの変数とコントローラで定義した変数の名前が一致している場合は、compact関数を利用してスッキリ書くこともできる。
 // ※compact関数とは、変数名とその値から配列を作成するPHPの関数。
 // compact関数使用例
-return view('tasks/edit', compact('hoge', 'fuga', 'piyo'));
+return view('tasks.edit', compact('hoge', 'fuga', 'piyo'));
 // ※以下と同義
-return view('tasks/edit', [
+return view('tasks.edit', [
     'hoge' => $hoge,
     'fuga' => $fuga,
     'piyo' => $piyo,
