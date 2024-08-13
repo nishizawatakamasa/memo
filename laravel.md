@@ -1556,7 +1556,9 @@ FormRequestの子クラスを作成するコマンド
 例：  
 `php artisan make:request SampleRequest`  
 これにより、app/Http/Requests/SampleRequest.phpが作成されます。  
-※命名例：PostControllerのstoreメソッドで使用したい場合→StorePostRequest
+※命名例：PostControllerのstoreメソッドで使用したい場合→StorePostRequest  
+ディレクトリを作成し、その中に作成するコマンド   
+`php artisan make:request WorkLog/CreateWorkLogFormatter`  
 
 作成されるコードの例:  
 ```php
@@ -1946,7 +1948,7 @@ resources/views/components/button.blade.phpへBladeファイルを作成する�
 
 
 ### CSRFフィールド、Methodフィールド
-* CSRFフィールド：formの内部に@csrfと記述するだけでCSRF攻撃を防げる。  
+* CSRFフィールド：formの内部に@csrfと記述するだけでCSRF攻撃を防げる。※必要なのは基本的にPOSTリクエストの場合。  
 * Methodフィールド：HTMLフォームで許可されているのはGETリクエスト(データ取得)とPOSTリクエスト(データ送信)のみのため、フォームのPUT, PATCH, DELETE, OPTIONSリクエストを使う場合はPOST送信のフォームの中で@method関数を使用し、擬似的にリクエストを実現させる。
 
 例：  
