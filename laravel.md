@@ -2140,6 +2140,7 @@ resources/lang/ja
 |PostCSS Language Support|エディタが@tailwindを正しく認識してくれるようになり、「Unknown at rule @tailwind」という警告と黄色い波線が消える。|
 
 ### 参考サイト
+* [Tailwind 公式サイト](https://tailwindcss.com/)
 * [Tailwind CSS Cheat Sheet](https://tailwindcomponents.com/cheatsheet/)
 * [Tailwind CSSで独自クラス（コンポーネント）を作成する](https://zenn.dev/takashi5816/articles/7d9d14a17a3ec0)
 * [初めてでもわかるTailwind CSS入門 基礎編](https://reffect.co.jp/html/tailwindcss-for-beginners)
