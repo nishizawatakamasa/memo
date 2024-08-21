@@ -831,15 +831,20 @@ $collection->isEmpty(); // コレクションが空の場合にtrueを返す。�
 $collection->isNotEmpty(); // コレクションが空でない場合にtrueを返す。そうでなければfalseを返す。
 ```
 
-### 基本のリレーションメソッド。
+### リレーションの概要
+1. リレーションをModelクラスのインスタンスメソッドとして定義しておく。
+1. クエリビルダーメソッドとしてwith()を使用し、リレーションを紐付ける。
+1. クエリ実行後に紐付けたいときは、取得したモデルインスタンス（もしくはコレクション）に対してload()を使用。
+
+
+### 主なリレーション
 ```php
 <?php
-// リレーションはメソッドとして定義する。
-// メソッド化の例：
 
 // Folderモデルに定義
+// 戻り値はIlluminate\Database\Eloquent\Relations\HasOne
 // ※クエリ実行時には単一のモデルインスタンスが取得される。
-public function task()
+public function task(): HasOne
 {
     // 主→従
     // 1対1。
@@ -848,8 +853,9 @@ public function task()
 }
 
 // Folderモデルに定義
+// 戻り値はIlluminate\Database\Eloquent\Relations\HasMany
 // ※クエリ実行時にはCollectionが取得される。
-public function tasks()
+public function tasks(): HasMany
 {
     // 主→従
     // 1対多。
@@ -858,8 +864,9 @@ public function tasks()
 }
 
 // Taskモデルに定義
+// 戻り値はIlluminate\Database\Eloquent\Relations\BelongsTo
 // ※クエリ実行時には単一のモデルインスタンスが取得される。
-public function folder()
+public function folder(): BelongsTo
 {
     // 従→主
     // ※hasOne(1対1)とhasMany(1対多)を逆から辿る。
@@ -869,26 +876,39 @@ public function folder()
 
 // hasOne()、hasMany()、belongsTo()の第二、第三引数は省略可能。省略した場合は従キーが「主Modelクラス名_id」、主キーが「id」となる。
 
+// ※すべてのリレーションの実態はクエリビルダなので、更に条件を追加できる。
+public function authStaffComments(): HasMany
+{
+    return $this->hasMany(StaffComment::class, 'user_member_id', 'id')
+        ->where('staff_member_id', Auth::user()->getStaffMember()?->id);
+}
 ```
 
-### リレーションの使い方。
+### 紐付けたデータへのアクセス
 ```php
 <?php
+
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-// Modelクラスのインスタンスメソッドとして定義
+// まずはリレーションをModelクラスのインスタンスメソッドとして定義する。
 public function workLogs(): HasMany
 {
-    // 主→従の1対多。
-    // 引数は従テーブル(Modelクラス)、従キー、主キー
     return $this->hasMany(WorkLog::class, 'welfare_user_name', 'name');
 }
 
-// モデル上で定義しているプロパティのようにリレーションメソッドへアクセスできる。
-// ※内部的には結局定義したメソッドを呼んでいる。
+// すると、モデル上で定義しているプロパティのようにリレーションメソッドへアクセスできる。
+// ※結局、内部的には定義したメソッドを呼んでいる。
 // つまり、Modelインスタンスのインスタンス変数のように、関連するCollectionやModelインスタンスにアクセスできる。
 // ※この場合は1対多なので、Collectionを返す。
 $user->workLogs
+
+// ただし、この方法では一件ごとにクエリが発行されてしまい、パフォーマンスが低下する(N+1問題)。
+// そのため、後述のwith()メソッドを使用してN+1問題を解決する。
+```
+
+### with()、load()メソッド
+```php
+<?php
 
 // with()メソッド
 // クエリビルダーメソッドとしても機能する
@@ -896,7 +916,7 @@ $user->workLogs
 // 引数には配列を渡す。※要素は指定したいリレーション(モデルに定義したメソッド名)。
 // リレーションにクエリ条件を追加指定したい場合、要素を「'リレーション' => 無名関数」とする。
 // 無名関数の引数として渡した「$query」にクエリ条件を追加指定する。
-// リレーション先のリレーションを指定したい場合、要素を「'リレーション' => 孫リレーションを指定する配列」とする。
+// リレーション先のリレーションを指定したい場合、要素を「'リレーション' => 孫リレーションを指定する配列」とする(※柔軟性がある書き方は無名関数を使ったwithメソッドのネスト。これは超省略した書き方)。
 $queryBuilderInstance->with([
     'posts' => [
         'comments' => function ($query) use ($public) {
@@ -962,6 +982,21 @@ $welfareUsers = $welfareUsers->load('posts');
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 // こういう使い方もできることをとりあえず知っておく
 
 // モデルのインスタンスメソッドとして定義
@@ -985,51 +1020,13 @@ $comment = Post::find(1)->comments()
 
 ```
 
-### リレーションとクエリビルダ
-```php
-<?php
-
-HasMany, HasOneなどのリレーションメソッドではクエリビルダを使用する事ができます。
-
-HasManyオブジェクトを返すようになっているのでリレーションオブジェクトが返されます。
-リレーションメソッドはクエリビルダとして使用することができます。
-しかし動的プロパティのようにカラム名をつけて値を取得することはできません。
-リレーションメソッドのあとにget()やfirst()をつけてデータを取得できます。
-
-
-そして、ひとつ重要なことは HasMany オブジェクトなどの Eloquent リレーションオブジェクトはクエリビルダとしても動作する ということです。
-
-
-すべてのタイプのEloquentリレーションは、クエリビルダとしても機能するため、
-
-
-c21
-c3
-
-リレーションシップメソッド
-は、QueryBuilderそのものではありませんが、結果的にQueryBuilderを返します
-リレーションオブジェクトは、その内部でQueryBuilderを利用しています
-
-hasOne()やhasMany()などのリレーションシップメソッドは、直接的にはQueryBuilderを返しませんが、これらはQueryBuilderを内部で利用してクエリを構築し、データベースとやり取りするための手段を提供しています。リレーションオブジェクトを介してQueryBuilderの機能が提供される形になります。
-
-Laravel(Lumen)のRelationship(hasOne(), hasMany()など)メソッドは、所詮はQueryBuilderなので更に条件が追加できます。
-
-
-QueryBuilderを内部で利用して
-
-```
-
 
 ### その他リレーション関連。
 ```php
 <?php
 
-// hasMany()の戻り値はIlluminate\Database\Eloquent\Relations\HasManyのインスタンス。
-// hasOne()の戻り値はIlluminate\Database\Eloquent\Relations\HasOneのインスタンス。
 
-// リレーションメソッドの戻り値はリレーションそのものの定義を含むオブジェクトであり、実際のモデルやコレクションを取得するにはリレーションを解決するプロセスが必要。
 
-// hasOne()、hasMany()、belongsTo()、belongsToMany()の戻り値からレコードを取得するには、->get()メソッドや->first()メソッドが必要(HasManyインスタンス等のメソッド)。
 
 // 新しいModelインスタンスを、主Modelインスタンスに関連付けて従テーブルに保存する(保存時に従キーが適切に設定される)。
 $hasManyInstance->save($modelInstance);
