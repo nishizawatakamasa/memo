@@ -911,37 +911,11 @@ $user->workLogs
 <?php
 
 // with()メソッド
-// クエリビルダーメソッドとしても機能する
+// リレーションをロードするメソッド。クエリビルダとして機能する。
 // リレーション先のデータも一括で取得するので、クエリの発行回数を減らせる(N+1問題を解決することができる)。
-// 引数には配列を渡す。※要素は指定したいリレーション(モデルに定義したメソッド名)。
+// 引数には配列を渡し、要素は指定したいリレーション(モデルに定義したメソッド名)。
 // リレーションにクエリ条件を追加指定したい場合、要素を「'リレーション' => 無名関数」とする。
 // 無名関数の引数として渡した「$query」にクエリ条件を追加指定する。
-// リレーション先のリレーションを指定したい場合、要素を「'リレーション' => 孫リレーションを指定する配列」とする(※柔軟性がある書き方は無名関数を使ったwithメソッドのネスト。これは超省略した書き方)。
-$queryBuilderInstance->with([
-    'posts' => [
-        'comments' => function ($query) use ($public) {
-            $query->where('public', $public);
-        },
-        'details',
-    ],
-    'target',
-])
-
-// ※例
-// 戻り値はコレクション(複数の$userインスタンス)
-// それぞれの$userインスタンスのインスタンス変数(workLogs)として、コレクション(複数の$workLogインスタンス)を持つ。
-$welfareUsers = User::query()
-    ->where('user_type', UserType::WELFARE_USER->value)
-    ->with([
-        'workLogs' => function ($query) use ($date) {
-            $query->whereDate('date', $date)
-                ->oldest('updated_at');
-        }
-    ])
-    ->get();
-
-
-// リレーション先にクエリ条件を追加し、さらにその先のリレーションを指定するには、withメソッドをネストさせる。
 // ※例
 $outsideWorks = OutsideWork::query()
     ->with([
@@ -967,6 +941,16 @@ $queryBuilderInstance->with('posts')->get(); // 単独のリレーション
 $queryBuilderInstance->with('posts.comments')->get(); // ネストしたリレーション
 // 指定したカラムのみ取得したい場合。※外部キーカラムを必ず含める必要がある。
 $queryBuilderInstance->with('posts:id,user_id,title')->get();
+// リレーション先のリレーションを指定する。省略した書き方。要素を「'リレーション' => 孫リレーションを指定する配列」とする。
+$queryBuilderInstance->with([
+    'posts' => [
+        'comments' => function ($query) use ($public) {
+            $query->where('public', $public);
+        },
+        'details',
+    ],
+    'target',
+])
 
 
 // loadメソッド
@@ -978,24 +962,12 @@ $welfareUsers = User::query()
     ->where('user_type', UserType::WELFARE_USER->value)
     ->get();
 $welfareUsers = $welfareUsers->load('posts');
+```
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+### その他リレーション関連。
+```php
+<?php
 
 // こういう使い方もできることをとりあえず知っておく
 
@@ -1017,14 +989,6 @@ $comment = Post::query()
 $comment = Post::find(1)->comments()
                     ->where('title', 'foo')
                     ->first();
-
-```
-
-
-### その他リレーション関連。
-```php
-<?php
-
 
 
 
