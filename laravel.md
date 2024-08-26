@@ -142,20 +142,44 @@ mysqld.exeが動いていた場合はタスクマネージャーで終了させ�
 ## CarbonImmutable（日付操作）
 
 ### 参考サイト
-[Carbonではなく「CarbonImmutable」を使う](https://qiita.com/kbys-fumi/items/b923cdfb09c8f5c35fce)
+[Carbonではなく「CarbonImmutable」を使う](https://qiita.com/kbys-fumi/items/b923cdfb09c8f5c35fce)  
+[全217件！Carbonで時間操作する実例](https://blog.capilano-fw.com/?p=867)
 
-
+### クラスメソッド
 ```php
 <?php
-use Carbon\CarbonImmutable;
 
-// 現在の日時を'Y-m-d'の形式で取得する。例：'2024-07-09'
-CarbonImmutable::now()->toDateString()
-
-// 保留
-CarbonPeriod
+// CarbonImmutableインスタンスを生成
+CarbonImmutable::now() // 現在の日時
+CarbonImmutable::parse('2024-07-09') // 指定した日時
 ```
 
+### インスタンスメソッド
+```php
+<?php
+
+// CarbonImmutableインスタンスを操作
+// ※1日、1月、1年の場合は「Day」「Month」「Year」にして引数は無し。
+$carbonImmutableInstance->addDays(9) // 指定日数を追加する
+$carbonImmutableInstance->subDays(3) // 指定日数を減らす
+$carbonImmutableInstance->addMonthsNoOverflow(2) // 日付あふれを許可せずに指定月を追加する
+$carbonImmutableInstance->subMonthsNoOverflow(2) // 日付あふれを許可せずに指定月を減らす
+$carbonImmutableInstance->addYearsNoOverflow(3) // 日付あふれを許可せずに指定年を追加する
+$carbonImmutableInstance->subYearsNoOverflow(5) // 日付あふれを許可せずに指定年を減らす
+
+// CarbonImmutableインスタンスから日時データを取得
+$carbonImmutableInstance->toDateString() // 日付を取得する
+$carbonImmutableInstance->toTimeString() // 時間を取得する
+$carbonImmutableInstance->toDateTimeString() // 日時を取得する
+$carbonImmutableInstance->year // 年を取得
+$carbonImmutableInstance->month // 月を取得
+$carbonImmutableInstance->day // 日を取得
+$carbonImmutableInstance->hour // 時間を取得
+$carbonImmutableInstance->minute // 分を取得
+$carbonImmutableInstance->second // 秒を取得
+```
+// 保留  
+CarbonPeriod
 
 <a id="nullsafe演算子"></a>
 ## nullsafe演算子
@@ -878,7 +902,7 @@ public function folder(): BelongsTo
     return $this->belongsTo(Folder::class, 'folder_id', 'id');
 }
 
-// hasOne()、hasMany()、belongsTo()の第二、第三引数は省略可能。省略した場合は従キーが「主Modelクラス名_id」、主キーが「id」となる。
+// hasOne()、hasMany()、belongsTo()の第二、第三引数は省略可能。省略した場合は従キーが「主Modelクラス名のスネークケース_id」、主キーが「id」となる。
 
 // ※すべてのリレーションの実態はクエリビルダなので、更に条件を追加できる。
 public function authStaffComments(): HasMany
