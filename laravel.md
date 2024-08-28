@@ -168,6 +168,7 @@ $carbonImmutableInstance->addMonthsNoOverflow(2) // 日付あふれを許可せ�
 $carbonImmutableInstance->subMonthsNoOverflow(2) // 日付あふれを許可せずに指定月を減らす
 $carbonImmutableInstance->addYearsNoOverflow(3) // 日付あふれを許可せずに指定年を追加する
 $carbonImmutableInstance->subYearsNoOverflow(5) // 日付あふれを許可せずに指定年を減らす
+$carbonImmutableInstance->format('H:i') // フォーマット
 
 // CarbonImmutableインスタンスから日時データを取得
 $carbonImmutableInstance->toDateString() // 日付を取得する
@@ -182,9 +183,6 @@ $carbonImmutableInstance->second // 秒を取得
 ```
 // 保留  
 CarbonPeriod
-
-### 参考サイト
-
 
 
 <a id="nullsafe演算子"></a>
