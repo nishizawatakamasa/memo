@@ -162,24 +162,27 @@ CarbonImmutable::parse('2024-07-09') // 指定した日時
 
 // CarbonImmutableインスタンスを操作
 // ※1日、1月、1年の場合は「Day」「Month」「Year」にして引数は無し。
-$carbonImmutableInstance->addDays(9) // 指定日数を追加する
-$carbonImmutableInstance->subDays(3) // 指定日数を減らす
-$carbonImmutableInstance->addMonthsNoOverflow(2) // 日付あふれを許可せずに指定月を追加する
-$carbonImmutableInstance->subMonthsNoOverflow(2) // 日付あふれを許可せずに指定月を減らす
-$carbonImmutableInstance->addYearsNoOverflow(3) // 日付あふれを許可せずに指定年を追加する
-$carbonImmutableInstance->subYearsNoOverflow(5) // 日付あふれを許可せずに指定年を減らす
-$carbonImmutableInstance->format('H:i') // フォーマット
+$carbonInstance->addDays(9) // 指定日数を追加する
+$carbonInstance->subDays(3) // 指定日数を減らす
+$carbonInstance->addMonthsNoOverflow(2) // 日付あふれを許可せずに指定月を追加する
+$carbonInstance->subMonthsNoOverflow(2) // 日付あふれを許可せずに指定月を減らす
+$carbonInstance->addYearsNoOverflow(3) // 日付あふれを許可せずに指定年を追加する
+$carbonInstance->subYearsNoOverflow(5) // 日付あふれを許可せずに指定年を減らす
 
 // CarbonImmutableインスタンスから日時データを取得
-$carbonImmutableInstance->toDateString() // 日付を取得する
-$carbonImmutableInstance->toTimeString() // 時間を取得する
-$carbonImmutableInstance->toDateTimeString() // 日時を取得する
-$carbonImmutableInstance->year // 年を取得
-$carbonImmutableInstance->month // 月を取得
-$carbonImmutableInstance->day // 日を取得
-$carbonImmutableInstance->hour // 時間を取得
-$carbonImmutableInstance->minute // 分を取得
-$carbonImmutableInstance->second // 秒を取得
+$carbonInstance->format('H:i') // 指定した形式にフォーマットしたstringを取得
+$carbonInstance->toDateString() // 日付を取得する
+$carbonInstance->toTimeString() // 時間を取得する
+$carbonInstance->toDateTimeString() // 日時を取得する
+$carbonInstance->year // 年を取得
+$carbonInstance->month // 月を取得
+$carbonInstance->day // 日を取得
+$carbonInstance->hour // 時間を取得
+$carbonInstance->minute // 分を取得
+$carbonInstance->second // 秒を取得
+
+// CarbonImmutableインスタンスから差分を取得
+$startCarbonInstance->diffInMinutes($endCarbonInstance); //差分を分数で取得する
 ```
 // 保留  
 CarbonPeriod
