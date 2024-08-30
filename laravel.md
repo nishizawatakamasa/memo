@@ -1680,6 +1680,29 @@ class SampleRequest extends FormRequest
 }
 ```
 
+バリデーションエラーメッセージの表示:  
+```php
+<?php
+
+// エラーメッセージは自動的に変数$errorsへ格納される。
+// $errorsは連想配列であり、以下のようにしてビューの中で使用できる。
+// 例：
+@if ($errors->any())
+    <div>
+        <ul>
+            @foreach ($errors->all() as $error)
+                <li>{{$error}}</li>
+            @endforeach
+        </ul>
+    </div>
+@endif
+
+// ※$errorsはIlluminate\Support\ViewErrorBagのインスタンス。
+```
+
+
+
+
 |バリデーションルール|意味|
 |-|-|
 |required|入力必須|
