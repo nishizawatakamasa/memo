@@ -138,14 +138,24 @@ DB_COLLATION=utf8mb4_general_ci   # 追記：照合順序
 
 mysqld.exeが動いていた場合はタスクマネージャーで終了させる。
 
-<a id="CarbonImmutable（日付操作）"></a>
-## CarbonImmutable（日付操作）
+<a id="日付操作(CarbonImmutable)"></a>
+## 日付操作(CarbonImmutable)
 
-### 参考サイト
-[Carbonではなく「CarbonImmutable」を使う](https://qiita.com/kbys-fumi/items/b923cdfb09c8f5c35fce)  
-[全217件！Carbonで時間操作する実例](https://blog.capilano-fw.com/?p=867)  
-[Carbonで日付操作(比較, 差分, format)](https://www.wakuwakubank.com/posts/421-php-carbon/)  
-[【PHP】DatetimeやCarbonの最大値/最小値取得、ソートを手軽に行う](https://pg.echo-s.net/%E3%80%90php%E3%80%91datetime%E3%82%84carbon%E3%81%AE%E6%9C%80%E5%A4%A7%E5%80%A4-%E6%9C%80%E5%B0%8F%E5%80%A4%E5%8F%96%E5%BE%97%E3%80%81%E3%82%BD%E3%83%BC%E3%83%88%E3%82%92%E6%89%8B%E8%BB%BD%E3%81%AB/)
+### 予備知識：日付操作で使う主なもの
+* 日付文字列 （型はstring）
+* タイムスタンプ 1970年1月1日00:00:00UTCからの経過秒数 （型はint）
+* Carbonインスタンス （型はCarbon）
+
+### 予備知識：主な関数
+```php
+<?php
+
+date("Y-m-d", $timestamp); // タイムスタンプを日付文字列としてフォーマット ※タイムスタンプは省略すると現在の日時となる
+
+strtotime('2024-08-31'); // 日付文字列をタイムスタンプに変換
+time() // 現在のタイムスタンプを返す
+
+```
 
 ### クラスメソッド
 ```php
@@ -162,31 +172,52 @@ CarbonImmutable::parse('2024-07-09') // 指定した日時
 
 // CarbonImmutableインスタンスを操作
 // ※1日、1月、1年の場合は「Day」「Month」「Year」にして引数は無し。
-$carbonInstance->addDays(9) // 指定日数を追加する
-$carbonInstance->subDays(3) // 指定日数を減らす
-$carbonInstance->addMonthsNoOverflow(2) // 日付あふれを許可せずに指定月を追加する
-$carbonInstance->subMonthsNoOverflow(2) // 日付あふれを許可せずに指定月を減らす
-$carbonInstance->addYearsNoOverflow(3) // 日付あふれを許可せずに指定年を追加する
-$carbonInstance->subYearsNoOverflow(5) // 日付あふれを許可せずに指定年を減らす
+$carbonInstance->addDays(9) // 指定日数を追加する @return \Carbon
+$carbonInstance->subDays(3) // 指定日数を減らす @return \Carbon
+$carbonInstance->addMonthsNoOverflow(2) // 日付あふれを許可せずに指定月を追加する @return \Carbon
+$carbonInstance->subMonthsNoOverflow(2) // 日付あふれを許可せずに指定月を減らす @return \Carbon
+$carbonInstance->addYearsNoOverflow(3) // 日付あふれを許可せずに指定年を追加する @return \Carbon
+$carbonInstance->subYearsNoOverflow(5) // 日付あふれを許可せずに指定年を減らす @return \Carbon
 
 // CarbonImmutableインスタンスから日時データを取得
-$carbonInstance->format('H:i') // 指定した形式にフォーマットしたstringを取得
-$carbonInstance->toDateString() // 日付を取得する
-$carbonInstance->toTimeString() // 時間を取得する
-$carbonInstance->toDateTimeString() // 日時を取得する
-$carbonInstance->year // 年を取得
-$carbonInstance->month // 月を取得
-$carbonInstance->day // 日を取得
-$carbonInstance->hour // 時間を取得
-$carbonInstance->minute // 分を取得
-$carbonInstance->second // 秒を取得
+$carbonInstance->format('H:i') // 指定した形式にフォーマットした日時を取得 @return string
+$carbonInstance->toDateString() // 日付を取得する @return string
+$carbonInstance->toTimeString() // 時間を取得する @return string
+$carbonInstance->toDateTimeString() // 日時を取得する @return string
+$carbonInstance->year // 年を取得 @var int
+$carbonInstance->month // 月を取得 @var int
+$carbonInstance->day // 日を取得 @var int
+$carbonInstance->hour // 時間を取得 @var int
+$carbonInstance->minute // 分を取得 @var int
+$carbonInstance->second // 秒を取得 @var int
 
 // CarbonImmutableインスタンスから差分を取得
-$startCarbonInstance->diffInMinutes($endCarbonInstance); //差分を分数で取得する
+$startCarbonInstance->diffInMinutes($endCarbonInstance); //差分を分数で取得する  @return float
 ```
+
+### フォーマット文字
+
+[ドキュメント](https://www.php.net/manual/ja/datetime.format.php)  
+
+|主な文字|表すもの|
+|-|-|
+|Y|年（西暦の4桁） 例：2017|
+|m|月（2桁の月） 例：08|
+|d|日（2桁の日付） 例：21|
+|H|時間（2桁の24時間単位） 例：16|
+|i|分（2桁の分） 例：20|
+|s|秒（2桁の秒） 例：30|
+|D|曜日。3文字のテキスト形式。（Mon ～ Sun）|
+
+
 // 保留  
 CarbonPeriod
 
+### 参考サイト
+[Carbonではなく「CarbonImmutable」を使う](https://qiita.com/kbys-fumi/items/b923cdfb09c8f5c35fce)  
+[全217件！Carbonで時間操作する実例](https://blog.capilano-fw.com/?p=867)  
+[Carbonで日付操作(比較, 差分, format)](https://www.wakuwakubank.com/posts/421-php-carbon/)  
+[【PHP】DatetimeやCarbonの最大値/最小値取得、ソートを手軽に行う](https://pg.echo-s.net/%E3%80%90php%E3%80%91datetime%E3%82%84carbon%E3%81%AE%E6%9C%80%E5%A4%A7%E5%80%A4-%E6%9C%80%E5%B0%8F%E5%80%A4%E5%8F%96%E5%BE%97%E3%80%81%E3%82%BD%E3%83%BC%E3%83%88%E3%82%92%E6%89%8B%E8%BB%BD%E3%81%AB/)
 
 <a id="nullsafe演算子"></a>
 ## nullsafe演算子
