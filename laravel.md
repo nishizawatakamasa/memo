@@ -181,9 +181,9 @@ $carbonInstance->subYearsNoOverflow(5) // 日付あふれを許可せずに指�
 
 // CarbonImmutableインスタンスから日時データを取得
 $carbonInstance->format('H:i') // 指定した形式にフォーマットした日時を取得 @return string
-$carbonInstance->toDateString() // 日付を取得する @return string
-$carbonInstance->toTimeString() // 時間を取得する @return string
-$carbonInstance->toDateTimeString() // 日時を取得する @return string
+$carbonInstance->toDateString() // 日付を取得する('Y-m-d') @return string
+$carbonInstance->toTimeString() // 時間を取得する('H:i:s') @return string
+$carbonInstance->toDateTimeString() // 日時を取得する('Y-m-d H:i:s') @return string
 $carbonInstance->year // 年を取得 @var int
 $carbonInstance->month // 月を取得 @var int
 $carbonInstance->day // 日を取得 @var int
