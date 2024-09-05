@@ -178,6 +178,7 @@ $carbonInstance->addMonthsNoOverflow(2) // 日付あふれを許可せずに指�
 $carbonInstance->subMonthsNoOverflow(2) // 日付あふれを許可せずに指定月を減らす @return \Carbon
 $carbonInstance->addYearsNoOverflow(3) // 日付あふれを許可せずに指定年を追加する @return \Carbon
 $carbonInstance->subYearsNoOverflow(5) // 日付あふれを許可せずに指定年を減らす @return \Carbon
+$carbonInstance->startOfMonth() // 「その月の初日」にする @return \Carbon
 
 // CarbonImmutableインスタンスから日時データを取得
 $carbonInstance->format('H:i') // 指定した形式にフォーマットした日時を取得 @return string
@@ -2326,7 +2327,7 @@ class AppServiceProvider extends ServiceProvider
         // 投稿の閲覧権限を定義するなら'view-post'、投稿の編集権限を定義するなら'edit-post'といったように、説明的でわかりやすい名前を付ける。
         // 第二引数は無名関数↓
         // 権限の有無を判定する認可ロジックを定義する。
-        // 常に最初の引数としてユーザーインスタンスを受け取る。
+        // 常に最初の引数として現在認証中のユーザーインスタンスを受け取る(Auth::user()と同じもの)。
         // 関連するEloquentモデルなどの追加の引数を受け取ることもできる。
         // 真偽値を返す。
         Gate::define('welfare-user', function (User $user) {
