@@ -2344,6 +2344,13 @@ class AppServiceProvider extends ServiceProvider
     //'welfare-user'の戻り値も'welfare-staff'の戻り値もfalseの場合の処理
 @endcan
 
+// 上記の@canステートメントは以下のステートメントと同等だが、@canの方がより簡潔で、認証されていないユーザーに対しても安全に動作する。※認証されていないユーザー（null）の場合でもエラーを出さず、falseを返すため。
+@if (Auth::user()->can('welfare-user'))
+@elseif (Auth::user()->can('welfare-staff'))
+@else
+@endif
+
+
 // 複数版
 @canany(['update', 'view', 'delete'])
 @elsecanany(['create'])
