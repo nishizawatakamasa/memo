@@ -1080,70 +1080,61 @@ $hasOneInstance->delete();
 ### アクセサとミューテタ
 |||
 |:-|:-|
-|Accessor(アクセサ)|データベースからデータを取得する際に自動的に呼び出される処理(メソッド)。|
-|Mutator(ミューテタ)|データをデータベースに保存する際に自動的に呼び出される処理(メソッド)。|
+|Accessor(アクセサ)|Modelのインスタンス変数から値を取得するときに自動で呼び出される処理(メソッド)。|
+|Mutator(ミューテタ)|Modelのインスタンス変数に値を格納するときに自動で呼び出される処理(メソッド)。|
+
 ```php
+
 <?php
 
 namespace App\Models;
-// Attributeクラスをインポート
-use Illuminate\Database\Eloquent\Casts\Attribute;
+
+use Illuminate\Database\Eloquent\Casts\Attribute; // Attributeクラスをインポート
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Carbon\Carbon;
+use Illuminate\Support\Facades\Auth;
 
-class Task extends Model
+class WorkLog extends Model
 {
     use HasFactory;
 
-    protected $table = 'tasks';
-
-    const STATUS = [
-        1 => [ 'label' => '未着手', 'class' => 'label-danger' ],
-        2 => [ 'label' => '着手中', 'class' => 'label-info' ],
-        3 => [ 'label' => '完了', 'class' => '' ],
-    ];
+    // 中略
 
     // アクセサやミューテータのメソッド名をスネークケースにしたものが、Modelインスタンスのインスタンス変数としてアクセス可能になる。
-    // インスタンス変数status_labelとしてアクセス可能。
-    protected function statusLabel(): Attribute
+
+    // ※'H:i:s'形式の時刻データを'H:i'形式に変換
+    private function formatTime($time)
     {
-        // make()メソッドで新しいAttributeインスタンスを生成。その時にget引数を与えるとアクセサを定義でき、set引数を与えるとミューテタを定義できる。
-        return Attribute::make(
-            // get引数に無名関数を渡す。
-            // アロー関数でも可。
-            // setでも同様。
-            get: function ()
-            {
-                $status = $this->status;
-                // PHPのnull合体演算子
-                return self::STATUS[$status]['label'] ?? '';
-            }
-        );
+        return $time ? date('H:i', strtotime($time)) : null;
     }
 
-    // インスタンス変数status_classとしてアクセス可能。
-    protected function statusClass(): Attribute
+    // アクセサ
+    // インスタンス変数formatted_visiting_timeから値を取得するときに自動で呼び出される。
+    protected function formattedVisitingTime(): Attribute
     {
-        return Attribute::make(
-            get: function ()
-            {
-                $status = $this->status;
-                return self::STATUS[$status]['class'] ?? '';
-            }
-        );
-    }
-
-    // インスタンス変数formatted_due_dateとしてアクセス可能。
-    protected function formattedDueDate(): Attribute
-    {
+        // make()メソッドで新しいAttributeインスタンスを生成。
+        // その時にget引数を与えるとアクセサを定義できる。
         return Attribute::make(
             // get引数にアロー関数を渡す。
-            get: fn () => Carbon::createFromFormat('Y-m-d', $this->due_date)->format('Y/m/d')
+            // ※無名関数でも可。
+            get: fn () => $this->formatTime($this?->visiting_time),
+        );
+    }
+
+    // ミューテタ
+    // インスタンス変数mentalityに値を格納するときに自動で呼び出される。
+    protected function mentality(): Attribute
+    {
+        // make()メソッドで新しいAttributeインスタンスを生成。
+        // その時にset引数を与えるとミューテタを定義できる。
+        return Attribute::make(
+            // set引数にアロー関数を渡す。
+            // ※無名関数でも可。
+            // 引数$valueは格納しようとした値で、この値が格納前に変換される。
+            set: fn (string $value) => $value . '★★★',
         );
     }
 }
-
 ```
 
 https://bonoponz.hatenablog.com/entry/2020/10/06/%E3%80%90Laravel%E3%80%91Eloquent%E3%82%92%E4%BD%BF%E3%81%A3%E3%81%9F%E3%83%A2%E3%83%87%E3%83%AB%E3%82%92%E7%90%86%E8%A7%A3%E3%81%99%E3%82%8B
