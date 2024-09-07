@@ -13,6 +13,7 @@
     * [CarbonImmutable（日付操作）](#CarbonImmutable（日付操作）)
     * [nullsafe演算子](#nullsafe演算子)
     * [Enum](#Enum)
+    * [trait](#trait)
     * [マイグレーション](#マイグレーション)
     * [モデル](#モデル)
     * [シーダー](#シーダー)
@@ -233,6 +234,7 @@ $todayWorkLog?->activities
 ```
 
 
+
 <a id="Enum"></a>
 ## Enum
 
@@ -271,6 +273,38 @@ UserType::WELFARE_USER->value // '利用者'
 UserType::WELFARE_STAFF->value // '職員'
 ```
 
+<a id="trait"></a>
+## trait
+
+```php
+<?php
+
+namespace App\Traits;
+
+// プロパティやメソッドを定義
+trait CalculatorForUser
+{
+    private $hoge;
+    public $fuga;
+
+    private function piyo()
+    {
+        //
+    }
+}
+```
+```php
+<?php
+
+use App\Traits\CalculatorForUser;
+
+class CalculatorForGeneral
+{
+    // クラス内でuseで使用
+    // ※traitの内容をクラス定義に直接書き込んでいるのと同じ動作になる
+    use CalculatorForUser;
+}
+```
 
 <a id="マイグレーション"></a>
 ## マイグレーション
