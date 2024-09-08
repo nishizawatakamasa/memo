@@ -921,6 +921,9 @@ $queryBuilderInstance->firstOrFail();
 // 戻り値は、指定したカラムの値をキーとし、その値に対応するレコードのCollectionを持つ連想配列のようなCollection
 $collection->groupBy('カラム名');
 
+// 連想配列のキーでコレクションを並べ替える(昇順)。
+$collection->sortKeys();
+
 $collection->first(); // コレクションの最初の要素を取得。コレクションが空の場合はnullを返す。
 $collection->last(); // コレクションの最後の要素を取得。コレクションが空の場合はnullを返す。
 
