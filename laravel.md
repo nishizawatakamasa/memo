@@ -929,6 +929,8 @@ $collection->last(); // コレクションの最後の要素を取得。コレ�
 
 $collection->isEmpty(); // コレクションが空の場合にtrueを返す。そうでなければfalseを返す。
 $collection->isNotEmpty(); // コレクションが空でない場合にtrueを返す。そうでなければfalseを返す。
+
+$collection->sum('カラム名'); // 指定したカラムの合計値を返す。
 ```
 
 ### リレーションの概要
