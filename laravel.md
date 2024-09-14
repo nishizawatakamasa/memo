@@ -2367,6 +2367,10 @@ class AppServiceProvider extends ServiceProvider
         Gate::define('welfare-staff', function (User $user) {
             return ($user->user_type === UserType::WELFARE_STAFF->value);
         });
+
+        Gate::define('update-post', function (User $user, Post $post) {
+            return $user->id === $post->user_id;
+        });
     }
 }
 ```
@@ -2425,17 +2429,25 @@ Gate::none(['update-post', 'delete-post'], $post)
 // アクションが許可されていることを確実にする場合に便利。
 Gate::authorize('update', $post)
 
-// Gate::allowsメソッド()の使用例
-public function show(Post $post)
+
+// Gateメソッドの使用例
+class PostController extends Controller
 {
-    // 認証されているユーザーが特定のアクションを実行できるかどうかを確認するために使用される。
-    // 認可が必要なアクションを実行する前に、コントローラ内でゲート認可メソッドを呼び出すのが一般的
-    if (Gate::allows('view-post', $post)) {
+
+    public function update(Request $request, Post $post): RedirectResponse
+    {
+        // 認可が必要なアクションを実行する前に、コントローラ内でゲート認可メソッドを呼び出すのが一般的
+        // 認証済ユーザーインスタンスをメソッドに渡す必要はない(Laravelが自動的にゲートクロージャに引き渡す)。
+        if (Gate::denies('update-post', $post)) {
+            // 認可されていない場合の処理
+            // abortで例外を発生させる(この場合はメッセージ付き)。
+            abort(403, 'アクセス権限がありません');
+        }
+
         // 認可されている場合の処理
-        return view('posts.show', compact('post'));
-    } else {
-        // 認可されていない場合の処理
-        abort(403, 'Unauthorized action.');
+        // 投稿を更新…
+
+        return redirect('/posts');
     }
 }
 ```
