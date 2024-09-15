@@ -19,6 +19,7 @@
 |-|-|
 |pd.DataFrame({<br>'hoge': [1, 2, 3],<br>'fuga': [4, 5, 6],<br>'piyo': [7, 8, 9]<br>})|データフレーム。<br>二次元のデータ構造。<br>※代表的な作り方。|
 |pd.Series(['hoge', 'fuga', 'piyo'])|シリーズ。<br>一次元のデータ構造。<br>※代表的な作り方。|
+|Series.to_frame('列名')|SeriesをDataFrameに変換。<br>引数で列名を指定できる(省略するとintの0になる)。<br>indexはそのまま。|
 |DataFrame.values<br>Series.values|データ値属性(NumPy配列=ndarray)。|
 |DataFrame.values.tolist()|データフレームを2次元リスト化。<br>※ndarrayのtolist()メソッドで2次元リスト化する。<br>※要素は各行をリスト化したもの。|
 |Series.to_list()|シリーズをリスト化。|
@@ -232,6 +233,8 @@ pandasにはデータ型(dtype)が存在するが、int,str,floatのようなPyt
 |pd.concat([df1, df2])|※ ignore_index=Trueとするとインデックスが振り直される(0からの連番)。<br>※ axis=1とすると横方向に連結される。|
 |df['str1'] + ' in ' + df['str2']||
 |df['num1'] * 3 / df['num2']||
+|(df['num'] / 30).astype(str).str[0:3].astype(float)||
+|(df['num'] / 30).astype(int)||
 |df[2:9]|※ 行番号のスライスで該当した行をDataFrameとして取得。|
 |DataFrame.drop(index=['行名1', '行名2'], columns=['列名1', '列名2'])||
 |DataFrame.reset_index(drop=True)|※ indexを振り直す。drop=Trueとすると、元のindexは削除され残らない。|
