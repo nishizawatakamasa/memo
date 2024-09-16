@@ -10,7 +10,7 @@
     * [サーバー起動](#サーバー起動)
     * [.env.exampleの設定](#.env.exampleの設定)
     * [XAMPPでMySQLが起動しない時の対処法](#XAMPPでMySQLが起動しない時の対処法)
-    * [CarbonImmutable（日付操作）](#CarbonImmutable（日付操作）)
+    * [日付操作(CarbonImmutable)](#日付操作(CarbonImmutable))
     * [nullsafe演算子](#nullsafe演算子)
     * [Enum](#Enum)
     * [trait](#trait)
@@ -19,6 +19,7 @@
     * [シーダー](#シーダー)
     * [ファクトリー](#ファクトリー)
     * [ルーティング](#ルーティング)
+    * [GET/POST](#GET/POST)
     * [コントローラー](#コントローラー)
     * [リクエスト](#リクエスト)
     * [サービス](#サービス)
@@ -1427,14 +1428,21 @@ public function showEditForm(int $id, int $task_id)
 
 // route関数でURLを生成する例。
 // 基本：第一引数にルートの名前を指定すると、ルートのURLそのものが生成される。
-$url = route('folders.create');
-echo $url; // 'http://127.0.0.1:8000/folders/create'
-// 応用：ルートのURLにルートパラメータの指定がある場合は、第二引数に連想配列で指定する。
-$url = route('tasks.edit', [
-    'id' => 11,
-    'task_id' => 22,
-]);
-echo $url; // 'http://127.0.0.1:8000/folders/11/tasks/22/edit'
+// 'http://127.0.0.1:8000/work-log'
+route('work_log.create')
+// 応用：第二引数に連想配列を渡すと、ルートのURLにルートパラメータやクエリパラメータを含んだURLが生成される。
+// 以下のようなルート定義があるとする
+Route::get('/work_log/{user_member_id}', [WorkLogController::class, 'create'])->name('work_log.create');
+// route関数の第二引数に渡す連想配列の中で、ルートパラメータはルート定義({hoge}の部分)に一致するキーとして指定し、クエリパラメータはその他のキーとして指定する。
+// ルートパラメータはURLパスの一部になり、クエリパラメータは?param=valueの形式でURLの末尾に追加される。
+// つまりこのようにすると
+route('work_log.create', [
+    'user_member_id' => 5, // これはルートパラメータ
+    'date' => '2024-09-16', // これはクエリパラメータ
+])
+// 次のURLが生成される
+// 'http://127.0.0.1:8000/work-log/5?date=2024-09-16'
+
 
 
 // リダイレクトをする際に使用するredirect関数にもrouteは使える(その時redirect関数には何も引数を入れない)。
@@ -1448,8 +1456,27 @@ return redirect('URL');
 
 // Bladeテンプレート内でリンクを生成する場合は次のように使用する。
 <a href="{{ route('folders.edit', ['id' => $folder->id]) }}">編集</a>
-
 ```
+
+<a id="GET/POST"></a>
+## GET/POST
+
+### GET
+* GETリクエストでは、主にURLパラメータであるクエリパラメータとルートパラメータが利用される。
+* クエリパラメータは?param1=value1&param2=value2の形式でURLの末尾に追加される。
+* ルートパラメータはURLパスの一部を利用する。
+* 基本的にformタグを使用してリクエストを送る。
+* また、GETリクエストはURLの中に情報を載せる方法なので、aタグでも送ることができる。
+
+### POST
+* POSTリクエストでは、主にボディパラメータが利用される。
+* ボディパラメータはメッセージボディに記述される。
+* メッセージボディとは?->HTTPリクエストの部品で、補足のメモ書きが書いてある場所。
+* 基本的にformタグを使用してリクエストを送る。
+
+### Laravelにおけるパラメータの使用法
+パラメータは、Illuminate\Http\Requestのインスタンスから呼び出して使用できる。  
+※注意：ルートパラメータはちょっと特殊
 
 <a id="コントローラー"></a>
 ## コントローラー
@@ -1465,7 +1492,8 @@ return redirect('URL');
     1. Viewを表示
 
 ※※重要！※※  
-**コントローラーは指示役に徹する。自分自身で一切処理は行わない。**
+**コントローラーは指示役に徹する。自分自身で一切処理は行わない。**  
+main関数みたいなイメージ。つまりまとめ役。
 
 作成コマンド  
 `php artisan make:controller SampleController`  
@@ -1825,7 +1853,8 @@ class SampleController extends Controller
 
 
 [バリデーションのための入力準備](https://readouble.com/laravel/11.x/ja/validation.html?header=%E3%83%95%E3%82%A9%E3%83%BC%E3%83%A0%E3%83%AA%E3%82%AF%E3%82%A8%E3%82%B9%E3%83%88%E3%83%90%E3%83%AA%E3%83%87%E3%83%BC%E3%82%B7%E3%83%A7%E3%83%B3#:~:text=email%20address%27%2C%0A%20%20%20%20%5D%3B%0A%7D-,%E3%83%90%E3%83%AA%E3%83%87%E3%83%BC%E3%82%B7%E3%83%A7%E3%83%B3%E3%81%AE%E3%81%9F%E3%82%81%E3%81%AE%E5%85%A5%E5%8A%9B%E6%BA%96%E5%82%99,-%E3%83%90%E3%83%AA%E3%83%87%E3%83%BC%E3%82%B7%E3%83%A7%E3%83%B3%E3%83%AB%E3%83%BC%E3%83%AB%E3%82%92)  
-[【保存版】バリデーションルールのまとめ](https://www.wakuwakubank.com/posts/376-laravel-validation/)
+[【保存版】バリデーションルールのまとめ](https://www.wakuwakubank.com/posts/376-laravel-validation/)  
+[Laravel 11.x バリデーション](https://readouble.com/laravel/11.x/ja/validation.html)
 
 
 #### 追加処理
