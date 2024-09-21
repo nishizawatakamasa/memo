@@ -1854,7 +1854,6 @@ class SampleController extends Controller
 
 [バリデーションのための入力準備](https://readouble.com/laravel/11.x/ja/validation.html?header=%E3%83%95%E3%82%A9%E3%83%BC%E3%83%A0%E3%83%AA%E3%82%AF%E3%82%A8%E3%82%B9%E3%83%88%E3%83%90%E3%83%AA%E3%83%87%E3%83%BC%E3%82%B7%E3%83%A7%E3%83%B3#:~:text=email%20address%27%2C%0A%20%20%20%20%5D%3B%0A%7D-,%E3%83%90%E3%83%AA%E3%83%87%E3%83%BC%E3%82%B7%E3%83%A7%E3%83%B3%E3%81%AE%E3%81%9F%E3%82%81%E3%81%AE%E5%85%A5%E5%8A%9B%E6%BA%96%E5%82%99,-%E3%83%90%E3%83%AA%E3%83%87%E3%83%BC%E3%82%B7%E3%83%A7%E3%83%B3%E3%83%AB%E3%83%BC%E3%83%AB%E3%82%92)  
 [【保存版】バリデーションルールのまとめ](https://www.wakuwakubank.com/posts/376-laravel-validation/)  
-[Laravel 11.x バリデーション](https://readouble.com/laravel/11.x/ja/validation.html)
 
 
 #### 追加処理
@@ -1897,6 +1896,26 @@ public function withValidator(Validator $validator): void
 #### 参考サイト
 [LaravelのFormRequestをちゃんと理解する](https://laranote.jp/understanding-laravel-formrequest/)
 
+
+### oldヘルパ
+
+バリデーションで弾かれた場合でも、フォームの入力値を保持できる機能。
+
+```php
+<?php
+// 基本
+old(name属性値, 初期値)
+
+// 使用例
+<input name="body_temp" type="number" value="{{ old('body_temp', $workLog?->body_temp) }}">
+<input name="lunch" type="checkbox" value="1" @checked(old('lunch', $workLog?->lunch))>
+<input name="quantity[]" type="number" value="{{ old('quantity.' . $index, $piecework?->pieceworkLogs?->first()?->minute_quantity) }}">
+
+// ※name属性値が配列形式の場合の使用法
+<input type="text" name="name[]" value="{{ old('name.0') }}">
+<input type="text" name="name[]" value="{{ old('name.1') }}">
+<input type="text" name="name[]" value="{{ old('name.2') }}">
+```
 
 <a id="サービス"></a>
 ## サービス
