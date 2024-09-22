@@ -5,7 +5,7 @@ exe化したいファイルがあるディレクトリで
 `python -m venv env`  
 
 仮想環境の有効化  
-`env\scripts\activate.ps1`  
+`$ source env/Scripts/activate`   
 
 仮想環境の無効化  
 `deactivate`  

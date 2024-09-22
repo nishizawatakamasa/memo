@@ -165,7 +165,7 @@ time() // 現在のタイムスタンプを返す
 
 // CarbonImmutableインスタンスを生成
 CarbonImmutable::now() // 現在の日時
-CarbonImmutable::parse('2024-07-09') // 指定した日時
+CarbonImmutable::parse('2024-07-09') // 多種多様な日時文字列を指定できる
 ```
 
 ### インスタンスメソッド
@@ -193,6 +193,12 @@ $carbonInstance->day // 日を取得 @var int
 $carbonInstance->hour // 時間を取得 @var int
 $carbonInstance->minute // 分を取得 @var int
 $carbonInstance->second // 秒を取得 @var int
+$carbonInstance->dayName // 曜日を文字列で取得 例：'月曜日' @var string
+$carbonInstance->shortDayName // 曜日を短い文字列で取得 例：'月' @var string
+// ※曜日を日本語の文字列で取得するには.envファイルに以下の設定が必要
+// APP_TIMEZONE=Asia/Tokyo
+// APP_LOCALE=ja
+
 
 // CarbonImmutableインスタンスから差分を取得
 $startCarbonInstance->diffInMinutes($endCarbonInstance); //差分を分数で取得する  @return float
