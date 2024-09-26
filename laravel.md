@@ -166,6 +166,7 @@ time() // 現在のタイムスタンプを返す
 // CarbonImmutableインスタンスを生成
 CarbonImmutable::now() // 現在の日時
 CarbonImmutable::parse('2024-07-09') // 多種多様な日時文字列を指定できる
+CarbonImmutable::parse($carbonInstance) // カーボンインスタンスも指定できる
 ```
 
 ### インスタンスメソッド
@@ -219,14 +220,24 @@ $startCarbonInstance->diffInMinutes($endCarbonInstance); //差分を分数で取
 |D|曜日。3文字のテキスト形式。（Mon ～ Sun）|
 
 
-// 保留  
-CarbonPeriod
+### CarbonPeriodImmutableの使用
+```php
+<?php
+// 特定の期間を配列で取得できる
+$periods = CarbonPeriod::create('2024-07-01', '2024-07-31')->toArray();
+// カーボンインスタンスも指定できる
+$periods = CarbonPeriodImmutable::create(
+    $carbonInstance->startOfMonth(),
+    $carbonInstance->endOfMonth()
+)->toArray()
+```
 
 ### 参考サイト
 [Carbonではなく「CarbonImmutable」を使う](https://qiita.com/kbys-fumi/items/b923cdfb09c8f5c35fce)  
 [全217件！Carbonで時間操作する実例](https://blog.capilano-fw.com/?p=867)  
 [Carbonで日付操作(比較, 差分, format)](https://www.wakuwakubank.com/posts/421-php-carbon/)  
 [【PHP】DatetimeやCarbonの最大値/最小値取得、ソートを手軽に行う](https://pg.echo-s.net/%E3%80%90php%E3%80%91datetime%E3%82%84carbon%E3%81%AE%E6%9C%80%E5%A4%A7%E5%80%A4-%E6%9C%80%E5%B0%8F%E5%80%A4%E5%8F%96%E5%BE%97%E3%80%81%E3%82%BD%E3%83%BC%E3%83%88%E3%82%92%E6%89%8B%E8%BB%BD%E3%81%AB/)
+[CarbonPeriod ドキュメント](https://carbon.nesbot.com/docs/#api-period)
 
 <a id="nullsafe演算子"></a>
 ## nullsafe演算子
@@ -917,9 +928,9 @@ $queryBuilderInstance->firstOr();
 $queryBuilderInstance->firstOrFail();
 ```
 
-### Eloquent Collectionメソッド
-[Eloquent Collectionメソッド](https://readouble.com/laravel/11.x/ja/eloquent-collections.html)  
-[Laravelの基本Collectionから継承されるメソッド。](https://readouble.com/laravel/11.x/ja/collections.html#available-methods)
+### Eloquent\Collectionメソッド
+[Eloquent\Collectionメソッド](https://readouble.com/laravel/11.x/ja/eloquent-collections.html)  
+[Support\Collectionから継承されるメソッド。](https://readouble.com/laravel/11.x/ja/collections.html#available-methods)
 ```php
 <?php
 // クエリ実行等の手段で取得したCollectionから呼べるメソッド。
@@ -938,6 +949,19 @@ $collection->isEmpty(); // コレクションが空の場合にtrueを返す。�
 $collection->isNotEmpty(); // コレクションが空でない場合にtrueを返す。そうでなければfalseを返す。
 
 $collection->sum('カラム名'); // 指定したカラムの合計値を返す。
+
+
+// 「Support\Collection」のmergeメソッド
+// 指定したコレクションをオリジナルコレクションへマージする。
+// キーの衝突が起きた場合は、オリジナルコレクションの値を指定コレクションの値で上書きする。
+// ※Eloquent\Collectionにもmergeメソッドは存在するが、同じモデルは1つしか保持されない、キーの再インデックスが行われる等、挙動が異なる
+$merged = $supportCollection->merge($collection);
+
+// Support\Collectionを生成
+collect($arrayable)
+// Eloquent\Collectionを生成
+// ※Illuminate\Database\Eloquent\Collection::make()
+Collection::make($arrayable)
 ```
 
 ### リレーションの概要
@@ -1071,6 +1095,7 @@ $queryBuilderInstance->with([
 // loadメソッド
 // withメソッド同様、リレーションをロードするために使用されるが、使用のタイミングはクエリ実行後。
 // つまり、すでに取得したモデルインスタンス（もしくはコレクション）に対して使用する。
+// ※当然だがSupport\Collectionにはloadメソッドが存在しないため、使用不可。
 // 戻り値は、 リレーションがロードされた状態の元のモデルインスタンス（もしくはコレクション）
 // 基本的に、指定できる引数の形式はwithメソッドと同じ
 $welfareUsers = User::query()
