@@ -971,7 +971,14 @@ $collection->isEmpty(); // コレクションが空の場合にtrueを返す。�
 $collection->isNotEmpty(); // コレクションが空でない場合にtrueを返す。そうでなければfalseを返す。
 
 $collection->sum('カラム名'); // 指定したカラムの合計値を返す。
+$collection->count(); // コレクションのアイテム数を返す。
 
+
+// コレクション全体をフィルタリングし、テストでtrueを返したアイテムだけが残った新しいコレクションを返す。
+// 引数にはコールバック関数を指定。
+$collection->filter(function ($item, $key) {
+    return $item > 2;
+});
 
 // コレクション全体を反復処理し、各値が更新された新しいコレクションを返す。
 // 引数にコールバック関数を指定。
