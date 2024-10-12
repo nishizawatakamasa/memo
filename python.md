@@ -34,5 +34,17 @@ settings.jsonに設定
 "python.analysis.extraPaths": ["/Users/user/AppData/Local/programs/Python/Python312/lib/site-packages"]
 ```
 
+## 抽象基底クラス
+```python
+from abc import ABCMeta, abstractmethod
+
+class BaseSe(metaclass=ABCMeta):
+
+    @abstractmethod
+    def hoge(self):
+      pass
+```
+
+
 ## 参考サイト
 [Pythonプログラミング入門](https://utokyo-ipp.github.io/index.html)
