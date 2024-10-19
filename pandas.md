@@ -8,7 +8,7 @@
     * [グルーピング](#グルーピング)
     * [マージ](#マージ)
     * [メルト](#メルト)
-    * [ファイル読み込み](#ファイル読み込み)
+    * [データ形式変換](#データ形式変換)
     * [その他](#その他)
 
 <a id="基本的なこと"></a>
@@ -194,12 +194,13 @@ pandasにはデータ型(dtype)が存在するが、int,str,floatのようなPyt
 * [データフレームを再構築するPandasのMelt()関数のお話し](https://www.salesanalytics.co.jp/datascience/datascience021/)
 
 
-<a id="ファイル読み込み"></a>
-## ファイル読み込み
+<a id="データ形式変換"></a>
+## データ形式変換
+
+### pd.read_parquet
+* ファイルパスからparquetオブジェクトを読み込み、DataFrameを返す。
 
 ### pd.read_csv 
-※read_clipboard()の内部でもread_csv()が動いており、同じ引数が指定できる。  
-※ただしread_clipboard()の場合は引数sepのデフォルト値が空白文字(sep=r'\s+')。
 |主な引数|引数の説明|
 |-|-|
 |filepath_or_buffer|※重要！ CSVファイルのパスを指定。唯一の必須引数。位置引数でもある。|
@@ -212,7 +213,15 @@ pandasにはデータ型(dtype)が存在するが、int,str,floatのようなPyt
 |index_col||
 |on_bad_lines||
 
+### pd.read_clipboard
+* 内部的にはpd.read_csvが動いているため、基本的な引数や挙動はpd.read_csvと同じ。
+* 違い
+    * データはファイルからではなくクリップボードから読み込まれる。
+    * 引数sepのデフォルト値が空白文字(sep=r'\s+')。
+
 ### pd.read_excel
+* $ pip install openpyxl
+
 |主な引数|引数の説明|
 |-|-|
 |io|Excelファイルのパスを指定。|
@@ -221,6 +230,54 @@ pandasにはデータ型(dtype)が存在するが、int,str,floatのようなPyt
 |usecols=[2, 6, 7, 8]|読み込む列をリストで指定する。intのリストの場合は列番号（0始まり）での指定となり、文字列のリストの場合は列名での指定となる。列名がintの場合、その列名を指定することはできない。|
 |dtype=str|pd.read_csvと同様。|
 |index_col||
+
+### pd.read_html
+* $ pip install lxml html5lib beautifulsoup4
+* dfs = pd.read_html(url, match='リリース日', header=0)
+* 第一引数にURLかHTMLファイルへのパスを指定すると、そのページ内のtable表をすべて取得しDataFrameのリストとして返す。
+* 表が1つしかない場合も、長さ1のリストとして返される。
+* 引数のmatchの文字列を指定すると、その文字列が含まれる表のみを取得できる。
+* 引数のheaderで指定した行がヘッダーになる。
+
+---------------------------------------------------
+
+### df.to_parquet
+* $ pip install pyarrow
+* df.to_parquet('hoge/fuga/piyo.parquet')
+* .parquetファイルとして新規作成or上書き保存。
+
+### df.to_csv
+* df.to_csv(hoge/fuga/piyo.csv',  sep=',', header=True, index=True, encoding=utf-8, mode='w')
+* 引数のheaderとindexは、それぞれの出力の有無をboolで指定する。
+* .csvファイルとして出力。
+
+### df.to_clipboard
+* DataFrame.to_clipboard(excel=True, sep=r'\t', **kwargs)
+* 内部的にはto_csvが動いているため、基本的な引数や挙動はto_csvと同じ。
+* 違い
+    * データはファイルとして出力されず、クリップボードにコピーされる。
+    * 引数sepのデフォルト値がタブ(sep=r'\t')
+    * excel=Falseとすると、print(df)で表示される文字列がそのままクリップボードに書き込まれる。
+
+### df.to_excel
+* $ pip install openpyxl
+* df.to_excel('hoge/fuga/piyo.xlsx', sheet_name='Sheet1', header=True, index=True)
+* 引数のheaderとindexは、それぞれの出力の有無をboolで指定する。
+* .xlsxファイルとして新規作成or上書き保存。
+
+### df.to_html
+* df.to_html('hoge/fuga/piyo.html', header=True, index=True)
+* 引数のheaderとindexは、それぞれの出力の有無をboolで指定する。
+* .htmlファイルとして新規作成or上書き保存。
+* ファイルパスを指定しなければ、HTMLのテキストを返す。
+
+### df.to_markdown
+* $ pip install tabulate
+* df.to_markdown('hoge/fuga/piyo.md"", index=True, mode='w')
+* .mdファイルとして出力。
+* ファイルパスを指定しなければ、Markdownのテキストを返す。
+
+
 
 ### 参考サイト
 * [【保存版】Pandas2.0のread_csv関数の全引数、パフォーマンス、活用テクニックを完全解説する！](https://qiita.com/fujine/items/dbe2f5e4101d6299ff12#encoding)
