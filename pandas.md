@@ -220,7 +220,7 @@ pandasにはデータ型(dtype)が存在するが、int,str,floatのようなPyt
     * 引数sepのデフォルト値が空白文字(sep=r'\s+')。
 
 ### pd.read_excel
-* $ pip install openpyxl
+`$ pip install openpyxl`
 
 |主な引数|引数の説明|
 |-|-|
@@ -244,17 +244,23 @@ dfs = pd.read_html(url, match='リリース日', header=0)
 ---------------------------------------------------
 
 ### df.to_parquet
-* $ pip install pyarrow
-* df.to_parquet('hoge/fuga/piyo.parquet')
+`$ pip install pyarrow`
+```py
+df.to_parquet('hoge/fuga/piyo.parquet')
+```
 * .parquetファイルとして新規作成or上書き保存。
 
 ### df.to_csv
-* df.to_csv(hoge/fuga/piyo.csv',  sep=',', header=True, index=True, encoding=utf-8, mode='w')
+```py
+df.to_csv(hoge/fuga/piyo.csv',  sep=',', header=True, index=True, encoding=utf-8, mode='w')
+```
 * 引数のheaderとindexは、それぞれの出力の有無をboolで指定する。
 * .csvファイルとして出力。
 
 ### df.to_clipboard
-* DataFrame.to_clipboard(excel=True, sep=r'\t', **kwargs)
+```py
+df.to_clipboard(excel=True, sep=r'\t', **kwargs)
+```
 * 内部的にはto_csvが動いているため、基本的な引数や挙動はto_csvと同じ。
 * 違い
     * データはファイルとして出力されず、クリップボードにコピーされる。
@@ -262,20 +268,26 @@ dfs = pd.read_html(url, match='リリース日', header=0)
     * excel=Falseとすると、print(df)で表示される文字列がそのままクリップボードに書き込まれる。
 
 ### df.to_excel
-* $ pip install openpyxl
-* df.to_excel('hoge/fuga/piyo.xlsx', sheet_name='Sheet1', header=True, index=True)
+`$ pip install openpyxl`
+```py
+df.to_excel('hoge/fuga/piyo.xlsx', sheet_name='Sheet1', header=True, index=True)
+```
 * 引数のheaderとindexは、それぞれの出力の有無をboolで指定する。
 * .xlsxファイルとして新規作成or上書き保存。
 
 ### df.to_html
-* df.to_html('hoge/fuga/piyo.html', header=True, index=True)
+```py
+df.to_html('hoge/fuga/piyo.html', header=True, index=True)
+```
 * 引数のheaderとindexは、それぞれの出力の有無をboolで指定する。
 * .htmlファイルとして新規作成or上書き保存。
 * ファイルパスを指定しなければ、HTMLのテキストを返す。
 
 ### df.to_markdown
-* $ pip install tabulate
-* df.to_markdown('hoge/fuga/piyo.md"", index=True, mode='w')
+`$ pip install tabulate`
+```py
+df.to_markdown('hoge/fuga/piyo.md', index=True, mode='w')
+```
 * .mdファイルとして出力。
 * ファイルパスを指定しなければ、Markdownのテキストを返す。
 
