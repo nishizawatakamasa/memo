@@ -232,8 +232,10 @@ pandasにはデータ型(dtype)が存在するが、int,str,floatのようなPyt
 |index_col||
 
 ### pd.read_html
-* $ pip install lxml html5lib beautifulsoup4
-* dfs = pd.read_html(url, match='リリース日', header=0)
+`$ pip install lxml html5lib beautifulsoup4`
+```py
+dfs = pd.read_html(url, match='リリース日', header=0)
+```
 * 第一引数にURLかHTMLファイルへのパスを指定すると、そのページ内のtable表をすべて取得しDataFrameのリストとして返す。
 * 表が1つしかない場合も、長さ1のリストとして返される。
 * 引数のmatchの文字列を指定すると、その文字列が含まれる表のみを取得できる。
