@@ -198,6 +198,9 @@ pandasにはデータ型(dtype)が存在するが、int,str,floatのようなPyt
 ## データ形式変換
 
 ### pd.read_parquet
+```py
+df = pd.read_parquet('hoge/fuga/piyo.parquet')
+```
 * ファイルパスからparquetオブジェクトを読み込み、DataFrameを返す。
 
 ### pd.read_csv 
