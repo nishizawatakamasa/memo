@@ -4,7 +4,8 @@
     * [基本的なこと](#基本的なこと)
     * [選択操作](#選択操作)
     * [文字列操作](#文字列操作)
-    * [基礎集計メソッド](#基礎集計メソッド)
+    * [基礎集計](#基礎集計)
+    * [ユニーク](#ユニーク)
     * [グルーピング](#グルーピング)
     * [マージ](#マージ)
     * [メルト](#メルト)
@@ -14,19 +15,62 @@
 <a id="基本的なこと"></a>
 ## 基本的なこと
 
-### 基本
+### pandasの思想
+1. DataFrameは単一のテーブル構造（行と列の形式）で扱う。  
+1. 分離、適用、結合。
+
+**思想に沿わない使い方をするべきではない。**
+
+### DataFrameの基本
+```py
+# コンストラクタ
+pandas.DataFrame(data=None, columns=None)
+
+# 二次元リストからDataFrameを作成。
+# 各要素が行となる。
+# columnsを省略すると、列名は0からの連番になる。
+data = [[0, 1, 2], [3, 4, 5], [6, 7, 8]]
+columns=['col_0', 'col_1', 'col_2']
+df1 = pd.DataFrame(data, columns=columns)
+# DataFrameを二次元リストに変換
+# ndarrayのtolist()メソッドを使う。
+# 要素は各行をリスト化したもの。
+li = df1.values.tolist()
+# [[0, 1, 2], [3, 4, 5], [6, 7, 8]]
+
+# 辞書からDataFrameを作成
+# 各キーが列名となり、値が列になる。
+data = {
+    'col_0': [0, 1, 2],
+    'col_1': [3, 4, 5],
+    'col_2': [6, 7, 8],
+}
+df2 = pd.DataFrame(data)
+# DataFrameを辞書に変換
+# 行名の情報は失われる。
+di = df2.to_dict(orient='list')
+# {
+#     'col_0': [0, 1, 2],
+#     'col_1': [3, 4, 5],
+#     'col_2': [6, 7, 8],
+# }
+
+
+DataFrame.values # データ値属性(NumPy配列=ndarray)。
+DataFrame.index = ['行名1', '行名2', '行名3'] # 行名属性へ値を代入。
+DataFrame.columns = ['列名1', '列名2', '列名3'] # 列名属性へ値を代入。
+DataFrame.index.to_list() # 行名属性をリスト化。
+DataFrame.columns.to_list() # 列名属性をリスト化。
+```
+
+### Seriesの基本
 |||
 |-|-|
-|pd.DataFrame({<br>'hoge': [1, 2, 3],<br>'fuga': [4, 5, 6],<br>'piyo': [7, 8, 9]<br>})|データフレーム。<br>二次元のデータ構造。<br>※代表的な作り方。|
 |pd.Series(['hoge', 'fuga', 'piyo'])|シリーズ。<br>一次元のデータ構造。<br>※代表的な作り方。|
 |Series.to_frame('列名')|SeriesをDataFrameに変換。<br>引数で列名を指定できる(省略するとintの0になる)。<br>indexはそのまま。|
-|DataFrame.values<br>Series.values|データ値属性(NumPy配列=ndarray)。|
-|DataFrame.values.tolist()|データフレームを2次元リスト化。<br>※ndarrayのtolist()メソッドで2次元リスト化する。<br>※要素は各行をリスト化したもの。|
+|Series.values|データ値属性(NumPy配列=ndarray)。|
 |Series.to_list()|シリーズをリスト化。|
-|DataFrame.index.to_list()|行名属性をリスト化。|
-|DataFrame.columns.to_list()|列名属性をリスト化。|
-|DataFrame.index = ['行名1', '行名2', '行名3']|行名属性へ値を代入。|
-|DataFrame.columns = ['列名1', '列名2', '列名3']|列名属性へ値を代入。|
+
 
 ### データ型
 pandasにはデータ型(dtype)が存在するが、int,str,floatのようなPythonの型を指定することもできる。  
@@ -36,6 +80,8 @@ pandasにはデータ型(dtype)が存在するが、int,str,floatのようなPyt
 |int|int64|
 |float|float64|
 |str|object（各要素がstr型）|
+
+※注意点：int64は欠損値をサポートしていないため、数値型の列に欠損値が一つでも含まれていると自動的にfloat64へ変換される。
 
 <a id="選択操作"></a>
 ## 選択操作
@@ -59,6 +105,11 @@ pandasにはデータ型(dtype)が存在するが、int,str,floatのようなPyt
 |Series.isnull()||
 |Series.notnull()||
 |DataFrame.duplicated(subset=['列名1', '列名2'], keep=False)|指定した全ての列の要素が重複している行について。<br>keep=Falseで重複行全てがTrue。|
+|df_of_bool.all(axis=1)|※boolのDataFrameに対して使用<br>行が全てTrue|
+|df_of_bool.any(axis=1)|※boolのDataFrameに対して使用<br>行がひとつでもTrue|
+
+
+df.isnull().all(axis=1)
 
 ### ※boolのDataFrameを得る方法の例
 |||
@@ -106,19 +157,23 @@ pandasにはデータ型(dtype)が存在するが、int,str,floatのようなPyt
 |(?im)|複数フラグ|
 |(?ms:)|複数フラグを部分適用|
 
-<a id="基礎集計メソッド"></a>
-## 基礎集計メソッド
+<a id="基礎集計"></a>
+## 基礎集計
 
 ### 重要なメソッド
-
 |||
 |-|-|
 |DataFrame.sum()|列方向の合計を算出。<br>※axis=1とすると行方向。<br>Seriesを返す。|
 |Series.sum()|合計を算出。<br>スカラー値を返す。|
 |DataFrame.sum().sum()|DataFrame.sum()が返したSeriesのsum()を呼ぶことで、総数を得られる。|
 
+<a id="ユニーク"></a>
+## ユニーク
+
+### ユニーク
 |||
 |-|-|
+|Series.unique()|ユニークな要素の値の一覧を一次元のNumPy配列=ndarrayで返す。<br>欠損値NaNも含まれる。<br>出現順に並べられる。<br>ndarrayでなければならない理由がないのなら、tolist()メソッドでリストに変換して使う。|
 |Series.value_counts()|ユニークな要素の値をインデックス、その個数を要素とするSeriesを返す。<br>dropna=FalseとするとNaNもカウント対象となる。<br>normalize=Trueとすると、合計が1になるように規格化した値となる。|
 |DataFrame.value_counts(subset=['列名1', '列名2'])|基本はSeries.value_counts()と同じだが、subsetで指定した列要素の組み合わせ単位でユニークカウントされる。<br>subsetを指定しなければ、全ての列要素の組み合わせ単位になる。|
 
@@ -303,23 +358,49 @@ df.to_markdown('hoge/fuga/piyo.md', index=True, mode='w')
 <a id="その他"></a>
 ## その他
 
+### 基本的な操作
 |||
 |-|-|
-|pd.concat([df1, df2])|※ ignore_index=Trueとするとインデックスが振り直される(0からの連番)。<br>※ axis=1とすると横方向に連結される。|
 |df['str1'] + ' in ' + df['str2']||
 |df['num1'] * 3 / df['num2']||
 |(df['num'] / 30).astype(str).str[0:3].astype(float)||
 |(df['num'] / 30).astype(int)||
 |df[2:9]|※ 行番号のスライスで該当した行をDataFrameとして取得。|
-|DataFrame.drop(index=['行名1', '行名2'], columns=['列名1', '列名2'])||
-|DataFrame.reset_index(drop=True)|※ indexを振り直す。drop=Trueとすると、元のindexは削除され残らない。|
-|DataFrame.drop_duplicates(subset=['列名1', '列名2'], ignore_index=True)<br>Series.drop_duplicates(ignore_index=True)|※ 指定した全ての列の要素が重複している行を、最初の行だけを残して削除|
-|DataFrame.sort_values(by='列名', ascending=False, ignore_index=True)|※ デフォルトは昇順。降順にするには引数ascendingをFalseにする。<br>※ na_position='first'とすると、欠損値NaNが先頭に並べられる。デフォルトでは末尾。<br>※ ignore_index=Trueとするとインデックスが振り直される(0からの連番)。|
-|DataFrame.astype(int)<br>Series.astype(float)|データ型を一括で変更する。<br>DataFrame.astypeの場合は引数に{'列名': str}のような辞書も指定でき、任意の列のデータ型を個別に変更できる。|
-|DataFrame.fillna(value)<br>Series.fillna(value)|※ 欠損値をvalueに置換|
+
+### 型変換
+|||
+|-|-|
+|s2 = pd.to_numeric(s1, errors='coerce')|シリーズを数値型に変換する(文字列等の例外データは欠損値に変換する)。|
+|DataFrame.astype(int)<br>Series.astype(float)|データ型を一括で変更する。<br>DataFrame.astypeの場合は引数に{'列名': str}のような辞書も指定でき、任意の列のデータ型を個別に変更できる。<br>※変換できない値が含まれている場合はValueErrorとなる。|
+
+### 欠損値の取り扱い
+|||
+|-|-|
+|DataFrame.dropna(how='any', subset=None, ignore_index=False)|欠損値を含む行を削除する。<br>※ how='all'とすると、全てが欠損値の行を削除する。<br>※ subset=['列名1', '列名2']とすると、指定列のみが調査対象になる。<br>※ ignore_index=Trueとすると、インデックスが振り直される(0からの連番)。|
+|DataFrame.fillna(value)<br>Series.fillna(value)|欠損値をvalueで指定する値に置き換える。|
+|DataFrame.ffill()<br>Series.ffill()|欠損値を直前の非欠損値で置き換える。|
+|DataFrame.bfill()<br>Series.bfill()|欠損値を直後の非欠損値で置き換える。|
+
+### ランダムサンプリング
+|||
+|-|-|
 |DataFrame.sample(n=30)|※ n行だけランダムサンプリング|
 |DataFrame.sample(frac=0.1)|※ 行を指定割合だけランダムサンプリング|
-|DataFrame.transpose()|※ 転置|
-|DataFrame.rename(index={'元の行名': '新しい行名'}, columns={'元の列名': '新しい列名'})|行名・列名のいずれかのみを変更したい場合は、引数indexとcolumnsのどちらか一方だけを指定すればよい。|
+
+### 関数の適用
+|||
+|-|-|
 |DataFrame.map(lambda x: hex(int(x)))<br>Series.map(lambda x: func(x, 5))|na_action='ignore'とすると、NaNは関数に渡されずに結果がそのままNaNとなる。|
 |Series.apply(pd.Series)|Seriesの各要素のリストにpd.Series()を適用したDataFrameを返す。<br>※Series.map()はDataFrameを返すことができないため、Series.apply()を使う。|
+
+### その他
+|||
+|-|-|
+|DataFrame.copy()|dfのコピーを作成(参照の値渡しを防ぐため)。|
+|pd.concat([df1, df2])|※ ignore_index=Trueとするとインデックスが振り直される(0からの連番)。<br>※ axis=1とすると横方向に連結される。|
+|DataFrame.transpose()|※ 転置|
+|DataFrame.sort_values(by='列名', ascending=False, ignore_index=True)|※ デフォルトは昇順。降順にするには引数ascendingをFalseにする。<br>※ na_position='first'とすると、欠損値NaNが先頭に並べられる。デフォルトでは末尾。<br>※ ignore_index=Trueとするとインデックスが振り直される(0からの連番)。|
+|DataFrame.reset_index()|※ indexを0からの連番に振り直す。<br>元のindexはデータ列として残る(列名は'index')。<br>drop=Trueとすると、元のindexは削除され残らない。|
+|DataFrame.drop(index=['行名1', '行名2'], columns=['列名1', '列名2'])||
+|DataFrame.drop_duplicates(subset=['列名1', '列名2'], ignore_index=True)<br>Series.drop_duplicates(ignore_index=True)|※ 指定した全ての列の要素が重複している行を、最初の行だけを残して削除|
+|DataFrame.rename(index={'元の行名': '新しい行名'}, columns={'元の列名': '新しい列名'})|行名・列名のいずれかのみを変更したい場合は、引数indexとcolumnsのどちらか一方だけを指定すればよい。|

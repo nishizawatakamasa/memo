@@ -1,5 +1,43 @@
 # Python覚書
 
+## 基本
+
+```py
+
+# 定数
+COLMUN_NAMES
+
+zip()
+enumerate()
+range()
+len()
+内包表記（list,dict）
+['' for _ in range(7)]
+f'{v}'
+
+# アンパック
+*li
+
+# スライス
+# スライスではインデックスをオーバーしてもエラーにならない
+[::]
+# 演算子
++= //
+
+li.append(COLMUN_NAMES)
+li.extend(body)
+```
+
+
+
+
+### 参考サイト
+[Pythonの基本的な組み込み型とその一般論まとめ](https://qiita.com/nakasan/items/bc9ba8eb57f5b7a22698)  
+[Pythonのzip関数の罠を回避する](https://zenn.dev/nakurei/articles/avoiding-python-zip-function-trap)
+
+
+
+
 ## venvを使った仮想環境の作成
 exe化したいファイルがあるディレクトリで  
 `python -m venv env`  

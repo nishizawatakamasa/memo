@@ -1,6 +1,7 @@
 # 覚書
 
 ## Web
+* [全般](./web.md)
 * フロントエンド
     * HTML/CSS
         * [全般](./html_css.md)
@@ -19,7 +20,8 @@
         * phpMyAdmin
     * SQL
         * MariaDB(MySQL)
-## データ分析
+## データ処理
+* [全般](./data_proc.md)
 * 簡易な処理
     * Excel(VBA)
     * Google スプレッドシート(GAS)
