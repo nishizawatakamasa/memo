@@ -1,5 +1,15 @@
 # Python覚書
 
+* 目次
+    * [基本](#基本)
+    * [venvを使った仮想環境の作成](#venvを使った仮想環境の作成)
+    * [settings.jsonにモジュールの検索パスを追加する](#settings.jsonにモジュールの検索パスを追加する)
+    * [抽象基底クラス](#抽象基底クラス)
+    * [参考サイト](#参考サイト)
+
+
+
+<a id="基本"></a>
 ## 基本
 
 ```py
@@ -9,11 +19,14 @@ COLMUN_NAMES
 
 zip()
 enumerate()
-range()
+range(start, stop, step)
 len()
 内包表記（list,dict）
-['' for _ in range(7)]
+['' for _ in range(7)] if句付きも
 f'{v}'
+
+辞書内包表記
+集合内包表記
 
 # アンパック
 *li
@@ -24,8 +37,14 @@ f'{v}'
 # 演算子
 += //
 
+三項演算子
+
+with
+
 li.append(COLMUN_NAMES)
 li.extend(body)
+
+差集合
 ```
 
 
@@ -37,8 +56,9 @@ li.extend(body)
 
 
 
-
+<a id="venvを使った仮想環境の作成"></a>
 ## venvを使った仮想環境の作成
+
 exe化したいファイルがあるディレクトリで  
 `python -m venv env`  
 
@@ -64,15 +84,17 @@ settings.jsonに設定
   "PSExecutionPolicyPreference": "RemoteSigned"
 },
 ```
-
+<a id="settings.jsonにモジュールの検索パスを追加する"></a>
 ## settings.jsonにモジュールの検索パスを追加する
+
 自動取得の対象とならない場合、明示的な設定が必要となる。  
 設定例
 ```json:settings.json
 "python.analysis.extraPaths": ["/Users/user/AppData/Local/programs/Python/Python312/lib/site-packages"]
 ```
-
+<a id="抽象基底クラス"></a>
 ## 抽象基底クラス
+
 ```python
 from abc import ABCMeta, abstractmethod
 
@@ -83,6 +105,7 @@ class BaseSe(metaclass=ABCMeta):
       pass
 ```
 
-
+<a id="参考サイト"></a>
 ## 参考サイト
+
 [Pythonプログラミング入門](https://utokyo-ipp.github.io/index.html)
