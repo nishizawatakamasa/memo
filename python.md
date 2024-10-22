@@ -16,9 +16,6 @@
 ```py
 
 
-
-
-
 # 数値型
 # 整数
 int()
@@ -73,94 +70,86 @@ set()
 
 
 
-
-
-
-
-
-
 # インデックス
-# 指定した位置の値を取得。
-# 指定した位置に値を代入。
+# シーケンスに対して使う
+# 指定した位置の値を取得できる。
+# 指定した位置に値を代入できる。
+# -は逆からになる
+# 該当要素がない場合は例外が発生(IndexError)。
 li[0]
 # スライス
-# 指定した部分のシーケンスを取得。
-# 指定した部分にシーケンスを代入。
-li[start:stop:step]
-li[1:-2:-1]
+# シーケンスに対して使う
+# 指定した部分のシーケンスを取得できる。
+# 指定した部分にシーケンスを代入できる。
 # -は逆からになる
 # スライスで取得した新しいシーケンスは浅いコピーとなる
-
-# 該当要素がない場合はIndexError
-該当要素が一つもなくても空のシーケンスを返せる
-step数に満たない部分はそのままの要素数で返る
-
-
+# step数に満たない部分はそのままの要素数で返る。
+# 該当要素がない場合は空のシーケンスが返る。
+li[start:stop:step]
+li[1:-2:-1]
 
 
 
-引数の絶対値を返す。
-absolute valueの略
+
+# 組み込み関数
+
+# 引数の絶対値を返す。
+# absolute valueの略
 abs()
 
-
-
+# 引数に渡したイテラブルオブジェクトの全要素がTrueならば、Trueを返す。
+# 注意点：引数の要素が空の場合はTrueを返す。
 all()
-anext()
+
+# 引数に渡したイテラブルオブジェクトの要素が一つでもTrueならば、Trueを返す。
+# 注意点：引数の要素が空の場合はFalseを返す。
 any()
-ascii()
 
-B
-bin()
+# 引数を真偽値に変換して返す。
 bool()
-breakpoint()
-bytearray()
-bytes()
 
-C
-callable()
-chr()
-classmethod()
-compile()
-complex()
+# 引数に指定した2つの数値(intかfloat)の商と余りをタプルとして返す。
+# 引数のどちらかがfloatの場合は、商と余りもfloatになる。
+# 引数のどちらかが0の場合は例外が発生する(ZeroDivisionError)。
+divmod(7, 3)
+# (2, 1)
 
-D
-delattr()
-dict()
-dir()
-divmod()
+# 引数に指定したイテラブルオブジェクトの要素とインデックスをタプルとして返すイテレータを作成する。
+# インデックスは0から始まるが、startパラメータで変更することができる。
+fruits = ['apple', 'banana', 'cherry']
+for i, fruit in enumerate(fruits, start=1):
+    print(i, fruit)
+# 1 apple
+# 2 banana
+# 3 cherry
 
-E
-enumerate()
+# 引数に与えられた文字列をPythonの式として評価し、その結果を返す。
+# ※危険！
 eval()
+
+# 引数に与えられた文字列をPythonの文として実行する。
+# ※危険！
 exec()
 
-F
-filter()
-float()
-format()
-frozenset()
-
-G
-getattr()
-globals()
-
-H
-hasattr()
-hash()
-help()
-hex()
-
-I
+# 引数に渡したオブジェクトの識別子(メモリアドレス)を返す。
 id()
+
+# 引数に渡した文字列を標準出力に表示し、ユーザーからの入力を受け取って返す。
+# 引数がない場合は、何も表示しない。
 input()
-int()
-isinstance()
-issubclass()
+
+# オブジェクトの型を判定する。
+# 引数に渡したオブジェクトが指定したクラスのインスタンスであるかどうかを真偽値で返す。
+isinstance(s, str)
+
+# 引数に渡したイテラブルオブジェクトをイテレータに変換して返す。
 iter()
-L
+
+# 引数に渡したイテラブルオブジェクトの長さ(要素数や文字数)を返す。
 len()
-list()
+
+
+
 locals()
 
 M
@@ -169,12 +158,13 @@ max()
 memoryview()
 min()
 
-N
+
+# 引数に渡したイテレータの次の要素を返す。
 next()
 
 O
 object()
-oct()
+
 open()
 ord()
 
@@ -293,6 +283,7 @@ li.extend(body)
 
 
 ### 参考サイト
+[組み込み関数全71件 完全解説](https://qiita.com/t_aki/items/a5e578aecf8cc20bec31)  
 [Python基礎文法まとめ](https://qiita.com/kita_ds12/items/84552d41a8aad36d5519)  
 [Pythonの基本的な組み込み型とその一般論まとめ](https://qiita.com/nakasan/items/bc9ba8eb57f5b7a22698)  
 [Pythonのzip関数の罠を回避する](https://zenn.dev/nakurei/articles/avoiding-python-zip-function-trap)
