@@ -114,6 +114,7 @@ bool()
 divmod(7, 3)
 # (2, 1)
 
+# enumerate関数
 # 引数に指定したイテラブルオブジェクトの要素とインデックスをタプルとして返すイテレータを作成する。
 # インデックスは0から始まるが、startパラメータで変更することができる。
 fruits = ['apple', 'banana', 'cherry']
@@ -130,6 +131,23 @@ eval()
 # 引数に与えられた文字列をPythonの文として実行する。
 # ※危険！
 exec()
+
+
+# filter関数
+# 第一引数(関数)は第二引数(イテラブルオブジェクト)の各要素に適用し、条件に合う要素だけを残します。
+# 第一引数(関数)を第二引数(イテラブルオブジェクト)の各要素に適用し、条件に合う要素だけを残します。
+# 結果はイテレータで返します。
+関数はイテラブルオブジェクトの各要素を引数にとり、真偽値を返す必要があります。
+def is_even(x):
+    return x % 2 == 0
+
+numbers = [1, 2, 3, 4, 5, 6]
+evens = filter(is_even, numbers)
+print(evens) # <filter object at 0x000001E8B0A9F7F0>
+print(list(evens)) # [2, 4, 6]
+
+
+
 
 # 引数に渡したオブジェクトの識別子(メモリアドレス)を返す。
 id()
@@ -149,11 +167,20 @@ iter()
 len()
 
 
+# map関数
+# 第一引数(関数)を第二引数(イテラブルオブジェクト)の各要素に適用した結果をイテレータで返します。
+def square(x):
+    return x ** 2
 
-locals()
+arr = [1, 2, 3, 4, 5]
+result = map(square, arr)
+print(result) # <map object at 0x000001E8F1A6B9A0>
+print(list(result)) # [1, 4, 9, 16, 25]
 
-M
-map()
+
+
+
+
 max()
 memoryview()
 min()
