@@ -93,6 +93,7 @@ pandasにはデータ型(dtype)が存在するが、int,str,floatのようなPyt
 |df.at['行名', '列名']|選択した要素の値を取得・変更。<br>変更時にはスカラー値を代入。|
 |df['列名']|df.loc[:, '列名']の簡潔な書き方(全行選択)。|
 |df[boolのSeries]|df.loc[boolのSeries]の簡潔な書き方(全列選択)。|
+|df[boolのDataFrame]|true部分の値のみを抽出。他は欠損値となる。<br>※サイズが一致していなくてもエラーは出ないが、想定されている使い方ではない気がする。|
 
 ### boolのSeriesを得る方法の例
 |||
@@ -111,12 +112,14 @@ pandasにはデータ型(dtype)が存在するが、int,str,floatのようなPyt
 
 df.isnull().all(axis=1)
 
-### ※boolのDataFrameを得る方法の例
+### boolのDataFrameを得る方法の例
 |||
 |-|-|
 |DataFrame >= 数値||
 |DataFrame == '文字列'||
 |DataFrame != '文字列'||
+|df1 == df2|※比較できるのはDataFrameのサイズが一致している場合のみ。|
+|df1 >= df2|※比較できるのはDataFrameのサイズが一致している場合のみ。|
 |DataFrame.isin(['文字列1', '文字列2'])|指定した複数の文字列のいずれかと完全一致。|
 |DataFrame.isnull()||
 |DataFrame.notnull()||
@@ -276,6 +279,7 @@ df = pd.read_parquet('hoge/fuga/piyo.parquet')
 * 違い
     * データはファイルからではなくクリップボードから読み込まれる。
     * 引数sepのデフォルト値が空白文字(sep=r'\s+')。
+* 表データの左上隅が空の場合、pandasがデータ構造を誤って解釈する可能性がある。
 
 ### pd.read_excel
 `$ pip install openpyxl`
