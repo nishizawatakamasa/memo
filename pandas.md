@@ -279,7 +279,13 @@ df = pd.read_parquet('hoge/fuga/piyo.parquet')
 * 違い
     * データはファイルからではなくクリップボードから読み込まれる。
     * 引数sepのデフォルト値が空白文字(sep=r'\s+')。
-* 表データの左上隅が空の場合、pandasがデータ構造を誤って解釈する可能性がある。
+```py
+# 表データの左上隅が空の場合、pandasがデータ構造を誤って解釈する可能性がある。
+# その場合に使う処理の一例。
+pyperclip.copy('Placeholder' + pyperclip.paste())
+df = pd.read_clipboard('\t', header=None)
+df.iat[0, 0] = None
+```
 
 ### pd.read_excel
 `$ pip install openpyxl`
