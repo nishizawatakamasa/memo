@@ -1618,7 +1618,7 @@ return view('tasks.edit', [
 
 ### リソースコントローラ
 作成コマンド  
-`php artisan make:controller SampleController  --resource`  
+`php artisan make:controller SampleController --resource`  
 (必ず使うというわけではないが、命名規則等を参考にしようかな。)
 ```php
 <?php
