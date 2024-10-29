@@ -457,34 +457,54 @@ print(list(c)) # [(1, 'a'), (2, 'b'), (3, 'c')]
 
 
 
-
-
-
-
-
-
-
-7. 単純文 (simple statement)
-7.1. 式文 (expression statement)
-7.2. 代入文 (assignment statement)
+# 単純文 (simple statement)
 
 # アサーションの条件がTrueの場合は何も起きず、Falseの場合は例外が発生(AssertionError)。
-assert 0 < hoge
+assert a > 0
+assert a > 0, 'aは正の値でなければなりません'
+
+# 何も起きない(文が必要だが何も実行したくない場合のプレースホルダとして有用)。
+pass
+
+# 指定したオブジェクトを削除する(リストは再帰的に削除される)。
+del a
+
+# 指定した値を戻り値として返し、関数の処理を終了する。
+return a
+
+# 指定した値を戻り値として返し、関数の処理を一時停止する。
+# 停止位置を記憶しており、再実行時はそこから再開される。
+# 関数定義内でyieldを使用することで、その定義は通常の関数でなくジェネレータ関数になる。
+yield a
+
+# 明示的に例外を発生させる。
+raise ValueError
+raise ValueError('入力値が不正です')
+
+# ループ処理を抜ける。
+# ループの内側でのみ出現することができる(ループ内の関数定義やクラス定義の内側には出現できない)。
+break
+
+# 現在のループを一回分スキップする。
+# ループの内側でのみ出現することができる(ループ内の関数定義やクラス定義の内側には出現できない)。
+continue
+
+# モジュールやクラス、関数などをインポートする
+import time
+# from 形式
+from time import sleep
+
+# 列挙した識別子を、グローバル変数として解釈するよう指定する。
+global a, b
+
+# 列挙した識別子を、一つ外側のスコープ(グローバルを除く)の変数として解釈するよう指定する。
+nonlocal a, b, c
 
 
 
-7.4. pass 文
-7.5. del 文
-7.6. return 文
-7.7. yield 文
-7.8. raise 文
-7.9. break 文
-7.10. continue 文
-7.11. import 文
-7.12. global 文
-7.13. nonlocal 文
 
-8. 複合文 (compound statement)
+# 複合文 (compound statement)
+
 8.1. if 文
 8.2. while 文
 8.3. for 文
