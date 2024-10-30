@@ -505,11 +505,66 @@ nonlocal a, b, c
 
 # 複合文 (compound statement)
 
-8.1. if 文
-8.2. while 文
-8.3. for 文
-8.4. try 文
-8.5. with 文
+# if文
+if condition1:
+    # condition1が真の時の処理
+elif condition2:
+    # condition1が偽でcondition2が真の時の処理
+else:
+    # 全ての条件が偽の時の処理
+
+# while文
+while some_condition:
+    # some_conditionが真の間、繰り返し実行する処理。
+    if condition:
+        break
+else:
+    # ループが中断されずに終了した場合に実行される処理
+    # ※考え方：conditionが真ならばbreakする。conditionがすべて偽ならば、breakせずelse節を実行する。
+    # if: break else: ~
+
+# for文
+for item in iterable:
+    # iterableの要素を順番にitemに代入しながら、繰り返し実行される処理
+    if condition:
+        break
+else:
+    # ループが中断されずに終了した場合に実行される処理
+    # ※考え方：conditionが真ならばbreakする。conditionがすべて偽ならば、breakせずelse節を実行する。
+    # if: break else: ~
+
+# try文
+try:
+    # 例外が発生するかもしれない処理
+except SomeException:
+    # 指定した例外が発生したら実行される処理
+except OtherException:
+    # except節は複数指定できる。複数の例外に対してそれぞれ異なる処理を記述可能。
+else:
+    # 例外が発生しなかった場合に実行される処理
+    # ※考え方：except(例外が発生したら) ~ else(例外が発生しなかったら)
+finally:
+    # 例外の有無に関わらず必ず実行される処理
+
+# with文
+# コンテキストマネージャ(型)を起動し、生成されたオブジェクトを変数targetに代入して利用する。
+# コンテキストマネージャとは、__enter__()と__exit__()の2つのメソッドを持つ型である。
+with ContextManager() as target:
+    # targetを使った主処理
+
+# ※処理の順番は以下
+__init__()
+__enter__() # ここでreturnしたオブジェクトが、変数targetに代入される。通常はself。
+# targetを使った主処理
+__exit__() # 例外の有無に関わらず必ず実行される
+
+# open()で返したファイルオブジェクトはコンテキストマネージャ型であるため、with文が使える。
+
+
+
+
+
+
 8.6. match 文
 8.7. 関数定義
 8.8. クラス定義
