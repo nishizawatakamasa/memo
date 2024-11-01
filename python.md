@@ -1,11 +1,21 @@
 # Python覚書
 
 * 目次
+    * [真骨頂](#真骨頂)
     * [基本](#基本)
+    * [よく使われるモジュール（ライブラリ）](#よく使われるモジュール（ライブラリ）)
     * [venvを使った仮想環境の作成](#venvを使った仮想環境の作成)
     * [settings.jsonにモジュールの検索パスを追加する](#settings.jsonにモジュールの検索パスを追加する)
     * [抽象基底クラス](#抽象基底クラス)
     * [参考サイト](#参考サイト)
+
+
+
+<a id="真骨頂"></a>
+## 真骨頂
+
+Pythonはオールラウンダーなプログラミング言語だが、真骨頂はデータ処理と自動化。  
+※データ処理と自動化は密接に関わり合っているので、切り離して考えるべきではない。
 
 
 
@@ -614,6 +624,48 @@ li.extend(body)
 [Python基礎文法まとめ](https://qiita.com/kita_ds12/items/84552d41a8aad36d5519)  
 [Pythonの基本的な組み込み型とその一般論まとめ](https://qiita.com/nakasan/items/bc9ba8eb57f5b7a22698)  
 [Pythonのzip関数の罠を回避する](https://zenn.dev/nakurei/articles/avoiding-python-zip-function-trap)
+
+
+
+<a id="よく使われるモジュール（ライブラリ）"></a>
+## よく使われるモジュール（ライブラリ）
+
+
+* Requests (HTTPリクエストを送信、ウェブサイトからデータを取得。)
+* Beautiful Soup (HTMLを解析、要素を抽出。)
+* Selenium (ブラウザの自動操作。動的ページからデータを取得。)
+
+* NumPy (高速な数値計算。)
+* Pandas (データ操作。)
+* Matplotlib (静的なグラフを作成。)
+* Plotly (動的なグラフを作成。)
+* scikit-learn (機械学習。)
+
+* openpyxl (Excelを操作。)
+* pynput (キーボードやマウスを操作。)
+
+osモジュール
+
+ファイルやディレクトリの作成、削除、移動などの基本的なファイル操作が可能です。
+例: os.remove()、os.rename()、os.mkdir()、os.rmdir()。
+shutilモジュール
+
+ファイルやディレクトリのコピー、移動、削除といった操作を簡単に行えます。
+例: shutil.copy()、shutil.move()、shutil.rmtree()。
+
+jsonモジュール
+
+JSONファイルの読み書きに特化したモジュールです。
+例: json.load()、json.dump()。
+dillモジュール
+
+Pythonオブジェクトをバイナリ形式で保存したり、ロードしたりするためのモジュールです。
+例: dill.dump()、dill.load()。
+globモジュール
+
+ワイルドカードを使用して特定のパターンに一致するファイルを検索する際に便利です。
+例: glob.glob('*.txt')。
+
 
 
 
