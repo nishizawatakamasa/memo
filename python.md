@@ -7,6 +7,8 @@
     * [よく使われるモジュール（ライブラリ）](#よく使われるモジュール（ライブラリ）)
     * [よく使われる関数](#よく使われる関数)
     * [venvを使った仮想環境の作成](#venvを使った仮想環境の作成)
+    * [Pyinstallerを使ったスクリプトのexe化](#Pyinstallerを使ったスクリプトのexe化)
+    * [pipコマンド](#pipコマンド)
     * [settings.jsonにモジュールの検索パスを追加する](#settings.jsonにモジュールの検索パスを追加する)
     * [抽象基底クラス](#抽象基底クラス)
     * [参考サイト](#参考サイト)
@@ -824,6 +826,47 @@ settings.jsonに設定
   "PSExecutionPolicyPreference": "RemoteSigned"
 },
 ```
+
+
+
+<a id="Pyinstallerを使ったスクリプトのexe化"></a>
+## Pyinstallerを使ったスクリプトのexe化
+
+### exe化したいスクリプトがあるディレクトリで以下のコマンドを実行。  
+`pyinstaller hoge.py --noconsole --onefile --icon=fuga.ico`
+
+### 主なオプション
+* `--noconsole` ： コンソール（コマンドプロンプト）を表示しない。
+* `--onefile` ： 関連ファイルを1つにまとめてexeファイルを作成する。
+* `--icon=fuga.ico`： exeファイルのアイコンを変更。exe化するスクリプトと同一ディレクトリに*.icoファイルを置いておくと簡単。
+
+
+
+
+<a id="pipコマンド"></a>
+## pipコマンド
+
+
+### pip installコマンド
+`pip install pandas` : 最新バージョンをインストール  
+`pip install pandas==2.1.4` : 指定したバージョンをインストール  
+`pip install --upgrade pandas` : 最新バージョンにアップグレード  
+`pip install -r requirements.txt` : requirements.txtファイルに記述されているパッケージをインストール  
+
+### pip uninstallコマンド
+`pip uninstall pandas` : アンインストール  
+`pip uninstall --yes pandas` : 確認プロンプトを表示せずにアンインストール  
+`pip uninstall -r requirements.txt` : requirements.txtファイルに記述されているパッケージをアンインストール    
+
+### パッケージを一覧するコマンド
+`pip list` : インストールされているパッケージの一覧を出力  
+`pip freeze` : インストールされているパッケージの一覧をrequirements.txtのフォーマットで出力  
+`pip freeze > requirements.txt` : requirements.txtを作成  
+`pip show pandas` : パッケージに関する情報を出力  
+
+
+
+
 <a id="settings.jsonにモジュールの検索パスを追加する"></a>
 ## settings.jsonにモジュールの検索パスを追加する
 
@@ -832,6 +875,9 @@ settings.jsonに設定
 ```json:settings.json
 "python.analysis.extraPaths": ["/Users/user/AppData/Local/programs/Python/Python312/lib/site-packages"]
 ```
+
+
+
 <a id="抽象基底クラス"></a>
 ## 抽象基底クラス
 
