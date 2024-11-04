@@ -35,7 +35,8 @@ df1 = pd.DataFrame(data, columns=columns)
 # DataFrameを二次元リストに変換
 # ndarrayのtolist()メソッドを使う。
 # 要素は各行をリスト化したもの。
-li = df1.values.tolist()
+# df1.values.tolist()でも可能だが非推奨
+li = df1.to_numpy().tolist()
 # [[0, 1, 2], [3, 4, 5], [6, 7, 8]]
 
 # 辞書からDataFrameを作成
@@ -55,8 +56,10 @@ di = df2.to_dict(orient='list')
 #     'col_2': [6, 7, 8],
 # }
 
+# 上記2パターンのDataFrame作成方法では、各要素にリスト、タプル、rangeオブジェクト、シリーズを指定できる。
 
-DataFrame.values # データ値属性(NumPy配列=ndarray)。
+
+DataFrame.to_numpy() # データ値属性(NumPy配列=ndarray)。
 DataFrame.index = ['行名1', '行名2', '行名3'] # 行名属性へ値を代入。
 DataFrame.columns = ['列名1', '列名2', '列名3'] # 列名属性へ値を代入。
 DataFrame.index.to_list() # 行名属性をリスト化。
@@ -77,11 +80,46 @@ pandasにはデータ型(dtype)が存在するが、int,str,floatのようなPyt
 この場合、等価なdtypeに自動的に変換される(Python3、64ビット環境での例は以下の通り)。
 |Pythonの型|等価なdtypeの例|
 |-|-|
+|bool|bool|
 |int|int64|
 |float|float64|
 |str|object（各要素がstr型）|
 
 ※注意点：int64は欠損値をサポートしていないため、数値型の列に欠損値が一つでも含まれていると自動的にfloat64へ変換される。
+
+他のdtype||
+|-|-|
+|'string'|文字列型。|
+|'category'|性別などのカテゴリを数値化し、0や1で示すようなデータ。<br>つまり、数値自体に意味のない数値データ。|
+|datetime64[ns]|日付、時刻型。[ns]はナノ秒(nanoseconds)単位の精度を示す。|
+
+※注意点：文字列や日付、時刻などは、デフォルトでは柔軟なobject型が設定される。
+
+
+
+df['date'] = pd.to_datetime(df['date'])
+df['date'] = pd.to_datetime(df['date'], format='%Y年%m月%d日')
+
+
+
+
+to_datetimeで変換できる主な文字列
+'2023-02-28'
+'2023/02/28'
+'20230228 14:21:31'
+
+formatを用いて変換を行う
+標準的な書式でない場合は、引数formatに書式文字列を指定する。
+使用できる書式化コードは以下の公式ドキュメントを参照。
+https://docs.python.org/ja/3/library/datetime.html#strftime-and-strptime-behavior
+
+
+
+
+
+
+
+
 
 <a id="選択操作"></a>
 ## 選択操作
@@ -264,15 +302,15 @@ df = pd.read_parquet('hoge/fuga/piyo.parquet')
 ### pd.read_csv 
 |主な引数|引数の説明|
 |-|-|
-|filepath_or_buffer|※重要！ CSVファイルのパスを指定。唯一の必須引数。位置引数でもある。|
-|sep=','|※重要！ 区切り文字を指定。デフォルトはカンマ。|
-|header=None|※重要！ 列名(columns)の設定。デフォルトでは一行目。Noneにすると0始まりの連番。|
-|usecols=[2, 6, 7, 8]|※重要！ 読み込む列を、列名のリストで指定(読み込む列を限定するため、メモリの節約にもなる)。|
-|dtype=str|※重要！ カラムのデータ型を指定。<br>引数に{'列名': str}のような辞書も指定でき、任意の列のデータ型を個別に指定できる。|
+|filepath_or_buffer|CSVファイルのパスを指定。唯一の必須引数。位置引数でもある。|
+|sep=','|区切り文字を指定。デフォルトはカンマ。|
+|header=None|列名(columns)の設定。デフォルトでは一行目。Noneにすると0始まりの連番。|
+|usecols=[2, 6, 7, 8]|読み込む列を、列名のリストで指定(読み込む列を限定するため、メモリの節約にもなる)。|
+|dtype=str|カラムのデータ型を指定。<br>引数に{'列名': str}のような辞書も指定でき、任意の列のデータ型を個別に指定できる。|
+|encoding|文字コードを指定。デフォルトはNoneだが、内部の処理的には"utf-8"と同じ。<br>UnicodeDecodeErrorが発生した場合に試す選択肢→"shift-jis"、"cp932"、"utf-8-sig"。|
+|index_col|index_col='date'のように、indexとするカラムを列名で指定できる。省略すると新しいindex(0からの連番)が作成される。|
 |nrows=2|読み込む行数（ヘッダー行数を除く）を指定。中身をざっと確認したい時用。|
-|encoding|文字コードを指定。|
-|index_col||
-|on_bad_lines||
+|on_bad_lines|フィールド数がヘッダーのカラム数よりも多いレコード（不正レコード）の扱いを指定。<br>デフォルトはerrorで、ParserErrorが発生する。|
 
 ### pd.read_clipboard
 * 内部的にはpd.read_csvが動いているため、基本的な引数や挙動はpd.read_csvと同じ。
@@ -297,7 +335,7 @@ df.iat[0, 0] = None
 |header=None|pd.read_csvと同様。|
 |usecols=[2, 6, 7, 8]|読み込む列をリストで指定する。intのリストの場合は列番号（0始まり）での指定となり、文字列のリストの場合は列名での指定となる。列名がintの場合、その列名を指定することはできない。|
 |dtype=str|pd.read_csvと同様。|
-|index_col||
+|index_col|indexとするカラムを列番号で指定できる。省略すると新しいindex(0からの連番)が作成される。|
 
 ### pd.read_html
 `$ pip install lxml html5lib beautifulsoup4`
@@ -381,7 +419,22 @@ df.to_markdown('hoge/fuga/piyo.md', index=True, mode='w')
 |||
 |-|-|
 |s2 = pd.to_numeric(s1, errors='coerce')|シリーズを数値型に変換する(文字列等の例外データは欠損値に変換する)。|
-|DataFrame.astype(int)<br>Series.astype(float)|データ型を一括で変更する。<br>DataFrame.astypeの場合は引数に{'列名': str}のような辞書も指定でき、任意の列のデータ型を個別に変更できる。<br>※変換できない値が含まれている場合はValueErrorとなる。|
+|DataFrame.astype(int)<br>Series.astype(float)|データ型を一括で変更する。<br>DataFrame.astypeの場合は引数に{'列名': 'string'}のような辞書も指定でき、任意の列のデータ型を個別に変更できる。<br>※変換できない値が含まれている場合はValueErrorとなる。|
+
+```py
+# datetime64[ns]型への変換は特殊で、to_datetime関数を使う。
+df['date'] = pd.to_datetime(df['date'])
+
+# to_datetimeで変換できる主な文字列
+'2023-02-28'
+'2023/02/28'
+'20230228 14:21:31'
+
+# 標準的な書式でない場合は、引数formatに書式文字列を指定する。
+df['date'] = pd.to_datetime(df['date'], format='%Y年%m月%d日')
+```
+※引数formatに指定する書式化コードは[公式ドキュメント](https://docs.python.org/ja/3/library/datetime.html#strftime-and-strptime-behavior)を参照。
+
 
 ### 欠損値の取り扱い
 |||
