@@ -139,7 +139,7 @@ https://docs.python.org/ja/3/library/datetime.html#strftime-and-strptime-behavio
 |Series >= 数値||
 |Series == '文字列'||
 |Series != '文字列'||
-|Series.isin(['文字列1', '文字列2'])|指定した複数の文字列のいずれかと完全一致。|
+|Series.isin(['文字列1', '文字列2'])<br>Series.isin([数値1, 数値2])|指定した複数の文字列のいずれかと完全一致。<br>指定した複数の数値のいずれかと完全一致。|
 |Series.str.contains(r'pat', na=?)|na(欠損値)をTrueかFalse。デフォルトではNone(行抽出時はエラー)。|
 |Series.isnull()||
 |Series.notnull()||
