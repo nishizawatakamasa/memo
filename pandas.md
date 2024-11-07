@@ -251,7 +251,7 @@ df.isnull().all(axis=1)
 ### 基本
 |||
 |-|-|
-|df = df_left.merge(df_right, on='キーとする列の名前', how='left')|標準的なマージ|
+|df = pd.merge(df_left, df_right, on='キーとする列の名前', how='left')<br>df = df_left.merge(df_right, on='キーとする列の名前', how='left')|標準的なマージ。書き方が二種類ある。|
 
 ### 結合処理の基本的な挙動。
 共通するキーを持つ行同士の全組み合わせが生成される。
