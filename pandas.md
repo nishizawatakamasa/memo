@@ -7,7 +7,9 @@
     * [基礎集計](#基礎集計)
     * [ユニーク](#ユニーク)
     * [グルーピング](#グルーピング)
-    * [マージ](#マージ)
+    * [横方向に結合](#横方向に結合)
+    * [縦方向に結合](#縦方向に結合)
+    * [結合](#結合)
     * [メルト](#メルト)
     * [データ形式変換](#データ形式変換)
     * [その他](#その他)
@@ -118,20 +120,31 @@ https://docs.python.org/ja/3/library/datetime.html#strftime-and-strptime-behavio
 
 
 
-
-
-
 <a id="選択操作"></a>
 ## 選択操作
 
 ### 基本
 |||
 |-|-|
-|df.loc[<br>boolのSeriesか行名リストか行名スライス,<br>列名か列名リストか列名スライス<br>]|※ 行名や列名がint型の場合は、指定もint型で。※index値の行名はint型。<br>■第二引数が列名の場合、選択した列をSeriesとして取得・変更・追加できる。<br>・ 変更、追加時にはスカラー値、リスト、NumPy配列、Series(indexを合わせて代入されることに注意)を代入。<br>■第二引数が列名リストか列名スライスの場合、選択した範囲をDataFrameとして取得・変更できる。<br>・ 変更時にはスカラー値、二次元リスト、二次元NumPy配列を代入。<br>■行や列をリストで指定した場合はその順番で選択される。<br>■第一引数がbool値を要素とするSeriesの場合、Trueの行が選択される。<br>・ 複数のboolのSeriesに~&\|を適用し、複数条件で選択することも可能。<br>・ 優先順位が高い順から、~(not)、&(and)、\|(or)<br>・ 比較演算子を使うときは括弧で括る。<br>・ 優先したい処理も括弧で括る。|
-|df.at['行名', '列名']|選択した要素の値を取得・変更。<br>変更時にはスカラー値を代入。|
-|df['列名']|df.loc[:, '列名']の簡潔な書き方(全行選択)。|
-|df[boolのSeries]|df.loc[boolのSeries]の簡潔な書き方(全列選択)。|
+|df.loc[<br>boolのSeries、行名、行名リスト、行名スライス,<br>boolのSeries、列名、列名リスト、列名スライス<br>]|※ 行名や列名がint型の場合は、指定もint型で。※index値の行名はint型。<br>■行名と列名で指定すると単一要素の値にアクセスすることが可能だが、atを使用するべき(処理速度も速い)。<br>■どちらか片方が行名や列名の場合、選択した行や列をSeriesとして取得・変更・追加できる。<br>・ 変更、追加時にはスカラー値、リスト、NumPy配列、Series(indexを合わせて代入されることに注意)を代入。<br>■それ以外の場合は、選択した範囲をDataFrameとして取得・変更できる。<br>・ 変更時にはスカラー値、二次元リスト、二次元NumPy配列を代入。<br>■行や列をリストで指定した場合はその順番で選択される。<br>■boolのSeriesを指定すると、Trueの行や列が選択される。<br>・Boolean Indexingという。<br>・行選択と列選択どちらの場合でもindexが一致している必要がある。<br>・ 複数のboolのSeriesに~&\|を適用し、複数条件で選択することも可能。<br>・ 優先順位が高い順から、~(not)、&(and)、\|(or)<br>・ 比較演算子を使うときは括弧で括る。<br>・ 優先したい処理も括弧で括る。|
+|df.at['行名', '列名']|選択した単一要素の値を取得・変更できる。<br>変更時にはスカラー値を代入。|
+
+### インデックス指定による簡潔な書き方
+|||
+|-|-|
+|df[列名]|列の選択。df.loc[:, 列名]と同じ。|
+|df[列名リスト]|列の選択。df.loc[:, 列名リスト]と同じ。|
+|df[boolのSeries]|行の選択。df.loc[boolのSeries]と同じ。|
 |df[boolのDataFrame]|true部分の値のみを抽出。他は欠損値となる。<br>※サイズが一致していなくてもエラーは出ないが、想定されている使い方ではない気がする。|
+
+
+### 正規表現による行、列の選択
+|||
+|-|-|
+|df.filter(regex=r'3')|正規表現の条件を満たす列名の列を選択。<br>DataFrameを返す。<br>axis=0にすると行に適用。<br>行と列を同時に指定することはできない。|
+
+
+
 
 ### boolのSeriesを得る方法の例
 |||
@@ -225,44 +238,69 @@ df.isnull().all(axis=1)
 ### 基本的なグルーピング
 |||
 |-|-|
-|DataFrame.groupby('列名')|列名で指定した列の値ごとにグルーピングされる。<br>返されるのはGroupByオブジェクト。<br>デフォルトでは指定した列が結果のインデックスになるが、as_index=Falseとするとインデックスにならない。<br>デフォルトでは指定した列に含まれる欠損値NaNは無視されるが、dropna=FalseとするとNaNも一つのキーとして扱われる。|
+|gb = DataFrame.groupby('列名')|列名で指定した列の値ごとにグルーピングされる。<br>DataFrameGroupByオブジェクトを返す。<br>デフォルトでは指定した列が結果のインデックスになるが、as_index=Falseとするとインデックスにならない。<br>デフォルトでは指定した列に含まれる欠損値NaNは無視されるが、dropna=FalseとするとNaNも一つのキーとして扱われる。|
 
-### GroupByオブジェクトの主なメソッド
+### DataFrameGroupByオブジェクトとは
+グループ名と、そのグループのDataFrameが対になっているイメージ。  
+当然、Boolean Indexingでも特定の列の値を指定してDataFrameを取得することはできる。  
+特定のカテゴリーだけ選択したいのならBoolean Indexingを使い、全カテゴリーを分割し選択できるようにしたいのならgroupbyメソッドを使うといい。  
+ちなみにイテラブルオブジェクトである。
+
+```py
+# for文を使うと、グループ名とそのグループのDataFrameを順に取得できる。
+for group, df in gb:
+    print(group, df.shape)
+```
+
+### DataFrameGroupByオブジェクトの主なメソッド
 |||
 |-|-|
-|df.groupby('列名').sum()|合計|
-|df.groupby('列名').mean()|平均|
-|df.groupby('列名').max()|最大|
-|df.groupby('列名').min()|最小|
-|df.groupby('列名').median()|中央値|
-|df.groupby('列名').std()|標準偏差|
-|df.groupby('列名').count()|欠損値ではない要素数|
-|df.groupby('列名').describe()|主要な統計量を一括算出|
-|df.groupby('列名').agg(func)|任意の関数適用<br>※自作関数(def or lambda)を指定する場合は、引数がarray-likeとなるように作成。 |
+|gb.get_group('グループ名')|グループ名で指定したグループのDataFrameを取得できる。|
+|gb.size()|行数|
+|gb.sum()|合計(各dfに適用して、結合するイメージ)|
+|gb.mean()|平均|
+|gb.max()|最大|
+|gb.min()|最小|
+|gb.median()|中央値|
+|gb.std()|標準偏差|
+|gb.count()|欠損値ではない要素数|
+|gb.describe()|主要な統計量を一括算出|
+|gb.agg(func)|任意の関数適用<br>※自作関数(def or lambda)を指定する場合は、引数がarray-likeとなるように作成。 |
 
 ### 参考サイト
 * [pandasのgroupby()でグルーピングし統計量を算出](https://note.nkmk.me/python-pandas-groupby-statistics/)  
 * [pandas groupbyでグループ化｜図解でわかりやすく解説](https://www.yutaka-note.com/entry/pandas_groupby)
 
 
-<a id="マージ"></a>
-## マージ
+
+<a id="横方向に結合"></a>
+## 横方向に結合
 
 ### 基本
-|||
-|-|-|
-|df = pd.merge(df_left, df_right, on='キーとする列の名前', how='left')<br>df = df_left.merge(df_right, on='キーとする列の名前', how='left')|標準的なマージ。書き方が二種類ある。|
+```py
+# マージ関数
+df = pd.merge(df_left, df_right, on='キーとする列の名前', how='left')
+```
 
 ### 結合処理の基本的な挙動。
 共通するキーを持つ行同士の全組み合わせが生成される。
 
-### 引数on
-キーとする列を指定
+### 引数on、left_on、right_on、left_index、right_index
+キーにする列やインデックスを指定
 
 * デフォルトでは、すべての同名の列がキーとして処理される。
-* キーとする列を明示的に指定する場合は、引数onに列名を指定する(複数の場合はリスト)。
+* キーとする列を明示的に指定する場合は、引数on, left_on, right_onに列名を指定する(複数の場合はリスト)。
 * ※キーとする列を省略して問題ない場合でも、明示しておいたほうが分かりやすい。
-* キーにする列以外の列名が重複している場合、デフォルトでは_x(left側), _y(right側)というサフィックスがつけられる。
+* onは両側dfの列名, left_onはleft側dfの列名, right_onはright側dfの列名。
+* 複数の列をキーとする場合、キーに指定した全ての列の値が一致することが結合の条件となる(複合キー)。
+* indexをキーに指定する場合は、left_index、right_indexをTrueとする(left_on、right_onと組み合わせることも可能。)。
+
+### 引数suffixes
+任意のサフィックスを指定
+
+キーにする列以外の列名が重複している場合、デフォルトでは_x(left側), _y(right側)というサフィックスがつけられる。  
+suffixes=[left用サフィックス, right用サフィックス]とすると、任意のサフィックスを指定できる。  
+例：suffixes=['_left', '_right']  
 
 ### 引数how
 結合方法を指定
@@ -274,9 +312,36 @@ df.isnull().all(axis=1)
 |how='right'|innerに加えて、rightにしかキーが存在しない行も残る。|
 |how='outer'|innerに加えて、leftにしかキーが存在しない行とrightにしかキーが存在しない行が残る。<br>(要するにleftとrightのすべての行が残る。)|
 
+### 引数indicator
+元データの情報を含む列が追加される。
+
+indicator=Trueとすると'_merge'という名前の列が追加され、both, left_only, right_onlyのいずれかに分類される。
 
 ### 参考サイト
 * [pandas.DataFrameを結合するmerge, join（列・インデックス基準）](https://note.nkmk.me/python-pandas-merge-join/)  
+
+
+<a id="縦方向に結合"></a>
+## 縦方向に結合
+
+### 基本
+```py
+# コンキャット関数
+# キーには列名を使用する。
+df = pd.concat([df1, df2, df3])
+```
+
+### 引数ignore_index
+ignore_index=Trueとするとインデックスが振り直される(0からの連番)。
+
+### 引数join
+結合方法を指定
+
+|||
+|-|-|
+|join='outer'|すべての列が残る。<br>これがデフォルト。|
+|join='inner'|共通の名前の列のみが残る。|
+
 
 
 <a id="メルト"></a>
@@ -413,7 +478,7 @@ df.to_markdown('hoge/fuga/piyo.md', index=True, mode='w')
 |df['num1'] * 3 / df['num2']||
 |(df['num'] / 30).astype(str).str[0:3].astype(float)||
 |(df['num'] / 30).astype(int)||
-|df[2:9]|※ 行番号のスライスで該当した行をDataFrameとして取得。|
+|df[2:9]|行名もしくは行番号のスライスで該当した行をDataFrameとして取得。<br>intのスライスは、常に行番号のスライスとして扱われる。つまりintの行名を指定することは不可。|
 
 ### 型変換
 |||
@@ -447,8 +512,8 @@ df['date'] = pd.to_datetime(df['date'], format='%Y年%m月%d日')
 ### ランダムサンプリング
 |||
 |-|-|
-|DataFrame.sample(n=30)|※ n行だけランダムサンプリング|
-|DataFrame.sample(frac=0.1)|※ 行を指定割合だけランダムサンプリング|
+|DataFrame.sample(n=30)|n行だけランダムサンプリング|
+|DataFrame.sample(frac=0.1)|行を指定割合だけランダムサンプリング|
 
 ### 関数の適用
 |||
@@ -459,11 +524,10 @@ df['date'] = pd.to_datetime(df['date'], format='%Y年%m月%d日')
 ### その他
 |||
 |-|-|
+|DataFrame.reset_index()|indexを0からの連番に振り直す。<br>元のindexはデータ列として残る(列名は'index')。<br>drop=Trueとすると、元のindexは削除され残らない。|
+|DataFrame.drop(index=['行名1', '行名2'], columns=['列名1', '列名2'])|DataFrameの行・列を指定して削除する。|
+|DataFrame.sort_values(by='列名', ascending=False, ignore_index=True)|デフォルトは昇順。降順にするには引数ascendingをFalseにする。<br>na_position='first'とすると、欠損値NaNが先頭に並べられる。デフォルトでは末尾。<br>ignore_index=Trueとするとインデックスが振り直される(0からの連番)。|
 |DataFrame.copy()|dfのコピーを作成(参照の値渡しを防ぐため)。|
-|pd.concat([df1, df2])|※ ignore_index=Trueとするとインデックスが振り直される(0からの連番)。<br>※ axis=1とすると横方向に連結される。|
-|DataFrame.transpose()|※ 転置|
-|DataFrame.sort_values(by='列名', ascending=False, ignore_index=True)|※ デフォルトは昇順。降順にするには引数ascendingをFalseにする。<br>※ na_position='first'とすると、欠損値NaNが先頭に並べられる。デフォルトでは末尾。<br>※ ignore_index=Trueとするとインデックスが振り直される(0からの連番)。|
-|DataFrame.reset_index()|※ indexを0からの連番に振り直す。<br>元のindexはデータ列として残る(列名は'index')。<br>drop=Trueとすると、元のindexは削除され残らない。|
-|DataFrame.drop(index=['行名1', '行名2'], columns=['列名1', '列名2'])||
-|DataFrame.drop_duplicates(subset=['列名1', '列名2'], ignore_index=True)<br>Series.drop_duplicates(ignore_index=True)|※ 指定した全ての列の要素が重複している行を、最初の行だけを残して削除|
+|DataFrame.transpose()|転置|
+|DataFrame.drop_duplicates(subset=['列名1', '列名2'], ignore_index=True)<br>Series.drop_duplicates(ignore_index=True)|指定した全ての列の要素が重複している行を、最初の行だけを残して削除|
 |DataFrame.rename(index={'元の行名': '新しい行名'}, columns={'元の列名': '新しい列名'})|行名・列名のいずれかのみを変更したい場合は、引数indexとcolumnsのどちらか一方だけを指定すればよい。|
