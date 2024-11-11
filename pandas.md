@@ -9,9 +9,11 @@
     * [グルーピング](#グルーピング)
     * [横方向に結合](#横方向に結合)
     * [縦方向に結合](#縦方向に結合)
-    * [結合](#結合)
-    * [メルト](#メルト)
+    * [任意の関数を適用](#任意の関数を適用)
+    * [型変換](#型変換)
+    * [欠損値の取り扱い](#欠損値の取り扱い)
     * [データ形式変換](#データ形式変換)
+    * [メルト](#メルト)
     * [その他](#その他)
 
 <a id="基本的なこと"></a>
@@ -73,7 +75,7 @@ DataFrame.columns.to_list() # 列名属性をリスト化。
 |-|-|
 |pd.Series(['hoge', 'fuga', 'piyo'])|シリーズ。<br>一次元のデータ構造。<br>※代表的な作り方。|
 |Series.to_frame('列名')|SeriesをDataFrameに変換。<br>引数で列名を指定できる(省略するとintの0になる)。<br>indexはそのまま。|
-|Series.values|データ値属性(NumPy配列=ndarray)。|
+|Series.to_numpy()|データ値属性(NumPy配列=ndarray)。|
 |Series.to_list()|シリーズをリスト化。|
 
 
@@ -99,26 +101,6 @@ pandasにはデータ型(dtype)が存在するが、int,str,floatのようなPyt
 
 
 
-df['date'] = pd.to_datetime(df['date'])
-df['date'] = pd.to_datetime(df['date'], format='%Y年%m月%d日')
-
-
-
-
-to_datetimeで変換できる主な文字列
-'2023-02-28'
-'2023/02/28'
-'20230228 14:21:31'
-
-formatを用いて変換を行う
-標準的な書式でない場合は、引数formatに書式文字列を指定する。
-使用できる書式化コードは以下の公式ドキュメントを参照。
-https://docs.python.org/ja/3/library/datetime.html#strftime-and-strptime-behavior
-
-
-
-
-
 
 <a id="選択操作"></a>
 ## 選択操作
@@ -126,7 +108,7 @@ https://docs.python.org/ja/3/library/datetime.html#strftime-and-strptime-behavio
 ### 基本
 |||
 |-|-|
-|df.loc[<br>boolのSeries、行名、行名リスト、行名スライス,<br>boolのSeries、列名、列名リスト、列名スライス<br>]|※ 行名や列名がint型の場合は、指定もint型で。※index値の行名はint型。<br>■行名と列名で指定すると単一要素の値にアクセスすることが可能だが、atを使用するべき(処理速度も速い)。<br>■どちらか片方が行名や列名の場合、選択した行や列をSeriesとして取得・変更・追加できる。<br>・ 変更、追加時にはスカラー値、リスト、NumPy配列、Series(indexを合わせて代入されることに注意)を代入。<br>■それ以外の場合は、選択した範囲をDataFrameとして取得・変更できる。<br>・ 変更時にはスカラー値、二次元リスト、二次元NumPy配列を代入。<br>■行や列をリストで指定した場合はその順番で選択される。<br>■boolのSeriesを指定すると、Trueの行や列が選択される。<br>・Boolean Indexingという。<br>・行選択と列選択どちらの場合でもindexが一致している必要がある。<br>・ 複数のboolのSeriesに~&\|を適用し、複数条件で選択することも可能。<br>・ 優先順位が高い順から、~(not)、&(and)、\|(or)<br>・ 比較演算子を使うときは括弧で括る。<br>・ 優先したい処理も括弧で括る。|
+|df.loc[<br>boolのSeries、行名、行名リスト、行名スライス,<br>boolのSeries、列名、列名リスト、列名スライス<br>]|※ 行名や列名がint型の場合は、指定もint型で。※index値の行名はint型。<br>■行名と列名で指定すると単一要素の値にアクセスすることが可能だが、atを使用するべき(処理速度も速い)。<br>■どちらか片方が行名や列名の場合、選択した行や列をSeriesとして取得・変更・追加できる。<br>・ 変更、追加時にはスカラー値、リスト、NumPy配列、Series(indexを合わせて代入されることに注意)を代入。<br>■それ以外の場合は、選択した範囲をDataFrameとして取得・変更できる。<br>・ 変更時にはスカラー値、二次元リスト、二次元NumPy配列、DataFrameを代入。<br>■行や列をリストで指定した場合はその順番で選択される。<br>■boolのSeriesを指定すると、Trueの行や列が選択される。<br>・Boolean Indexingという。<br>・行選択と列選択どちらの場合でもindexが一致している必要がある。<br>・ 複数のboolのSeriesに~&\|を適用し、複数条件で選択することも可能。<br>・ 優先順位が高い順から、~(not)、&(and)、\|(or)<br>・ 比較演算子を使うときは括弧で括る。<br>・ 優先したい処理も括弧で括る。|
 |df.at['行名', '列名']|選択した単一要素の値を取得・変更できる。<br>変更時にはスカラー値を代入。|
 
 ### インデックス指定による簡潔な書き方
@@ -142,6 +124,16 @@ https://docs.python.org/ja/3/library/datetime.html#strftime-and-strptime-behavio
 |||
 |-|-|
 |df.filter(regex=r'3')|正規表現の条件を満たす列名の列を選択。<br>DataFrameを返す。<br>axis=0にすると行に適用。<br>行と列を同時に指定することはできない。|
+
+
+### Seriesに対するインデックス指定
+|||
+|-|-|
+|s[ラベル名・番号]|単独の要素の値をそれぞれの型で取得|
+|s[ラベル名・番号のリスト]|単独・複数の要素の値をpandas.Seriesとして取得|
+|s[ラベル名・番号のスライス]|単独・複数の要素の値をpandas.Seriesとして取得|
+|s[boolのSeries]|Trueの要素をpandas.Seriesとして取得|
+
 
 
 
@@ -344,15 +336,64 @@ ignore_index=Trueとするとインデックスが振り直される(0からの�
 
 
 
-<a id="メルト"></a>
-## メルト
+<a id="任意の関数を適用"></a>
+## 任意の関数を適用
 
-### 基本
-対象のDataFrameを、三種類のカラム(id_vars, variable, value)で再構築する。
+### map
+|||
+|-|-|
+|Series.map(len)<br>Series.map(lambda x: func(x, 5))<br>DataFrame.map(len)<br>DataFrame.map(lambda x: hex(int(x)))|引数に指定した関数を各要素に適用する(新しいオブジェクトが返される)。<br>defで定義した関数やラムダ式も指定可能。<br>na_action='ignore'とすると、NaNは関数に渡されずに結果がそのままNaNとなる。|
 
-### 参考サイト
-* [pandas.melt — pandas 2.2.2 documentation](https://pandas.pydata.org/docs/reference/api/pandas.melt.html)
-* [データフレームを再構築するPandasのMelt()関数のお話し](https://www.salesanalytics.co.jp/datascience/datascience021/)
+### apply
+|||
+|-|-|
+|Series.apply(pd.Series)|Seriesの各要素のリストにpd.Series()を適用したDataFrameを返す。<br>※Series.map()はDataFrameを返すことができないため、Series.apply()を使う。|
+|DataFrame.apply(lambda s: s[1] in s['所在地'], axis=1)|第一引数に適用したい関数を指定。<br>defで定義した関数やラムダ式も指定可能。<br>デフォルトでは各列がSeriesとして関数に渡される(戻り値が新しい列となる)。<br>引数axisを1とすると各行がSeriesとして関数に渡される(戻り値が新しい行となる)。<br>Laxis(0と1の覚え方)。<br>Seriesを引数として受け取れない関数だとエラーになる。<br>指定した関数をDataFrameの各行もしくは各列に適用する。<br>新しいオブジェクト(SeriesかDataFrame)が返される。|
+
+### 注意点
+mapやapplyの処理速度は遅い。あくまでも他では実現できない複雑な処理を適用するためのもの。
+
+
+<a id="型変換"></a>
+## 型変換
+
+|||
+|-|-|
+|s2 = pd.to_numeric(s1, errors='coerce')|シリーズを数値型に変換する(文字列等の例外データは欠損値に変換する)。|
+|DataFrame.astype(int)<br>Series.astype(float)|データ型を一括で変更する。<br>DataFrame.astypeの場合は引数に{'列名': 'string'}のような辞書も指定でき、任意の列のデータ型を個別に変更できる。<br>※変換できない値が含まれている場合はValueErrorとなる。|
+
+```py
+# datetime64[ns]型への変換は特殊で、to_datetime関数を使う。
+df['date'] = pd.to_datetime(df['date'])
+
+# to_datetimeで変換できる主な文字列
+'2023-02-28'
+'2023/02/28'
+'20230228 14:21:31'
+
+# 標準的な書式でない場合は、引数formatに書式文字列を指定する。
+df['date'] = pd.to_datetime(df['date'], format='%Y年%m月%d日')
+```
+※引数formatに指定する書式化コードは[公式ドキュメント](https://docs.python.org/ja/3/library/datetime.html#strftime-and-strptime-behavior)を参照。
+
+
+
+
+<a id="欠損値の取り扱い"></a>
+## 欠損値の取り扱い
+
+|||
+|-|-|
+|DataFrame.dropna(how='any', subset=None, ignore_index=False)|欠損値を含む行を削除する。<br>※ how='all'とすると、全てが欠損値の行を削除する。<br>※ subset=['列名1', '列名2']とすると、指定列のみが調査対象になる。<br>※ ignore_index=Trueとすると、インデックスが振り直される(0からの連番)。|
+|DataFrame.fillna(value)<br>Series.fillna(value)|欠損値をvalueで指定する値に置き換える。|
+|DataFrame.ffill()<br>Series.ffill()|欠損値を直前の非欠損値で置き換える。|
+|DataFrame.bfill()<br>Series.bfill()|欠損値を直後の非欠損値で置き換える。|
+
+
+
+
+
+
 
 
 <a id="データ形式変換"></a>
@@ -463,9 +504,23 @@ df.to_markdown('hoge/fuga/piyo.md', index=True, mode='w')
 * ファイルパスを指定しなければ、Markdownのテキストを返す。
 
 
-
 ### 参考サイト
 * [【保存版】Pandas2.0のread_csv関数の全引数、パフォーマンス、活用テクニックを完全解説する！](https://qiita.com/fujine/items/dbe2f5e4101d6299ff12#encoding)
+
+
+
+
+<a id="メルト"></a>
+## メルト
+
+### 基本
+対象のDataFrameを、三種類のカラム(id_vars, variable, value)で再構築する。
+
+### 参考サイト
+* [pandas.melt — pandas 2.2.2 documentation](https://pandas.pydata.org/docs/reference/api/pandas.melt.html)
+* [データフレームを再構築するPandasのMelt()関数のお話し](https://www.salesanalytics.co.jp/datascience/datascience021/)
+
+
 
 
 <a id="その他"></a>
@@ -476,38 +531,11 @@ df.to_markdown('hoge/fuga/piyo.md', index=True, mode='w')
 |-|-|
 |df['str1'] + ' in ' + df['str2']||
 |df['num1'] * 3 / df['num2']||
+|df[['num1', 'num2']] /= 3||
 |(df['num'] / 30).astype(str).str[0:3].astype(float)||
 |(df['num'] / 30).astype(int)||
 |df[2:9]|行名もしくは行番号のスライスで該当した行をDataFrameとして取得。<br>intのスライスは、常に行番号のスライスとして扱われる。つまりintの行名を指定することは不可。|
 
-### 型変換
-|||
-|-|-|
-|s2 = pd.to_numeric(s1, errors='coerce')|シリーズを数値型に変換する(文字列等の例外データは欠損値に変換する)。|
-|DataFrame.astype(int)<br>Series.astype(float)|データ型を一括で変更する。<br>DataFrame.astypeの場合は引数に{'列名': 'string'}のような辞書も指定でき、任意の列のデータ型を個別に変更できる。<br>※変換できない値が含まれている場合はValueErrorとなる。|
-
-```py
-# datetime64[ns]型への変換は特殊で、to_datetime関数を使う。
-df['date'] = pd.to_datetime(df['date'])
-
-# to_datetimeで変換できる主な文字列
-'2023-02-28'
-'2023/02/28'
-'20230228 14:21:31'
-
-# 標準的な書式でない場合は、引数formatに書式文字列を指定する。
-df['date'] = pd.to_datetime(df['date'], format='%Y年%m月%d日')
-```
-※引数formatに指定する書式化コードは[公式ドキュメント](https://docs.python.org/ja/3/library/datetime.html#strftime-and-strptime-behavior)を参照。
-
-
-### 欠損値の取り扱い
-|||
-|-|-|
-|DataFrame.dropna(how='any', subset=None, ignore_index=False)|欠損値を含む行を削除する。<br>※ how='all'とすると、全てが欠損値の行を削除する。<br>※ subset=['列名1', '列名2']とすると、指定列のみが調査対象になる。<br>※ ignore_index=Trueとすると、インデックスが振り直される(0からの連番)。|
-|DataFrame.fillna(value)<br>Series.fillna(value)|欠損値をvalueで指定する値に置き換える。|
-|DataFrame.ffill()<br>Series.ffill()|欠損値を直前の非欠損値で置き換える。|
-|DataFrame.bfill()<br>Series.bfill()|欠損値を直後の非欠損値で置き換える。|
 
 ### ランダムサンプリング
 |||
@@ -515,11 +543,6 @@ df['date'] = pd.to_datetime(df['date'], format='%Y年%m月%d日')
 |DataFrame.sample(n=30)|n行だけランダムサンプリング|
 |DataFrame.sample(frac=0.1)|行を指定割合だけランダムサンプリング|
 
-### 関数の適用
-|||
-|-|-|
-|DataFrame.map(lambda x: hex(int(x)))<br>Series.map(lambda x: func(x, 5))|na_action='ignore'とすると、NaNは関数に渡されずに結果がそのままNaNとなる。|
-|Series.apply(pd.Series)|Seriesの各要素のリストにpd.Series()を適用したDataFrameを返す。<br>※Series.map()はDataFrameを返すことができないため、Series.apply()を使う。|
 
 ### その他
 |||
