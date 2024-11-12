@@ -4,6 +4,7 @@
     * [基本的なこと](#基本的なこと)
     * [選択操作](#選択操作)
     * [文字列操作](#文字列操作)
+    * [算術演算](#算術演算)
     * [基礎集計](#基礎集計)
     * [ユニーク](#ユニーク)
     * [グルーピング](#グルーピング)
@@ -202,6 +203,20 @@ df.isnull().all(axis=1)
 |r'hoge(?s:fuga)piyo'|部分適用|
 |(?im)|複数フラグ|
 |(?ms:)|複数フラグを部分適用|
+
+
+
+<a id="算術演算"></a>
+## 算術演算
+
+DataFrame、Series、スカラー値は、それぞれ算術演算子(+、-、*、/、//、%、**)による処理が可能。  
+式は括弧()で一括りにできる。
+
+※DataFrameとSeriesの算術演算は、SeriesをDataFrameの各行に対して適用する挙動になる。
+
+累算代入演算子(+=、-=、*=、/=、//=、%=、**=)も使える。
+
+
 
 <a id="基礎集計"></a>
 ## 基礎集計
@@ -554,3 +569,7 @@ df.to_markdown('hoge/fuga/piyo.md', index=True, mode='w')
 |DataFrame.transpose()|転置|
 |DataFrame.drop_duplicates(subset=['列名1', '列名2'], ignore_index=True)<br>Series.drop_duplicates(ignore_index=True)|指定した全ての列の要素が重複している行を、最初の行だけを残して削除|
 |DataFrame.rename(index={'元の行名': '新しい行名'}, columns={'元の列名': '新しい列名'})|行名・列名のいずれかのみを変更したい場合は、引数indexとcolumnsのどちらか一方だけを指定すればよい。|
+|Series.shift(2, fill_value='あいうえお')|行方向に値がずれた列を作成する。<br>第一引数にずらし幅を指定。fill_valueにずれた部分に設定する値を指定(省略すると欠損値)。|
+
+### 保留
+* ループ処理
