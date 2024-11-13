@@ -138,7 +138,6 @@ pandasにはデータ型(dtype)が存在するが、int,str,floatのようなPyt
 
 
 
-
 ### boolのSeriesを得る方法の例
 |||
 |-|-|
@@ -149,12 +148,10 @@ pandasにはデータ型(dtype)が存在するが、int,str,floatのようなPyt
 |Series.str.contains(r'pat', na=?)|na(欠損値)をTrueかFalse。デフォルトではNone(行抽出時はエラー)。|
 |Series.isnull()||
 |Series.notnull()||
-|DataFrame.duplicated(subset=['列名1', '列名2'], keep=False)|指定した全ての列の要素が重複している行について。<br>keep=Falseで重複行全てがTrue。|
+|DataFrame.duplicated()<br>Series.duplicated()|重複行を抽出(True)<br>引数subsetで重複判定する列を指定(デフォルトでは全ての列)<br>subset='列名'<br>subset=['列名1', '列名2']<br>引数keep(デフォルトでは、重複した最初の行は重複行として扱わない)<br>keep='last'とすると、重複した最後の行は重複行として扱わない。<br>keep=Falseとすると、重複した全ての行を重複行として扱う。|
 |df_of_bool.all(axis=1)|※boolのDataFrameに対して使用<br>行が全てTrue|
 |df_of_bool.any(axis=1)|※boolのDataFrameに対して使用<br>行がひとつでもTrue|
 
-
-df.isnull().all(axis=1)
 
 ### boolのDataFrameを得る方法の例
 |||
@@ -224,9 +221,11 @@ DataFrame、Series、スカラー値は、それぞれ算術演算子(+、-、*�
 ### 重要なメソッド
 |||
 |-|-|
-|DataFrame.sum()|列方向の合計を算出。<br>※axis=1とすると行方向。<br>Seriesを返す。|
+|DataFrame.sum()<br>DataFrame.min()<br>DataFrame.max()<br>DataFrame.mean()<br>DataFrame.median()<br>DataFrame.count()<br>DataFrame.nunique()|sum：列方向の合計を算出。<br>min：列方向の最小値を算出。<br>max：列方向の最大値を算出。<br>mean：列方向の平均値を算出。<br>median：列方向の中央値を算出。<br>count：列方向の非欠損値数を算出。<br>nunique：列方向のユニーク数を算出。<br>※axis=1とすると行方向。<br>Seriesを返す。|
 |Series.sum()|合計を算出。<br>スカラー値を返す。|
 |DataFrame.sum().sum()|DataFrame.sum()が返したSeriesのsum()を呼ぶことで、総数を得られる。|
+|DataFrame.mean()|mean：列方向の平均値を算出。<br>※axis=1とすると行方向。<br>Seriesを返す。|
+|DataFrame.median()|median：列方向の中央値を算出。<br>※axis=1とすると行方向。<br>Seriesを返す。|
 
 <a id="ユニーク"></a>
 ## ユニーク
@@ -400,7 +399,7 @@ df['date'] = pd.to_datetime(df['date'], format='%Y年%m月%d日')
 |||
 |-|-|
 |DataFrame.dropna(how='any', subset=None, ignore_index=False)|欠損値を含む行を削除する。<br>※ how='all'とすると、全てが欠損値の行を削除する。<br>※ subset=['列名1', '列名2']とすると、指定列のみが調査対象になる。<br>※ ignore_index=Trueとすると、インデックスが振り直される(0からの連番)。|
-|DataFrame.fillna(value)<br>Series.fillna(value)|欠損値をvalueで指定する値に置き換える。|
+|DataFrame.fillna(value)<br>DataFrame.fillna({'列名1': 'value1', '列名2': 'value2'})<br>DataFrame.fillna(Series)<br>Series.fillna(value)|欠損値をvalueで指定する値に置き換える。|
 |DataFrame.ffill()<br>Series.ffill()|欠損値を直前の非欠損値で置き換える。|
 |DataFrame.bfill()<br>Series.bfill()|欠損値を直後の非欠損値で置き換える。|
 
@@ -562,14 +561,16 @@ df.to_markdown('hoge/fuga/piyo.md', index=True, mode='w')
 ### その他
 |||
 |-|-|
-|DataFrame.reset_index()|indexを0からの連番に振り直す。<br>元のindexはデータ列として残る(列名は'index')。<br>drop=Trueとすると、元のindexは削除され残らない。|
+|DataFrame.reset_index()|indexを0からの連番に振り直す。<br>元のindexはデータ列として残る(列名は'index')。<br>drop=Trueとすると、元のindexは削除され残らない。<br>※引数にignore_index=Trueを指定できるメソッドに対しても、こっち(reset_index)を使うほうがいいかも。|
 |DataFrame.drop(index=['行名1', '行名2'], columns=['列名1', '列名2'])|DataFrameの行・列を指定して削除する。|
+|DataFrame.drop_duplicates()<br>Series.drop_duplicates()|重複行を削除する。<br>※引数(subset、keep)による重複行の扱い方はduplicatedメソッドと同じ。|
 |DataFrame.sort_values(by='列名', ascending=False, ignore_index=True)|デフォルトは昇順。降順にするには引数ascendingをFalseにする。<br>na_position='first'とすると、欠損値NaNが先頭に並べられる。デフォルトでは末尾。<br>ignore_index=Trueとするとインデックスが振り直される(0からの連番)。|
-|DataFrame.copy()|dfのコピーを作成(参照の値渡しを防ぐため)。|
 |DataFrame.transpose()|転置|
-|DataFrame.drop_duplicates(subset=['列名1', '列名2'], ignore_index=True)<br>Series.drop_duplicates(ignore_index=True)|指定した全ての列の要素が重複している行を、最初の行だけを残して削除|
+|DataFrame.copy()|dfのコピーを作成(参照の値渡しを防ぐため)。|
 |DataFrame.rename(index={'元の行名': '新しい行名'}, columns={'元の列名': '新しい列名'})|行名・列名のいずれかのみを変更したい場合は、引数indexとcolumnsのどちらか一方だけを指定すればよい。|
 |Series.shift(2, fill_value='あいうえお')|行方向に値がずれた列を作成する。<br>第一引数にずらし幅を指定。fill_valueにずれた部分に設定する値を指定(省略すると欠損値)。|
 
 ### 保留
-* ループ処理
+* ループ処理(iterrows、itertuples)
+* 欠損値を前後の値から線形補間(interpolate)
+* agg
