@@ -14,6 +14,7 @@
     * [型変換](#型変換)
     * [欠損値の取り扱い](#欠損値の取り扱い)
     * [データ形式変換](#データ形式変換)
+    * [クロス集計](#クロス集計)
     * [メルト](#メルト)
     * [その他](#その他)
 
@@ -521,6 +522,54 @@ df.to_markdown('hoge/fuga/piyo.md', index=True, mode='w')
 ### 参考サイト
 * [【保存版】Pandas2.0のread_csv関数の全引数、パフォーマンス、活用テクニックを完全解説する！](https://qiita.com/fujine/items/dbe2f5e4101d6299ff12#encoding)
 
+
+
+
+<a id="クロス集計"></a>
+## クロス集計
+
+### 基本
+```py
+# クロス集計表を作成する関数
+df = pd.crosstab()
+```
+
+```py
+def crosstab(
+    # 行に表示するカテゴリ変数(Series、またはSeriesのリスト)
+    # Seriesのリストを指定した場合、Multiindexになる。
+    index,
+    # 列に表示するカテゴリ変数(Series、またはSeriesのリスト)
+    # Seriesのリストを指定した場合、Multiindexになる。
+    columns,
+    # index名をリストで指定。
+    # 要素数が、indexに指定したSeries数と一致する必要がある。
+    rownames=None,
+    # columns名をリストで指定。
+    # 要素数が、columnsに指定したSeries数と一致する必要がある。
+    colnames=None,
+    # Trueで集計表に小計を追加する。
+    margins: bool = False,
+    # 小計の項目名を文字列で指定。
+    margins_name: Hashable = "All",
+    # aggfuncで集計する量的変数(Series)。
+    # aggfuncを同時に指定する必要がある。
+    values=None,
+    # valuesを集計する方法を文字列で指定(主に'sum'、'max'、'min'、'mean'、'median')。
+    # valuesを同時に指定する必要がある。
+    aggfunc=None,
+    # True(初期値)だと、全てが欠損値の列を含めない。
+    # Falseだと含める。
+    dropna: bool = True,
+    # 全ての値を値の合計で割って正規化する。
+    # False(初期値)だと正規化されない。
+    # 'all'が渡されると全ての値が正規化される。
+    # 'index'が渡されると各行の値が正規化される。
+    # 'columns'が渡されると各列の値が正規化される。
+    # ※marginsがTrueの場合、小計値も正規化される。
+    normalize: bool = False,
+) -> DataFrame:
+```
 
 
 
