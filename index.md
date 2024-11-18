@@ -33,7 +33,7 @@
         * NumPy
         * [pandas](./pandas.md)
         * matplotlib
-        * plotly.express
+        * [plotly.express](./plotly_express.md)
         * scikit-learn
     * AIアルゴリズム
         * 線形回帰
