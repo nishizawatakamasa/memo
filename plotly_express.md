@@ -22,7 +22,6 @@ plotly.expressでは対応できない場合、plotly.graph_objectsを使用す�
 
 ```py
 def bar(
-
     # グラフに使用するDataFrame。
     data_frame=None,
     # x軸に使用する列名、または列名リスト。
@@ -30,39 +29,30 @@ def bar(
     # y軸に使用する列名、または列名リスト。
     y=None,
 
-
-
-
-    # 指定した列でデータを色分けする。
-    color=None,
-    # 指定した列でデータのパターン形状を分ける。
-    pattern_shape=None,
-    # 列名で指定した値のカテゴリ毎に分割して複数のグラフを作成する(行ごと)。
-    facet_row=None,
-    # 列名で指定した値のカテゴリ毎に分割して複数のグラフを作成する(列ごと)。
-    facet_col=None,
+    # グラフのタイトル
+    title: str | None = None,
+    # 列名を指定。バーに表示するテキスト。
+    text=None,
+    # Trueにすると、方向に応じてxかyかzの値がテキストとしてバーに表示される。 
+    text_auto=False,
+    # x軸、y軸のラベル名を上書きしてカスタマイズできる。
+    # 例：labels={'x軸ラベル名': 'x軸カスタマイズ名', 'y軸ラベル名': 'y軸カスタマイズ名'}
+    labels=None,
     # 列名を指定。この列の値は、ホバーツールチップに太字で表示される。
     hover_name=None,
     # 列名を指定。この列の値は、ホバーツールチップの追加データとして表示される。
     hover_data=None,
-    # 列名を指定。バーに表示するテキスト。
-    text=None,
-    # 列名を指定。バーのベース(基点)となる値。
-    base=None,
 
-
-    # 列名を指定。この列の値がアニメーションフレーム(時間軸)に使用される。
-    animation_frame=None,
-    # 列名を指定。アニメーションの実行時、この列の値ごとにグループ化される。
-    animation_group=None,
-
-
-    # x軸、y軸のラベル名を上書きしてカスタマイズできる。
-    # 例：labels={'x軸ラベル名': 'x軸カスタマイズ名', 'y軸ラベル名': 'y軸カスタマイズ名'}
-    labels=None,
-
+    # グラフ書式テンプレートを指定。
+    # template='plotly_dark'がかっこいい。
+    template=None,
+    # 指定した列でデータを色分けする。
+    color=None,
+    # 指定した列でデータのパターン形状を分ける。
+    pattern_shape=None,
     # バーの透明度(0~1)。
     opacity=None,
+
     # バーの方向（'h'または'v'）。
     # デフォルト: 縦棒グラフ
     # 'h': 横棒グラフ
@@ -72,24 +62,26 @@ def bar(
     # 'group': 複数の棒が横に並ぶ
     # 'overlay': 複数の棒が半透明で重なり合う
     barmode="relative",
+    # 列名を指定。バーのベース(基点)となる値。
+    base=None,
     # x軸の範囲。2つのintのリスト。デフォルトでは自動スケーリング。
     range_x=None,
     # y軸の範囲。2つのintのリスト。デフォルトでは自動スケーリング。
     range_y=None,
-    # Trueにすると、方向に応じてxかyかzの値がテキストとしてバーに表示される。 
-    text_auto=False,
-
-
-    # グラフのタイトル
-    title : str | None = None,
-    # グラフ書式テンプレートを指定。
-    # template='plotly_dark'がかっこいい。
-    template=None,
     # グラフの幅(ピクセル単位)。
     width: int | None = None,
     # グラフの高さ(ピクセル単位)。
     height: int | None = None,
 
+    # 列名で指定した値のカテゴリ毎に分割して複数のグラフを作成する(行ごと)。
+    facet_row=None,
+    # 列名で指定した値のカテゴリ毎に分割して複数のグラフを作成する(列ごと)。
+    facet_col=None,
+
+    # 列名を指定。この列の値がアニメーションフレーム(時間軸)に使用される。
+    animation_frame=None,
+    # 列名を指定。アニメーションの実行時、この列の値ごとにグループ化される。
+    animation_group=None,
 
 
     facet_col_wrap=0,
