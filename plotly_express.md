@@ -24,9 +24,9 @@ plotly.expressでは対応できない場合、plotly.graph_objectsを使用す�
 def bar(
     # グラフに使用するDataFrame。
     data_frame=None,
-    # x軸に使用する列名、または列名リスト。
+    # 列名、または列名リストを指定。x軸に使用する値(カテゴリ)。
     x=None,
-    # y軸に使用する列名、または列名リスト。
+    # 列名、または列名リストを指定。y軸に使用する値(カテゴリ)。
     y=None,
 
     # グラフのタイトル
@@ -73,10 +73,23 @@ def bar(
     # グラフの高さ(ピクセル単位)。
     height: int | None = None,
 
-    # 列名で指定した値のカテゴリ毎に分割して複数のグラフを作成する(行ごと)。
+    # 列名で指定した値のカテゴリ毎に複数のグラフを作成する(各グラフが図の行として縦に並ぶ)。
     facet_row=None,
-    # 列名で指定した値のカテゴリ毎に分割して複数のグラフを作成する(列ごと)。
+    # 列名で指定した値のカテゴリ毎に複数のグラフを作成する(各グラフが図の列として横に並ぶ)。
     facet_col=None,
+    # facet_rowで作成した各グラフの間隔を指定。
+    # 0から1までの浮動小数点(図全体の高さを1としたときの割合)で指定。
+    facet_row_spacing=None,
+    # facet_colで作成した各グラフの間隔を指定。
+    # 0から1までの浮動小数点(図全体の幅を1としたときの割合)で指定。
+    facet_col_spacing=None,
+    # facet_colで作成した複数のグラフが、いくつ横に並んだら折り返すかを指定。
+    facet_col_wrap: int = 0,
+
+    # 列のカテゴリーの順序を辞書で指定(デフォルトでは出現順)。
+    # 辞書のキーは列名、値はカテゴリーの順序を文字列のリストで指定する。
+    # 例：category_orders={'野菜': ['ナス', 'ピーマン']}
+    category_orders=None,
 
     # 列名を指定。この列の値がアニメーションフレーム(時間軸)に使用される。
     animation_frame=None,
@@ -84,15 +97,11 @@ def bar(
     animation_group=None,
 
 
-    facet_col_wrap=0,
-    facet_row_spacing=None,
-    facet_col_spacing=None,
     custom_data=None,
     error_x=None,
     error_x_minus=None,
     error_y=None,
     error_y_minus=None,
-    category_orders=None,
     color_discrete_sequence=None,
     color_discrete_map=None,
     color_continuous_scale=None,
@@ -106,16 +115,12 @@ def bar(
 ```
 
 ## まだよくわかってない引数(copilotの簡単な解説付き)。
-
-facet_col_wrap: 列ごとに分けるサブプロットの最大数。  
-facet_row_spacing: 行間の間隔。  
-facet_col_spacing: 列間の間隔。  
+ 
 custom_data: カスタムデータをホバーテキストに表示。  
 error_x: X軸方向のエラーバー。  
 error_x_minus: X軸方向の負のエラーバー。  
 error_y: Y軸方向のエラーバー。  
-error_y_minus: Y軸方向の負のエラーバー。  
-category_orders: カテゴリーの順序。  
+error_y_minus: Y軸方向の負のエラーバー。   
 color_discrete_sequence: カラーシーケンスのカスタマイズ。  
 color_discrete_map: カラーのマッピング。  
 color_continuous_scale: カラーの連続スケール。  

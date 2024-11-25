@@ -578,6 +578,41 @@ def crosstab(
 
 ### 基本
 対象のDataFrameを、三種類のカラム(id_vars, variable, value)で再構築する。
+横持ちのデータフレーム（Wide DataFrame）を、縦持ちのデータフレーム（Long DataFrame）に再構築する
+```py
+def melt(
+    frame: DataFrame,
+    id_vars=None,
+    value_vars=None,
+    var_name=None,
+    value_name: Hashable = "value",
+    col_level=None,
+    ignore_index: bool = True,
+) -> DataFrame:
+
+
+
+
+df：対象となるデータフレーム
+id_vars：IDとして利用する変数（カラム）
+value_vars：melt する変数（カラム）、無指定の場合はid_vars以外の変数全部
+var_name：variable変数の変数（カラム）名、無指定の場合はvariableが変数（カラム）名になる
+value_name：value変数の変数（カラム）名、無指定の場合はvalueが変数（カラム）名になる
+col_level：meltする変数（カラム）のレベル指定
+
+
+id_varsに指定した変数（カラム）は、melt されずに再構築されたデータフレームにそのまま残ります。
+
+ここからややこしい説明になります。
+
+values_varsに指定した変数（カラム）の「変数（カラム）名」は値として扱われ、variable変数の値になります。var_nameで、variable変数の変数（カラム）名を定義します。
+
+values_varsに指定した変数（カラム）の「値」は、value変数の値になります。value_nameで、value_name変数の変数（カラム）名を定義します。
+
+
+
+
+```
 
 ### 参考サイト
 * [pandas.melt — pandas 2.2.2 documentation](https://pandas.pydata.org/docs/reference/api/pandas.melt.html)
