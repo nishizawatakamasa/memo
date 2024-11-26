@@ -93,14 +93,13 @@ pandasにはデータ型(dtype)が存在するが、int,str,floatのようなPyt
 
 ※注意点：int64は欠損値をサポートしていないため、数値型の列に欠損値が一つでも含まれていると自動的にfloat64へ変換される。
 
-他のdtype||
+|他のdtype||
 |-|-|
 |'string'|文字列型。|
-|'category'|性別などのカテゴリを数値化し、0や1で示すようなデータ。<br>つまり、数値自体に意味のない数値データ。|
 |datetime64[ns]|日付、時刻型。[ns]はナノ秒(nanoseconds)単位の精度を示す。|
+|'category'|※このデータ型は完全にはサポートされていないため、基本的には使わないようにする。<br>性別などのカテゴリを数値化し、0や1で示すようなデータ。<br>つまり、数値自体に意味のない数値データ。<br>また、文字列でカテゴリ分けしてあるデータ。|
 
 ※注意点：文字列や日付、時刻などは、デフォルトでは柔軟なobject型が設定される。
-
 
 
 
@@ -577,42 +576,34 @@ def crosstab(
 ## メルト
 
 ### 基本
-対象のDataFrameを、三種類のカラム(id_vars, variable, value)で再構築する。
-横持ちのデータフレーム（Wide DataFrame）を、縦持ちのデータフレーム（Long DataFrame）に再構築する
+横持ちのDataFrameを縦持ちのDataFrameに再構築する(DB的になる)。
 ```py
+# DataFrameを三種類のカラム(id_vars, variable, value)に再構築して返す。
 def melt(
-    frame: DataFrame,
-    id_vars=None,
-    value_vars=None,
-    var_name=None,
-    value_name: Hashable = "value",
-    col_level=None,
-    ignore_index: bool = True,
+    # 対象のDataFrame
+    frame,
+    # 列名リストを指定。指定した列はid_varsカラムとなり、meltされずにそのまま残る。
+    id_vars,
+    # 列名リストを指定。指定した列の列名はvariableカラムとなり、値はvalueカラムとなる。
+    value_vars,
+    # variableカラムの列名を指定(デフォルトはvariable)。
+    var_name,
+    # valueカラムの列名を指定(デフォルトはvalue)。
+    value_name,
 ) -> DataFrame:
-
-
-
-
-df：対象となるデータフレーム
-id_vars：IDとして利用する変数（カラム）
-value_vars：melt する変数（カラム）、無指定の場合はid_vars以外の変数全部
-var_name：variable変数の変数（カラム）名、無指定の場合はvariableが変数（カラム）名になる
-value_name：value変数の変数（カラム）名、無指定の場合はvalueが変数（カラム）名になる
-col_level：meltする変数（カラム）のレベル指定
-
-
-id_varsに指定した変数（カラム）は、melt されずに再構築されたデータフレームにそのまま残ります。
-
-ここからややこしい説明になります。
-
-values_varsに指定した変数（カラム）の「変数（カラム）名」は値として扱われ、variable変数の値になります。var_nameで、variable変数の変数（カラム）名を定義します。
-
-values_varsに指定した変数（カラム）の「値」は、value変数の値になります。value_nameで、value_name変数の変数（カラム）名を定義します。
-
-
-
-
 ```
+
+### 再構築したDataFrameのイメージ
+|id_vars|variable|value|
+|-|-|-|
+|id_vars指定列(全)|value_vars指定列の列名(1)|value_vars指定列(1)|
+|id_vars指定列(全)|value_vars指定列の列名(2)|value_vars指定列(2)|
+|id_vars指定列(全)|value_vars指定列の列名(3)|value_vars指定列(3)|
+|id_vars指定列(全)|value_vars指定列の列名(4)|value_vars指定列(4)|
+|id_vars指定列(全)|value_vars指定列の列名(5)|value_vars指定列(5)|
+
+
+
 
 ### 参考サイト
 * [pandas.melt — pandas 2.2.2 documentation](https://pandas.pydata.org/docs/reference/api/pandas.melt.html)
