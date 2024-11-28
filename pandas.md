@@ -75,10 +75,12 @@ DataFrame.columns.to_list() # 列名属性をリスト化。
 ### Seriesの基本
 |||
 |-|-|
-|pd.Series(['hoge', 'fuga', 'piyo'])|シリーズ。<br>一次元のデータ構造。<br>※代表的な作り方。|
+|pd.Series(['hoge', 'fuga', 'piyo'])|リストから作成。インデックスは0からの連番となる。|
+|pd.Series({'a': 1, 'b': 2, 'c': 3, 'd': 4})|辞書から作成。キーがインデックスとなる。|
 |Series.to_frame('列名')|SeriesをDataFrameに変換。<br>引数で列名を指定できる(省略するとintの0になる)。<br>indexはそのまま。|
 |Series.to_numpy()|データ値属性(NumPy配列=ndarray)。|
-|Series.to_list()|シリーズをリスト化。|
+|Series.to_list()|シリーズをリストに変換。|
+|Series.to_dict()|シリーズを辞書に変換。|
 
 
 ### データ型
@@ -109,7 +111,7 @@ pandasにはデータ型(dtype)が存在するが、int,str,floatのようなPyt
 ### 基本
 |||
 |-|-|
-|df.loc[<br>boolのSeries、行名、行名リスト、行名スライス,<br>boolのSeries、列名、列名リスト、列名スライス<br>]|※ 行名や列名がint型の場合は、指定もint型で。※index値の行名はint型。<br>■行名と列名で指定すると単一要素の値にアクセスすることが可能だが、atを使用するべき(処理速度も速い)。<br>■どちらか片方が行名や列名の場合、選択した行や列をSeriesとして取得・変更・追加できる。<br>・ 変更、追加時にはスカラー値、リスト、NumPy配列、Series(indexを合わせて代入されることに注意)を代入。<br>■それ以外の場合は、選択した範囲をDataFrameとして取得・変更できる。<br>・ 変更時にはスカラー値、二次元リスト、二次元NumPy配列、DataFrameを代入。<br>■行や列をリストで指定した場合はその順番で選択される。<br>■boolのSeriesを指定すると、Trueの行や列が選択される。<br>・Boolean Indexingという。<br>・行選択と列選択どちらの場合でもindexが一致している必要がある。<br>・ 複数のboolのSeriesに~&\|を適用し、複数条件で選択することも可能。<br>・ 優先順位が高い順から、~(not)、&(and)、\|(or)<br>・ 比較演算子を使うときは括弧で括る。<br>・ 優先したい処理も括弧で括る。|
+|df.loc[<br>boolのSeries、行名、行名リスト、行名スライス,<br>boolのSeries、列名、列名リスト、列名スライス<br>]|※ 行名や列名がint型の場合は、指定もint型で。※index値の行名はint型。<br>■行名と列名で指定すると単一要素の値にアクセスすることが可能だが、atを使用するべき(処理速度も速い)。<br>■どちらか片方が行名や列名の場合、選択した行や列をSeriesとして取得・変更・追加できる。<br>・ 変更、追加時にはスカラー値、Series(indexを合わせて代入されることに注意)、リスト、NumPy配列を代入。<br>■それ以外の場合は、選択した範囲をDataFrameとして取得・変更できる。<br>・ 変更時にはスカラー値、Series(indexを合わせて代入されることに注意)、二次元リスト、二次元NumPy配列を代入。<br>■行や列をリストで指定した場合はその順番で選択される。<br>■boolのSeriesを指定すると、Trueの行や列が選択される。<br>・Boolean Indexingという。<br>・行選択と列選択どちらの場合でもindexが一致している必要がある。<br>・ 複数のboolのSeriesに~&\|を適用し、複数条件で選択することも可能。<br>・ 優先順位が高い順から、~(not)、&(and)、\|(or)<br>・ 比較演算子を使うときは括弧で括る。<br>・ 優先したい処理も括弧で括る。|
 |df.at['行名', '列名']|選択した単一要素の値を取得・変更できる。<br>変更時にはスカラー値を代入。|
 
 ### インデックス指定による簡潔な書き方
@@ -649,3 +651,4 @@ def melt(
 * ループ処理(iterrows、itertuples)
 * 欠損値を前後の値から線形補間(interpolate)
 * agg
+* pandas.DataFrame.update()※DataFrameの値の更新
