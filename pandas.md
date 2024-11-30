@@ -184,7 +184,7 @@ pandasにはデータ型(dtype)が存在するが、int,str,floatのようなPyt
 ### 正規表現関連
 |||
 |-|-|
-|Series.str.extract(pat, expand=False)|※ 最初の一つのキャプチャ|
+|Series.str.extract(pat, expand=False)|※ 最初の一つのキャプチャ ※本当は思っていたより凄い|
 |Series.str.findall(pat)||
 |Series.str.replace(pat, repl, regex=True)|※ DataFrame.replace, Series.replaceのほうが便利。|
 |Series.str.split(pat, regex=True)|patが初期値のままなら空白で分割される。<br>expand=Trueとすると複数の列に分割。|

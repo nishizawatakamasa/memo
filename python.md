@@ -7,6 +7,7 @@
     * [よく使われるモジュール（ライブラリ）](#よく使われるモジュール（ライブラリ）)
     * [よく使われる関数](#よく使われる関数)
     * [reを使った正規表現操作](#reを使った正規表現操作)
+    * [pywebviewを使ったデスクトップアプリの作成](#pywebviewを使ったデスクトップアプリの作成)
     * [venvを使った仮想環境の作成](#venvを使った仮想環境の作成)
     * [Pyinstallerを使ったスクリプトのexe化](#Pyinstallerを使ったスクリプトのexe化)
     * [pipコマンド](#pipコマンド)
@@ -815,6 +816,138 @@ glob.iglob()
 |(?P\<name> )|キャプチャグループを設定。各グループに番号＆名前付き。|\1, (?P=name)|\1, \g\<name>|
 
 
+
+
+<a id="pywebviewを使ったデスクトップアプリの作成"></a>
+## pywebviewを使ったデスクトップアプリの作成
+
+例：
+```py
+
+import webview
+
+# APIクラスには、JavaScriptから呼び出すことができる関数を定義する。
+class Api:
+    def say_hello(self, name):
+        return f"Hello, {name}!"
+
+if __name__ == '__main__':
+    api = Api()
+    # ウィンドウを作成
+    window = webview.create_window('Hello world', 'https://example.com', js_api=api)
+    # ウィンドウを表示
+    webview.start()
+
+```
+
+```html
+<script>
+    // Webビュー内で動作するJavaScriptからPython側のAPI関数を呼び出すことができる。
+    const hello = pywebview.api.say_hello()
+</script>
+```
+
+
+```py
+# ネイティブGUIを使用してウェブビューウィンドウを作成する。
+# この関数が呼び出された後、実行はブロックされる。
+# プログラム・ロジックは別のスレッドで実行する必要がある。
+def create_window(
+    # タイトル ウィンドウのタイトル
+    title: str,
+    # url： ロードするURL
+    url: str | None = None,
+    # html： 読み込むHTMLコンテンツ
+    html: str | None = None,
+    # APIクラスのインスタンス
+    js_api: Any = None,
+    # width: ウィンドウの幅。デフォルトは800px
+    width: int = 800,
+    # height: ウィンドウの高さ。デフォルトは600px。
+    height: int = 600,
+    x: int | None = None,
+    y: int | None = None,
+    # screen： ウィンドウを表示するスクリーン。
+    screen: Screen = None,
+    # resizable： ウィンドウのサイズを変更できる場合はTrue、そうでない場合はFalse。デフォルトはTrue
+    resizable: bool = True,
+    # fullscreen： フルスクリーンモードで開始する場合はTrue。デフォルトはFalse
+    fullscreen: bool = False,
+    # min_size: 最小ウィンドウサイズを指定する (width, height) タプル。デフォルトは200x100
+    min_size: tuple[int, int] = (200, 100),
+    # hidden: ウィンドウを隠すかどうか
+    hidden: bool = False,
+    # frameless： ウィンドウがフレームを持つかどうか。
+    frameless: bool = False,
+    # easy_drag： ウィンドウがフレームレスの場合の簡単なウィンドウ・ドラッグ・モード。
+    easy_drag: bool = True,
+    # shadow: ウィンドウに枠線をつけるかどうか (影と Windows の丸いエッジ)。
+    shadow: bool = True,
+    # focus： ユーザーがウィンドウを開いたときにアクティブにするかどうか。ウィンドウはマウスで操作できますが、キーボード入力はこのウィンドウではなく別の（アクティブな）ウィンドウに送られます。
+    focus: bool = True,
+    # 最小化： ウィンドウを最小化して表示します。
+    minimized: bool = False,
+    # 最大化： ウィンドウを最大化する。
+    maximized: bool = False,
+    # on_top： ウィンドウを他のウィンドウより上に表示する (必須 OS: Windows)
+    on_top: bool = False,
+    # confirm_close： ウィンドウを閉じる確認ダイアログを表示する。デフォルトは False
+    confirm_close: bool = False,
+    # background_color: ウェブビューのコンテンツが読み込まれる前に表示される背景色。デフォルトは白。
+    background_color: str = '#FFFFFF',
+    # transparent： ウィンドウの背景を描画しない。
+    transparent: bool = False,
+    # text_select： ページ上でのテキスト選択を許可する。デフォルトは False。
+    text_select: bool = False,
+    zoomable: bool = False,
+    draggable: bool = False,
+    vibrancy: bool = False,
+    localization: Mapping[str, str] | None = None,
+    # サーバー： サーバークラス。デフォルトはBottleServer
+    server: type[http.ServerType] = http.BottleServer,
+    http_port: int | None = None,
+    # server_args： サーバーのインスタンス化に渡す引数の辞書。
+    server_args: http.ServerArgs = {},
+# :return: ウィンドウオブジェクト。
+) -> Window:
+
+
+# GUIループを開始し、以前に作成したウィンドウを表示する。
+# この関数はメインスレッドから呼び出されなければならない。
+def start(
+    # func： GUIループの開始時に呼び出す関数。
+    func: Callable[..., None] | None = None,
+    # args: 関数の引数。単一の値、または値のタプル
+    args: Iterable[Any] | None = None,
+    # localization： ローカライズされた文字列を含む辞書。デフォルトの文字列とそのキーは localization.py で定義されています。
+    localization: dict[str, str] = {},
+    # gui： 特定のGUIを強制する。指定できる値は ``cef``, ``qt`` です。
+    # プラットフォームによって ``cef``、``qt``、``gtk``、``mshtml`` または ``edgechromium`` である。
+    gui: GUIType | None = None,
+    # debug： デバッグモードを有効にする。
+    debug: bool = False,
+    # http_server： 組み込みの HTTP サーバーを有効にする。有効にすると、ローカル・ファイルはランダムなポートでローカルのHTTPサーバーを使用して提供されます。
+    # 各ウィンドウごとに、別々のHTTPサーバーが生成されます。このオプションは無視されます。
+    http_server: bool = False,
+    http_port: int | None = None,
+    # user_agent： ユーザーエージェント文字列を変更します。
+    user_agent: str | None = None,
+    # private_mode： プライベート・モードを有効にする。プライベートモードでは、クッキーとローカルストレージは保存されません。
+    private_mode: bool = True,
+    # storage_path： クッキーと他のウェブサイトデータの保存場所。
+    storage_path: str | None = None,
+    # メニュー： アプリのメニューに含まれるメニューのリスト
+    menu: list[Menu] = [],
+    # server： サーバークラス。デフォルトはBottleServer
+    server: type[http.ServerType] = http.BottleServer,
+    # server_args： サーバーのインスタンス化に渡す引数の辞書。
+    server_args: dict[Any, Any] = {},
+    # ssl: ローカルHTTPサーバーのSSLを有効にします。デフォルトはFalse。
+    ssl: bool = False,
+    # icon: アイコンファイルへのパス： アイコンファイルへのパス。GTK/QTでのみサポート。
+    icon: str | None = None,
+):
+```
 
 
 
