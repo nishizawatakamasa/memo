@@ -63,7 +63,7 @@ di = df2.to_dict(orient='list')
 # }
 
 # 上記2パターンのDataFrame作成方法では、各要素にリスト、タプル、rangeオブジェクト、シリーズを指定できる。
-
+※df2.to_dict(orient='records')
 
 DataFrame.to_numpy() # データ値属性(NumPy配列=ndarray)。
 DataFrame.index = ['行名1', '行名2', '行名3'] # 行名属性へ値を代入。
@@ -107,6 +107,27 @@ pandasにはデータ型(dtype)が存在するが、int,str,floatのようなPyt
 
 <a id="選択操作"></a>
 ## 選択操作
+
+取得・変更・追加
+
+単一セルとスカラー値はindexに影響されない。
+
+DataFrameとSeriesを扱うときのルール
+
+* カラム数を一致させる
+* indexは存在するものしか指定できない
+* indexを合わせて代入される
+
+※Seriesの指定範囲に対してDataFrameで変更できないバグが存在するっぽい(一列丸ごとのSeriesに対してはバグは起きない)。
+
+|指定範囲|index|
+|-|-|
+|DataFrame|元DataFrameのindex|
+|列Series|元DataFrameのindex|
+|行Series|元のDataFrameの列名|
+
+
+
 
 ### 基本
 |||
@@ -184,14 +205,15 @@ pandasにはデータ型(dtype)が存在するが、int,str,floatのようなPyt
 ### 正規表現関連
 |||
 |-|-|
-|Series.str.extract(pat, expand=False)|※ 最初の一つのキャプチャ ※本当は思っていたより凄い|
+|★Series.str.extract(pat)|最初のマッチ部分のみ抽出。<br>キャプチャ部分がそれぞれ列となったDataFrameを返す。 <br>キャプチャに名前を付けると、それがそのまま列名となる。|
+|Series.str.extractall(pat)|すべてのマッチ部分を抽出。<br>キャプチャ部分がそれぞれ列となり、マッチ部分がそれぞれ行となったマルチインデックスのDataFrameを返す。<br>※マッチする部分が一つしかなくてもindexはマルチインデックスとなる。<br>キャプチャに名前を付けると、それがそのまま列名となる。|
 |Series.str.findall(pat)||
 |Series.str.replace(pat, repl, regex=True)|※ DataFrame.replace, Series.replaceのほうが便利。|
 |Series.str.split(pat, regex=True)|patが初期値のままなら空白で分割される。<br>expand=Trueとすると複数の列に分割。|
 
 |||
 |-|-|
-|DataFrame.replace({<br>'列名1': {r'^あ': 'aa', r'\d{4}': '8888'},<br>'列名2': {r'(\d+)分': r'\1年'},<br>}, regex=True)<br><br>DataFrame.replace({r'pat1': '', r'pat2': ''}, regex=True)<br>Series.replace({r'pat1': '', r'pat2': ''}, regex=True)|便利な置換手段。<br>DataFrameにもSeriesにも使える。|
+|★DataFrame.replace({<br>'列名1': {r'^あ': 'aa', r'\d{4}': '8888'},<br>'列名2': {r'(\d+)分': r'\1年'},<br>}, regex=True)<br><br>★DataFrame.replace({r'pat1': '', r'pat2': ''}, regex=True)<br>★Series.replace({r'pat1': '', r'pat2': ''}, regex=True)|便利な置換手段。<br>DataFrameにもSeriesにも使える。|
 
 #### インラインフラグ
 |||
