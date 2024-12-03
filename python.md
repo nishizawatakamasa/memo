@@ -993,7 +993,8 @@ settings.jsonに設定
 ### 主なオプション
 * `--noconsole` ： コンソール（コマンドプロンプト）を表示しない。
 * `--onefile` ： 関連ファイルを1つにまとめてexeファイルを作成する。
-* `--icon=fuga.ico`： exeファイルのアイコンを変更。exe化するスクリプトと同一ディレクトリに*.icoファイルを置いておくと簡単。
+* `--icon=../icon/fuga.ico`： exeファイルのアイコンを変更。*.icoファイルまでのパスを指定。
+* `--name=SimpleTube`： exeファイルの名前を指定できる。
 
 
 
@@ -1007,6 +1008,7 @@ settings.jsonに設定
 `pip install pandas==2.1.4` : 指定したバージョンをインストール  
 `pip install --upgrade pandas` : 最新バージョンにアップグレード  
 `pip install -r requirements.txt` : requirements.txtファイルに記述されているパッケージをインストール  
+`pip install pyperclip pywebview pyinstaller` : 複数のモジュールを一括でインストール  
 
 ### pip uninstallコマンド
 `pip uninstall pandas` : アンインストール  
