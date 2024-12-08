@@ -32,38 +32,48 @@
 # コンストラクタ
 pandas.DataFrame(data=None, columns=None)
 
+
+# DataFrameの各行を要素とするアプローチ
+data = [
+    {'col_0': 0, 'col_1': 1, 'col_2': 2},
+    {'col_0': 3, 'col_1': 4, 'col_2': 5},
+    {'col_0': 6, 'col_1': 7, 'col_2': 8},
+]
+# 辞書をDataFrameに変換
+# 各要素(辞書)のキーが列名となり、値はそのまま値となる。
+df = pd.DataFrame(data)
+# DataFrameを辞書に変換
+# 行名の情報は失われる。
+di = df.to_dict(orient='records')
+
+# DataFrameの各列を要素とするアプローチ
+data = {
+    'col_0': [0, 3, 6],
+    'col_1': [1, 4, 7],
+    'col_2': [2, 5, 8],
+}
+# 辞書をDataFrameに変換
+# 各キーが列名となり、値が列になる。
+# ※DataFrame作成時、各要素にリスト、タプル、rangeオブジェクト、シリーズを指定できる。
+df = pd.DataFrame(data)
+# DataFrameを辞書に変換
+# 行名の情報は失われる。
+di = df.to_dict(orient='list')
+
+# DataFrameの各行を要素とするアプローチ(リスト)
+data = [[0, 1, 2], [3, 4, 5], [6, 7, 8]]
+columns=['col_0', 'col_1', 'col_2']
 # 二次元リストからDataFrameを作成。
 # 各要素が行となる。
 # columnsを省略すると、列名は0からの連番になる。
-data = [[0, 1, 2], [3, 4, 5], [6, 7, 8]]
-columns=['col_0', 'col_1', 'col_2']
-df1 = pd.DataFrame(data, columns=columns)
+# ※DataFrame作成時、各要素にリスト、タプル、rangeオブジェクト、シリーズを指定できる。
+df = pd.DataFrame(data, columns=columns)
 # DataFrameを二次元リストに変換
 # ndarrayのtolist()メソッドを使う。
 # 要素は各行をリスト化したもの。
-# df1.values.tolist()でも可能だが非推奨
-li = df1.to_numpy().tolist()
-# [[0, 1, 2], [3, 4, 5], [6, 7, 8]]
+# df.values.tolist()でも可能だが非推奨
+li = df.to_numpy().tolist()
 
-# 辞書からDataFrameを作成
-# 各キーが列名となり、値が列になる。
-data = {
-    'col_0': [0, 1, 2],
-    'col_1': [3, 4, 5],
-    'col_2': [6, 7, 8],
-}
-df2 = pd.DataFrame(data)
-# DataFrameを辞書に変換
-# 行名の情報は失われる。
-di = df2.to_dict(orient='list')
-# {
-#     'col_0': [0, 1, 2],
-#     'col_1': [3, 4, 5],
-#     'col_2': [6, 7, 8],
-# }
-
-# 上記2パターンのDataFrame作成方法では、各要素にリスト、タプル、rangeオブジェクト、シリーズを指定できる。
-※df2.to_dict(orient='records')
 
 DataFrame.to_numpy() # データ値属性(NumPy配列=ndarray)。
 DataFrame.index = ['行名1', '行名2', '行名3'] # 行名属性へ値を代入。
