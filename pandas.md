@@ -5,6 +5,7 @@
     * [データへのアクセス](#データへのアクセス)
     * [文字列操作](#文字列操作)
     * [算術演算](#算術演算)
+    * [数値操作](#数値操作)
     * [基礎集計](#基礎集計)
     * [ユニーク](#ユニーク)
     * [グルーピング](#グルーピング)
@@ -114,16 +115,23 @@ pandasにはデータ型(dtype)が存在するが、int,str,floatのようなPyt
 ※注意点：文字列や日付、時刻などは、デフォルトでは柔軟なobject型が設定される。
 
 
-
 <a id="データへのアクセス"></a>
 ## データへのアクセス
 
 ### 基本
 
+df.at['行名', '列名']  
+
+df.loc[  
+boolのSeries、行名、行名リスト、行名スライス,  
+boolのSeries、列名、列名リスト、列名スライス  
+]
 
 
-* アクセス
-    * 行名と列名で指定するとscalarにアクセスするが、atを使用するべき(処理速度も速い)。
+* atプロパティを使ったアクセス
+    * 行名と列名を指定してスカラーにアクセスする。
+* locプロパティを使ったアクセス
+    * 行名と列名を指定するとスカラーにアクセスするが、atを使用するべき(処理速度も速い)。
     * どちらか片方が行名や列名の場合はSeriesにアクセスする。
     * それ以外の場合はDataFrameにアクセスする。
     * ※行名や列名がint型の場合は、指定もint型で。
@@ -135,75 +143,36 @@ pandasにはデータ型(dtype)が存在するが、int,str,floatのようなPyt
         * 優先順位が高い順から、~(not)、&(and)、|(or)
         * 比較演算子を使うときは括弧で括る。
         * 優先したい処理も括弧で括る。
+* 操作
+    * 取得
+        * アクセスしたデータをそのまま戻り値として取得できる。
+    * 更新、追加
+        * アクセスしたデータに新しいデータを代入する。
+        * 存在する単一セル、行、列に対してはデータ更新となる。
+        * 存在しない単一セル、行、列に対してはデータ追加となる。
 
 
-取得
-アクセスしたデータをそのまま戻り値として取得できる。
+### データの代入
+* 単一セルに対して
+    * スカラーを代入
+        * そのまま代入するだけ。
+* 行に対して
+    * スカラーを代入
+        * そのまま代入するだけ。
+    * Seriesを代入
+        * 完全な行単位で行う。
+        * サイズ(行数、列数)とデータ型を合わせる。
+        * indexを合わせて代入される。
+        * 行Seriesでは列名がindexとなる。
+* 列に対して
+    * スカラーを代入
+        * そのまま代入するだけ。
+    * Series、DataFrameを代入
+        * 完全な列単位で行う。
+        * サイズ(行数、列数)とデータ型を合わせる。
+        * indexを合わせて代入される。
+        * 1列を指定する場合、基本はSeriesにアクセスする。
 
-
-更新、追加
-アクセスしたデータに新しいデータを代入する。
-存在する単一セル、行、列に対してはデータ更新となる。
-存在しない単一セル、行、列に対してはデータ追加となる。
-
-
-scalarを代入する場合
-そのまま代入するだけ。
-
-
-Seriesを代入する場合
-完全な1行、もしくは完全な1列で行う
-Seriesに対して代入する
-サイズ(行数、列数)とデータ型を合わせる
-* indexを合わせて代入されることに注意
-
-
-DataFrameを代入する場合
-完全な列単位で行う
-サイズ(行数、列数)とデータ型を合わせる
-* indexを合わせて代入されることに注意
-
-
-
-1.単一セル
-scalar
-2.行
-scalar
-Series
-3.列
-scalar
-Series
-DataFrame
-
-
-
-
-
-
-|指定範囲|index|
-|-|-|
-|DataFrame|元DataFrameのindex|
-|列Series|元DataFrameのindex|
-|行Series|元のDataFrameの列名|
-
-
-
-
-locプロパティ
-atプロパティ
-データへのアクセス
-
-
-1
-2
-
-
-
-
-|||
-|-|-|
-|df.loc[<br>boolのSeries、行名、行名リスト、行名スライス,<br>boolのSeries、列名、列名リスト、列名スライス<br>]|※ 行名や列名がint型の場合は、指定もint型で。※index値の行名はint型。<br>■行名と列名で指定すると単一要素の値にアクセスすることが可能だが、atを使用するべき(処理速度も速い)。<br>■どちらか片方が行名や列名の場合、選択した行や列をSeriesとして取得・変更・追加できる。<br>・ 変更、追加時にはスカラー値、Series(indexを合わせて代入されることに注意)、リスト、NumPy配列を代入。<br>■それ以外の場合は、選択した範囲をDataFrameとして取得・変更できる。<br>・ 変更時にはスカラー値、Series(indexを合わせて代入されることに注意)、二次元リスト、二次元NumPy配列を代入。<br>■行や列をリストで指定した場合はその順番で選択される。<br>■boolのSeriesを指定すると、Trueの行や列が選択される。<br>・Boolean Indexingという。<br>・行選択と列選択どちらの場合でもindexが一致している必要がある。<br>・ 複数のboolのSeriesに~&\|を適用し、複数条件で選択することも可能。<br>・ 優先順位が高い順から、~(not)、&(and)、\|(or)<br>・ 比較演算子を使うときは括弧で括る。<br>・ 優先したい処理も括弧で括る。|
-|df.at['行名', '列名']|選択した単一要素の値を取得・変更できる。<br>変更時にはスカラー値を代入。|
 
 ### インデックス指定による簡潔な書き方
 |||
@@ -214,12 +183,10 @@ atプロパティ
 |df[列名リスト]|列の選択。df.loc[:, 列名リスト]と同じ。|
 |df[boolのDataFrame]|true部分の値のみを抽出。他は欠損値となる。<br>※サイズが一致していなくてもエラーは出ないが、想定されている使い方ではない気がする。|
 
-
 ### 正規表現による行、列の選択
 |||
 |-|-|
 |df.filter(regex=r'3')|正規表現の条件を満たす列名の列を選択。<br>DataFrameを返す。<br>axis=0にすると行に適用。<br>行と列を同時に指定することはできない。|
-
 
 ### Seriesに対するインデックス指定
 |||
@@ -228,9 +195,6 @@ atプロパティ
 |s[ラベル名・番号のリスト]|単独・複数の要素の値をpandas.Seriesとして取得|
 |s[ラベル名・番号のスライス]|単独・複数の要素の値をpandas.Seriesとして取得|
 |s[boolのSeries]|Trueの要素をpandas.Seriesとして取得|
-
-
-
 
 ### boolのSeriesを得る方法の例
 |||
@@ -245,7 +209,6 @@ atプロパティ
 |DataFrame.duplicated()<br>Series.duplicated()|重複行を抽出(True)<br>引数subsetで重複判定する列を指定(デフォルトでは全ての列)<br>subset='列名'<br>subset=['列名1', '列名2']<br>引数keep(デフォルトでは、重複した最初の行は重複行として扱わない)<br>keep='last'とすると、重複した最後の行は重複行として扱わない。<br>keep=Falseとすると、重複した全ての行を重複行として扱う。|
 |df_of_bool.all(axis=1)|※boolのDataFrameに対して使用<br>行が全てTrue|
 |df_of_bool.any(axis=1)|※boolのDataFrameに対して使用<br>行がひとつでもTrue|
-
 
 ### boolのDataFrameを得る方法の例
 |||
@@ -266,6 +229,7 @@ atプロパティ
 ### 基本
 |||
 |-|-|
+|df['str1'] + ' in ' + df['str2']||
 |Series.str[2]||
 |Series.str[2:9]||
 |Series.str.strip()||
@@ -284,7 +248,7 @@ atプロパティ
 
 |||
 |-|-|
-|★DataFrame.replace({<br>'列名1': {r'^あ': 'aa', r'\d{4}': '8888'},<br>'列名2': {r'(\d+)分': r'\1年'},<br>}, regex=True)<br><br>★DataFrame.replace({r'pat1': '', r'pat2': ''}, regex=True)<br>★Series.replace({r'pat1': '', r'pat2': ''}, regex=True)|便利な置換手段。<br>DataFrameにもSeriesにも使える。|
+|★DataFrame.replace({<br>'列名1': {r'^あ': 'aa', r'\d{4}': '8888'},<br>'列名2': {r'(\d+)分': r'\1年'},<br>}, regex=True)<br><br>★DataFrame.replace({r'pat1': '', r'pat2': ''}, regex=True)<br>★Series.replace({r'pat1': '', r'pat2': ''}, regex=True)|便利な置換手段。<br>DataFrameにもSeriesにも使える。<br>※文字列以外にも使える。|
 
 #### インラインフラグ
 |||
@@ -297,7 +261,6 @@ atプロパティ
 |(?ms:)|複数フラグを部分適用|
 
 
-
 <a id="算術演算"></a>
 ## 算術演算
 
@@ -308,6 +271,17 @@ DataFrame、Series、スカラー値は、それぞれ算術演算子(+、-、*�
 
 累算代入演算子(+=、-=、*=、/=、//=、%=、**=)も使える。
 
+
+<a id="数値操作"></a>
+## 数値操作
+
+### 基本的な操作
+|||
+|-|-|
+|df['num1'] * 3 / df['num2']||
+|df[['num1', 'num2']] /= 3||
+|(df['num'] / 30).astype(str).str[0:3].astype(float)||
+|(df['num'] / 30).astype(int)||
 
 
 <a id="基礎集計"></a>
@@ -371,7 +345,6 @@ for group, df in gb:
 ### 参考サイト
 * [pandasのgroupby()でグルーピングし統計量を算出](https://note.nkmk.me/python-pandas-groupby-statistics/)  
 * [pandas groupbyでグループ化｜図解でわかりやすく解説](https://www.yutaka-note.com/entry/pandas_groupby)
-
 
 
 <a id="横方向に結合"></a>
@@ -444,7 +417,6 @@ ignore_index=Trueとするとインデックスが振り直される(0からの�
 |join='inner'|共通の名前の列のみが残る。|
 
 
-
 <a id="任意の関数を適用"></a>
 ## 任意の関数を適用
 
@@ -486,8 +458,6 @@ df['date'] = pd.to_datetime(df['date'], format='%Y年%m月%d日')
 ※引数formatに指定する書式化コードは[公式ドキュメント](https://docs.python.org/ja/3/library/datetime.html#strftime-and-strptime-behavior)を参照。
 
 
-
-
 <a id="欠損値の取り扱い"></a>
 ## 欠損値の取り扱い
 
@@ -497,12 +467,6 @@ df['date'] = pd.to_datetime(df['date'], format='%Y年%m月%d日')
 |DataFrame.fillna(value)<br>DataFrame.fillna({'列名1': 'value1', '列名2': 'value2'})<br>DataFrame.fillna(Series)<br>Series.fillna(value)|欠損値をvalueで指定する値に置き換える。|
 |DataFrame.ffill()<br>Series.ffill()|欠損値を直前の非欠損値で置き換える。|
 |DataFrame.bfill()<br>Series.bfill()|欠損値を直後の非欠損値で置き換える。|
-
-
-
-
-
-
 
 
 <a id="データ形式変換"></a>
@@ -618,7 +582,6 @@ df.to_markdown('hoge/fuga/piyo.md', index=True, mode='w')
 
 
 
-
 <a id="クロス集計"></a>
 ## クロス集計
 
@@ -666,7 +629,6 @@ def crosstab(
 ```
 
 
-
 <a id="メルト"></a>
 ## メルト
 
@@ -699,27 +661,14 @@ def melt(
 
 
 
-
 ### 参考サイト
 * [pandas.melt — pandas 2.2.2 documentation](https://pandas.pydata.org/docs/reference/api/pandas.melt.html)
 * [データフレームを再構築するPandasのMelt()関数のお話し](https://www.salesanalytics.co.jp/datascience/datascience021/)
 
 
 
-
 <a id="その他"></a>
 ## その他
-
-### 基本的な操作
-|||
-|-|-|
-|df['str1'] + ' in ' + df['str2']||
-|df['num1'] * 3 / df['num2']||
-|df[['num1', 'num2']] /= 3||
-|(df['num'] / 30).astype(str).str[0:3].astype(float)||
-|(df['num'] / 30).astype(int)||
-
-
 
 ### ランダムサンプリング
 |||
