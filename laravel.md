@@ -69,9 +69,11 @@ Controllerの責務は
 の３つのみ。  
 例外は無し
 
-共通化は明確に有用な場合のみ。少しでも迷ったら共通化しない。
+共通化(トレイト含む)は明確に有用な場合のみ。少しでも迷ったら共通化しない。
 
 
+app/Http/Requests/Post/StoreRequest.php
+public function store(StoreRequest $request, StoreAction $action)
 
 
 <a id="図解(旧)"></a>
