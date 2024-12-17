@@ -21,6 +21,7 @@
     * [シーダー](#シーダー)
     * [ファクトリー](#ファクトリー)
     * [ルーティング](#ルーティング)
+    * [リダイレクト](#リダイレクト)
     * [GET/POST](#GET/POST)
     * [コントローラー](#コントローラー)
     * [リクエスト](#リクエスト)
@@ -1572,19 +1573,33 @@ route('work_log.create', [
 // 'http://127.0.0.1:8000/work-log/5?date=2024-09-16'
 
 
-
-// リダイレクトをする際に使用するredirect関数にもrouteは使える(その時redirect関数には何も引数を入れない)。
-return redirect()->route('tasks.index', [
-    'id' => $id
-]);
-
-// ※redirect関数の基本的な一番使い方(固定URLにリダイレクト)。
-return redirect('URL');
-
-
 // Bladeテンプレート内でリンクを生成する場合は次のように使用する。
 <a href="{{ route('folders.edit', ['id' => $folder->id]) }}">編集</a>
 ```
+
+
+<a id="リダイレクト"></a>
+## リダイレクト
+
+### 基本
+ブラウザに新しいHTTPリクエストを発行させる。  
+※つまり、指定したURLに改めてアクセスする。
+
+```php
+<?php
+
+// 基本(固定URLにリダイレクト)。
+return redirect('URL');
+
+// routeも使える。
+// この時、redirect関数には何も引数を入れない。
+return redirect()->route('tasks.index', [
+    'id' => $id
+]);
+```
+### 参考サイト
+[return view('cart.index');とreturn redirect()->route('cart.index');の違い](https://takuya-084-it.hatenablog.jp/entry/2023/11/14/083921)
+
 
 <a id="GET/POST"></a>
 ## GET/POST
