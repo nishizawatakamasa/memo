@@ -4,7 +4,7 @@
 * 目次
     * [Laravelについて](#Laravelについて)
     * [Serviceパターンのアイデア](#Serviceパターンのアイデア)
-    * [図解(旧)](#図解(旧))
+    * [図解](#図解)
     * [参考サイト](#参考サイト)
     * [便利なVSCodeの拡張機能](#便利なVSCodeの拡張機能)
     * [インストール](#インストール)
@@ -76,9 +76,9 @@ app/Http/Requests/Post/StoreRequest.php
 public function store(StoreRequest $request, StoreAction $action)
 
 
-<a id="図解(旧)"></a>
-## 図解(旧)
-![図解(旧)](./laravel.drawio.svg)
+<a id="図解"></a>
+## 図解
+![図解](./laravel.drawio.svg)
 
 
 <a id="参考サイト"></a>
