@@ -1,25 +1,5 @@
 # 覚書
 
-## Web
-* [全般](./web.md)
-* フロントエンド
-    * HTML/CSS
-        * [全般](./html_css.md)
-        * [CSSセレクタ](./css_selector.md)
-    * JavaScript
-        * [全般(外部サイト)](https://share.kokoronoki.net/nszw/summary/lang_spec/)
-        * [処理の実行タイミング](./js_execution_timing.md)
-        * React
-            * [全般](./react.md)
-* バックエンド
-    * PHP
-        * [全般(外部サイト)](https://share.kokoronoki.net/nszw/summary/lang_spec/)
-        * WordPress
-        * Laravel
-            * [全般](./laravel.md)
-        * phpMyAdmin
-    * SQL
-        * MariaDB(MySQL)
 ## データ処理
 * [全般](./data_proc.md)
 * 簡易な処理
@@ -44,6 +24,26 @@
     * 英語
         * リーディング
 
+## Web
+* [全般](./web.md)
+* フロントエンド
+    * HTML/CSS
+        * [全般](./html_css.md)
+        * [CSSセレクタ](./css_selector.md)
+    * JavaScript
+        * [全般(外部サイト)](https://share.kokoronoki.net/nszw/summary/lang_spec/)
+        * [処理の実行タイミング](./js_execution_timing.md)
+        * React
+            * [全般](./react.md)
+* バックエンド
+    * PHP
+        * [全般(外部サイト)](https://share.kokoronoki.net/nszw/summary/lang_spec/)
+        * WordPress
+        * Laravel
+            * [全般](./laravel.md)
+        * phpMyAdmin
+    * SQL
+        * MariaDB(MySQL)
 
 ## エンジニアリング全般
 * Git/GitHub
