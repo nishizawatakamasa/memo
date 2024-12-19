@@ -31,6 +31,7 @@
     * [ミドルウェア](#ミドルウェア)
     * [Breezejp](#Breezejp)
     * [TailwindCSS](#TailwindCSS)
+    * [Facade](#Facade)
     * [ログイン中のユーザの情報を取得](#ログイン中のユーザの情報を取得)
     * [ユーザーアクションの認可](#ユーザーアクションの認可)
 
@@ -1596,6 +1597,9 @@ return redirect('URL');
 return redirect()->route('tasks.index', [
     'id' => $id
 ]);
+
+// 直前のURLにリダイレクト。
+return back();
 ```
 ### 参考サイト
 [return view('cart.index');とreturn redirect()->route('cart.index');の違い](https://takuya-084-it.hatenablog.jp/entry/2023/11/14/083921)
@@ -2470,6 +2474,44 @@ resources/lang/ja
 * [Tailwind CSSで独自クラス（コンポーネント）を作成する](https://zenn.dev/takashi5816/articles/7d9d14a17a3ec0)
 * [初めてでもわかるTailwind CSS入門 基礎編](https://reffect.co.jp/html/tailwindcss-for-beginners)
 * [Vite + Tailwind CSS + Laravel Breezeを使った開発環境の構築](https://zenn.dev/nenenemo/articles/46d43854cd01c5)
+
+
+
+<a id="Facade"></a>
+## Facade
+
+
+```php
+<?php
+class RateLimiter extends Facade
+{
+    /**
+     * Get the registered name of the component.
+     *
+     * @return string
+     */
+    protected static function getFacadeAccessor()
+    {
+        return \Illuminate\Cache\RateLimiter::class;
+    }
+}
+
+// このコードは Laravel の Facade（ファサード）というデザインパターンを利用しています。
+// ファサードパターンを使うことで、複雑なサブシステムへの簡単なインターフェースを提供することができます。
+// ここでのポイントは、getFacadeAccessor メソッドです。
+
+// このメソッドが実行されると、return \Illuminate\Cache\RateLimiter::class; という行によって \Illuminate\Cache\RateLimiter クラスの名前が文字列として返されます。
+// この文字列がファサードの内部で利用されて、実際のサービスコンテナのバインディング（登録されたインスタンス）を解決します。
+
+// つまり、RateLimiter ファサードを使うと、直接 \Illuminate\Cache\RateLimiter クラスのメソッドを呼び出すのと同じ効果が得られます。
+// これは Laravel の便利な機能で、サービスコンテナを介してサービスにアクセスする際のコードを簡潔に保つことができます。
+```
+
+
+
+
+
+
 
 
 
