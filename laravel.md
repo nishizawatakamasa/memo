@@ -493,13 +493,26 @@ $table->softDeletes('deleted_at', $precision = 0); // deleted_at カラムを追
 // カラム定義 ブール型
 $table->boolean('column_name'); // 真偽値
 
+
 // 外部キーを定義するメソッド
+
+// まず外部キーを定義するカラムを手動で作成。
+$table->unsignedBigInteger('user_id');
+// そのカラムに対して外部キー制約を設定。
+// 例：foreign() メソッドを使って user_id を users テーブルの id カラムに関連付ける。
 // 子テーブルのuser_idカラムが、常にusersテーブルの有効なidを参照することを強制
 // 子テーブルにある各レコードのuser_idは、必ずusersテーブルに存在するidでなければならなくなる。
 $table->foreign('user_id')->references('id')->on('users');
-// 上記の外部キー定義メソッドを簡潔に書く方法
+// 外部キーが標準的な命名規則に従わない場合や、カラムの型を自分で定義したい場合に使う。
+
+// 簡略版
+// 以下のコードは次の処理を自動で行う。
+// user_id という名前の unsignedBigInteger カラムを作成。
+// user_id を外部キーとして users テーブルの id カラムに関連付ける。
+$table->foreignId('user_id')->constrained();
+// 簡単な外部キー制約を作成する場合に使うとコードが簡潔になる。
 // ※カラム修飾子は、constrainedメソッドの前に呼び出す必要がある。
-$table->foreignId('user_id')->constrained('users', 'id');
+
 
 // カラム定義 その他
 $table->rememberToken(); // 現在の「ログイン持続」認証トークンを格納。NULL許容。最大100文字。
@@ -511,19 +524,18 @@ $table->jsonb('column_name'); // JSONB
 ```php
 <?php
 
-->comment('好きなコメント(日本語カラム名など)') // カラムへコメントを追加（MySQL／PostgreSQL）
-->default($value) // デフォルト値を設定する。
+$table->string('email')->unique(); // カラムの値が一意であることを指定する。
 ->nullable() // カラムをNULL許容にする(デフォルトでは拒否)。
+->default($value) // デフォルト値を設定する。
+
+// カラムへコメントを追加（MySQL／PostgreSQL）
+// メソッドチェーンの最後に付け加えるようにすると可読性が高まる(コメントはそのカラムの意味を補足する情報に過ぎず、カラムの動作に直接影響を与えるものではないため)。
+->comment('好きなコメント(日本語カラム名など)')
 ```
 
-### ユニーク制約
+### カラム定義後のユニーク制約
 ```php
 <?php
-
-// カラムの値が一意であることを指定する。
-
-// カラム定義にuniqueメソッドをチェーンする。
-$table->string('email')->unique();
 
 // カラムを定義した後にユニーク制約をつけることもできる。
 // その場合、uniqueメソッドの引数にカラムの名前を渡す。
