@@ -1553,6 +1553,7 @@ Route::get('/', function () {
 // そのため、フォームのPUT,PATCH,DELETE,OPTIONSリクエストを使う場合はPOST送信のフォームの中で@method関数を使用し、擬似的にリクエストを実現させる。
 
 // @method関数の使用例
+// HTTPメソッドは大文字推奨
 <form action="{{ route('hoges.destroy', ['id' => $id]) }}" method="POST">
     @csrf
     // これを認識したlaravelは、「<input type="hidden" name="_method" value="DELETE">」を生成し、実際のHTTPリクエストメソッドをオーバーライドする。
@@ -1579,14 +1580,17 @@ Route::middleware()
 // name()メソッドでルートに名前を付けられる。
 // ルートの名前を定義すると、route関数でURLを生成できるようになる。
 // ルートの名前に特定のルールや制約はないが、ドット区切りでリソースとアクションを表現するのが一般的。
-Route::get('/folders/{id}/tasks/{task_id}/edit', [TaskController::class,"edit"])->name('tasks.edit');
+Route::get('/folder/{id}/task/{task_id}/edit', [TaskController::class,"edit"])->name('task.edit');
 
-// これも一応ルーティング定義の例
-Route::get('/folders/create', [FolderController::class,"showCreateForm"])->name('folders.create');
-Route::post('/folders/create', [FolderController::class,"create"]);
+
+// これもルーティング定義の例
+// 同じURLに対してgetとpostを使い分けることも可能だが、URLとメソッドの関係を明確にする方が推奨される。
+Route::get('/staff-comment/create', [StaffCommentController::class, 'create'])->name('staff_comment.create');
+Route::post('/staff-comment/store', [StaffCommentController::class, 'store'])->name('staff_comment.store');
+
 
 // ルートパラメータの値が引数として渡される例。
-public function showEditForm(int $id, int $task_id)
+public function edit(int $id, int $task_id)
 {
     //
 }
