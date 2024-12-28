@@ -33,7 +33,7 @@
     * [Breezejp](#Breezejp)
     * [TailwindCSS](#TailwindCSS)
     * [Facade](#Facade)
-    * [ログイン中のユーザの情報を取得](#ログイン中のユーザの情報を取得)
+    * [セッション](#セッション)
     * [ユーザーアクションの認可](#ユーザーアクションの認可)
 
 
@@ -536,6 +536,15 @@ $table->foreignId('user_id')->constrained();
 // 簡単な外部キー制約を作成する場合に使うとコードが簡潔になる。
 // ※カラム修飾子は、constrainedメソッドの前に呼び出す必要がある。
 
+// 外部キー参照している親カラムが削除されたとき、連動して削除されるようになる。
+$table->cascadeOnDelete();
+// 使用例
+$table->foreign('member_key')->references('member_key')->on('member_keys')->cascadeOnDelete();
+$table->foreignId('binder_id')->comment('バインダーID')->constrained()->cascadeOnDelete();
+// データベースにおける「カスケード（Cascade）」とは、リレーショナルデータベース内の親テーブルのデータが変更されたときに、関連する子テーブルのデータにも自動的に同じ操作を適用する機能。
+// 依存関係を持った親と子のレコード同士の整合性を保つための仕組み。
+
+
 
 // カラム定義 その他
 $table->rememberToken(); // 現在の「ログイン持続」認証トークンを格納。NULL許容。最大100文字。
@@ -757,8 +766,15 @@ $modelInstance->fill();
 ModelClass::all(); // 戻り値はCollection
 
 // 主キーで指定したレコードを取得
-ModelClass::find(1); // 戻り値はModelインスタンス。無いときはnullなのでissetで判定。
-ModelClass::find([1, 2, 3]); // 戻り値はCollection。
+ModelClass::find(1); // Modelインスタンスを返す。無いときはnullを返す。
+ModelClass::find([1, 2, 3]); // Collectionを返す。
+ModelClass::findOrFail(1); // Modelインスタンスを返す。無いときはエラー(404)を返す。
+// Modelインスタンスを返す。無いときは指定クロージャを実行する。
+// クロージャの返却値がメソッドの結果とみなされる。
+ModelClass::findOr(1, function () {
+    // ...
+});
+
 
 // 新しいインスタンス(レコード)の作成、追加、保存を簡潔に書く方法。
 // 'created_at'(作成日)と'updated_at'(更新日)は自動的に追加される。
@@ -814,21 +830,22 @@ ModelClass::upsert(
 );
 
 
+// ModelClass::updateOrCreateの「取得か作成」版。
+ModelClass::firstOrCreat();
+// ModelClass::updateOrCreateの「取得か新しくインスタンス化」版。
+// ※Createするには、手作業でsaveメソッドを呼び出す必要がある。
+ModelClass::firstOrNew();
 
-// モデルに関連しているすべてのデータベースレコードを削除する。
-// モデルの関連テーブルの自動増分IDはリセットされる。
-ModelClass::truncate();
 
 // 指定した主キーのレコードを削除
 ModelClass::destroy(1);
 ModelClass::destroy([1, 2, 3]);
 
 
-// 保留
-ModelClass::findOr();
-ModelClass::findOrFail();
-ModelClass::firstOrCreat();
-ModelClass::firstOrNew();
+// モデルに関連しているすべてのデータベースレコードを削除する。
+// モデルの関連テーブルの自動増分IDはリセットされる。
+ModelClass::truncate();
+
 ```
 
 ### クエリビルダーメソッド
@@ -1615,6 +1632,16 @@ route('work_log.create', [
 
 // Bladeテンプレート内でリンクを生成する場合は次のように使用する。
 <a href="{{ route('folders.edit', ['id' => $folder->id]) }}">編集</a>
+
+
+
+// 以下のように、requireを使用してweb.phpにルート情報が記述されたファイルを取り込むことができる。
+// リソース別、目的別にルート情報を分割することができる。
+// web.phpに記述する。
+require __DIR__ . '/authenticated-session.php';
+require __DIR__ . '/member-key.php';
+require __DIR__ . '/binder.php';
+require __DIR__ . '/note.php';
 ```
 
 
@@ -1885,6 +1912,7 @@ class SampleRequest extends FormRequest
     // falseが返った場合、バリデーションすら行わず403 Forbiddenを返しリクエストが拒否される。
     // trueが返った場合はバリデーションに処理が進む。つまり認可・許可されたことになる。
     // 条件によってtrueにしたり、falseにしたりと、便利な使い方もできる。
+    // ※ 以下のように単にtrueを返すだけであれば、メソッド自体を実装しなかったとしても挙動は変わらない。
     public function authorize(): bool
     {
         return true;
@@ -1914,7 +1942,7 @@ class SampleRequest extends FormRequest
 
     // バリデーションルールを定義するメソッド。
     // バリデーションルールは2次元配列で定義してreturnする。
-    // ※フォーム項目名はinputのname属性。
+    // バリデーション項目名はinputのname属性か、クエリパラメータ名。
     // 定義したルールに基づいてバリデーションが実行される。
     // バリデーションが通らなければ、直前の画面にリダイレクトされる。
     // バリデーションが通れば、コントローラー内部へと処理が移る。
@@ -1966,6 +1994,11 @@ class SampleRequest extends FormRequest
     }
 }
 ```
+
+参考サイト(ルートパラメータをFormRequestでバリデーション)  
+[【Laravel8】GETで取得したパラメーターをFormRequestでバリデーションをかける](https://yama-weblog.com/how-to-validate-get-parameter-in-laravel8/)  
+[Laravel ルートパラメータ：取得と活用方法](https://cyublog.com/articles/php-ja/laravel-route-parameters/)  
+
 
 バリデーションエラーメッセージの表示:  
 ```php
@@ -2519,7 +2552,6 @@ resources/lang/ja
 <a id="Facade"></a>
 ## Facade
 
-
 ```php
 <?php
 class RateLimiter extends Facade
@@ -2546,49 +2578,64 @@ class RateLimiter extends Facade
 // これは Laravel の便利な機能で、サービスコンテナを介してサービスにアクセスする際のコードを簡潔に保つことができます。
 ```
 
-
-
-
-
-
-
-
-
-<a id="ログイン中のユーザの情報を取得"></a>
-## ログイン中のユーザの情報を取得
-
-
 ```php
 <?php
 
 use Illuminate\Support\Facades\Auth;
 
-
-Auth::user()はログインしているユーザのインスタンスを返す
-未ログイン時にはnullを返します。
-そのため未ログイン時の場合は、nullオブジェクトからidプロパティを取得しようとすることになるので、エラーが発生します。
-
+// ログインしているユーザのインスタンスを返す。未ログイン時にはnullを返す。
+// 完全なモデルインスタンスを返すので、id以外の他の属性（年齢や職業など）に同時にアクセスしたいときに便利。
+Auth::user()
+// ログインしているユーザのidを返す。未ログイン時にはnullを返す。
+// 単にユーザのidを取得したいというケースではこちらが適切。
 Auth::id()
-対してAuth::id()は未ログイン時にnullを返す点では同じですが、こちらは直接ログインユーザのidを返します。
-
-ログイン時はログインユーザのidを、未ログイン時はnullを返すだけなので、エラーが起こる心配はありません。（nullの場合の処理を行う必要性はあります）
-
-そのため、単にユーザのidを取得したいというケースであれば、Auth::id()の方が適切だと考えられます。
-
-Auth::user()->は完全なモデルインスタンスを返すので、id以外の他の属性（年齢や職業など）に同時にアクセスしたいときに便利です。
-
-
 
 ```
 
 
+<a id="セッション"></a>
+## セッション
 
+Laravelでは、ユーザーに関する情報を一時的に保存するための状態管理ツールとしてセッションが提供されている。  
+セッションは、短期的なデータ保存、ログイン状態の管理、フラッシュメッセージなどの表示に便利な機能。
 
+```php
+<?php
 
+// グローバルなsessionヘルパを使用
 
+// データを保存
+session()->put('key', 'value');
 
+// データを取得
+session()->get('key');
+// デフォルト値を指定(指定したキーが存在しない場合に返す)。
+session()->get('key', 'default');
 
+// データを削除
+session()->forget('key');
+// 複数のデータを削除
+session()->forget(['key1', 'key2']);
+// 全てのデータを削除
+session()->flush();
 
+// データが存在する場合、trueを返す。
+session()->exists('key');
+// データが存在し、かつnullでない場合、trueを返す。
+session()->has('key');
+// データが存在しない場合、trueを返す。
+session()->missing('key');
+
+// 指定したデータを取得後に削除
+session()->pull('key', 'default');
+
+// フラッシュデータを保存
+// ※直後のリクエストでのみ利用可能、その後削除される。
+session()->flash('key', 'value');
+```
+
+参考サイト  
+[Laravel 11.x HTTPセッション](https://readouble.com/laravel/11.x/ja/session.html)
 
 
 
@@ -2882,8 +2929,6 @@ middleware(ミドルウェア)を利用した制限
 |edit|update|
 |update|update|
 |delete|delete|
-
-
 
 
 ---------------------------------------------
