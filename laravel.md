@@ -2602,36 +2602,42 @@ Laravelでは、ユーザーに関する情報を一時的に保存するため�
 ```php
 <?php
 
-// グローバルなsessionヘルパを使用
+// Illuminate\Session\SessionManagerのインスタンスを使用する。
+
+// DI
+public function __construct(SessionManager $session)
+{
+    $this->session = $session;
+}
 
 // データを保存
-session()->put('key', 'value');
+$this->session->put('key', 'value');
 
 // データを取得
-session()->get('key');
+$this->session->get('key');
 // デフォルト値を指定(指定したキーが存在しない場合に返す)。
-session()->get('key', 'default');
+$this->session->get('key', 'default');
 
 // データを削除
-session()->forget('key');
+$this->session->forget('key');
 // 複数のデータを削除
-session()->forget(['key1', 'key2']);
+$this->session->forget(['key1', 'key2']);
 // 全てのデータを削除
-session()->flush();
+$this->session->flush();
 
 // データが存在する場合、trueを返す。
-session()->exists('key');
+$this->session->exists('key');
 // データが存在し、かつnullでない場合、trueを返す。
-session()->has('key');
+$this->session->has('key');
 // データが存在しない場合、trueを返す。
-session()->missing('key');
+$this->session->missing('key');
 
 // 指定したデータを取得後に削除
-session()->pull('key', 'default');
+$this->session->pull('key', 'default');
 
 // フラッシュデータを保存
 // ※直後のリクエストでのみ利用可能、その後削除される。
-session()->flash('key', 'value');
+$this->session->flash('key', 'value');
 ```
 
 参考サイト  

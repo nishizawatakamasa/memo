@@ -21,6 +21,7 @@
         * 微分
         * 線形代数
         * 統計
+        * 確率論
     * 英語
         * リーディング
 
@@ -44,6 +45,8 @@
         * phpMyAdmin
     * SQL
         * MariaDB(MySQL)
+    * API作成
+        * FastAPI
 
 ## エンジニアリング全般
 * Git/GitHub
@@ -52,3 +55,4 @@
 * Linux
 * Docker
 * クラウド
+* CI/CD
