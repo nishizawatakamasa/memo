@@ -429,7 +429,7 @@ ignore_index=Trueとするとインデックスが振り直される(0からの�
 |||
 |-|-|
 |Series.apply(pd.Series)|Seriesの各要素のリストにpd.Series()を適用したDataFrameを返す。<br>※Series.map()はDataFrameを返すことができないため、Series.apply()を使う。|
-|DataFrame.apply(lambda s: s[1] in s['所在地'], axis=1)|第一引数に適用したい関数を指定。<br>defで定義した関数やラムダ式も指定可能。<br>デフォルトでは各列がSeriesとして関数に渡される(戻り値が新しい列となる)。<br>引数axisを1とすると各行がSeriesとして関数に渡される(戻り値が新しい行となる)。<br>Laxis(0と1の覚え方)。<br>Seriesを引数として受け取れない関数だとエラーになる。<br>指定した関数をDataFrameの各行もしくは各列に適用する。<br>新しいオブジェクト(SeriesかDataFrame)が返される。|
+|DataFrame.apply(lambda s: s[1] in s['所在地'], axis=1)|第一引数に指定した関数をDataFrameの各行もしくは各列に適用する。<br>新しいオブジェクト(SeriesかDataFrame)が返される。<br>defで定義した関数やラムダ式も指定可能。<br>デフォルトでは各列がSeriesとして関数に渡される(戻り値が新しい列となる)。<br>引数axisを1とすると各行がSeriesとして関数に渡される(戻り値が新しい行となる)。<br>Laxis(0と1の覚え方)。<br>Seriesを引数として受け取れない関数だとエラーになる。|
 
 ### 注意点
 mapやapplyの処理速度は遅い。あくまでも他では実現できない複雑な処理を適用するためのもの。

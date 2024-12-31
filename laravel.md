@@ -746,16 +746,33 @@ public function isSubmittedByUser(): bool
     return $this->submitter_type === UserType::WELFARE_USER->value;
 }
 
+// モデル取得後、属性が変更されていないか。bool値を返す。
+$modelInstance->isClean();
+$modelInstance->isClean('カラム名');
+$modelInstance->isClean(['カラム名1', 'カラム名2']);
+// モデル取得後、属性が変更されたか。bool値を返す。
+$modelInstance->isDirty();
+$modelInstance->isDirty('カラム名');
+$modelInstance->isDirty(['カラム名1', 'カラム名2']);
+// モデルの最後の保存時に、属性が変更されたか。bool値を返す。
+$modelInstance->wasChanged();
+
+// モデル取得後、属性が変更されたかどうかに関わらず、元の属性を含む配列を返す。
+$modelInstance->getOriginal();
+// 属性名を渡すと、その属性の元の値を取得できる。
+$modelInstance->getOriginal('カラム名');
+
+
+
+
+
+
 
 
 // 保留
 $modelInstance->fresh();
 $modelInstance->refresh();
 $modelInstance->update();
-$modelInstance->isDirty();
-$modelInstance->isClean();
-$modelInstance->wasChanged();
-$modelInstance->getOriginal();
 $modelInstance->fill();
 ```
 
@@ -778,6 +795,7 @@ ModelClass::findOr(1, function () {
 
 // 新しいインスタンス(レコード)の作成、追加、保存を簡潔に書く方法。
 // 'created_at'(作成日)と'updated_at'(更新日)は自動的に追加される。
+// その挿入したモデルインスタンスを返す。
 ModelClass::create([
     'folder_id' => 1,
     'title' => "サンプルタスク {$num}",
@@ -832,7 +850,7 @@ ModelClass::upsert(
 
 // ModelClass::updateOrCreateの「取得か作成」版。
 ModelClass::firstOrCreat();
-// ModelClass::updateOrCreateの「取得か新しくインスタンス化」版。
+// ModelClass::updateOrCreateの「取得か新規インスタンスを作成」版。
 // ※Createするには、手作業でsaveメソッドを呼び出す必要がある。
 ModelClass::firstOrNew();
 
@@ -991,6 +1009,10 @@ $queryBuilderInstance->reorder('カラム名', 'desc')
 $queryBuilderInstance->skip(10)->take(5)
 $queryBuilderInstance->offset(5)->limit(10)
 
+// サブクエリをサポートしている関数
+select
+addSelect
+orderBy
 
 // ※保留
 // JOIN(結合)
@@ -1015,9 +1037,32 @@ $queryBuilderInstance->when()
 // 全てのレコードを取得。
 // 戻り値はCollection(要素が見つからなかった場合は空のCollection)。
 $queryBuilderInstance->get();
+
 // 最初のレコードを取得。
 // 戻り値はModelインスタンス(要素が見つからなかった場合はnull)。
 $queryBuilderInstance->first();
+$queryBuilderInstance->firstOrFail(); // Modelインスタンスを返す。無いときはエラー(404)を返す。
+// Modelインスタンスを返す。無いときは指定クロージャを実行する。
+// クロージャの返却値がメソッドの結果とみなされる。
+$queryBuilderInstance->firstOr(function () {
+    // ...
+});
+
+
+
+// 指定したクエリに一致するモデルに対して更新を実行する。
+// 更新の影響を受けた行数を返す。
+$queryBuilderInstance->update(['カラム名' => 1]);
+
+
+
+
+
+
+
+
+
+
 // レコードから単一の値を取得。
 // 戻り値はカラムの値(要素が見つからなかった場合はnull)。
 $queryBuilderInstance->value('カラム名');
@@ -1026,25 +1071,39 @@ $queryBuilderInstance->find(3);
 
 $queryBuilderInstance->pluck('カラム名(バリュー)', 'カラム名(キー)※省略可'); // 第一引数をバリュー、第二引数(省略可)をキーとした配列を作ることができる。
 
-$queryBuilderInstance->count(); // レコードの件数を取得。戻り値は整数値(int)。
-$queryBuilderInstance->max('カラム名'); // 指定カラムの最大値を取得。
-$queryBuilderInstance->min('カラム名'); // 指定カラムの最小値を取得。
-$queryBuilderInstance->avg('カラム名'); // 指定カラムの平均値を取得。
-$queryBuilderInstance->sum('カラム名'); // 指定カラムの合計値を取得。
+$queryBuilderInstance->count(); // レコードの件数を取得。スカラー値を返す。
+$queryBuilderInstance->max('カラム名'); // 指定カラムの最大値を取得。スカラー値を返す。
+$queryBuilderInstance->min('カラム名'); // 指定カラムの最小値を取得。スカラー値を返す。
+$queryBuilderInstance->avg('カラム名'); // 指定カラムの平均値を取得。スカラー値を返す。
+$queryBuilderInstance->sum('カラム名'); // 指定カラムの合計値を取得。スカラー値を返す。
 
 $queryBuilderInstance->exists(); // レコードが存在するかどうかをチェック。戻り値は真偽値(bool)。
 $queryBuilderInstance->doesntExist(); // exists()メソッドの逆。戻り値は真偽値(bool)。
 
 
-// ※保留
-$queryBuilderInstance->chunk();
-$queryBuilderInstance->chunkById();
-$queryBuilderInstance->lazy();
-$queryBuilderInstance->lazyById();
-$queryBuilderInstance->lazyByIdDesc();
-$queryBuilderInstance->cursor();
-$queryBuilderInstance->firstOr();
-$queryBuilderInstance->firstOrFail();
+// ※簡単に解説
+$queryBuilderInstance->fresh(); // 一括で全部処理しないようにして、メモリを節約。
+$queryBuilderInstance->refresh(); // 一括で全部処理しないようにして、メモリを節約。
+$queryBuilderInstance->chunk(); // 一括で全部処理しないようにして、メモリを節約。
+$queryBuilderInstance->chunkById(); // 一括で全部処理しないようにして、メモリを節約。
+$queryBuilderInstance->lazy(); // 一括で全部処理しないようにして、メモリを節約。
+$queryBuilderInstance->lazyById(); // 一括で全部処理しないようにして、メモリを節約。
+$queryBuilderInstance->lazyByIdDesc(); // 一括で全部処理しないようにして、メモリを節約。
+$queryBuilderInstance->cursor(); // 一括で全部処理しないようにして、メモリを節約。
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 ```
 
 ### Eloquent\Collectionメソッド
