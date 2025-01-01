@@ -19,6 +19,15 @@
     * [trait](#trait)
     * [マイグレーション](#マイグレーション)
     * [モデル](#モデル)
+        * [インスタンスメソッド(モデル)](#インスタンスメソッド(モデル))
+        * [クラスメソッド(モデル)](#クラスメソッド(モデル))
+        * [クエリビルダーメソッド(モデル)](#クエリビルダーメソッド(モデル))
+        * [クエリ実行メソッド(モデル)](#クエリ実行メソッド(モデル))
+        * [クエリスコープ(モデル)](#クエリスコープ(モデル))
+        * [ソフトデリート(モデル)](#ソフトデリート(モデル))
+        * [Eloquent\Collectionメソッド(モデル)](#Eloquent\Collectionメソッド(モデル))
+        * [リレーション(モデル)](#リレーション(モデル))
+        * [アクセサとミューテタ(モデル)](#アクセサとミューテタ(モデル))
     * [シーダー](#シーダー)
     * [ファクトリー](#ファクトリー)
     * [ルーティング](#ルーティング)
@@ -97,8 +106,6 @@ DTOは特定のプロトコルに依存せず、アプリケーション内で�
 DTOは、アプリケーション内部の「データのやり取りを整える」役割を持ち、APIは外部との「通信プロトコルに基づくやり取りを管理する」役割を持っていますが、「適切なデータの抽象化と制御」という発想においては非常に似ています。
 
 したがって、DTOの設計思想を理解していれば、API設計にも役立つと言えるでしょう。
-
-
 
 
 <a id="図解"></a>
@@ -715,7 +722,10 @@ VSCodeの拡張機能「PHP Intelephense」によって、モデルの基本メ�
 `php artisan ide-helper:generate`  
 `php artisan ide-helper:models --nowrite`  
 
+
+<a id="インスタンスメソッド(モデル)"></a>
 ### インスタンスメソッド
+
 ```php
 <?php
 // new演算子で新しいインスタンス(レコード)を作成。
@@ -734,6 +744,10 @@ $user = User::query()
     ->first(); 
 $user->name = 'hoge';
 $user->save();
+
+// 連想配列でモデルインスタンスに属性を設定。
+// $fillableプロパティの制約を受ける。
+$modelInstance->fill(['name' => 'Amsterdam to Frankfurt']);
 
 // レコードを削除
 $modelInstance->delete();
@@ -762,21 +776,28 @@ $modelInstance->getOriginal();
 // 属性名を渡すと、その属性の元の値を取得できる。
 $modelInstance->getOriginal('カラム名');
 
-
-
-
-
-
+// 既存のモデルインスタンスの未保存のコピーを作成して返す。
+$modelInstance->replicate();
+// 使用例
+$billing = $shipping->replicate()->fill([
+    'type' => 'billing'
+]);
+// コピーしない属性を配列で指定できる。
+$flight = $flight->replicate([
+    'last_flown',
+    'last_pilot_id'
+]);
 
 
 // 保留
 $modelInstance->fresh();
 $modelInstance->refresh();
 $modelInstance->update();
-$modelInstance->fill();
 ```
 
+<a id="クラスメソッド(モデル)"></a>
 ### クラスメソッド
+
 ```php
 <?php
 // 全レコードを取得
@@ -800,7 +821,7 @@ ModelClass::create([
     'folder_id' => 1,
     'title' => "サンプルタスク {$num}",
 ]);
-// create()メソッドを使用する前に、ModelClassにfillableまたはguardedプロパティを指定する必要がある。
+// create()メソッドを使用する前に、ModelClassにfillableまたはguardedプロパティを指定する必要がある(セキュリティ対策)。
 // ホワイトリストの設定は$fillable、ブラックリストの設定は$guardedで、カラム名の配列で定義する。
 // fillableとguardedを両方定義することはできない。
 // 基本的には$fillabでいいかな。
@@ -846,27 +867,34 @@ ModelClass::upsert(
     ['departure', 'destination'], // 一意のキーとして使用するカラム
     ['price'] // 更新するカラム
 );
-
+// MariaDBとMySQLデータベースドライバは、upsertメソッドの第２引数を無視し、常にテーブルの"primary"および"unique"インデックスを既存レコードの検出に使用する。
 
 // ModelClass::updateOrCreateの「取得か作成」版。
 ModelClass::firstOrCreat();
 // ModelClass::updateOrCreateの「取得か新規インスタンスを作成」版。
-// ※Createするには、手作業でsaveメソッドを呼び出す必要がある。
+// Createするには、手作業でsaveメソッドを呼び出す必要がある。
 ModelClass::firstOrNew();
-
 
 // 指定した主キーのレコードを削除
 ModelClass::destroy(1);
 ModelClass::destroy([1, 2, 3]);
+ModelClass::destroy(collect([1, 2, 3]));
+// モデルのソフトデリートが有効になっている場合でも、完全に削除できる。
+ModelClass::forceDestroy(1);
+// 注意：destroyメソッドは各モデルを個別にロードするため、削除イベントや関連するイベントが発生する。
 
-
-// モデルに関連しているすべてのデータベースレコードを削除する。
-// モデルの関連テーブルの自動増分IDはリセットされる。
+// テーブル内のすべてのレコードを削除する。
+// テーブルの自動増分IDもリセットされる。
+// 削除イベントや関連するイベントは発生しない。
+// つまり、cascadeOnDelete()をトリガーしない。
 ModelClass::truncate();
-
+// 注意：Eloquentのイベントは、モデルのインスタンスに対して操作が行われたときに発生する。
+// 注意：モデルを一旦取得してから削除操作を実行しないと、削除イベントや関連するイベントが発生しない。
 ```
 
+<a id="クエリビルダーメソッド(モデル)"></a>
 ### クエリビルダーメソッド
+
 [Laravel 11.x データベース：クエリビルダ](https://readouble.com/laravel/11.x/ja/queries.html)  
 [Laravel クエリビルダ記法まとめ](https://www.ritolab.com/posts/93)
 
@@ -1029,7 +1057,9 @@ $queryBuilderInstance->havingBetween()
 $queryBuilderInstance->when()
 ```
 
+<a id="クエリ実行メソッド(モデル)"></a>
 ### クエリ実行メソッド
+
 ```php
 <?php
 // クエリビルダーインスタンスからクエリを実行して、実際の結果を取得するために使用する。
@@ -1048,20 +1078,16 @@ $queryBuilderInstance->firstOr(function () {
     // ...
 });
 
-
-
-// 指定したクエリに一致するモデルに対して更新を実行する。
+// 指定したクエリ条件に一致するモデルに対して更新を実行する。
 // 更新の影響を受けた行数を返す。
 $queryBuilderInstance->update(['カラム名' => 1]);
 
-
-
-
-
-
-
-
-
+// 指定したクエリ条件に一致するモデルを削除する。
+// 削除イベントや関連するイベントは発生しない。
+// つまり、cascadeOnDelete()をトリガーしない。
+$queryBuilderInstance->delete();
+// 注意：Eloquentのイベントは、モデルのインスタンスに対して操作が行われたときに発生する。
+// 注意：モデルを一旦取得してから削除操作を実行しないと、削除イベントや関連するイベントが発生しない。
 
 // レコードから単一の値を取得。
 // 戻り値はカラムの値(要素が見つからなかった場合はnull)。
@@ -1090,23 +1116,201 @@ $queryBuilderInstance->lazy(); // 一括で全部処理しないようにして�
 $queryBuilderInstance->lazyById(); // 一括で全部処理しないようにして、メモリを節約。
 $queryBuilderInstance->lazyByIdDesc(); // 一括で全部処理しないようにして、メモリを節約。
 $queryBuilderInstance->cursor(); // 一括で全部処理しないようにして、メモリを節約。
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 ```
 
+<a id="クエリスコープ(モデル)"></a>
+### クエリスコープ
+
+グローバルスコープの作成
+
+グローバルスコープを作成すると、指定したモデルですべてのクエリが同じ制約を受けるようになる。
+
+app/Models/Scopesディレクトリへグローバルスコープを生成するコマンド。  
+`php artisan make:scope HogeScope`
+
+```php
+<?php
+
+namespace App\Models\Scopes;
+
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Scope;
+
+// 生成されたグローバルスコープのクラスは、Illuminate\Database\Eloquent\Scopeインターフェイスを実装している。
+// Scopeインターフェイスは、applyメソッド１つの実装を求めている。
+// 必要に応じapplyメソッドへ、where制約や他のタイプの句をクエリへ追加する。
+// グローバルスコープがクエリのSELECT句にカラムを追加する場合は、selectの代わりにaddSelectメソッドを使用する必要がある。これにより、クエリの既存のselect句が意図せず置き換えられるのを防ぐことができる。
+class HogeScope implements Scope
+{
+    /**
+     * 指定のEloquentクエリビルダにスコープを適用
+     */
+    public function apply(Builder $builder, Model $model): void
+    {
+        $builder->where('created_at', '<', now()->subYears(2000));
+    }
+}
+```
+
+グローバルスコープの登録
+```php
+<?php
+
+namespace App\Models;
+
+use App\Models\Scopes\HogeScope;
+use Illuminate\Database\Eloquent\Model;
+
+// モデルのbootedメソッドをオーバーライドし、モデルのaddGlobalScopeメソッドを呼び出すことでグローバルスコープを登録できる。
+// addGlobalScopeメソッドは、唯一スコープのインスタンスを引数に取る。
+class User extends Model
+{
+    /**
+     * モデルの"booted"メソッド
+     */
+    protected static function booted(): void
+    {
+        static::addGlobalScope(new HogeScope);
+    }
+}
+```
+グローバルスコープを不適用にする。
+```php
+<?php
+
+// withoutGlobalScopesメソッドを使用
+
+// すべてのグローバルスコープを不適用にする。
+User::query()
+    ->withoutGlobalScopes()
+    ->get();
+
+// 任意のグローバルスコープを不適用にする。
+User::query()
+    ->withoutGlobalScopes([
+        FirstScope::class, 
+        SecondScope::class,
+    ])->get();
+```
+
+ローカルスコープの作成、登録
+
+ローカルスコープを作成、登録すると、そのモデル内で共通のクエリ制約を簡単に再利用できる。
+
+```php
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
+
+// スコープを定義するには、Eloquentモデルメソッドの前にscopeを付ける。
+// スコープは常に同じクエリビルダのインスタンスか、voidを返す必要がある。
+// パラメータを受け入れるスコープを定義したい場合は、スコープメソッドの引数にパラメータを追加する。
+// スコープパラメータは、$queryパラメータの後に定義する必要がある。
+class User extends Model
+{
+    /**
+     * 人気のあるユーザーのみを含むようにクエリのスコープを設定
+     */
+    public function scopePopular(Builder $query): void
+    {
+        $query->where('votes', '>', 100);
+    }
+
+    /**
+     * アクティブユーザーのみを含むようにクエリのスコープを設定
+     */
+    public function scopeActive(Builder $query): void
+    {
+        $query->where('active', 1);
+    }
+
+    /**
+     * 特定のタイプのユーザーのみを含むようにクエリのスコープを設定
+     */
+    public function scopeOfType(Builder $query, string $type): void
+    {
+        $query->where('type', $type);
+    }
+}
+```
+ローカルスコープの利用
+```php
+<?php
+
+// スコープを定義したら、モデルをクエリするときにスコープメソッドを呼び出すことができる。
+// ただし、メソッドを呼び出すときはscopeプレフィックスを含めない。
+
+// さまざまなスコープに呼び出しをチェーンすることもできる。
+$users = User::popular()->active()->orderBy('created_at')->get();
+
+// クロージャを使用せずにスコープを流暢にチェーンできる「高次」の「orWhere」メソッドを使用して、OR条件を指定することもできる。
+$users = User::popular()->orWhere->active()->get();
+
+// パラメータを受け入れるスコープの場合は、呼び出し時に引数を渡すことができる。
+$users = User::ofType('admin')->get();
+```
+
+<a id="ソフトデリート(モデル)"></a>
+### ソフトデリート
+
+モデルにdeleted_at属性がセットされ、モデルを削除した日時が保存される。実際にはデータベースから削除されない。 
+ソフトデリートされたモデルはすべてのクエリ結果から自動的に除外される。   
+有効にするには、Illuminate\Database\Eloquent\SoftDeletesトレイトをモデルに追加する。
+```php
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
+
+class Flight extends Model
+{
+    use SoftDeletes;
+}
+```
+
+データベーステーブルにdeleted_atカラムを追加する必要がある。
+```php
+<?php
+
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+Schema::table('flights', function (Blueprint $table) {
+    $table->softDeletes();
+});
+```
+
+```php
+<?php
+
+// 特定のモデルインスタンスがソフトデリートされているかを判断する。
+if ($modelInstance->trashed()) {
+    // ...
+}
+
+// ソフトデリートしたモデルを復元する(モデルのdeleted_atカラムをnullにする)。
+$flight->restore();
+// クエリでwithTrashedメソッドを呼び出すと、ソフトデリートしたモデルをクエリの結果に含められる。
+// クエリでonlyTrashedメソッドを呼び出すと、ソフトデリートしたモデルのみを取得する。
+// クエリでrestoreメソッドを使用して、複数のモデルを復元することができる。
+Flight::query()
+    ->withTrashed()
+    ->where('airline_id', 1)
+    ->restore();
+
+// ソフトデリートされたモデルを完全に削除する。
+$flight->forceDelete();
+```
+
+<a id="Eloquent\Collectionメソッド(モデル)"></a>
 ### Eloquent\Collectionメソッド
+
 [Eloquent\Collectionメソッド](https://readouble.com/laravel/11.x/ja/eloquent-collections.html)  
 [Support\Collectionから継承されるメソッド。](https://readouble.com/laravel/11.x/ja/collections.html#available-methods)
 ```php
@@ -1160,7 +1364,6 @@ $zipped->all(); // [['Chair', 100], ['Desk', 200]]
 // ※allメソッドはコレクションの元の配列表現を返す。
 
 
-
 // 「Support\Collection」のmergeメソッド
 // 指定したコレクションをオリジナルコレクションへマージする。
 // キーの衝突が起きた場合は、オリジナルコレクションの値を指定コレクションの値で上書きする。
@@ -1173,6 +1376,8 @@ collect($arrayable)
 // ※Illuminate\Database\Eloquent\Collection::make()
 Collection::make($arrayable)
 ```
+
+<a id="リレーション(モデル)"></a>
 
 ### リレーションの概要
 1. 定義
@@ -1358,7 +1563,9 @@ $hasOneInstance->delete();
 // 第二引数以降は、省略可能です。
 ```
 
+<a id="アクセサとミューテタ(モデル)"></a>
 ### アクセサとミューテタ
+
 |||
 |:-|:-|
 |Accessor(アクセサ)|Modelのインスタンス変数から値を取得するときに自動で呼び出される処理(メソッド)。|
@@ -1418,16 +1625,9 @@ class WorkLog extends Model
 }
 ```
 
-https://bonoponz.hatenablog.com/entry/2020/10/06/%E3%80%90Laravel%E3%80%91Eloquent%E3%82%92%E4%BD%BF%E3%81%A3%E3%81%9F%E3%83%A2%E3%83%87%E3%83%AB%E3%82%92%E7%90%86%E8%A7%A3%E3%81%99%E3%82%8B
-
-https://tobilog.net/10364/
 
 
 
-### ソフトデリート
-### モデルの整理
-### モデルの複製
-### クエリスコープ
 ### モデルの比較(isとisNotメソッド)
 ### イベント
 

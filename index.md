@@ -6,6 +6,7 @@
     * Excel(VBA)
     * Google スプレッドシート(GAS)
 * 高度な処理
+    * [全般](./advanced_data_proc)
     * Python
         * [全般](./python.md)
         * [全般(外部サイト)](https://share.kokoronoki.net/nszw/summary/lang_spec/)
@@ -37,6 +38,8 @@
         * React
             * [全般](./react.md)
 * バックエンド
+    * Python
+        * FastAPI
     * PHP
         * [全般(外部サイト)](https://share.kokoronoki.net/nszw/summary/lang_spec/)
         * WordPress
@@ -45,8 +48,6 @@
         * phpMyAdmin
     * SQL
         * MariaDB(MySQL)
-    * API作成
-        * FastAPI
 
 ## エンジニアリング全般
 * Git/GitHub
