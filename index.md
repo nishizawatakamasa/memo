@@ -6,7 +6,7 @@
     * Excel(VBA)
     * Google スプレッドシート(GAS)
 * 高度な処理
-    * [全般](./advanced_data_proc)
+    * [全般](./advanced_data_proc.md)
     * Python
         * [全般](./python.md)
         * [全般(外部サイト)](https://share.kokoronoki.net/nszw/summary/lang_spec/)
