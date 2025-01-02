@@ -28,6 +28,8 @@
         * [Eloquent\Collectionメソッド(モデル)](#Eloquent\Collectionメソッド(モデル))
         * [リレーション(モデル)](#リレーション(モデル))
         * [アクセサとミューテタ(モデル)](#アクセサとミューテタ(モデル))
+        * [isとisNotメソッドで比較(モデル)](#isとisNotメソッドで比較(モデル))
+        * [イベント(モデル)](#イベント(モデル))
     * [シーダー](#シーダー)
     * [ファクトリー](#ファクトリー)
     * [ルーティング](#ルーティング)
@@ -35,16 +37,17 @@
     * [GET/POST](#GET/POST)
     * [コントローラー](#コントローラー)
     * [リクエスト](#リクエスト)
+        * [バリデーションルール](#バリデーションルール)
+    * [lang](#lang)
     * [サービス](#サービス)
     * [ビュー](#ビュー)
     * [Breeze](#Breeze)
-    * [ミドルウェア](#ミドルウェア)
     * [Breezejp](#Breezejp)
+    * [ミドルウェア](#ミドルウェア)
     * [TailwindCSS](#TailwindCSS)
     * [Facade](#Facade)
     * [セッション](#セッション)
     * [ユーザーアクションの認可](#ユーザーアクションの認可)
-
 
 
 <a id="Laravelについて"></a>
@@ -1625,17 +1628,56 @@ class WorkLog extends Model
 }
 ```
 
+<a id="isとisNotメソッドで比較(モデル)"></a>
+### isとisNotメソッドで比較
 
+```php
+<?php
 
+// ２つのモデルが同一であるかを判定する。
+if ($post->is($anotherPost)) {
+    // ...
+}
+if ($post->isNot($anotherPost)) {
+    // ...
+}
 
-### モデルの比較(isとisNotメソッド)
+// belongsTo、hasOne、morphTo、morphOneリレーションを使用するときにも利用できる。
+if ($post->author()->is($user)) {
+    // ...
+}
+if ($post->author()->isNot($user)) {
+    // ...
+}
+```
+
+<a id="イベント(モデル)"></a>
 ### イベント
+
+モデルは以下のイベントをディスパッチする。  
+※モデルに対する操作をフックできるようにしている。
+* retrieved
+* creating
+* created
+* updating
+* updated
+* saving
+* saved
+* deleting
+* deleted
+* trashed
+* forceDeleting
+* forceDeleted
+* restoring
+* restored
+* replicating。
 
 
 <a id="シーダー"></a>
 ## シーダー
 
-Seederを使うと、データベースに初期データやテストデータを一斉に挿入できる。
+Seederを使うと
+* データベースに初期データやテストデータを一斉に挿入できる。
 
 ### シーダーファイルの新規作成コマンド  
 `php artisan make:seeder シーダー名`  
@@ -1871,6 +1913,16 @@ public function edit(int $id, int $task_id)
     //
 }
 
+
+// ルートモデル結合を利用して、Userモデルをidカラムの値で取得できる。
+// URLのルートパラメータの値{user}とクロージャの引数の変数名$userを一致させ、引数の型にEloquentモデルの型を指定する。
+// そうすると、URLのパラメータの値と一致するidカラムの値を持ったUserモデルを簡単に取得出来る。
+// 例：/users/1と指定した場合は、idカラムの値が1のuserモデルを取得出来る。
+Route::get('users/{user}', function (User $user) {
+    return $user; // idカラムの値で取得
+});
+
+
 // route関数でURLを生成する例。
 // 基本：第一引数にルートの名前を指定すると、ルートのURLそのものが生成される。
 // 'http://127.0.0.1:8000/work-log'
@@ -2083,6 +2135,7 @@ Route::get('profile', [UserController::class, 'show'])->middleware(['auth', 'ver
 コントローラーのメソッド(コンストラクタ含む)に対して依存性注入行うことができる。
 
 
+
 <a id="リクエスト"></a>
 ## リクエスト
 
@@ -2147,8 +2200,6 @@ FormRequestクラスはIlluminate\Http\Requestクラスを継承している。
 コントローラーからバリデーション処理を完全に切り離し、Fat Controller化を防ぐ効果もある。  
 
 FormRequestの子クラスを作成するコマンド  
-`php artisan make:request [任意のクラス名]`  
-例：  
 `php artisan make:request SampleRequest`  
 これにより、app/Http/Requests/SampleRequest.phpが作成されます。  
 ※命名例：PostControllerのstoreメソッドで使用したい場合→StorePostRequest  
@@ -2166,18 +2217,33 @@ use Illuminate\Foundation\Http\FormRequest;
 
 class SampleRequest extends FormRequest
 {
+    // デフォルトでは、バリデーションが通らなければ直前の画面にリダイレクトされる。
+    // プロパティで任意のリダイレクト先を指定することができる。
+    protected $redirect = '/dashboard'; // URLで指定。
+    protected $redirectRoute = 'dashboard'; // ルート名で指定。
+
+    public function hoge():
+    {
+        // userメソッドで現在認証済みユーザーにアクセスできる。
+        $this->user();
+        // routeメソッドでルートパラメータにアクセスできる。
+        // Route::post('/comment/{comment}');
+        $this->route('comment');
+    }
+
+
     // リクエストが認可されるかどうかを決定するためのメソッド。
     // 戻り値はbool
     // falseが返った場合、バリデーションすら行わず403 Forbiddenを返しリクエストが拒否される。
     // trueが返った場合はバリデーションに処理が進む。つまり認可・許可されたことになる。
-    // 条件によってtrueにしたり、falseにしたりと、便利な使い方もできる。
+    // 条件によってtrueにしたり、falseにしたりと、便利な使い方もできる(ほとんどの場合、認可ゲートとポリシーを操作する)。
     // ※ 以下のように単にtrueを返すだけであれば、メソッド自体を実装しなかったとしても挙動は変わらない。
     public function authorize(): bool
     {
         return true;
     }
 
-    // バリデーションルールエラーメッセージの変数名を上書きできる。
+    // バリデーションルールエラーメッセージの変数名(:attributeプレースホルダー)を上書きできる。
     // ※attributesメソッドをオーバーライドしている。
     public function attributes(): array
     {
@@ -2239,6 +2305,7 @@ class SampleRequest extends FormRequest
         ];
     }
 
+
     // messagesメソッド内に、自分で作成したバリデーションルール毎のエラーメッセージを定義できる。
     // ※定義したいエラーメッセージが特殊で、attributesメソッドによる変数上書きでは表現しきれない場合に使う。
     // ※FormRequestクラスで定義されているmessagesメソッドをオーバーライドしている。
@@ -2257,47 +2324,6 @@ class SampleRequest extends FormRequest
 参考サイト(ルートパラメータをFormRequestでバリデーション)  
 [【Laravel8】GETで取得したパラメーターをFormRequestでバリデーションをかける](https://yama-weblog.com/how-to-validate-get-parameter-in-laravel8/)  
 [Laravel ルートパラメータ：取得と活用方法](https://cyublog.com/articles/php-ja/laravel-route-parameters/)  
-
-
-バリデーションエラーメッセージの表示:  
-```php
-<?php
-
-// エラーメッセージは自動的に変数$errorsへ格納される。
-// $errorsは連想配列であり、以下のようにしてビューの中で使用できる。
-// 例：
-@if ($errors->any())
-    <div>
-        <ul>
-            @foreach ($errors->all() as $error)
-                <li>{{$error}}</li>
-            @endforeach
-        </ul>
-    </div>
-@endif
-
-// ※$errorsはIlluminate\Support\ViewErrorBagのインスタンス。
-```
-
-
-
-
-|バリデーションルール|意味|
-|-|-|
-|required|入力必須|
-|nullable|入力任意|
-|string|文字列|
-|integer|数値(少数不可)|
-|numeric|数値(少数可)|
-|min:3|3以上|
-|max:32|32以下|
-|between:0,9999|0～9999の間|
-|email|メールアドレスの形式|
-|url|URLの形式|
-|boolean|真偽値|
-|date|日付形式|
-|date_format:H:i|時刻形式|
-|array|配列形式|
 
 
 
@@ -2323,18 +2349,20 @@ class SampleController extends Controller
         // 以下全ての$validatedの中身は、['name' => 'nameの値', 'email' => 'emailの値']のような配列となる。
         
         // バリデーション済みデータを取得
-        $validated = $request->validated();
-
+        $validated = $request->safe()->all();
         // バリデーション済みデータを取得(onlyで指定したパラメータのみ)
         $validated = $request->safe()->only(['name', 'email']);
         // バリデーション済みデータを取得(exceptで指定したパラメータ以外)
         $validated = $request->safe()->except(['name', 'email']);
-
+        // バリデーション済みデータをコレクションインスタンスとして取得したい場合
+        $collection = $request->safe()->collect();
         // ※safe()は、バリデーションをパスした値を抽出する
         // mergeは値を追加できる。※必ずsafe()の直後に連結する。
         $validated = $request->safe()->merge(['active_flag' => 'Y'])->except(['email']);
 
-        // 以下略
+        // バリデーション済みデータを取得
+        $validated = $request->validated();
+
     }
 }
 ```
@@ -2357,9 +2385,10 @@ protected function prepareForValidation()
 
 // バリデーション成功時に処理を行う
 // passedValidation メソッドを追加
+// 注意：validated()やsafe()には反映されない
 protected function passedValidation()
 {
-    //
+    $this->replace(['name' => 'Taylor']);
 }
 
 // バリデーション失敗時に処理を行う
@@ -2377,10 +2406,59 @@ public function withValidator(Validator $validator): void
 }
 ```
 
-#### エラーメッセージの日本語化＆カスタマイズ
-* 2つの方法がある。
-    1. Laravelの言語ファイルを作成＆設定する。
-    1. FormRequestの子クラスで定義する(messagesメソッドをオーバーライドする)。
+#### バリデーションエラーメッセージの表示
+```php
+<?php
+
+// エラーメッセージは自動的に変数$errorsへ格納される。
+// $errorsは連想配列であり、ビューの中で使用できる。
+
+// エラーメッセージが存在するかを判定。
+$errors->any()
+// 指定したフィールドのエラーメッセージが存在するかを判定。
+$errors->has('email')
+// 全フィールドの全メッセージの配列を取得。
+$errors->all()
+
+// 使用例：
+@if ($errors->any())
+    <div>
+        <ul>
+            @foreach ($errors->all() as $error)
+                <li>{{$error}}</li>
+            @endforeach
+        </ul>
+    </div>
+@endif
+
+// ※$errorsはIlluminate\Support\ViewErrorBagのインスタンス。
+```
+
+エラーメッセージの日本語化＆カスタマイズには2つの方法がある。
+1. Laravelの言語ファイルを作成＆設定する。
+1. FormRequestの子クラスで定義する。
+    1. messagesメソッドをオーバーライドする。
+    1. attributesメソッドをオーバーライド。
+
+
+```php
+<?php
+// lang/xx/validation.php言語ファイル
+
+// 特定の属性とルールの組み合わせで使用するエラーメッセージをカスタマイズできる。
+'custom' => [
+    'email' => [
+        'required' => 'We need to know your email address!',
+        'max' => 'Your email address is too long!'
+    ],
+],
+
+// バリデーションメッセージの:attribute部分をカスタマイズできる。
+// ※:attributeプレースホルダーは、Laravelの組み込みエラーメッセージの多くに含まれ、バリデーション中のフィールドや属性の名前に置き換えられる。
+'attributes' => [
+    'email' => 'email address',
+],
+```
 
 #### 参考サイト
 [LaravelのFormRequestをちゃんと理解する](https://laranote.jp/understanding-laravel-formrequest/)
@@ -2405,6 +2483,116 @@ old(name属性値, 初期値)
 <input type="text" name="name[]" value="{{ old('name.1') }}">
 <input type="text" name="name[]" value="{{ old('name.2') }}">
 ```
+
+
+<a id="バリデーションルール"></a>
+### バリデーションルール
+
+使用可能なバリデーションルールは全部で104個ある。  
+参考：[ドキュメント](https://readouble.com/laravel/11.x/ja/validation.html#rule-array)
+
+#### よく使うバリデーションルール
+|ルール|意味|
+|-|-|
+|accepted|"yes"、"on"、1、"1"、true、"true"。チェックされているかどうかなどに使用。|
+|accepted_if:他のフィールド,値|accepted(他のフィールドが指定した値と等しい場合)|
+|active_url|実際にアクセス可能なURL|
+|after:日付|指定の日付より後。日付にバリデーション中の別のフィールドを指定することもできる。|
+|after_or_equal:日付|指定の日付より後か同じ。日付にバリデーション中の別のフィールドを指定することもできる。|
+|alpha:ascii|a-z、A-Z|
+|alpha_num:ascii|a-z、A-Z、0-9|
+|alpha_dash:ascii|a-z、A-Z、0-9、-(ハイフン)、_(アンダースコア)|
+|array:foo,bar|PHPの配列タイプ。存在を許可するキーも指定できる。|
+|ascii|アスキー文字|
+|before:日付|指定の日付より前。日付にバリデーション中の別のフィールドを指定することもできる。|
+|before_or_equal:日付|指定の日付より前か同じ。日付にバリデーション中の別のフィールドを指定することもできる。|
+|between:0,9999|※例：0～9999の間|
+|boolean|true、false、1、0、"1"、"0"。論理値として有効。|
+|confirmed|例えば、バリデーション中のフィールドが「password」の場合、「password_confirmation」フィールドが入力に存在し一致している必要がある。|
+|contains:値1,値2,...|指定した値を全部含んでいる配列。|
+|current_password|認証されているユーザーのパスワード|
+|date|日付形式|
+|date_equals:日付|指定の日付と同じ。|
+|date_format:H:i|時刻形式。フォーマット指定。|
+|decimal:1,3|※例：数値。小数点以下が1~3桁(9.9,9.99,9.999)。指定する桁数は一つだけでもいい。|
+|declined|"no", "off", 0, "0", false, "false"。チェックされているかどうかなどに使用。|
+|declined_if:他のフィールド,値|declined(他のフィールドが指定した値と等しい場合)|
+|different:フィールド|指定したフィールドと異なった値。|
+|digits:5|※例：5ケタの整数。|
+|digits_between:3,7|※例：3~7ケタの整数。|
+|||
+|||
+|||
+|||
+|||
+|||
+|email|メールアドレスの形式|
+|||
+|||
+|||
+|||
+|required|入力必須|
+|nullable|入力任意|
+|string|文字列|
+|integer|数値(少数不可)|
+|numeric|数値(少数可)|
+|min:3|3以上|
+|max:32|32以下|
+|url|URLの形式|
+
+
+
+#### あまり使わなさそうなバリデーションルール
+|ルール|意味|
+|-|-|
+|bail|バリデーションに失敗した時点で、そのフィールドのバリデーションを中止する。|
+|dimensions|ファイルが、パラメータに指定したサイズに合致。|
+|distinct|配列内に重複した値がない。|
+|doesnt_start_with:値1,値2,...|指定した値で始まらない。|
+|doesnt_end_with:値1,値2,...|指定した値で終わらない。|
+|||
+|||
+|||
+|||
+|||
+|||
+|||
+|||
+|||
+
+
+
+
+
+
+
+
+以下のようなクラスメソッドでルールを指定することもある。
+```php
+<?php
+Rule::foo();
+File::bar();
+Password::baz();
+```
+
+#### 参考サイト
+[LaravelのFormRequestをちゃんと理解する](https://laranote.jp/understanding-laravel-formrequest/)
+
+
+
+<a id="lang"></a>
+## lang
+
+lang/en作成コマンド
+`php artisan lang:publish`  
+
+lang/en/validation.phpファイル内に、各バリデーションルールの翻訳エントリーがある。  
+これらのメッセージは、アプリケーションのニーズに応じて自由に変更・修正する。  
+
+lang/jaディレクトリを作成して各ファイルをコピーし、日本語メッセージを設定することもできる。
+
+
+
 
 <a id="サービス"></a>
 ## サービス
@@ -2657,6 +2845,15 @@ node_modulesディレクトリは通常Gitの管理下におかないため、�
 これらの手順を実行すると、Laravel Breezeアプリケーションが実行できるようになる。  
 
 
+<a id="Breezejp"></a>
+## Breezejp
+
+Laravel Breezeを手軽に日本語化出来るパッケージ  
+Breezejpをインストールするコマンド  
+`composer require askdkc/breezejp --dev`  
+必要な言語ファイルの出力を実行するコマンド  
+`php artisan breezejp`
+
 
 <a id="ミドルウェア"></a>
 ## ミドルウェア
@@ -2749,23 +2946,6 @@ Route::middleware(WelfareUser::class)
 Route::middleware(['auth', 'verified', WelfareUser::class])
 ```
 
-
-
-
-<a id="Breezejp"></a>
-## Breezejp
-
-Breezejpをインストールするコマンド  
-`composer require askdkc/breezejp --dev`  
-必要な言語ファイルの出力を実行するコマンド  
-`php artisan breezejp`
-
-### (仮)lang
-lang/作成コマンド
-`php artisan lang:publish`  
-
-resources/lang/en  
-resources/lang/ja  
 
 
 <a id="TailwindCSS"></a>
