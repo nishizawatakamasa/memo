@@ -2488,8 +2488,8 @@ old(name属性値, 初期値)
 <a id="バリデーションルール"></a>
 ### バリデーションルール
 
-使用可能なバリデーションルールは全部で104個ある。  
-参考：[ドキュメント](https://readouble.com/laravel/11.x/ja/validation.html#rule-array)
+使用可能なバリデーションルールは全部で106個ある。  
+参考：[ドキュメント](https://readouble.com/laravel/11.x/ja/validation.html#rule-accepted)
 
 #### よく使うバリデーションルール
 |ルール|意味|
@@ -2520,25 +2520,36 @@ old(name属性値, 初期値)
 |different:フィールド|指定したフィールドと異なった値。|
 |digits:5|※例：5ケタの整数。|
 |digits_between:3,7|※例：3~7ケタの整数。|
-|||
-|||
-|||
-|||
-|||
-|||
 |email|メールアドレスの形式|
-|||
-|||
-|||
-|||
-|required|入力必須|
-|nullable|入力任意|
-|string|文字列|
-|integer|数値(少数不可)|
+|exists:テーブル,カラム|指定したテーブルのカラムに存在する値。カラムを指定しない場合はフィールド名が適用される。|
+|gt:他のフィールド|他のフィールドより大きい(sizeルール)。２つのフィールドは同じタイプでなくてはならない。|
+|gte:他のフィールド|他のフィールドより大きいか同じ(sizeルール)。２つのフィールドは同じタイプでなくてはならない。|
+|hex_color|有効な16進数カラーコード|
+|integer|整数|
+|lt:他のフィールド|他のフィールドより小さい(sizeルール)。２つのフィールドは同じタイプでなくてはならない。|
+|lte:他のフィールド|他のフィールドより小さいか同じ(sizeルール)。２つのフィールドは同じタイプでなくてはならない。|
+|max:値|値以下(sizeルール)|
+|max_digits:ケタ数|整数で、指定したケタ数以下|
+|min:値|値以上(sizeルール)|
+|min_digits:ケタ数|整数で、指定したケタ数以上|
+|multiple_of:値|値の倍数|
+|nullable|null値を許容|
 |numeric|数値(少数可)|
-|min:3|3以上|
-|max:32|32以下|
-|url|URLの形式|
+|required|フィールドが存在し、空でない。空判定：null,空文字列,空配列,空のCountableオブジェクト,パスのないアップロード済みファイル|
+|required_if:他のフィールド,値|required(他のフィールドが指定した値と等しい場合)|
+|required_unless:他のフィールド,値|required(他のフィールドが指定した値と等しくない場合)|
+|required_with:foo,bar,...|required(指定したフィールドのいずれかが存在する場合)|
+|required_with_all:foo,bar,...|required(指定したフィールド全てが存在する場合)|
+|required_if_accepted:他のフィールド|required(他のフィールドがacceptedの場合)|
+|required_if_declined:他のフィールド|required(他のフィールドがdeclinedの場合)|
+|required_without:foo,bar,...|required(指定した他のフィールドのどれか一つでも存在していない場合)|
+|required_without_all:foo,bar,...|required(指定した他のフィールドがすべて存在していない場合)|
+|required_array_keys:foo,bar,...|配列であり、指定したキーを含んでいることが必須|
+|size:値|指定した値と同じサイズ。サイズ：数値(整数も小数も。numericかintegerルールが必要)、文字列の長さ、配列の要素数、ファイルのキロバイト。|
+|string|文字列|
+|unique:テーブル,カラム|指定したテーブルのカラムに存在しない値。カラムを指定しない場合はフィールド名が適用される。|
+|url|有効なURL。ルールのパラメータとして、プロトコルを指定することも可能。例 url:http,https|
+
 
 
 
@@ -2550,15 +2561,62 @@ old(name属性値, 初期値)
 |distinct|配列内に重複した値がない。|
 |doesnt_start_with:値1,値2,...|指定した値で始まらない。|
 |doesnt_end_with:値1,値2,...|指定した値で終わらない。|
-|||
-|||
-|||
-|||
-|||
-|||
-|||
-|||
-|||
+|ends_with:値1,値2,...|指定した値で終わる。|
+|enum|Rule::enumメソッドを使用。有効なenumの値が含まれているか|
+|exclude|バリデーション対象からも、リクエストデータからも除外される。|
+|exclude_if:他のフィールド,値|exclude(他のフィールドが指定した値と等しい場合)|
+|exclude_unless:他のフィールド,値|exclude(他のフィールドが指定した値と等しくない場合)|
+|exclude_with:他のフィールド|exclude(他のフィールドが存在する場合)|
+|exclude_without:他のフィールド|exclude(他のフィールドが存在しない場合)|
+|extensions:jpg,png|※例：ファイルの拡張子がjpgかpng。|
+|file|アップロードに成功したファイル。|
+|filled|存在し、空でない。|
+|image|ファイルが画像（jpg、jpeg、png、bmp、gif、svg、webp）である。|
+|in:値1,値2...|指定された値のリスト中に含まれている。|
+|in_array:他のフィールド.*|他のフィールドの値のどれか。|
+|ip|IPアドレス形式|
+|ipv4|IPv4アドレス形式|
+|ipv6|IPv6アドレス形式|
+|json|有効なJSON文字列|
+|lowercase|(大文字小文字の区別がある文字は)小文字|
+|list|キーが0からの連番である配列|
+|mac_address|MACアドレスとして正しい。|
+|mimetypes:text/plain,...|ファイルのMIMEタイプが指定したもののどれか。|
+|mimes:foo,bar,...|ファイルが、指定した拡張子のいずれかに対応するMIMEタイプを持っている|
+|missing|フィールド自体が存在しない|
+|missing_if:他のフィールド,値|missing(他のフィールドが指定した値と等しい場合)|
+|missing_unless:他のフィールド,値|missing(他のフィールドが指定した値と等しくない場合)|
+|missing_with:foo,bar,...|missing(指定したフィールドのいずれかが存在する場合)|
+|missing_with_all:foo,bar,...|missing(指定したフィールド全てが存在する場合)|
+|not_in:値1,値2...|指定された値のリスト中に含まれていない。|
+|not_regex:/^.+$/i|※例：指定した正規表現にマッチする部分がない。注意：ルール指定時に\|区切り文字ではなく配列を使用すること。|
+|present|フィールドが存在する。|
+|present_if:他のフィールド,値|present(他のフィールドが指定した値と等しい場合)|
+|present_unless:他のフィールド,値|present(他のフィールドが指定した値と等しくない場合)|
+|present_with:foo,bar,...|present(指定したフィールドのいずれかが存在する場合)|
+|present_with_all:foo,bar,...|present(指定したフィールド全てが存在する場合)|
+|prohibited|フィールドが存在しないか、空である。空判定：null,空文字列,空配列,空のCountableオブジェクト,パスのないアップロード済みファイル|
+|prohibited_if:他のフィールド,値|prohibited(他のフィールドが指定した値と等しい場合)|
+|prohibited_unless:他のフィールド,値|prohibited(他のフィールドが指定した値と等しくない場合)|
+|prohibits:他のフィールド,...|フィールドが存在し空でない場合、指定した全ての他のフィールドがprohibited|
+|regex:/^.+@.+$/i|※例：指定した正規表現にマッチする部分がある。注意：ルール指定時に\|区切り文字ではなく配列を使用すること。|
+|same:他のフィールド|他のフィールドと同じ値|
+|starts_with:値1,値2,...|指定した値で始まる。|
+|timezone|有効なタイムゾーン識別子|
+|uppercase|(大文字小文字の区別がある文字は)大文字|
+|ulid|有効なULID|
+|uuid|有効なUUID(RFC 4122の定めるバージョン1、3、4、5)|
+|sometimes|???よくわからない|
+
+
+
+
+
+
+
+
+
+
 
 
 
