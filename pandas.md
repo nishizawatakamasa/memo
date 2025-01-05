@@ -81,6 +81,8 @@ DataFrame.index = ['行名1', '行名2', '行名3'] # 行名属性へ値を代�
 DataFrame.columns = ['列名1', '列名2', '列名3'] # 列名属性へ値を代入。
 DataFrame.index.to_list() # 行名属性をリスト化。
 DataFrame.columns.to_list() # 列名属性をリスト化。
+DataFrame.index.astype(str) # 行名属性を型変換。
+DataFrame.columns.astype(str) # 列名属性を型変換。
 ```
 
 ### Seriesの基本
@@ -202,6 +204,7 @@ boolのSeries、列名、列名リスト、列名スライス
 |Series >= 数値||
 |Series == '文字列'||
 |Series != '文字列'||
+|Series1 >= Series2||
 |Series.isin(['文字列1', '文字列2'])<br>Series.isin([数値1, 数値2])|指定した複数の文字列のいずれかと完全一致。<br>指定した複数の数値のいずれかと完全一致。|
 |Series.str.contains(r'pat', na=?)|na(欠損値)をTrueかFalse。デフォルトではNone(行抽出時はエラー)。|
 |Series.isnull()||
@@ -290,11 +293,22 @@ DataFrame、Series、スカラー値は、それぞれ算術演算子(+、-、*�
 ### 重要なメソッド
 |||
 |-|-|
-|DataFrame.sum()<br>DataFrame.min()<br>DataFrame.max()<br>DataFrame.mean()<br>DataFrame.median()<br>DataFrame.count()<br>DataFrame.nunique()|sum：列方向の合計を算出。<br>min：列方向の最小値を算出。<br>max：列方向の最大値を算出。<br>mean：列方向の平均値を算出。<br>median：列方向の中央値を算出。<br>count：列方向の非欠損値数を算出。<br>nunique：列方向のユニーク数を算出。<br>※axis=1とすると行方向。<br>Seriesを返す。|
-|Series.sum()|合計を算出。<br>スカラー値を返す。|
-|DataFrame.sum().sum()|DataFrame.sum()が返したSeriesのsum()を呼ぶことで、総数を得られる。|
-|DataFrame.mean()|mean：列方向の平均値を算出。<br>※axis=1とすると行方向。<br>Seriesを返す。|
-|DataFrame.median()|median：列方向の中央値を算出。<br>※axis=1とすると行方向。<br>Seriesを返す。|
+|sum()|合計を算出。|
+|min()|最小値を算出。|
+|max()|最大値を算出。|
+|mean()|平均値を算出。|
+|median()|中央値を算出。|
+|count()|非欠損値数を算出。|
+|nunique()|ユニーク数を算出。|
+
+#### DataFrameから呼び出す場合
+* Seriesを返す。
+* デフォルトでは列方向への計算。axis=1とすると行方向への計算。
+
+#### Seriesから呼び出す場合
+* スカラー値を返す。
+
+
 
 <a id="ユニーク"></a>
 ## ユニーク
@@ -313,34 +327,46 @@ DataFrame、Series、スカラー値は、それぞれ算術演算子(+、-、*�
 ### 基本的なグルーピング
 |||
 |-|-|
-|gb = DataFrame.groupby('列名')|列名で指定した列の値ごとにグルーピングされる。<br>DataFrameGroupByオブジェクトを返す。<br>デフォルトでは指定した列が結果のインデックスになるが、as_index=Falseとするとインデックスにならない。<br>デフォルトでは指定した列に含まれる欠損値NaNは無視されるが、dropna=FalseとするとNaNも一つのキーとして扱われる。|
+|dfg = DataFrame.groupby('列名')|列名で指定した列の値ごとにグルーピングされる。<br>DataFrameGroupByオブジェクトを返す。<br>デフォルトでは指定した列が結果のインデックスになるが、as_index=Falseとするとインデックスにならない。<br>デフォルトでは指定した列に含まれる欠損値NaNは無視されるが、dropna=FalseとするとNaNも一つのキーとして扱われる。|
 
 ### DataFrameGroupByオブジェクトとは
-グループ名と、そのグループのDataFrameが対になっているイメージ。  
+指定列の値ごとに分割された複数のDataFrame、というイメージ。  
 当然、Boolean Indexingでも特定の列の値を指定してDataFrameを取得することはできる。  
 特定のカテゴリーだけ選択したいのならBoolean Indexingを使い、全カテゴリーを分割し選択できるようにしたいのならgroupbyメソッドを使うといい。  
 ちなみにイテラブルオブジェクトである。
 
 ```py
 # for文を使うと、グループ名とそのグループのDataFrameを順に取得できる。
-for group, df in gb:
+for group, df in dfg:
     print(group, df.shape)
 ```
 
 ### DataFrameGroupByオブジェクトの主なメソッド
+
+#### 指定したグループのDataFrameを取得
 |||
 |-|-|
-|gb.get_group('グループ名')|グループ名で指定したグループのDataFrameを取得できる。|
-|gb.size()|行数|
-|gb.sum()|合計(各dfに適用して、結合するイメージ)|
-|gb.mean()|平均|
-|gb.max()|最大|
-|gb.min()|最小|
-|gb.median()|中央値|
-|gb.std()|標準偏差|
-|gb.count()|欠損値ではない要素数|
-|gb.describe()|主要な統計量を一括算出|
-|gb.agg(func)|任意の関数適用<br>※自作関数(def or lambda)を指定する場合は、引数がarray-likeとなるように作成。 |
+|dfg.get_group('グループ名')|グループ名で指定したグループのDataFrameを取得できる。|
+
+#### グループごとにデータを集約(各DataFrameに適用し、全て結合するイメージ)
+|||
+|-|-|
+|dfg.size()|行数|
+|dfg.sum()|合計|
+|dfg.mean()|平均|
+|dfg.max()|最大|
+|dfg.min()|最小|
+|dfg.median()|中央値|
+|dfg.std()|標準偏差|
+|dfg.count()|欠損値ではない要素数|
+|dfg.describe()|主要な統計量を一括算出|
+|dfg.agg(func)|任意の関数適用<br>※自作関数(def or lambda)を指定する場合は、引数がarray-likeとなるように作成。 |
+
+### SeriesGroupByオブジェクト
+DataFrameGroupByオブジェクトに対して列名を指定すると取得できる。  
+sg = dfg['列名']  
+分割された複数のDataFrameが各々Seriesになる、というイメージ。  
+DataFrameGroupByオブジェクトと同じように集約メソッドなどが使える。
 
 ### 参考サイト
 * [pandasのgroupby()でグルーピングし統計量を算出](https://note.nkmk.me/python-pandas-groupby-statistics/)  
@@ -405,9 +431,6 @@ indicator=Trueとすると'_merge'という名前の列が追加され、both, l
 df = pd.concat([df1, df2, df3])
 ```
 
-### 引数ignore_index
-ignore_index=Trueとするとインデックスが振り直される(0からの連番)。
-
 ### 引数join
 結合方法を指定
 
@@ -428,8 +451,8 @@ ignore_index=Trueとするとインデックスが振り直される(0からの�
 ### apply
 |||
 |-|-|
-|Series.apply(pd.Series)|Seriesの各要素のリストにpd.Series()を適用したDataFrameを返す。<br>※Series.map()はDataFrameを返すことができないため、Series.apply()を使う。|
-|DataFrame.apply(lambda s: s[1] in s['所在地'], axis=1)|第一引数に指定した関数をDataFrameの各行もしくは各列に適用する。<br>新しいオブジェクト(SeriesかDataFrame)が返される。<br>defで定義した関数やラムダ式も指定可能。<br>デフォルトでは各列がSeriesとして関数に渡される(戻り値が新しい列となる)。<br>引数axisを1とすると各行がSeriesとして関数に渡される(戻り値が新しい行となる)。<br>Laxis(0と1の覚え方)。<br>Seriesを引数として受け取れない関数だとエラーになる。|
+|※特殊ケース<br>Series.apply(pd.Series)|Seriesの各要素のリストにpd.Series()を適用したDataFrameを返す。<br>※Series.map()はDataFrameを返すことができないため、Series.apply()を使う。|
+|DataFrame.apply(lambda s: s[1] in s['所在地'], axis=1)|第一引数に指定した関数をDataFrameの各行もしくは各列に一括で適用する。<br>新しいオブジェクト(SeriesかDataFrame)が返される。<br>defで定義した関数やラムダ式も指定可能。<br>デフォルトでは各列がSeriesとして関数に渡される(戻り値が新しい列となる)。<br>引数axisを1とすると各行がSeriesとして関数に渡される(戻り値が新しい行となる)。<br>Laxis(0と1の覚え方)。<br>Seriesを引数として受け取れない関数だとエラーになる。|
 
 ### 注意点
 mapやapplyの処理速度は遅い。あくまでも他では実現できない複雑な処理を適用するためのもの。
@@ -463,7 +486,7 @@ df['date'] = pd.to_datetime(df['date'], format='%Y年%m月%d日')
 
 |||
 |-|-|
-|DataFrame.dropna(how='any', subset=None, ignore_index=False)|欠損値を含む行を削除する。<br>※ how='all'とすると、全てが欠損値の行を削除する。<br>※ subset=['列名1', '列名2']とすると、指定列のみが調査対象になる。<br>※ ignore_index=Trueとすると、インデックスが振り直される(0からの連番)。|
+|DataFrame.dropna(how='any', subset=None)|欠損値を含む行を削除する。<br>※ how='all'とすると、全てが欠損値の行を削除する。<br>※ subset=['列名1', '列名2']とすると、指定列のみが調査対象になる。|
 |DataFrame.fillna(value)<br>DataFrame.fillna({'列名1': 'value1', '列名2': 'value2'})<br>DataFrame.fillna(Series)<br>Series.fillna(value)|欠損値をvalueで指定する値に置き換える。|
 |DataFrame.ffill()<br>Series.ffill()|欠損値を直前の非欠損値で置き換える。|
 |DataFrame.bfill()<br>Series.bfill()|欠損値を直後の非欠損値で置き換える。|
@@ -487,7 +510,7 @@ df = pd.read_parquet('hoge/fuga/piyo.parquet')
 |usecols=[2, 6, 7, 8]|読み込む列を、列名のリストで指定(読み込む列を限定するため、メモリの節約にもなる)。|
 |dtype=str|カラムのデータ型を指定。<br>引数に{'列名': str}のような辞書も指定でき、任意の列のデータ型を個別に指定できる。|
 |encoding|文字コードを指定。デフォルトはNoneだが、内部の処理的には"utf-8"と同じ。<br>UnicodeDecodeErrorが発生した場合に試す選択肢→"shift-jis"、"cp932"、"utf-8-sig"。|
-|index_col|index_col='date'のように、indexとするカラムを列名で指定できる。省略すると新しいindex(0からの連番)が作成される。|
+|index_col|index_col='date'のように、indexとするカラムを列名(または列番号)で指定できる。省略すると新しいindex(0からの連番)が作成される。|
 |nrows=2|読み込む行数（ヘッダー行数を除く）を指定。中身をざっと確認したい時用。|
 |on_bad_lines|フィールド数がヘッダーのカラム数よりも多いレコード（不正レコード）の扱いを指定。<br>デフォルトはerrorで、ParserErrorが発生する。|
 
@@ -537,7 +560,7 @@ df.to_parquet('hoge/fuga/piyo.parquet')
 
 ### df.to_csv
 ```py
-df.to_csv(hoge/fuga/piyo.csv',  sep=',', header=True, index=True, encoding=utf-8, mode='w')
+df.to_csv('hoge/fuga/piyo.csv',  sep=',', header=True, index=True, encoding=utf-8, mode='w')
 ```
 * 引数のheaderとindexは、それぞれの出力の有無をboolで指定する。
 * .csvファイルとして出力。
@@ -680,10 +703,10 @@ def melt(
 ### その他
 |||
 |-|-|
-|DataFrame.reset_index()|indexを0からの連番に振り直す。<br>元のindexはデータ列として残る(列名は'index')。<br>drop=Trueとすると、元のindexは削除され残らない。<br>※引数にignore_index=Trueを指定できるメソッドに対しても、こっち(reset_index)を使うほうがいいかも。|
+|DataFrame.reset_index()<br>Series.reset_index()|indexを0からの連番に振り直す。<br>元のindexはデータ列として残る(元のindex名がそのまま列名となる。ない場合ば'index'となる)。<br>drop=Trueとすると、元のindexは削除され残らない。<br>※引数にignore_index=Trueを指定できるメソッドに対しても、こっち(reset_index)を使うほうがいいかも。|
 |DataFrame.drop(index=['行名1', '行名2'], columns=['列名1', '列名2'])|DataFrameの行・列を指定して削除する。|
 |DataFrame.drop_duplicates()<br>Series.drop_duplicates()|重複行を削除する。<br>※引数(subset、keep)による重複行の扱い方はduplicatedメソッドと同じ。|
-|DataFrame.sort_values(by='列名', ascending=False, ignore_index=True)|デフォルトは昇順。降順にするには引数ascendingをFalseにする。<br>na_position='first'とすると、欠損値NaNが先頭に並べられる。デフォルトでは末尾。<br>ignore_index=Trueとするとインデックスが振り直される(0からの連番)。|
+|DataFrame.sort_values(by=['列名1', '列名2'], ascending=[True, False])|引数byで列名を指定してソートする。<br>引数ascendingではTrueが昇順でFalseが降順。<br>byとascendingでは、同じ位置にある要素がそれぞれ対応する。<br>na_position='first'とすると、欠損値NaNが先頭に並べられる。デフォルトでは末尾。|
 |DataFrame.transpose()|転置|
 |DataFrame.copy()|dfのコピーを作成(参照の値渡しを防ぐため)。|
 |DataFrame.rename(index={'元の行名': '新しい行名'}, columns={'元の列名': '新しい列名'})|行名・列名のいずれかのみを変更したい場合は、引数indexとcolumnsのどちらか一方だけを指定すればよい。|
