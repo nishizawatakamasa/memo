@@ -15,8 +15,10 @@
     * [型変換](#型変換)
     * [欠損値の取り扱い](#欠損値の取り扱い)
     * [データ形式変換](#データ形式変換)
-    * [クロス集計](#クロス集計)
-    * [メルト](#メルト)
+    * [pivot_table](#pivot_table)
+    * [melt](#melt)
+    * [meltの逆処理(pivot使用)](#meltの逆処理(pivot使用))
+    * [crosstab](#crosstab)
     * [その他](#その他)
 
 <a id="基本的なこと"></a>
@@ -83,6 +85,8 @@ DataFrame.index.to_list() # 行名属性をリスト化。
 DataFrame.columns.to_list() # 列名属性をリスト化。
 DataFrame.index.astype(str) # 行名属性を型変換。
 DataFrame.columns.astype(str) # 列名属性を型変換。
+DataFrame.index.name = 'indexタイトル' # index自体にタイトルをつける。※Noneの場合は消す。
+DataFrame.columns.name = None # columns自体にタイトルをつける。※Noneの場合は消す。
 ```
 
 ### Seriesの基本
@@ -180,7 +184,7 @@ boolのSeries、列名、列名リスト、列名スライス
 |||
 |-|-|
 |df[boolのSeries]|行の選択。df.loc[boolのSeries]と同じ。|
-|df[2:9]|行の選択。行名もしくは行番号のスライスで該当した行をDataFrameとして取得。<br>intのスライスは、常に行番号のスライスとして扱われる。つまりintの行名を指定することは不可。|
+|df['行名1':'行名2']|行の選択。行名のスライスで該当した行をDataFrameとして取得。<br>※指定できる行名は文字列のみ。つまり、intの行名を指定することは不可。|
 |df[列名]|列の選択。df.loc[:, 列名]と同じ。|
 |df[列名リスト]|列の選択。df.loc[:, 列名リスト]と同じ。|
 |df[boolのDataFrame]|true部分の値のみを抽出。他は欠損値となる。<br>※サイズが一致していなくてもエラーは出ないが、想定されている使い方ではない気がする。|
@@ -224,6 +228,23 @@ boolのSeries、列名、列名リスト、列名スライス
 |DataFrame.isin(['文字列1', '文字列2'])|指定した複数の文字列のいずれかと完全一致。|
 |DataFrame.isnull()||
 |DataFrame.notnull()||
+
+
+
+### 基本(iat,iloc)
+
+df.iat['行番号', '列番号']  
+
+df.iloc[  
+行番号、行番号リスト、行番号スライス,  
+列番号、列番号リスト、列番号スライス  
+]
+
+### インデックス指定による簡潔な書き方(iat,iloc)
+|||
+|-|-|
+|df[2:9]|行の選択。行番号のスライスで該当した行をDataFrameとして取得。|
+
 
 
 <a id="文字列操作"></a>
@@ -298,7 +319,9 @@ DataFrame、Series、スカラー値は、それぞれ算術演算子(+、-、*�
 |max()|最大値を算出。|
 |mean()|平均値を算出。|
 |median()|中央値を算出。|
+|std()|標準偏差を算出。|
 |count()|非欠損値数を算出。|
+|describe()|主要な統計量を一括算出。|
 |nunique()|ユニーク数を算出。|
 
 #### DataFrameから呼び出す場合
@@ -605,12 +628,104 @@ df.to_markdown('hoge/fuga/piyo.md', index=True, mode='w')
 
 
 
-<a id="クロス集計"></a>
-## クロス集計
+
+<a id="pivot_table"></a>
+## pivot_table
+
+df.pivot_table()の使用前に欠損値の処理を済ませておく。
+
+```py
+df_pt = df.pivot_table(
+    # 列名か列名リストを指定。集計対象のデータ。
+    values,
+    # 必須。列名か列名リストを指定。結果の行見出し。
+    index,
+    # 必須。列名か列名リストを指定。結果の列見出し。
+    columns,
+    # 結果の値の算出方法。
+    # 関数か関数のリストを指定。
+    # 指定する関数は一次元配列に対してスカラー値を返す関数であればよい。
+    # lenを使うと、pd.crosstab()同様カテゴリごとの出現回数が算出できる。
+    aggfunc,
+
+    # Trueとすると、小計と総計も算出できる。
+    margins: bool = False,
+    # 小計・総計の行ラベル・列ラベルを文字列で指定。デフォルトは'All'。
+    margins_name: Level = "All",
+
+    # 結果をソートするかどうかを指定。
+    sort: bool = True,
+    # 保留
+    observed: bool | lib.NoDefault = lib.no_default,
+)
+```
+
+
+<a id="melt"></a>
+## melt
+
+### 基本
+横持ちのDataFrameを縦持ちのDataFrameに再構築する(DB的になる)。  
+コンピュータにとってわかりやすい表になるイメージ。
+```py
+# DataFrameを三種類のカラム(id_vars, variable, value)に再構築して返す。
+df_melted = df.melt(
+    # 列名リストを指定。指定した列はid_varsカラムとなり、meltされずにそのまま残る。
+    id_vars,
+    # 列名リストを指定。指定した列の列名はvariableカラムとなり、値はvalueカラムとなる。
+    value_vars,
+    # variableカラムの列名を指定(デフォルトはvariable)。
+    var_name,
+    # valueカラムの列名を指定(デフォルトはvalue)。
+    value_name,
+)
+```
+
+### 再構築したDataFrameのイメージ
+|id_vars|variable|value|
+|-|-|-|
+|id_vars指定列(全)|value_vars指定列の列名(1)|value_vars指定列(1)|
+|id_vars指定列(全)|value_vars指定列の列名(2)|value_vars指定列(2)|
+|id_vars指定列(全)|value_vars指定列の列名(3)|value_vars指定列(3)|
+|id_vars指定列(全)|value_vars指定列の列名(4)|value_vars指定列(4)|
+|id_vars指定列(全)|value_vars指定列の列名(5)|value_vars指定列(5)|
+
+
+### 参考サイト
+* [pandas.melt — pandas 2.2.2 documentation](https://pandas.pydata.org/docs/reference/api/pandas.melt.html)
+* [データフレームを再構築するPandasのMelt()関数のお話し](https://www.salesanalytics.co.jp/datascience/datascience021/)
+
+
+
+<a id="meltの逆処理(pivot使用)"></a>
+## meltの逆処理(pivot使用)
+
+縦持ちのDataFrameを橫持ちのDataFrameに再構築する。  
+人間にとってわかりやすい表になるイメージ。
+
+```py
+# DataFrameの三種類のカラム(id_vars, variable, value)を橫持ちに再構築して返す。
+df_pivoted = df.pivot(
+    # id_varsに対応する列名リストを指定。
+    index,
+    # variableに対応する列名を指定。
+    columns,
+    # valueに対応する列名を指定。
+    values,
+).reset_index() # indexを振り直す。
+# columnsのタイトルを消す。
+df_pivoted.columns.name = None
+```
+
+
+<a id="crosstab"></a>
+## crosstab
 
 ### 基本
 ```py
 # クロス集計表を作成する関数
+# crosstabで出来ることは基本的にpivot_tableでも出来るので、pivot_tableを使う。
+# ただし、crosstabだと結果を1に規格化（正規化）したりできる。
 df = pd.crosstab()
 ```
 
@@ -650,43 +765,6 @@ def crosstab(
     normalize: bool = False,
 ) -> DataFrame:
 ```
-
-
-<a id="メルト"></a>
-## メルト
-
-### 基本
-横持ちのDataFrameを縦持ちのDataFrameに再構築する(DB的になる)。
-```py
-# DataFrameを三種類のカラム(id_vars, variable, value)に再構築して返す。
-def melt(
-    # 対象のDataFrame
-    frame,
-    # 列名リストを指定。指定した列はid_varsカラムとなり、meltされずにそのまま残る。
-    id_vars,
-    # 列名リストを指定。指定した列の列名はvariableカラムとなり、値はvalueカラムとなる。
-    value_vars,
-    # variableカラムの列名を指定(デフォルトはvariable)。
-    var_name,
-    # valueカラムの列名を指定(デフォルトはvalue)。
-    value_name,
-) -> DataFrame:
-```
-
-### 再構築したDataFrameのイメージ
-|id_vars|variable|value|
-|-|-|-|
-|id_vars指定列(全)|value_vars指定列の列名(1)|value_vars指定列(1)|
-|id_vars指定列(全)|value_vars指定列の列名(2)|value_vars指定列(2)|
-|id_vars指定列(全)|value_vars指定列の列名(3)|value_vars指定列(3)|
-|id_vars指定列(全)|value_vars指定列の列名(4)|value_vars指定列(4)|
-|id_vars指定列(全)|value_vars指定列の列名(5)|value_vars指定列(5)|
-
-
-
-### 参考サイト
-* [pandas.melt — pandas 2.2.2 documentation](https://pandas.pydata.org/docs/reference/api/pandas.melt.html)
-* [データフレームを再構築するPandasのMelt()関数のお話し](https://www.salesanalytics.co.jp/datascience/datascience021/)
 
 
 
