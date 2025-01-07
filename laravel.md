@@ -747,10 +747,15 @@ $user = User::query()
     ->first(); 
 $user->name = 'hoge';
 $user->save();
-
 // 連想配列でモデルインスタンスに属性を設定。
 // $fillableプロパティの制約を受ける。
-$modelInstance->fill(['name' => 'Amsterdam to Frankfurt']);
+// saveメソッドによるデータの永続化が必要
+$modelInstance->fill(['name' => 'Amsterdam to Frankfurt'])->save();
+
+
+// レコードを更新
+// $fillableプロパティの制約を受ける。
+$modelInstance->update(['name' => 'John']);
 
 // レコードを削除
 $modelInstance->delete();
@@ -795,7 +800,6 @@ $flight = $flight->replicate([
 // 保留
 $modelInstance->fresh();
 $modelInstance->refresh();
-$modelInstance->update();
 ```
 
 <a id="クラスメソッド(モデル)"></a>
