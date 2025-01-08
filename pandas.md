@@ -210,7 +210,7 @@ boolのSeries、列名、列名リスト、列名スライス
 |Series != '文字列'||
 |Series1 >= Series2||
 |Series.isin(['文字列1', '文字列2'])<br>Series.isin([数値1, 数値2])|指定した複数の文字列のいずれかと完全一致。<br>指定した複数の数値のいずれかと完全一致。|
-|Series.str.contains(r'pat', na=?)|na(欠損値)をTrueかFalse。デフォルトではNone(行抽出時はエラー)。|
+|★Series.str.contains(pat)|指定した正規表現が文字列内に含まれているかどうかで判定。<br>引数naで欠損値の判定を指定(TrueかFalse、デフォルトはNone)。|
 |Series.isnull()||
 |Series.notnull()||
 |DataFrame.duplicated()<br>Series.duplicated()|重複行を抽出(True)<br>引数subsetで重複判定する列を指定(デフォルトでは全ての列)<br>subset='列名'<br>subset=['列名1', '列名2']<br>引数keep(デフォルトでは、重複した最初の行は重複行として扱わない)<br>keep='last'とすると、重複した最後の行は重複行として扱わない。<br>keep=Falseとすると、重複した全ての行を重複行として扱う。|
@@ -272,7 +272,8 @@ df.iloc[
 
 |||
 |-|-|
-|★DataFrame.replace({<br>'列名1': {r'^あ': 'aa', r'\d{4}': '8888'},<br>'列名2': {r'(\d+)分': r'\1年'},<br>}, regex=True)<br><br>★DataFrame.replace({r'pat1': '', r'pat2': ''}, regex=True)<br>★Series.replace({r'pat1': '', r'pat2': ''}, regex=True)|便利な置換手段。<br>DataFrameにもSeriesにも使える。<br>※文字列以外にも使える。|
+|★DataFrame.replace({<br>'列名1': {'pat1': 'repl1', 'pat2': 'repl2'},<br>'列名2': {'pat3': 'repl3'},<br>})<br><br>★DataFrame.replace({'pat1': 'repl1', 'pat2': 'repl2'})<br>★Series.replace({'pat1': 'repl1', 'pat2': 'repl2'})|セル値の置換。文字列と数値に対して使える。<br>引数regexの初期値はFalse。Trueとすると正規表現での置換になる。<br>キャプチャグループを設定した場合、グループにマッチした文字列を1つ目から\1, \2, \3...とrepl内で使用できる。<br>replも基本的にraw文字列を使うのがベター。|
+
 
 #### インラインフラグ
 |||
