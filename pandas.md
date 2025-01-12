@@ -15,9 +15,9 @@
     * [型変換](#型変換)
     * [欠損値の取り扱い](#欠損値の取り扱い)
     * [データ形式変換](#データ形式変換)
-    * [pivot_table](#pivot_table)
     * [melt](#melt)
-    * [meltの逆処理(pivot使用)](#meltの逆処理(pivot使用))
+    * [pivot](#pivot)
+    * [pivot_table](#pivot_table)
     * [crosstab](#crosstab)
     * [その他](#その他)
 
@@ -628,22 +628,82 @@ df.to_markdown('hoge/fuga/piyo.md', index=True, mode='w')
 * [【保存版】Pandas2.0のread_csv関数の全引数、パフォーマンス、活用テクニックを完全解説する！](https://qiita.com/fujine/items/dbe2f5e4101d6299ff12#encoding)
 
 
+<a id="melt"></a>
+## melt
+
+### 基本
+横持ちのDataFrameを縦持ちのDataFrameに再構築する(DB的になる)。  
+コンピュータにとってわかりやすい表になるイメージ。
+```py
+# DataFrameを三種類のカラム(id_vars, variable, value)に再構築して返す。
+df_melted = df.melt(
+    # 列名か列名リストを指定。指定した列はid_varsカラムとなり、meltされずにそのまま残る。
+    id_vars,
+    # 列名か列名リストを指定。指定した列の列名はvariableカラムとなり、値はvalueカラムとなる。
+    # デフォルトでは、id_varsとして設定されていないすべての列。
+    value_vars,
+    # variableカラムの列名を指定(デフォルトはcolumns自体のタイトルで、無い場合は'variable')。
+    var_name,
+    # valueカラムの列名を指定(デフォルトは'value')。
+    value_name,
+)
+```
+
+### 再構築したDataFrameのイメージ
+|id_vars|variable(列名はvar_name)|value(列名はvalue_name)|
+|-|-|-|
+|id_vars指定列(全列、全行)|value_vars指定列の列名(1列目)|value_vars指定列(1列目、全行)|
+|id_vars指定列(全列、全行)|value_vars指定列の列名(2列目)|value_vars指定列(2列目、全行)|
+|id_vars指定列(全列、全行)|value_vars指定列の列名(3列目)|value_vars指定列(3列目、全行)|
+|id_vars指定列(全列、全行)|value_vars指定列の列名(4列目)|value_vars指定列(4列目、全行)|
+|id_vars指定列(全列、全行)|value_vars指定列の列名(5列目)|value_vars指定列(5列目、全行)|
+
+
+### 参考サイト
+* [pandas.melt — pandas 2.2.2 documentation](https://pandas.pydata.org/docs/reference/api/pandas.melt.html)
+* [データフレームを再構築するPandasのMelt()関数のお話し](https://www.salesanalytics.co.jp/datascience/datascience021/)
+
+
+
+<a id="pivot"></a>
+## pivot
+
+重複するエントリがなく(あったらエラーが発生)、単にmeltの逆処理をしたい場合に使う。
+指定したindexとcolumnsの組み合わせの対象データが存在しない場合、その項目はNaNになる。    
+人間にとってわかりやすい表になるイメージ。
+
+
+```py
+# DataFrameの三種類のカラム(id_vars, variable, value)を橫持ちに再構築して返す。
+df_pivoted = df.pivot(
+    # id_varsに対応する列名リストを指定。
+    index,
+    # variableに対応する列名を指定。
+    columns,
+    # valueに対応する列名を指定。
+    values,
+).reset_index() # indexを振り直す。
+# columnsのタイトルを消す。
+df_pivoted.columns.name = None
+```
 
 
 <a id="pivot_table"></a>
 ## pivot_table
 
-使用前に欠損値の処理を済ませておくのが無難。  
+重複するエントリを集計したい場合に使う。
 指定したindexとcolumnsの組み合わせの集計対象データが存在しない場合、その項目の集計結果はNaNになる。
+使用前に欠損値の処理を済ませておくのが無難。  
+
 
 ```py
 df_pt = df.pivot_table(
-    # 列名か列名リストを指定。集計対象のデータ。
-    values,
     # 必須。列名か列名リストを指定。結果の行見出し。
     index,
     # 必須。列名か列名リストを指定。結果の列見出し。
     columns,
+    # 列名か列名リストを指定。集計対象のデータ。デフォルトはindexとcolumnsに指定していないデータ型が数値の列全て。
+    values,
     # 集計方法を文字列で指定するか、自分で集計関数を定義して指定する。
     # 自作の集計関数は、引数でSeriesを受け取り、スカラー値を返す必要がある。
     # 集計方法と自作の集計関数は、リストとして複数指定することも可能。
@@ -671,63 +731,6 @@ df_pt = df.pivot_table(
     # 保留
     observed: bool | lib.NoDefault = lib.no_default,
 )
-```
-
-
-<a id="melt"></a>
-## melt
-
-### 基本
-横持ちのDataFrameを縦持ちのDataFrameに再構築する(DB的になる)。  
-コンピュータにとってわかりやすい表になるイメージ。
-```py
-# DataFrameを三種類のカラム(id_vars, variable, value)に再構築して返す。
-df_melted = df.melt(
-    # 列名リストを指定。指定した列はid_varsカラムとなり、meltされずにそのまま残る。
-    id_vars,
-    # 列名リストを指定。指定した列の列名はvariableカラムとなり、値はvalueカラムとなる。
-    value_vars,
-    # variableカラムの列名を指定(デフォルトはvariable)。
-    var_name,
-    # valueカラムの列名を指定(デフォルトはvalue)。
-    value_name,
-)
-```
-
-### 再構築したDataFrameのイメージ
-|id_vars|variable|value|
-|-|-|-|
-|id_vars指定列(全)|value_vars指定列の列名(1)|value_vars指定列(1)|
-|id_vars指定列(全)|value_vars指定列の列名(2)|value_vars指定列(2)|
-|id_vars指定列(全)|value_vars指定列の列名(3)|value_vars指定列(3)|
-|id_vars指定列(全)|value_vars指定列の列名(4)|value_vars指定列(4)|
-|id_vars指定列(全)|value_vars指定列の列名(5)|value_vars指定列(5)|
-
-
-### 参考サイト
-* [pandas.melt — pandas 2.2.2 documentation](https://pandas.pydata.org/docs/reference/api/pandas.melt.html)
-* [データフレームを再構築するPandasのMelt()関数のお話し](https://www.salesanalytics.co.jp/datascience/datascience021/)
-
-
-
-<a id="meltの逆処理(pivot使用)"></a>
-## meltの逆処理(pivot使用)
-
-縦持ちのDataFrameを橫持ちのDataFrameに再構築する。  
-人間にとってわかりやすい表になるイメージ。
-
-```py
-# DataFrameの三種類のカラム(id_vars, variable, value)を橫持ちに再構築して返す。
-df_pivoted = df.pivot(
-    # id_varsに対応する列名リストを指定。
-    index,
-    # variableに対応する列名を指定。
-    columns,
-    # valueに対応する列名を指定。
-    values,
-).reset_index() # indexを振り直す。
-# columnsのタイトルを消す。
-df_pivoted.columns.name = None
 ```
 
 
