@@ -19,6 +19,7 @@
     * [pivot](#pivot)
     * [pivot_table](#pivot_table)
     * [crosstab](#crosstab)
+    * [離散化](#離散化)
     * [その他](#その他)
 
 <a id="基本的なこと"></a>
@@ -195,12 +196,13 @@ boolのSeries、列名、列名リスト、列名スライス
 |df.filter(regex=r'3')|正規表現の条件を満たす列名の列を選択。<br>DataFrameを返す。<br>axis=0にすると行に適用。<br>行と列を同時に指定することはできない。|
 
 ### Seriesに対するインデックス指定
+※更新、追加時にはスカラーを代入。
 |||
 |-|-|
-|s[ラベル名]|単独の要素の値をそれぞれの型で取得|
-|s[ラベル名のリスト]|単独・複数の要素の値をpandas.Seriesとして取得|
-|s[ラベル名・番号のスライス]|単独・複数の要素の値をpandas.Seriesとして取得。<br>intのスライスは、常にラベル番号のスライスとして扱われる。つまりintのラベル名を指定することは不可。|
-|s[boolのSeries]|Trueの要素をpandas.Seriesとして取得|
+|s[ラベル名]|スカラーにアクセスする。|
+|s[ラベル名のリスト]|Seriesにアクセスする。|
+|s[ラベル名・番号のスライス]|Seriesにアクセスする。<br>intのスライスは、常にラベル番号のスライスとして扱われる。つまりintのラベル名を指定することは不可。|
+|s[boolのSeries]|Seriesにアクセスする。|
 
 ### boolのSeriesを得る方法の例
 |||
@@ -373,6 +375,32 @@ for group, df in dfg:
 |dfg.get_group('グループ名')|グループ名で指定したグループのDataFrameを取得できる。|
 
 #### グループごとにデータを集約(各DataFrameに適用し、全て結合するイメージ)
+```py
+
+# 集約方法：1.文字列で指定。2.引数がarray-likeの関数(自作関数も可)を指定。
+# 集約方法はリストとして複数指定することもできる。
+dfg.agg()
+# キーが列名、値が集約方法の辞書を指定すると、列ごとに異なる処理を適用できる。
+dfg.agg({'col1': '/'.join, 'col2': ['sum', 'max'], 'col3': lambda x: x.max() - x.min()})
+# 以下は文字列で指定できる集約方法
+# 'sum': 合計
+# 'prod': 積
+# 'mean': 平均
+# 'median': 中央値
+# 'min': 最小値
+# 'max': 最大値
+# 'std': 標準偏差
+# 'var': 分散
+# 'sem': 標準誤差
+# 'count': 欠損値ではない要素数
+# 'nunique': 欠損値ではないユニークな要素数
+# 'first': 最初の要素
+# 'last': 最後の要素
+# 'size': グループのサイズ
+# 'describe': 主要な統計量を一括算出
+```
+
+専用メソッドによる集計も可能
 |||
 |-|-|
 |dfg.size()|行数|
@@ -384,7 +412,6 @@ for group, df in dfg:
 |dfg.std()|標準偏差|
 |dfg.count()|欠損値ではない要素数|
 |dfg.describe()|主要な統計量を一括算出|
-|dfg.agg(func)|任意の関数適用<br>※自作関数(def or lambda)を指定する場合は、引数がarray-likeとなるように作成。 |
 
 ### SeriesGroupByオブジェクト
 DataFrameGroupByオブジェクトに対して列名を指定すると取得できる。  
@@ -510,10 +537,13 @@ df['date'] = pd.to_datetime(df['date'], format='%Y年%m月%d日')
 
 |||
 |-|-|
-|DataFrame.dropna(how='any', subset=None)|欠損値を含む行を削除する。<br>※ how='all'とすると、全てが欠損値の行を削除する。<br>※ subset=['列名1', '列名2']とすると、指定列のみが調査対象になる。|
-|DataFrame.fillna(value)<br>DataFrame.fillna({'列名1': 'value1', '列名2': 'value2'})<br>DataFrame.fillna(Series)<br>Series.fillna(value)|欠損値をvalueで指定する値に置き換える。|
+|DataFrame.dropna()|欠損値を含む行を削除する。<br>axis=1とすると、欠損値を含む列を削除する。<br>how='all'とすると、全てが欠損値の行(列)を削除する。<br>subset=['列名1', '列名2']とすると、指定列のみが調査対象になる。|
+|DataFrame.fillna()<br>Series.fillna()|欠損値を、引数で指定した値に置換する。<br>指定する値<br>1.スカラー<br>2.辞書、Series<br>・DataFrameに対して：キー(ラベル)が列名、値が列に対応する。<br>・Seriesに対して：キー(ラベル)とインデックスが合わさる形で対応する。|
 |DataFrame.ffill()<br>Series.ffill()|欠損値を直前の非欠損値で置き換える。|
 |DataFrame.bfill()<br>Series.bfill()|欠損値を直後の非欠損値で置き換える。|
+
+
+
 
 
 <a id="データ形式変換"></a>
@@ -783,6 +813,13 @@ def crosstab(
 ```
 
 
+<a id="離散化"></a>
+## 離散化
+
+* pd.cut()：データの間隔を基準にしてビン分割
+* pd.qcut()：データの個数を基準にしてビン分割
+
+
 
 <a id="その他"></a>
 ## その他
@@ -809,5 +846,7 @@ def crosstab(
 ### 保留
 * ループ処理(iterrows、itertuples)
 * 欠損値を前後の値から線形補間(interpolate)
-* agg
-* pandas.DataFrame.update()※DataFrameの値の更新
+* DataFrame.update()：DataFrameの値の更新
+* DataFrameかSeries.nlargest：n個の最大値
+* DataFrameかSeries.nsmallest：n個の最小値
+
