@@ -262,6 +262,7 @@ df.iloc[
 |Series.str.join(sep)||
 |Series.str.normalize('NFKC')||
 |Series.str.zfill(6)|左側をゼロ埋めし、指定した文字数にする|
+|Series.str.get_dummies(sep='区切り文字')|文字列を区切り文字で分割し、ダミー変数化。DataFrameを返す。|
 
 ### 正規表現関連
 |||
@@ -842,6 +843,7 @@ def crosstab(
 |DataFrame.copy()|dfのコピーを作成(参照の値渡しを防ぐため)。|
 |DataFrame.rename(index={'元の行名': '新しい行名'}, columns={'元の列名': '新しい列名'})|行名・列名のいずれかのみを変更したい場合は、引数indexとcolumnsのどちらか一方だけを指定すればよい。|
 |Series.shift(2, fill_value='あいうえお')|行方向に値がずれた列を作成する。<br>第一引数にずらし幅を指定。fill_valueにずれた部分に設定する値を指定(省略すると欠損値)。|
+|pd.get_dummies(Series)|ダミー変数化。文字列以外でもよい。区切り文字による複数分割は不可。DataFrameを返す。|
 
 ### 保留
 * ループ処理(iterrows、itertuples)
