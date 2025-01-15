@@ -98,6 +98,9 @@ DTOは「適切なデータの抽象化と制御」という発想において�
 ## 図解
 ![図解](./laravel.drawio.svg)
 
+====Action====  
+Request ⇅ Dto  
+=====View=====
 
 <a id="参考サイト"></a>
 ## 参考サイト
