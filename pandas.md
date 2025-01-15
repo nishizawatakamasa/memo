@@ -260,7 +260,7 @@ df.iloc[
 |Series.str[2:9]||
 |Series.str.strip()||
 |Series.str.join(sep)||
-|Series.str.normalize('NFKC')||
+|★Series.str.normalize('NFKC')||
 |Series.str.zfill(6)|左側をゼロ埋めし、指定した文字数にする|
 |Series.str.get_dummies(sep='区切り文字')|文字列を区切り文字で分割し、ダミー変数化。DataFrameを返す。|
 
