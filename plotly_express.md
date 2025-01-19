@@ -20,6 +20,37 @@ plotly.expressでは対応できない場合、plotly.graph_objectsを使用す�
 
 ## 引数
 
+### px.line()
+```py
+def line(
+    data_frame=None,
+    # array-likeな数値
+    x=None,
+    # 関数f(x)
+    y=None,
+    # Trueにすると線上にマーカーが表示される。
+    markers=False,
+    # x軸を対数スケールにするかどうか。
+    log_x=False,
+    # y軸を対数スケールにするかどうか。
+    log_y=False,
+    # x軸の範囲。2つのintのリスト。デフォルトでは自動スケーリング。
+    range_x=None,
+    # y軸の範囲。2つのintのリスト。デフォルトでは自動スケーリング。
+    range_y=None,
+    # グラフのタイトル
+    title=None,
+    # グラフ書式テンプレートを指定。
+    # template='plotly_dark'がかっこいい。
+    template=None,
+    # グラフの幅(ピクセル単位)。
+    width: int | None = None,
+    # グラフの高さ(ピクセル単位)。
+    height: int | None = None,
+) -> go.Figure:
+```
+
+### px.bar()
 ```py
 def bar(
     # グラフに使用するDataFrame。
@@ -112,21 +143,22 @@ def bar(
     log_x=False,
     log_y=False,
 ) -> go.Figure:
-```
 
-## まだよくわかってない引数(copilotの簡単な解説付き)。
+
+# まだよくわかってない引数(copilotの簡単な解説付き)。
  
-custom_data: カスタムデータをホバーテキストに表示。  
-error_x: X軸方向のエラーバー。  
-error_x_minus: X軸方向の負のエラーバー。  
-error_y: Y軸方向のエラーバー。  
-error_y_minus: Y軸方向の負のエラーバー。   
-color_discrete_sequence: カラーシーケンスのカスタマイズ。  
-color_discrete_map: カラーのマッピング。  
-color_continuous_scale: カラーの連続スケール。  
-pattern_shape_sequence: パターンシーケンスのカスタマイズ。  
-pattern_shape_map: パターンのマッピング。  
-range_color: カラーの範囲。  
-color_continuous_midpoint: カラーの中間点。  
-log_x: X軸を対数スケールにするかどうか。  
-log_y: Y軸を対数スケールにするかどうか。  
+# custom_data: カスタムデータをホバーテキストに表示。  
+# error_x: X軸方向のエラーバー。  
+# error_x_minus: X軸方向の負のエラーバー。  
+# error_y: Y軸方向のエラーバー。  
+# error_y_minus: Y軸方向の負のエラーバー。   
+# color_discrete_sequence: カラーシーケンスのカスタマイズ。  
+# color_discrete_map: カラーのマッピング。  
+# color_continuous_scale: カラーの連続スケール。  
+# pattern_shape_sequence: パターンシーケンスのカスタマイズ。  
+# pattern_shape_map: パターンのマッピング。  
+# range_color: カラーの範囲。  
+# color_continuous_midpoint: カラーの中間点。  
+# log_x: X軸を対数スケールにするかどうか。  
+# log_y: Y軸を対数スケールにするかどうか。  
+```
