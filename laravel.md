@@ -47,6 +47,7 @@
     * [Facade](#Facade)
     * [セッション](#セッション)
     * [ユーザーアクションの認可](#ユーザーアクションの認可)
+    * [テスト](#テスト)
 
 
 <a id="Laravelについて"></a>
@@ -1828,15 +1829,20 @@ class DatabaseSeeder extends Seeder
 {
     public function run(): void
     {
+        // HasFactoryトレイトがモデルへ提供しているstaticなfactoryメソッドが使用できる。
+        // factoryメソッドは、モデルに関連付けられたファクトリクラスを次の規約に基づいて探す。
+        // 規約：Database\Factories名前空間に存在し、名前が「モデルのクラス名 + Factory」という形式。
+        // ※ModelClass::factory()はEloquentモデルのクラスメソッドではなく、Laravelが提供するマジックメソッド。
+        // 例：ファクトリーを使ってモデルインスタンスを三つ保存(生成)。
+        // createメソッドの戻り値は、データベースに保存されたモデルインスタンス(複数の場合はコレクション)。
+        User::factory(3)->create();
+        // テスト内で異なる数のデータを作りたい場合など、動的に保存(生成)数を変更したい場合は以下の書き方ができる。
+        User::factory()->count(3)->create();
+        // createメソッドに配列を渡して特定のフィールドの値を指定すると、保存(生成)するインスタンス変数の一部を上書きできる。
         User::factory()->create([
             'name' => 'Test User',
             'email' => 'test@example.com',
         ]);
-
-        // ファクトリーを使ってテストデータを100個作成。
-        Task::factory(100)->create();
-        // ※ModelClass::factory()はEloquentモデルのクラスメソッドではなく、Laravelが提供するマジックメソッド。
-        // ※このメソッドはHasFactoryトレイトを使用して実現され、各モデルに対して対応するファクトリクラスを動的に解決する。
 
         // $this->call([
         //     FolderSeeder::class,
@@ -3192,7 +3198,6 @@ $this->session->flash('key', 'value');
 
 
 
-
 <a id="ユーザーアクションの認可"></a>
 ## ユーザーアクションの認可
 
@@ -3483,7 +3488,94 @@ middleware(ミドルウェア)を利用した制限
 |delete|delete|
 
 
----------------------------------------------
+
+
+<a id="テスト"></a>
+## テスト
+
+### 基本
+
+テストには二種類ある。
+
+* Featureテスト
+    * Laravel用に拡張されたTestCaseクラスを継承している
+    * use Tests\TestCase;
+    * Laravelの機能がテスト内で全て使える。
+    * 実行速度が遅い。
+* Unitテスト
+    * 素のPHPUnitのTestCaseクラスを継承している
+    * use PHPUnit\Framework\TestCase;
+    * Laravelの機能が使えず、素のPHPコードとしてのロジックテストを書くものになっている。
+    * 実行速度が早い。
+    * Laravelに依存しない形で書けるテストは極力Unitテストにするべき。
+
+
+実行コマンド  
+`php artisan test`  
+`php artisan test --filter=UserFeatureTest`  
+`php artisan test --filter=UserFeatureTest::test_can_create_user`  
+
+
+
+### Featureテスト
+作成コマンド。tests/Featureディレクトリへ配置される。  
+`php artisan make:test UserTest`
+
+
+テストに使うリクエストメソッド
+
+```php
+// 指定したURIに対してGETリクエストを送る。
+$this->get($uri)
+// 指定したURIに対してPOSTリクエストを送る。
+$this->post($uri, $data = [])
+// 指定したURIに対してPUTリクエストを送る。
+$this->put($uri, $data = [])
+// 指定したURIに対してDELETEリクエストを送る。
+$this->delete($uri)
+```
+例：
+```php
+<?php
+
+namespace Tests\Feature;
+
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Foundation\Testing\WithFaker;
+use Tests\TestCase;
+
+class memberTest extends TestCase
+{
+    // メソッド名は、test_から始まり、テストの内容がわかる名前にする（スネークケース推奨）。
+    public function test_user_can_submit_form()
+    {
+        // 送信するデータを連想配列形式で第二引数に指定。
+        // フォームに入力されたデータを模倣している。
+        // $responseにリクエスト後のHTTPレスポンスを格納する。
+        $response = $this->post('/submit-form', [
+            'name' => 'John Doe',
+            'email' => 'john.doe@example.com',
+        ]);
+        // サーバーが正常なレスポンス（HTTPステータスコード）を返したか確認する。
+        // 意味：ステータスコード 200 は「リクエストが成功した」ことを示す。
+        // 意味：ステータスコード 302 は「リダイレクトが成功した」ことを示す。
+        $response->assertStatus(200);
+    }
+}
+```
+
+
+### Unitテスト
+作成コマンド。tests/Unitディレクトリへ配置される。  
+`php artisan make:test UserTest --unit`
+
+
+
+
+
+
+
+
 
 
 
