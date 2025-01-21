@@ -173,6 +173,7 @@ APP_LOCALE=ja #言語設定
 APP_FALLBACK_LOCALE=en
 APP_FAKER_LOCALE=ja_JP #フェイクデータの言語設定
 
+# mysqlを使う場合
 DB_CONNECTION=mysql #接続するRDBMS名
 DB_HOST=127.0.0.1 #使用するホスト名
 DB_PORT=3306 #使用するポート番号
@@ -181,24 +182,43 @@ DB_USERNAME=root
 DB_PASSWORD=
 DB_CHARSE=utf8mb4          # 追記：文字コード設定
 DB_COLLATION=utf8mb4_general_ci   # 追記：照合順序
+
+# sqliteを使う場合
+DB_CONNECTION=sqlite
 ```
 
 ### .env.exampleの設定を.envにコピーする。  
 `cp .env.example .env`
 
-### config/app.phpファイル
+
+### env関数
+
+```php
+// .envファイルやサーバーの環境変数に定義された値を取得する。
+// 第一引数: .envファイル等に定義した環境変数のキー。
+// 第二引数（オプション）: 環境変数が設定されていない場合に返すデフォルト値。
+env('APP_TIMEZONE', 'UTC')
 ```
-<!-- 解説 -->
-<!-- .envファイルのAPP_TIMEZONEに設定があればそちらを採用。なければ第二引数の'UTC'にする。 -->
+
+
+### config/app.php
+```php
+// .envファイルのAPP_TIMEZONEに設定があればそちらを採用。なければ第二引数の'UTC'にする。
 'timezone' => env('APP_TIMEZONE', 'UTC'),
 ```
 
 ### config\database.php
-```
+```php
+
+'sqlite' => [
+    // SQLiteを使用する場合、データベースファイルを database ディレクトリに保存することが一般的
+    // database_path 関数は、プロジェクト内の database ディレクトリの絶対パスを返す ヘルパー関数
+    'database' => env('DB_DATABASE', database_path('database.sqlite')),
+],
+
 'mysql' => [
     'charset' => env('DB_CHARSET', 'utf8mb4'),
     'collation' => env('DB_COLLATION', 'utf8mb4_general_ci'),
-
 ],
 ```
 
