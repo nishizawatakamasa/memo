@@ -539,7 +539,7 @@ df['date'] = pd.to_datetime(df['date'], format='%Y年%m月%d日')
 |||
 |-|-|
 |DataFrame.dropna()|欠損値を含む行を削除する。<br>axis=1とすると、欠損値を含む列を削除する。<br>how='all'とすると、全てが欠損値の行(列)を削除する。<br>subset=['列名1', '列名2']とすると、指定列のみが調査対象になる。|
-|DataFrame.fillna()<br>Series.fillna()|欠損値を、引数で指定した値に置換する。<br>指定する値<br>1.スカラー<br>2.辞書、Series<br>・DataFrameに対して：キー(ラベル)が列名、値が列に対応する。<br>・Seriesに対して：キー(ラベル)とインデックスが合わさる形で対応する。|
+|DataFrame.fillna()<br>Series.fillna()|欠損値を、引数で指定した値に置換する。<br>指定できる値<br>1.スカラー<br>2.辞書、Series<br>・DataFrameに対して：キー(ラベル)が列名、値が列に対応する。<br>・Seriesに対して：キー(ラベル)とインデックスが合わさる形で対応する。|
 |DataFrame.ffill()<br>Series.ffill()|欠損値を直前の非欠損値で置き換える。|
 |DataFrame.bfill()<br>Series.bfill()|欠損値を直後の非欠損値で置き換える。|
 
