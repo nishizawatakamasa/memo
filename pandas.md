@@ -99,6 +99,7 @@ DataFrame.columns.name = None # columns自体にタイトルをつける。※No
 |Series.to_numpy()|データ値属性(NumPy配列=ndarray)。|
 |Series.to_list()|シリーズをリストに変換。|
 |Series.to_dict()|シリーズを辞書に変換。|
+* Seriesをforループに適用するとその値が順に取得できる。
 
 
 ### データ型
@@ -180,6 +181,12 @@ boolのSeries、列名、列名リスト、列名スライス
         * indexを合わせて代入される。
         * 1列を指定する場合、基本はSeriesにアクセスする。
 
+### update
+```py
+# df_lの値をdf_rの値で上書きする(行名と列名の両方が合っているセルのみ)。
+# df_lを直接変更する。戻り値はNone。
+df_l.update(df_r)
+```
 
 ### インデックス指定による簡潔な書き方
 |||
@@ -836,6 +843,7 @@ def crosstab(
 |||
 |-|-|
 |DataFrame.reset_index()<br>Series.reset_index()|indexを0からの連番に振り直す。<br>元のindexはデータ列として残る(元のindex名がそのまま列名となる。ない場合ば'index'となる)。<br>drop=Trueとすると、元のindexは削除され残らない。<br>※引数にignore_index=Trueを指定できるメソッドに対しても、こっち(reset_index)を使うほうがいいかも。|
+|DataFrame.set_index('列名')|列名で指定した列がindexに設定される。<br>drop=Falseとすると、指定列がindexに設定された上でデータ列にも残る。|
 |DataFrame.drop(index=['行名1', '行名2'], columns=['列名1', '列名2'])|DataFrameの行・列を指定して削除する。|
 |DataFrame.drop_duplicates()<br>Series.drop_duplicates()|重複行を削除する。<br>※引数(subset、keep)による重複行の扱い方はduplicatedメソッドと同じ。|
 |DataFrame.sort_values(by=['列名1', '列名2'], ascending=[True, False])|引数byで列名を指定してソートする。<br>引数ascendingではTrueが昇順でFalseが降順。<br>byとascendingでは、同じ位置にある要素がそれぞれ対応する。<br>na_position='first'とすると、欠損値NaNが先頭に並べられる。デフォルトでは末尾。|
