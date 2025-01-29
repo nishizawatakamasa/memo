@@ -684,6 +684,7 @@ a ^ b # {'a', 'b', 'e', 'f'}
 
 
 ### 参考サイト
+[コーディングスタイルガイド](https://google.github.io/styleguide/pyguide.html)
 [組み込み関数全71件 完全解説](https://qiita.com/t_aki/items/a5e578aecf8cc20bec31)  
 [Python基礎文法まとめ](https://qiita.com/kita_ds12/items/84552d41a8aad36d5519)  
 [Pythonの基本的な組み込み型とその一般論まとめ](https://qiita.com/nakasan/items/bc9ba8eb57f5b7a22698)  
