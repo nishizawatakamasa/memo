@@ -582,6 +582,10 @@ except SomeException:
     # 指定した例外が発生したら実行される処理
 except OtherException:
     # except節は複数指定できる。複数の例外に対してそれぞれ異なる処理を記述可能。
+except (ZeroDivisionError, ValueError) as e:
+  print("エラーが発生しました:", e)
+    # except節に複数の例外を指定することもできる。
+    # 例外オブジェクトをasで受けることもできる。
 else:
     # 例外が発生しなかった場合に実行される処理
     # ※考え方：except(例外が発生したら) ~ else(例外が発生しなかったら)
