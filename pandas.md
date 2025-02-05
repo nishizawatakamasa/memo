@@ -202,15 +202,6 @@ df_l.update(df_r)
 |-|-|
 |df.filter(regex=r'3')|正規表現の条件を満たす列名の列を選択。<br>DataFrameを返す。<br>axis=0にすると行に適用。<br>行と列を同時に指定することはできない。|
 
-### Seriesに対するインデックス指定
-※更新、追加時にはスカラーを代入。
-|||
-|-|-|
-|s[ラベル名]|スカラーにアクセスする。|
-|s[ラベル名のリスト]|Seriesにアクセスする。|
-|s[ラベル名・番号のスライス]|Seriesにアクセスする。<br>intのスライスは、常にラベル番号のスライスとして扱われる。つまりintのラベル名を指定することは不可。|
-|s[boolのSeries]|Seriesにアクセスする。|
-
 ### boolのSeriesを得る方法の例
 |||
 |-|-|
@@ -253,6 +244,24 @@ df.iloc[
 |||
 |-|-|
 |df[2:9]|行の選択。行番号のスライスで該当した行をDataFrameとして取得。|
+
+
+
+### Seriesの場合
+※更新、追加時にはスカラーを代入。
+
+Series[ラベル名]  
+Series[ラベル名リスト]  
+Series.loc[ラベル名スライス] 
+
+Series.iat[整数位置index]  
+Series.iloc[整数位置indexリスト]  
+Series[整数位置indexスライス]  
+
+Series[boolのSeries]  
+
+スカラー値で指定すると、スカラーにアクセスする。  
+リスト、スライス、boolのSeriesで指定すると、Seriesにアクセスする。  
 
 
 
@@ -385,11 +394,11 @@ for group, df in dfg:
 #### グループごとにデータを集約(各DataFrameに適用し、全て結合するイメージ)
 ```py
 
-# 集約方法：1.文字列で指定。2.引数がarray-likeの関数(自作関数も可)を指定。
+# 集約方法：1.文字列で指定。2.引数がarray-likeの関数を指定。自作関数も可。引数にはSeriesが渡される。
 # 集約方法はリストとして複数指定することもできる。
 dfg.agg()
 # キーが列名、値が集約方法の辞書を指定すると、列ごとに異なる処理を適用できる。
-dfg.agg({'col1': '/'.join, 'col2': ['sum', 'max'], 'col3': lambda x: x.max() - x.min()})
+dfg.agg({'col1': '/'.join, 'col2': ['sum', 'max'], 'col3': lambda s: s.max() - s.min()})
 # 以下は文字列で指定できる集約方法
 # 'sum': 合計
 # 'prod': 積
@@ -542,13 +551,14 @@ df['date'] = pd.to_datetime(df['date'], format='%Y年%m月%d日')
 
 <a id="欠損値の取り扱い"></a>
 ## 欠損値の取り扱い
-
+pandasで欠損値を扱う場合、np.nanの使用が推奨されている。
 |||
 |-|-|
 |DataFrame.dropna()|欠損値を含む行を削除する。<br>axis=1とすると、欠損値を含む列を削除する。<br>how='all'とすると、全てが欠損値の行(列)を削除する。<br>subset=['列名1', '列名2']とすると、指定列のみが調査対象になる。|
 |DataFrame.fillna()<br>Series.fillna()|欠損値を、引数で指定した値に置換する。<br>指定できる値<br>1.スカラー<br>2.辞書、Series<br>・DataFrameに対して：キー(ラベル)が列名、値が列に対応する。<br>・Seriesに対して：キー(ラベル)とインデックスが合わさる形で対応する。|
 |DataFrame.ffill()<br>Series.ffill()|欠損値を直前の非欠損値で置き換える。|
 |DataFrame.bfill()<br>Series.bfill()|欠損値を直後の非欠損値で置き換える。|
+|Series.dropna()|欠損値の要素が削除される。|
 
 
 
@@ -852,6 +862,7 @@ def crosstab(
 |DataFrame.rename(index={'元の行名': '新しい行名'}, columns={'元の列名': '新しい列名'})|行名・列名のいずれかのみを変更したい場合は、引数indexとcolumnsのどちらか一方だけを指定すればよい。|
 |Series.shift(2, fill_value='あいうえお')|行方向に値がずれた列を作成する。<br>第一引数にずらし幅を指定。fill_valueにずれた部分に設定する値を指定(省略すると欠損値)。|
 |pd.get_dummies(Series)|ダミー変数化。文字列以外でもよい。区切り文字による複数分割は不可。DataFrameを返す。|
+|Series.empty|Seriesが空の場合にTrueを返す属性。<br>※Seriesが空でない場合にTrueを返す属性は存在しない。|
 
 ### 保留
 * ループ処理(iterrows、itertuples)
@@ -859,4 +870,3 @@ def crosstab(
 * DataFrame.update()：DataFrameの値の更新
 * DataFrameかSeries.nlargest：n個の最大値
 * DataFrameかSeries.nsmallest：n個の最小値
-
