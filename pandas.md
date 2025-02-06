@@ -183,7 +183,9 @@ boolのSeries、列名、列名リスト、列名スライス
 
 ### update
 ```py
-# df_lの値をdf_rの値で上書きする(行名と列名の両方が合っているセルのみ)。
+# df_lの値をdf_rの非欠損値で上書きする(行名と列名の両方が合っているセルのみ)。
+# overwrite=Falseとすると、df_lの非欠損値は上書きされない。df_lの欠損値は更新される。
+# errors='raise'とすると、df_lとdf_r両方の同じ場所に非欠損値がある場合、ValueErrorが発生する。
 # df_lを直接変更する。戻り値はNone。
 df_l.update(df_r)
 ```
