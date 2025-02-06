@@ -86,6 +86,7 @@ Controllerの責務は
 の３つのみ。  
 例外は無し
 
+共通の処理は、Serviceディレクトリ直下に○○Service.phpとして作る。
 共通化(トレイト含む)は明確に有用な場合のみ。少しでも迷ったら共通化しない。
 
 app/Http/Requests/Post/StoreRequest.php
@@ -93,6 +94,7 @@ public function store(StoreRequest $request, StoreAction $action)
 
 データをビューに渡す際は、DTO（Data Transfer Object）を使用してひとまとめにする。
 DTOは「適切なデータの抽象化と制御」という発想において、APIと近い。
+
 
 
 <a id="図解"></a>
