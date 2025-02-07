@@ -99,7 +99,8 @@ DTOは「適切なデータの抽象化と制御」という発想において�
 
 <a id="図解"></a>
 ## 図解
-![図解](./laravel.drawio.svg)
+![図解2](./laravel.drawio.svg)  
+![図解1](./laravel_action.drawio.svg)  
 
 
 1234
