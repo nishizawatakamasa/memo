@@ -213,8 +213,8 @@ df_l.update(df_r)
 |Series1 >= Series2||
 |Series.isin(['文字列1', '文字列2'])<br>Series.isin([数値1, 数値2])|指定した複数の文字列のいずれかと完全一致。<br>指定した複数の数値のいずれかと完全一致。|
 |★Series.str.contains(pat)|指定した正規表現が文字列内に含まれているかどうかで判定。<br>引数naで欠損値の判定を指定(TrueかFalse、デフォルトはNone)。|
-|Series.isnull()||
-|Series.notnull()||
+|Series.isna()||
+|Series.notna()||
 |DataFrame.duplicated()<br>Series.duplicated()|重複行を抽出(True)<br>引数subsetで重複判定する列を指定(デフォルトでは全ての列)<br>subset='列名'<br>subset=['列名1', '列名2']<br>引数keep(デフォルトでは、重複した最初の行は重複行として扱わない)<br>keep='last'とすると、重複した最後の行は重複行として扱わない。<br>keep=Falseとすると、重複した全ての行を重複行として扱う。|
 |df_of_bool.all(axis=1)|※boolのDataFrameに対して使用<br>行が全てTrue|
 |df_of_bool.any(axis=1)|※boolのDataFrameに対して使用<br>行がひとつでもTrue|
@@ -228,8 +228,8 @@ df_l.update(df_r)
 |df1 == df2|※比較できるのはDataFrameのサイズが一致している場合のみ。|
 |df1 >= df2|※比較できるのはDataFrameのサイズが一致している場合のみ。|
 |DataFrame.isin(['文字列1', '文字列2'])|指定した複数の文字列のいずれかと完全一致。|
-|DataFrame.isnull()||
-|DataFrame.notnull()||
+|DataFrame.isna()||
+|DataFrame.notna()||
 
 
 
