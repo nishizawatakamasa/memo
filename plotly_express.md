@@ -10,7 +10,7 @@ import plotly.express as px
 import plotly.graph_objects as go
 ```
 
-グラフの作成には、ファサードであるplotly.expressの使用が推奨されている(内部的にはplotly.graph_objectsが使用される)。
+グラフの作成には、ファサードであるplotly.expressの使用が推奨されている(内部的にはplotly.graph_objectsが使用される)。  
 plotly.expressでは対応できない場合、plotly.graph_objectsを使用する。
 
 [引数についてのドキュメント](https://plotly.com/python-api-reference/generated/plotly.express.bar)  
@@ -19,6 +19,14 @@ plotly.expressでは対応できない場合、plotly.graph_objectsを使用す�
 
 
 ## 引数
+
+### 基本
+go.Figureオブジェクトを生成し、showメソッドで描画。  
+例：
+```py
+fig = px.line(x=x, y=f(x), template='plotly_dark')
+fig.show()
+```
 
 ### px.line()
 ```py
@@ -79,6 +87,8 @@ def bar(
     template=None,
     # 指定した列でデータを色分けする。
     color=None,
+    # colorで指定した列の値ごとに色を指定できる。例：{'default': '#ffff00', 'highlight': 'red'}
+    color_discrete_map=None,
     # 指定した列でデータのパターン形状を分ける。
     pattern_shape=None,
     # バーの透明度(0~1)。
@@ -134,7 +144,6 @@ def bar(
     error_y=None,
     error_y_minus=None,
     color_discrete_sequence=None,
-    color_discrete_map=None,
     color_continuous_scale=None,
     pattern_shape_sequence=None,
     pattern_shape_map=None,
@@ -153,7 +162,6 @@ def bar(
 # error_y: Y軸方向のエラーバー。  
 # error_y_minus: Y軸方向の負のエラーバー。   
 # color_discrete_sequence: カラーシーケンスのカスタマイズ。  
-# color_discrete_map: カラーのマッピング。  
 # color_continuous_scale: カラーの連続スケール。  
 # pattern_shape_sequence: パターンシーケンスのカスタマイズ。  
 # pattern_shape_map: パターンのマッピング。  

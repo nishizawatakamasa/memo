@@ -831,6 +831,16 @@ glob.iglob()
 <a id="pywebviewを使ったデスクトップアプリの作成"></a>
 ## pywebviewを使ったデスクトップアプリの作成
 
+pywebviewで作成したデスクトップアプリは、内部的にはWebアプリのようなことをやっている。
+
+* Webアプリと似てるところ
+    * UIの表示にWebブラウザエンジンを使っている。
+    * フロントエンド（HTML, CSS, JavaScript）とバックエンド(Python)でやりとりをする。
+* Webアプリと違うところ
+    * デスクトップ環境で実行される。
+    * リモートサーバーだけでなく、ローカルサーバーともやりとりができる。
+
+
 例：
 ```py
 
@@ -959,8 +969,32 @@ def start(
 ):
 ```
 
-
-
+DOM操作のサンプル  
+pywebviewではJavaScriptを利用することなくDOM操作ができる。  
+ボタンをクリックして、メッセージを表示するプログラムは次のようになる。  
+```py
+import webview
+# HTMLを定義
+HTML = """
+<!DOCTYPE html><meta charset="UTF-8">
+<style> div, button { font-size:3em; } </style>
+<button id="btn">格言を表示</button>
+<div id="msg"></div>
+"""
+window = None
+# 最初に実行する関数)
+def bind(win):
+    window = win
+    btn = window.dom.get_elements("#btn")[0]
+    btn.on("click", on_click)
+# ボタンをクリックした時に実行する関数
+def on_click(e):
+    msg = window.dom.get_elements("#msg")[0]
+    msg.text = "穏やかな舌は命の木である"
+# Windowを作成
+window = webview.create_window("click_test", html=HTML)
+webview.start(bind, window)
+```
 
 
 <a id="venvを使った仮想環境の作成"></a>
