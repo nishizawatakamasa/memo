@@ -10,7 +10,7 @@
     * Python
         * [全般](./python.md)
         * [全般(外部サイト)](https://share.kokoronoki.net/nszw/summary/lang_spec/)
-        * [スクレイピングで使う便利関数](./scraping_func.md)
+        * [スクレイピングコードレシピ](./scraping_code_recipe.md)
         * Selenium
         * NumPy
         * [pandas](./pandas.md)

@@ -23,7 +23,6 @@ class Counter:
             1から順にカウントアップするジェネレータイテレータ。
     '''
     def __init__(self) -> None:
-        '''初期化。'''
         self._num: int
         self._count_up: Generator[int, None, NoReturn]
     
@@ -111,4 +110,43 @@ def create_google_map_search_url(search_words: list[str], english_search: bool =
     query_string = urlencode(query_dict)
     return f'https://maps.google.com/maps?{query_string}'
 
+def next_hrefs1(select_next_button: Callable[[], WebElement], by_click: bool = False) -> list[str]:
+    '''nextボタン要素を特定し、そのhrefを開きながら(by_click=Trueならばクリックしながら)取得していく。'''
+    hrefs = [lm.driver.current_url]
+    while True:
+        next_ = select_next_button() if by_click else lm.attr('href', select_next_button())
+        if next_:
+            lm.click(next_) if by_click else lm.go_to(next_)
+            hrefs.append(lm.driver.current_url)
+        else:
+            break
+    return hrefs
+
+def next_hrefs2(select_prev_and_next_button: Callable[[], list[WebElement]], by_click: bool = False) -> list[str]:
+    '''prev&nextボタン要素を特定し、nextのhrefを開きながら(by_click=Trueならばクリックしながら)取得していく。
+
+    Note:
+        *nextボタンの判別方法。\n
+        1.最初はボタンが一つ。←それがnext。\n
+        2.次からボタンが二つ。←二つ目がnext。\n
+        3.最後にまたボタンが一つに。←それはprevだからnextは無し。
+    '''
+    hrefs = [lm.driver.current_url]
+    first_page = True
+    while True:
+        prev_and_next = select_prev_and_next_button() if by_click else [lm.attr('href', elem) for elem in select_prev_and_next_button()]
+        match len(prev_and_next):
+            case 0:
+                break
+            case 1:
+                if first_page:
+                    next_ = prev_and_next[0]
+                    first_page = False
+                else:
+                    break
+            case 2:
+                next_ = prev_and_next[1]
+        lm.click(next_) if by_click else lm.go_to(next_)
+        hrefs.append(lm.driver.current_url)
+    return hrefs
 ```
