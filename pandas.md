@@ -128,6 +128,18 @@ pandasにはデータ型(dtype)が存在するが、int,str,floatのようなPyt
 
 ### 基本
 
+Copy-on-Writeモード
+* 予期しないインデックス動作を防ぐために設定する
+* pandas3.0からデフォルトかつ唯一のモードになる
+* 設定時のインデックス動作
+    * データの取得時はコピーを返す
+    * データの代入時は参照扱い
+
+```py
+# 設定方法
+pd.options.mode.copy_on_write = True
+```
+
 df.at['行名', '列名']  
 
 df.loc[  
@@ -153,7 +165,7 @@ boolのSeries、列名、列名リスト、列名スライス
         * 優先したい処理も括弧で括る。
 * 操作
     * 取得
-        * アクセスしたデータをそのまま戻り値として取得できる。
+        * アクセスしたデータの参照をそのまま戻り値として取得できる。
     * 更新、追加
         * アクセスしたデータに新しいデータを代入する。
         * 存在する単一セル、行、列に対してはデータ更新となる。
@@ -193,10 +205,10 @@ df_l.update(df_r)
 ### インデックス指定による簡潔な書き方
 |||
 |-|-|
-|df[boolのSeries]|行の選択。df.loc[boolのSeries]と同じ。|
+|df[boolのSeries]|行の選択。|
 |df['行名1':'行名2']|行の選択。行名のスライスで該当した行をDataFrameとして取得。<br>※指定できる行名は文字列のみ。つまり、intの行名を指定することは不可。|
-|df[列名]|列の選択。df.loc[:, 列名]と同じ。|
-|df[列名リスト]|列の選択。df.loc[:, 列名リスト]と同じ。|
+|df[列名]|列の選択。|
+|df[列名リスト]|列の選択。|
 |df[boolのDataFrame]|true部分の値のみを抽出。他は欠損値となる。<br>※サイズが一致していなくてもエラーは出ないが、想定されている使い方ではない気がする。|
 
 ### 正規表現による行、列の選択
@@ -295,7 +307,6 @@ Series[boolのSeries]
 |-|-|
 |★DataFrame.replace({<br>'列名1': {'pat1': 'repl1', 'pat2': 'repl2'},<br>'列名2': {'pat3': 'repl3'},<br>})<br><br>★DataFrame.replace({'pat1': 'repl1', 'pat2': 'repl2'})<br>★Series.replace({'pat1': 'repl1', 'pat2': 'repl2'})|セル値の置換。文字列と数値に対して使える。<br>引数regexの初期値はFalse。Trueとすると正規表現での置換になる。<br>キャプチャグループを設定した場合、グループにマッチした文字列を1つ目から\1, \2, \3...とrepl内で使用できる。<br>replも基本的にraw文字列を使うのがベター。|
 
-
 #### インラインフラグ
 |||
 |-|-|
@@ -305,6 +316,18 @@ Series[boolのSeries]
 |r'hoge(?s:fuga)piyo'|部分適用|
 |(?im)|複数フラグ|
 |(?ms:)|複数フラグを部分適用|
+
+
+#### 条件に応じて値を置換
+```py
+
+# 第一引数: boolのSeriesを指定。Trueの要素を第二引数の値に置換。Falseの要素は変化なし。
+# 第二引数: 初期値はnp.nan。指定するときはスカラーかSeries(インデックス一致)。
+Series.mask(cond, other=np.nan)
+# maskのTrueとFalse逆バージョン。
+Series.where(cond, other=np.nan)
+```
+
 
 
 <a id="算術演算"></a>
@@ -859,8 +882,8 @@ def crosstab(
 |DataFrame.drop(index=['行名1', '行名2'], columns=['列名1', '列名2'])|DataFrameの行・列を指定して削除する。|
 |DataFrame.drop_duplicates()<br>Series.drop_duplicates()|重複行を削除する。<br>※引数(subset、keep)による重複行の扱い方はduplicatedメソッドと同じ。|
 |DataFrame.sort_values(by=['列名1', '列名2'], ascending=[True, False])|引数byで列名を指定してソートする。<br>引数ascendingではTrueが昇順でFalseが降順。<br>byとascendingでは、同じ位置にある要素がそれぞれ対応する。<br>na_position='first'とすると、欠損値NaNが先頭に並べられる。デフォルトでは末尾。|
+|DataFrame.copy()<br>Series.copy()|dfやSeriesのコピーを作成(参照の値渡しを防ぐため)。|
 |DataFrame.transpose()|転置|
-|DataFrame.copy()|dfのコピーを作成(参照の値渡しを防ぐため)。|
 |DataFrame.rename(index={'元の行名': '新しい行名'}, columns={'元の列名': '新しい列名'})|行名・列名のいずれかのみを変更したい場合は、引数indexとcolumnsのどちらか一方だけを指定すればよい。|
 |Series.shift(2, fill_value='あいうえお')|行方向に値がずれた列を作成する。<br>第一引数にずらし幅を指定。fill_valueにずれた部分に設定する値を指定(省略すると欠損値)。|
 |pd.get_dummies(Series)|ダミー変数化。文字列以外でもよい。区切り文字による複数分割は不可。DataFrameを返す。|
