@@ -395,7 +395,7 @@ DataFrame、Series、スカラー値は、それぞれ算術演算子(+、-、*�
 ### 基本的なグルーピング
 |||
 |-|-|
-|dfg = DataFrame.groupby('列名')|列名で指定した列の値ごとにグルーピングされる。<br>DataFrameGroupByオブジェクトを返す。<br>デフォルトでは指定した列が結果のインデックスになるが、as_index=Falseとするとインデックスにならない。<br>デフォルトでは指定した列に含まれる欠損値NaNは無視されるが、dropna=FalseとするとNaNも一つのキーとして扱われる。|
+|df_gb = DataFrame.groupby('列名')|列名で指定した列の値ごとにグルーピングされる。<br>DataFrameGroupByオブジェクトを返す。<br>デフォルトでは指定した列が結果のインデックスになるが、as_index=Falseとするとインデックスにならない。<br>デフォルトでは指定した列に含まれる欠損値NaNは無視されるが、dropna=FalseとするとNaNも一つのキーとして扱われる。|
 
 ### DataFrameGroupByオブジェクトとは
 指定列の値ごとに分割された複数のDataFrame、というイメージ。  
@@ -405,7 +405,7 @@ DataFrame、Series、スカラー値は、それぞれ算術演算子(+、-、*�
 
 ```py
 # for文を使うと、グループ名とそのグループのDataFrameを順に取得できる。
-for group, df in dfg:
+for group, df in df_gb:
     print(group, df.shape)
 ```
 
@@ -414,16 +414,16 @@ for group, df in dfg:
 #### 指定したグループのDataFrameを取得
 |||
 |-|-|
-|dfg.get_group('グループ名')|グループ名で指定したグループのDataFrameを取得できる。|
+|df_gb.get_group('グループ名')|グループ名で指定したグループのDataFrameを取得できる。|
 
 #### グループごとにデータを集約(各DataFrameに適用し、全て結合するイメージ)
 ```py
 
 # 集約方法：1.文字列で指定。2.引数がarray-likeの関数を指定。自作関数も可。引数にはSeriesが渡される。
 # 集約方法はリストとして複数指定することもできる。
-dfg.agg()
+df_gb.agg()
 # キーが列名、値が集約方法の辞書を指定すると、列ごとに異なる処理を適用できる。
-dfg.agg({'col1': '/'.join, 'col2': ['sum', 'max'], 'col3': lambda s: s.max() - s.min()})
+df_gb.agg({'col1': '/'.join, 'col2': ['sum', 'max'], 'col3': lambda s: s.max() - s.min()})
 # 以下は文字列で指定できる集約方法
 # 'sum': 合計
 # 'prod': 積
@@ -442,22 +442,75 @@ dfg.agg({'col1': '/'.join, 'col2': ['sum', 'max'], 'col3': lambda s: s.max() - s
 # 'describe': 主要な統計量を一括算出
 ```
 
-専用メソッドによる集計も可能
+集約メソッド(DataFrameを返す)
 |||
 |-|-|
-|dfg.size()|行数|
-|dfg.sum()|合計|
-|dfg.mean()|平均|
-|dfg.max()|最大|
-|dfg.min()|最小|
-|dfg.median()|中央値|
-|dfg.std()|標準偏差|
-|dfg.count()|欠損値ではない要素数|
-|dfg.describe()|主要な統計量を一括算出|
+|df_gb.sum()|和|
+|df_gb.prod()|積|
+|df_gb.mean()|平均|
+|df_gb.max()|最大|
+|df_gb.min()|最小|
+|df_gb.median()|中央値|
+|df_gb.std()|標準偏差|
+|df_gb.var()|分散|
+|df_gb.count()|欠損値ではない要素数|
+|df_gb.describe()|主要な統計量を一括算出|
+|df_gb.all()|全て真値の場合True、そうでなければFalseを返す。|
+|df_gb.any()|一つでも真値の場合True、そうでなければFalseを返す。|
+|df_gb.first()|各グループ内の各列の最初のエントリ。|
+|df_gb.last()|各グループ内の各列最後のエントリ。|
+|df_gb.head(n=5)|各グループの最初のn行を返す。|
+|df_gb.tail(n=5)|各グループの最後のn行を返す。|
+|df_gb.nth(n: int)|各グループからn番目の行を取得|
+|df_gb.take([n])|各グループ内の指定された位置インデックスの要素を取得。|
+|df_gb.idxmax()|最大値のインデックス(複数ある場合は最初に出現するもの)|
+|df_gb.idxmin()|最小値のインデックス(複数ある場合は最初に出現するもの)|
+|df_gb.nunique()|各グループ内のユニーク要素の数。dropna=Falseとすると欠損値もカウント対象となる。|
+|df_gb.ohlc()|グループ内の始値、高値、安値、終値。欠損値は除外。|
+|df_gb.sample()|各グループからランダムに抽出したアイテム。|
+|df_gb.sem()|平均の標準誤差|
+
+集約メソッド(Seriesを返す)
+|||
+|-|-|
+|df_gb.size()|行数|
+|df_gb.value_counts()|完全に一意の行(全列の要素が対象)の数。マルチインデックスのSeriesを返す。|
+
+非集約メソッド(DataFrameを返す)
+|||
+|-|-|
+|df_gb.ffill()|欠損値を直前の非欠損値で置き換える。|
+|df_gb.bfill()|欠損値を直後の非欠損値で置き換える。|
+|df_gb.cummax()|各グループの累積最大値。|
+|df_gb.cummin()|各グループの累積最小値。|
+|df_gb.cumsum()|各グループの累積和。|
+|df_gb.cumprod()|各グループの累積積。|
+|df_gb.shift(periods: int)|各グループ内のデータを指定行数分シフトする(ずらす)。|
+
+非集約メソッド(Seriesを返す)
+|||
+|-|-|
+|df_gb.cumcount()|各グループ内の各項目に0始まりの連番を振る。|
+|df_gb.ngroup()|各グループに0始まりの連番を振る。|
+
+良くわからないメソッド
+|||
+|-|-|
+|df_gb.corr()|NA/null 値を除外して、列のペアワイズ相関を計算します。|
+|df_gb.corr()|ペアワイズ相関を計算します。|
+|df_gb.cov()|NA/null 値を除外して、列のペアワイズ共分散を計算します。|
+|df_gb.diff()|要素の最初の離散差分。|
+|df_gb.pct_change()|各グループ内のパーセンテージの変化。|
+|df_gb.quantile()|numpy.percentile のように、指定された分位数におけるグループ値を返します。|
+|df_gb.rank()|各グループ内の値のランクを指定します。|
+|df_gb.resample()|TimeGrouperを使用するときに再サンプリングを提供します。|
+|df_gb.rolling()|グループごとにローリング機能を提供するローリング グルーパーを返します。|
+|df_gb.skew()|グループ内の偏りのない歪みを返します。|
+
 
 ### SeriesGroupByオブジェクト
 DataFrameGroupByオブジェクトに対して列名を指定すると取得できる。  
-sg = dfg['列名']  
+sg = df_gb['列名']  
 分割された複数のDataFrameが各々Seriesになる、というイメージ。  
 DataFrameGroupByオブジェクトと同じように集約メソッドなどが使える。
 

@@ -112,12 +112,12 @@ def create_google_map_search_url(search_words: list[str], english_search: bool =
 
 def next_hrefs1(select_next_button: Callable[[], WebElement], by_click: bool = False) -> list[str]:
     '''nextボタン要素を特定し、そのhrefを開きながら(by_click=Trueならばクリックしながら)取得していく。'''
-    hrefs = [lm.driver.current_url]
+    hrefs = [d.driver.current_url]
     while True:
-        next_ = select_next_button() if by_click else lm.attr('href', select_next_button())
+        next_ = select_next_button() if by_click else d.attr('href', select_next_button())
         if next_:
-            lm.click(next_) if by_click else lm.go_to(next_)
-            hrefs.append(lm.driver.current_url)
+            d.click(next_) if by_click else d.go_to(next_)
+            hrefs.append(d.driver.current_url)
         else:
             break
     return hrefs
@@ -131,10 +131,10 @@ def next_hrefs2(select_prev_and_next_button: Callable[[], list[WebElement]], by_
         2.次からボタンが二つ。←二つ目がnext。\n
         3.最後にまたボタンが一つに。←それはprevだからnextは無し。
     '''
-    hrefs = [lm.driver.current_url]
+    hrefs = [d.driver.current_url]
     first_page = True
     while True:
-        prev_and_next = select_prev_and_next_button() if by_click else [lm.attr('href', elem) for elem in select_prev_and_next_button()]
+        prev_and_next = select_prev_and_next_button() if by_click else [d.attr('href', elem) for elem in select_prev_and_next_button()]
         match len(prev_and_next):
             case 0:
                 break
@@ -146,7 +146,7 @@ def next_hrefs2(select_prev_and_next_button: Callable[[], list[WebElement]], by_
                     break
             case 2:
                 next_ = prev_and_next[1]
-        lm.click(next_) if by_click else lm.go_to(next_)
-        hrefs.append(lm.driver.current_url)
+        d.click(next_) if by_click else d.go_to(next_)
+        hrefs.append(d.driver.current_url)
     return hrefs
 ```
