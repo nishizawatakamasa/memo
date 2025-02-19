@@ -66,6 +66,17 @@ def save_screenshot(screenshot_path: str, target_elem: WebElement | None, driver
         time.sleep(3)
         target_elem.screenshot(screenshot_path)
 
+def scroll_to_end():
+    '''ページの最後までスクロールする。'''
+    last_height = None
+    while True:
+        new_height = driver.execute_script('return document.body.scrollHeight')
+        if new_height == last_height:
+            return
+        last_height = new_height
+        driver.execute_script('window.scrollTo(0, document.body.scrollHeight);')
+        time.sleep(3)
+
 def pause_proc(message: str) -> None:
     '''処理を一時停止(ダイアログを表示)。'''
     root = tk.Tk()
