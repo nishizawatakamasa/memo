@@ -1147,6 +1147,12 @@ Flitをインストール。
 `flit publish`
 
 
+### バージョン更新のやりかた
+1. pyproject.tomlのバージョンを変更
+1. distディレクトリがある場合は削除
+1. アップロード手順を実行※バージョンの変更がないと失敗する
+
+
 [Flitドキュメント](https://flit.pypa.io/en/latest/)
 
 
