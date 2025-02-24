@@ -587,7 +587,7 @@ $table->jsonb('column_name'); // JSONB
 ### カラム修飾子
 ```php
 <?php
-
+$table->string('member_key')->primary(); // カラムの値を主キーに設定する。
 $table->string('email')->unique(); // カラムの値が一意であることを指定する。
 ->nullable() // カラムをNULL許容にする(デフォルトでは拒否)。
 ->default($value) // デフォルト値を設定する。
@@ -608,7 +608,7 @@ $table->unique('email');
 $table->unique(['column_name1', 'column_name2', 'column_name3']);
 ```
 
-### 主キーを設定
+### カラム定義後の主キー設定
 ```php
 <?php
 
