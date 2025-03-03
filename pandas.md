@@ -93,7 +93,7 @@ DataFrame.columns.name = None # columns自体にタイトルをつける。※No
 ### Seriesの基本
 |||
 |-|-|
-|pd.Series(['hoge', 'fuga', 'piyo'])|リストから作成。インデックスは0からの連番となる。|
+|pd.Series(['hoge', 'fuga', 'piyo'])|リストから作成。インデックスは0からの連番となる。<br>pd.Seriesのname引数では、シリーズの名前を指定することができる。|
 |pd.Series({'a': 1, 'b': 2, 'c': 3, 'd': 4})|辞書から作成。キーがインデックスとなる。|
 |Series.to_frame('列名')|SeriesをDataFrameに変換。<br>引数で列名を指定できる(省略するとintの0になる)。<br>indexはそのまま。|
 |Series.to_numpy()|データ値属性(NumPy配列=ndarray)。|
