@@ -2315,6 +2315,10 @@ class SampleRequest extends FormRequest
             'lunch' => $this->boolean('lunch'), // 昼食
             'onward_transportation' => $this->boolean('onward_transportation'), // 送迎往路
             'return_transportation' => $this->boolean('return_transportation'), // 送迎復路
+            // ルートパラメータをバリデーションしたい場合は、routeメソッドで取得してリクエストデータにマージする。
+            'id' => $this->route('id'),
+            // 複数のルートパラメータをバリデーションしたい場合は、それぞれマージする必要がある。
+            'category_id' => $this->route('category_id'),
         ]);
     }
 

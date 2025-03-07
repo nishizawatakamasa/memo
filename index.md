@@ -36,6 +36,8 @@
     * JavaScript
         * [全般(外部サイト)](https://share.kokoronoki.net/nszw/summary/lang_spec/)
         * [処理の実行タイミング](./js_execution_timing.md)
+        * htmx
+            * [全般](./htmx.md)
         * React
             * [全般](./react.md)
 * バックエンド
