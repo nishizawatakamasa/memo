@@ -1,42 +1,29 @@
-# htmx
+# htmx覚書
+
+* 目次
+    * [概要](#概要)
+    * [hx-*属性](#hx-*属性)
+        * [hx-get系](#hx-get系)
+        * [hx-trigger系](#hx-trigger系)
+        * [hx-target系](#hx-target系)
+        * [hx-swap系](#hx-swap系)
+
+
+<a id="概要"></a>
 ## 概要
 
+* hx-get、hx-trigger、hx-target、hx-swapのような独自の属性を通じてサーバーとやりとりする。  
+* サーバ側でHTMLをレンダリングするため、テンプレート・エンジンとの相性が非常に良い  
+* 実態はただのJavaScript。  
+* ローカルに単一ファイルとして保存し、scriptタグで読み込むだけ。  
 
+コンセプト
+* aタグとformタグ以外も、HTTPリクエストを実行できてもいいはずだ。
+* clickとsubmit以外のイベントが、HTTPリクエストのトリガーになってもいはずだ。
+* GETとPOST以外のメソッドが使えてもいいはずだ。
+* ページ全体を差し替えなくてもいいはずだ。
 
-hx-get、hx-trigger、hx-target、hx-swapのような独自の属性を通じてサーバーとやりとりする。
-
-
-
-
-HTMLの組み立てを原則サーバ側で行う
-そのため、所謂HTMLのテンプレート・エンジンと相性が非常に良い
-
-
-
-* コンセプト
-    * aタグとformタグ以外も、HTTPリクエストを実行できてもいいはずだ。
-    * clickとsubmit以外のイベントが、HTTPリクエストのトリガーになってもいはずだ。
-    * GETとPOST以外のメソッドが使えてもいいはずだ。
-    * ページ全体を差し替えなくてもいいはずだ。
-
-
-
-
-レスポンスも、HTMLを返すのが前提となります。
-
-
-実態はただのJavaScript。
-ローカルにコピペして単一のファイルとして保存し、scriptタグで読み込むだけ。
-
-
-
-```html
-<!-- 例 -->
-<script src="js/htmx.min.js" defer></script>
-```
-
-
-
+例：
 ```html
  <button
     hx-post="/clicked"
@@ -47,16 +34,19 @@ HTMLの組み立てを原則サーバ側で行う
 </button>
  ```
 
-
+<a id="hx-*属性"></a>
 ## hx-*属性
-htmxによって拡張された、「hx-」が頭に付く属性。
-htmxエンジンが直接解釈して処理する。
-HTMLのセマンティクスを損なわずに機能を拡張できる。
-HTMLのカスタムデータ属性のdata-*属性は付けるべきではない。
+
+* htmxによって拡張された、「hx-」が頭に付く属性。
+* htmxエンジンが直接解釈して処理する。
+* HTMLのセマンティクスを損なわずに機能を拡張できる。
+* HTMLのカスタムデータ属性のdata-*属性は付けるべきではない。
 
 
+<a id="hx-get系"></a>
 ### hx-get系
 AJAXリクエストを発行できるようにする属性
+
 * 属性
     * hx-get
     * hx-post
@@ -64,46 +54,38 @@ AJAXリクエストを発行できるようにする属性
     * hx-patch
     * hx-delete
 
-hx-post="/clicked"のように、AJAXリクエストを発行するURLを指定する.
-要素がトリガーされると、指定されたURLに指定されたタイプのリクエストを発行する。
+要素がトリガーされると、指定したURLに指定されたタイプのAJAXリクエストを発行する。
 
 
-
-HTTPリクエストを実行するイベントを指定する属性
-
-
+<a id="hx-trigger系"></a>
 ### hx-trigger系
 hx-trigger
 
-hx-triggerを省略すると、デフォルトのイベントで発火します。
-formならsubmitイベント、input、select、textareaならchangeイベント、以外ならclickイベントがデフォルトです。
+AJAXリクエストの発行をトリガーするものを指定。
+属性を省略すると、デフォルトのイベントでリクエストを発行する。
+
+デフォルトのイベント
+|||
+|-|-|
+|form|submit|
+|input<br>select<br>textarea|change|
+|それ以外|click|
 
 
-このhx-trigger属性を使用すると、AJAX リクエストをトリガーするものを指定できます。トリガー値は次のいずれかになります。
+トリガー値は次のいずれか。
 
-イベント名（例：“click” または “my-custom-event”）の後にイベントフィルタとイベント修飾子のセットが続きます。
-フォームの投票定義every <timing declaration>
-カンマ区切りのイベントリスト
+1.イベント名
+#### 1-1 標準イベント
+click、mouseover、keydown、load等。
 
-
-
-
-
-標準イベント
-click、mouseover、keydown
-
-
-
-標準イベントフィルター
-イベント名の後に、角括弧で囲んだJavaScriptの式を指定できる。
+#### 1-2 標準イベントフィルター
+標準イベント名の後に、角括弧で囲んだJavaScriptの式を指定できる。
 このJavaScriptの式は真偽値を返し、trueの場合のみイベントがトリガーされる。
-
-
+```html
 <div hx-get="/clicked" hx-trigger="click[ctrlKey]">Control Click Me</div>
+```
 
-
-
-標準イベント修飾子
+#### 1-3 標準イベント修飾子
 標準イベントには、動作を変更する修飾子も設定できる。
 修飾子の例
 ```html
@@ -113,104 +95,68 @@ click、mouseover、keydown
 <div hx-trigger="load delay:5s"></div>
 ```
 
-
-非標準イベント
+#### 1-4 非標準イベント
 htmx独自のイベント。
-load(要素が読み込まれたら)
-revealed(要素がviewport内に入ったら)
+例：
+* revealed(要素がviewport内に入ったら)
 
+2.カンマ区切りの複数イベント  
+カンマで区切って複数のイベントを指定できる。    
+各トリガーには独自のオプションを付けられる。    
 
-複数のトリガー
-複数のトリガーをコンマで区切って指定できます。各トリガーには独自のオプションがあります。
-
-  <div hx-get="/news" hx-trigger="load, click delay:1s"></div>
-この例では、/newsページの読み込み時にすぐに読み込まれ、クリックするたびに 1 秒遅れて再度読み込まれます。
-
-イベントはカンマ区切りで複数指定することもできます。
-
-
-
-特殊な指定として、hx-trigger="every 2s"があります。これで「2秒間隔でリクエストを実行」となります。秒数は任意の値を指定できます。一定間隔でデータ取得が必要な場合は便利ですね。
-GETこの例では、URLに を1 秒ごとに発行し/latest_updates、その結果をこの div の innerHTML にスワップします。
-ポーリングにフィルターを追加する場合は、ポーリング宣言の後に追加する必要があります。
-<div hx-get="/latest_updates" hx-trigger="every 1s [someConditional]">
-  Nothing Yet!
-</div>
-
-
-
-
-
-
-### hx-target系
-
-
-hx-targetで、サーバからのレスポンス（HTML）を差し込む要素を指定します。指定する値は、CSSセレクタです。
-省略した場合、「自分自身」がターゲットになります。
-
-
-
-
-
-### hx-swap系
-
-スワッピング
-htmx では、DOM に返される HTML をスワップする方法がいくつか用意されています。デフォルトでは、コンテンツはターゲット要素の を置き換えます 。hx -swap属性を次のいずれかの値でinnerHTML使用して、これを変更できます。
-
-
-
-
-・hx-swapについて
-サーバからのレスポンス（html）をどこに差し込むかはhx-targetで指定しました。hx-swapで、「どのように差し込むか」を指定します。
-
-
-
-
-innerHTML、outerHTMLはレスポンスと「交換」しますが、afterbegin、beforeendは「追加」されます。
-
-noneは、レスポンスで差し替えをしない時に指定します。ページの表示に影響しないリクエストも当然あると思うので、案外使う頻度は高そうですね。
-
-hx-swapを指定しない場合、innerHTMLがデフォルトになります。
-
-
-
-
-
-
-
-
-
-
-
-innerHTML- 対象要素の内部HTMLを置き換える
-outerHTML- ターゲット要素全体をレスポンスに置き換える
-textContent- レスポンスをHTMLとして解析せずに、ターゲット要素のテキストコンテンツを置き換えます。
-beforebegin- ターゲット要素の前にレスポンスを挿入する
-afterbegin- ターゲット要素の最初の子要素の前にレスポンスを挿入します
-beforeend- ターゲット要素の最後の子の後にレスポンスを挿入します
-afterend- ターゲット要素の後にレスポンスを挿入します
-delete- 応答に関係なくターゲット要素を削除します
-none- 応答からコンテンツを追加しません (帯域外の項目は引き続き処理されます)。
-
-
-修飾子
-属性hx-swap
-属性hx-swapは、スワップの動作を変更するための修飾子をサポートします。以下に概要を示します。
-
+例：
 ```html
-<!-- 新しいコンテンツで見つかったタイトルは無視され、ドキュメントのタイトルは更新されません。 -->
- <button hx-post="/like" hx-swap="outerHTML ignoreTitle:true">Like</button>
-<!-- 応答を受信して​​からコンテンツをスワップするための htmx の待機時間を変更 -->
-<div hx-get="/example" hx-swap="innerHTML swap:1s">Get Some HTML & Append It</div>
-<!-- スワップとセトルのロジック間の時間を変更できます -->
-<div hx-get="/example" hx-swap="innerHTML settle:1s">Get Some HTML & Append It</div>
+<!-- ページの読み込み時にすぐに読み込まれ、クリックするたびに1秒遅れて再度読み込まれる。 -->
+<div hx-get="/news" hx-trigger="load, click delay:1s"></div>
 ```
 
-scroll: リストの更新や、コンテンツの追加など、要素がある程度近くに表示されている可能性が高い場合に適しています。ユーザーエクスペリエンスを損なわないように、控えめにスクロールしたい場合に適しています。
+3.特殊な指定  
+hx-trigger="every 2s"で「2秒間隔でリクエストを実行」となる。  
+秒数は任意の値を指定。一定間隔でのデータ取得が必要な場合に便利。  
+例：
+```html
+<div hx-get="/latest_updates" hx-trigger="every 2s [someConditional]">
+  Nothing Yet!
+</div>
+```
 
-show: 重要な要素（新しいコメント、エラーメッセージなど）を確実にユーザーに表示させたい場合に適しています。コンテンツの場所に関わらず、必ず表示させたい場合に適しています。
-topとを受け取りますbottom。
-デフォではターゲットが対象。セレクタ指定で上書き的な
-hx-swap="beforeend scroll:bottom">
-hx-swap="innerHTML show:#another-div:top">
-hx-swap="innerHTML show:window:top">
+
+<a id="hx-target系"></a>
+### hx-target系
+
+サーバからのレスポンス（HTML）をどの要素に差し込むかを指定する。  
+指定する値はCSSセレクタ。  
+省略した場合、「自分自身」がターゲットになる。  
+
+
+
+<a id="hx-swap系"></a>
+### hx-swap系
+
+サーバからのレスポンス（HTML）を要素に差し込む方法を指定する。  
+以下が指定できる値。デフォルトはinnerHTML。
+* innerHTML：対象要素の内部HTMLと交換
+* outerHTML：ターゲット要素全体と交換
+* beforebegin：ターゲット要素の前に追加
+* beforeend：ターゲット要素の最後の子の後に追加
+* afterbegin：ターゲット要素の最初の子要素の前に追加
+* afterend：ターゲット要素の後に追加
+* textContent：ターゲット要素のテキストコンテンツと交換
+* delete：ターゲット要素を削除。レスポンスは考慮されない。
+* none：差し替えをしない
+
+修飾子
+```html
+<!-- 新しいコンテンツで見つかったタイトルは無視され、ドキュメントのタイトルは更新されない。 -->
+ <button hx-post="/like" hx-swap="outerHTML ignoreTitle:true">Like</button>
+<!-- 応答を受信して​​からコンテンツをスワップするための htmx の待機時間を変更 -->
+<div hx-get="/example" hx-swap="innerHTML swap:1s">Get Some HTML</div>
+<!-- スワップとセトルのロジック間の時間を変更できます -->
+<div hx-get="/example" hx-swap="innerHTML settle:1s">Get Some HTML</div>
+<!-- 控えめなスクロールで要素を表示。表示要素はセレクタ等で指定(省略するとターゲット要素)。topかbottomを指定。 -->
+<div hx-get="/example" hx-swap="innerHTML scroll:#another-div:bottom">Get Some HTML</div>
+<!-- 要素を必ず表示。表示要素はセレクタ等で指定(省略するとターゲット要素)。topかbottomを指定。 -->
+<div hx-get="/example" hx-swap="innerHTML show:window:top">Get Some HTML</div>
+<!-- ターゲット内のフォーカスされた要素が、自動的にビューポートにスクロールインするようになる。 -->
+<input id="name" hx-get="/validation" hx-swap="outerHTML focus-scroll:true"/>
+```
