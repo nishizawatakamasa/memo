@@ -12,6 +12,7 @@
     * [サーバー起動](#サーバー起動)
     * [.env.exampleの設定](#.env.exampleの設定)
     * [XAMPPでMySQLが起動しない時の対処法](#XAMPPでMySQLが起動しない時の対処法)
+    * [namespace](#namespace)
     * [日付操作(CarbonImmutable)](#日付操作(CarbonImmutable))
     * [nullsafe演算子](#nullsafe演算子)
     * [Enum](#Enum)
@@ -35,6 +36,7 @@
     * [リダイレクト](#リダイレクト)
     * [GET/POST](#GET/POST)
     * [コントローラー](#コントローラー)
+    * [依存性注入](#依存性注入)
     * [リクエスト](#リクエスト)
         * [バリデーションルール](#バリデーションルール)
     * [lang](#lang)
@@ -261,6 +263,20 @@ env('APP_TIMEZONE', 'UTC')
 ※82はmysqlのバージョンが8.2の場合。
 
 mysqld.exeが動いていた場合はタスクマネージャーで終了させる。
+
+<a id="namespace"></a>
+## namespace
+
+
+
+* オートローダーがクラスを探せるようにするための地図(目印)にすぎず、ディレクトリを跨いだ独自のスコープを形成しているわけではない。
+* 名前と階層をディレクトリ構成と一致させる。
+* オートローダーはnamespaceをファイルパスに変換し、対応するファイルを読み込む。
+
+あるクラスを使用しようとしたとき
+1. そのクラスが現在のファイル内で定義されている場合：それをそのまま使用。オートロードは実行されない。
+1. そのクラスが現在のファイル内で定義されていない場合：オートローダーが起動し、名前空間に基づいてクラスを探しに行く。見つけたらそれを読み込んで使用。
+
 
 <a id="日付操作(CarbonImmutable)"></a>
 ## 日付操作(CarbonImmutable)
@@ -2184,10 +2200,37 @@ class SampleController extends Controller
 Route::get('profile', [UserController::class, 'show'])->middleware(['auth', 'verified'])->name('profile.show');
 // 'auth'だの'verified'だのは、「bootstrap\app.php」と「Illuminate\Foundation\Configuration\Middleware;」を参考。
 ```
-### 依存性注入
+
+<a id="依存性注入"></a>
+## 依存性注入
+
+
+// ルートに紐づいたコントローラに対し、クラス名がタイプヒントされた引数を指定すると、そのクラスのインスタンスを自動的に生成し、引数として渡してくれるようになる。
+// Laravelに組み込まれたサービスコンテナが担う機能の一つで、 依存性注入と言う。
+// サービスコンテナとは、 便利な「自動インスタンス化マシン」のようなもの。
+
+
 コントローラーのメソッド(コンストラクタ含む)に対して依存性注入行うことができる。
+メソッドインジェクション（アクションインジェクション）を使用しています。これは Laravel で利用可能な機能ですが、コンストラクタインジェクションの方がより一般的なベストプラクティスとされています。
+ コンストラクタインジェクション (推奨)
 
+ コントローラ
 
+モデル (Eloquentモデルイベントリスナーなど、一部のケース)
+
+サービスプロバイダ
+
+サービスコンテナに登録されたクラス（シングルトンやバインディングされたクラス）
+
+コマンド（Artisanコマンド）
+
+ミドルウェア
+
+イベントリスナー
+
+ジョブ
+
+ポリシー
 
 <a id="リクエスト"></a>
 ## リクエスト
@@ -2198,9 +2241,6 @@ LaravelはHTTPリクエストが来ると、このリクエストの情報をIll
 例：  
 ```php
 <?php
-// ルートに紐づいたコントローラに対し、クラス名がタイプヒントされた引数を指定すると、そのクラスのインスタンスを自動的に生成し、引数として渡してくれるようになる。
-// Laravelに組み込まれたサービスコンテナが担う機能の一つで、 依存性注入と言う。
-// サービスコンテナとは、 便利な「自動インスタンス化マシン」のようなもの。
 
 namespace App\Http\Controllers;
 
@@ -2209,7 +2249,6 @@ use Illuminate\Http\Request;
 
 class SampleController extends Controller
 {
-    // 「Request $request」の部分が依存性注入
     public function store(Request $request)
     {
         //
@@ -2378,15 +2417,18 @@ class SampleRequest extends FormRequest
 }
 ```
 
-参考サイト(ルートパラメータをFormRequestでバリデーション)  
+
+
+#### FormRequestの子クラスを利用する方法
+コントローラのメソッドの引数に型ヒントとして指定すると、インスタンスが自動的に渡される。  
+**※これはFormRequest特有の挙動であり、依存性注入ではない。**  
+
+
+
+#### 参考サイト(ルートパラメータをFormRequestでバリデーション)  
 [【Laravel8】GETで取得したパラメーターをFormRequestでバリデーションをかける](https://yama-weblog.com/how-to-validate-get-parameter-in-laravel8/)  
 [Laravel ルートパラメータ：取得と活用方法](https://cyublog.com/articles/php-ja/laravel-route-parameters/)  
 
-
-
-
-FormRequestの子クラスを利用するのはとても簡単。  
-コントローラの使いたいメソッドに、Requestの代わりに依存性注入するだけ。  
 
 例：  
 ```php
