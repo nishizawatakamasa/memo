@@ -41,6 +41,7 @@
         * [バリデーションルール](#バリデーションルール)
     * [lang](#lang)
     * [サービス](#サービス)
+    * [サービスプロバイダ](#サービスプロバイダ)
     * [ビュー](#ビュー)
     * [Breeze](#Breeze)
     * [Breezejp](#Breezejp)
@@ -140,6 +141,16 @@ action
 
 request→action→dto→view
 
+
+app/Dto
+app/Dto/Actions
+app/Dto/Common
+app/Dto/??????
+
+app/Services
+app/Services/Actions
+app/Services/Common
+app/Services/??????
 
 
 <a id="参考サイト"></a>
@@ -2204,111 +2215,85 @@ Route::get('profile', [UserController::class, 'show'])->middleware(['auth', 'ver
 <a id="依存性注入"></a>
 ## 依存性注入
 
+クラス名がタイプヒントされた引数を指定すると、そのクラスのインスタンスを自動的に生成し、引数として渡してくれる。  
+Laravelに組み込まれたDIコンテナが担う機能の一つで、 依存性注入と言う。  
+DIコンテナとは、 依存性注入を実行してくれる便利な「自動インスタンス化マシン」のようなもの。   
 
-クラス名がタイプヒントされた引数を指定すると、そのクラスのインスタンスを自動的に生成し、引数として渡してくれる
-Laravelに組み込まれたサービスコンテナが担う機能の一つで、 依存性注入と言う。
-サービスコンテナとは、 便利な「自動インスタンス化マシン」のようなもの。
-基本的にコンストラクタインジェクションが推奨される。
-
- Laravelのサービスコンテナによってインスタンス化されるかどうか
-
-
-コントローラ
-モデル (Eloquentモデルイベントリスナーなど、一部のケース)
-サービスプロバイダ
-サービスコンテナに登録されたクラス（シングルトンやバインディングされたクラス）
-ミドルウェア
-イベントリスナー
-ジョブ
-ポリシー
+### 明示的なDIコンテナへの登録について
+* コアコンポーネント(Laravelフレームワーク自体に組み込まれており、特別な設定なしにすぐに利用できるクラス)は、最初からDIコンテナに暗黙的に登録されている。
+* 自作したServices、Actions、Common等のディレクトリ内のクラスは、依存関係や再利用性などを考慮して、基本的にはDIコンテナに登録することを推奨。
+* DTOディレクトリ下のクラスは、純粋なデータコンテナである場合はDIコンテナに登録する必要はない。
 
 
-
-
-
-
-
-Laravelサービスコンテナ
-クラスの依存関係を管理し、依存注入を実行するためのツール
-
-
-クラスの依存は、コンストラクターまたは場合によっては「セッター」メソッドを介してクラスに「注入」されます。
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-Services、Actions、Common ディレクトリ内のクラスは、依存関係や再利用性などを考慮して、基本的にはDIコンテナに登録することを推奨します。
-
-DTO ディレクトリ下のクラスは、純粋なデータコンテナである場合は、DIコンテナに登録する必要はありません。
-
-原則として登録しておく方が無難
-
-
-
-
-
-
-最も一般的なのはサービスプロバイダを使用する方法
-
-サービスプロバイダの register メソッド内で、クラスをDIコンテナにバインド
-
-
-bind メソッド: 毎回新しいインスタンスを生成する場合に使用します。
-サービスプロバイダ内では、常に$this->appプロパティを介してコンテナにアクセスできます。bindメソッドを使用して結合を登録しできます。登録するクラスまたはインターフェイス名を、クラスのインスタンスを返すクロージャとともに渡します。
+### DIコンテナに登録する方法
+サービスプロバイダのregisterメソッド内で、クラスをDIコンテナに登録する方法が最も一般的  
+例：
 ```php
-use App\Services\Transistor;
-use App\Services\PodcastParser;
+<?php
+
+namespace App\Providers;
+
+use Illuminate\Support\ServiceProvider;
 use Illuminate\Contracts\Foundation\Application;
 
-$this->app->bind(Transistor::class, function (Application $app) {
-    return new Transistor($app->make(PodcastParser::class));
-});
-```
+use App\Services\Actions\Binder\IndexAction;
+use App\Services\Actions\Binder\StoreAction;
+use App\Services\Actions\Binder\EditAction;
+use App\Services\Actions\Binder\UpdateAction;
+use App\Services\Actions\Binder\ConfirmDestroyAction;
+use App\Services\Actions\Binder\DestroyAction;
+use Illuminate\Session\SessionManager;
 
-singleton メソッド: アプリケーション全体で単一のインスタンスを共有する場合に使用します。
-singletonメソッドは、クラスまたはインターフェイスをコンテナに結合しますが、これは１回のみ依存解決される必要がある結合です。シングルトン結合が依存解決されたら、コンテナに対する後続の呼び出しで、同じオブジェクトインスタンスが返されます。
-```php
-use App\Services\Transistor;
-use App\Services\PodcastParser;
-use Illuminate\Contracts\Foundation\Application;
-
-$this->app->singleton(Transistor::class, function (Application $app) {
-    return new Transistor($app->make(PodcastParser::class));
-});
-```
-
-bind メソッド (クラス名のみ): コンストラクタインジェクションを使用する場合、クラス名のみを指定できます。
-```php
-public function register()
+class BinderServiceProvider extends ServiceProvider
 {
-    $this->app->bind('App\Services\MyService');
+    /**
+     * Register services.
+     */
+    public function register(): void
+    {
+        // $this->app->bindメソッド
+        // 第一引数：登録するクラスを指定
+        // 第二引数：登録するクラスのインスタンスを返すクロージャを指定。
+        // 登録するクラスのインスタンス作成時に、コンストラクタに渡すインスタンスが必要な場合は$app->make()を使用。
+        $this->app->bind(IndexAction::class, function (Application $app) {
+            return new IndexAction($app->make(SessionManager::class));
+        });
+
+        $this->app->bind(StoreAction::class, function (Application $app) {
+            return new StoreAction($app->make(SessionManager::class));
+        });
+
+        $this->app->bind(EditAction::class, function (Application $app) {
+            return new EditAction($app->make(SessionManager::class));
+        });
+
+        $this->app->bind(UpdateAction::class, function (Application $app) {
+            return new UpdateAction($app->make(SessionManager::class));
+        });
+
+        $this->app->bind(ConfirmDestroyAction::class, function (Application $app) {
+            return new ConfirmDestroyAction($app->make(SessionManager::class));
+        });
+
+        $this->app->bind(DestroyAction::class, function (Application $app) {
+            return new DestroyAction($app->make(SessionManager::class));
+        });
+    }
+
+    /**
+     * Bootstrap services.
+     */
+    public function boot(): void
+    {
+        //
+    }
 }
 ```
-
-サービスプロバイダのregisterメソッドについて解説します。
-registerメソッドはサービスコンテナへのサービスのバインディングに特化しており、アプリケーションのサービスコンテナにサービスを登録するために使用されます。
-
-
-
 
 
 ### 参考サイト
 [Laravelサービスプロバイダを解剖](https://zenn.dev/kou_hikaru/articles/84d364152e8ba9)
 [サービスコンテナ・サービスプロバイダ・依存性注入の仕組みを整理した](https://zenn.dev/104/articles/2aa14172ddaa86)
-
-サービスプロバイダを登録する
-ユーザー定義サービスプロバイダは全て、bootstrap/providers.phpファイルへ登録します。
-
 
 
 <a id="リクエスト"></a>
@@ -2944,6 +2929,30 @@ class StoreWelfareUserFormatter
     }
 }
 ```
+
+
+<a id="サービスプロバイダ"></a>
+## サービスプロバイダ
+作成コマンド:  
+
+`php artisan make:provider BinderServiceProvider`
+
+リソースごとにプロバイダを作成すると、関心が分離され分かりやすい。  
+AppServiceProviderは汎用プロバイダとして使う感じで。  
+サービスプロバイダは、全てbootstrap/providers.phpファイルへ登録する。  
+※コマンドでサービスプロバイダを作成した場合は自動で登録される。  
+
+例：
+```php
+<?php
+
+return [
+    App\Providers\AppServiceProvider::class,
+    App\Providers\BinderServiceProvider::class,
+    App\Providers\NoteServiceProvider::class,
+];
+```
+
 
 
 <a id="ビュー"></a>
