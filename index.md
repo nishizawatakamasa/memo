@@ -42,7 +42,7 @@
             * [全般](./react.md)
 * バックエンド
     * Python
-        * FastAPI
+        * [FastAPI](./fastapi.md)
     * PHP
         * [全般(外部サイト)](https://share.kokoronoki.net/nszw/summary/lang_spec/)
         * WordPress
