@@ -36,12 +36,12 @@
     * [リダイレクト](#リダイレクト)
     * [GET/POST](#GET/POST)
     * [コントローラー](#コントローラー)
-    * [依存性注入](#依存性注入)
+    * [DIコンテナ](#DIコンテナ)
+    * [サービスプロバイダ](#サービスプロバイダ)
     * [リクエスト](#リクエスト)
         * [バリデーションルール](#バリデーションルール)
     * [lang](#lang)
     * [サービス](#サービス)
-    * [サービスプロバイダ](#サービスプロバイダ)
     * [ビュー](#ビュー)
     * [Breeze](#Breeze)
     * [Breezejp](#Breezejp)
@@ -2212,18 +2212,15 @@ Route::get('profile', [UserController::class, 'show'])->middleware(['auth', 'ver
 // 'auth'だの'verified'だのは、「bootstrap\app.php」と「Illuminate\Foundation\Configuration\Middleware;」を参考。
 ```
 
-<a id="依存性注入"></a>
-## 依存性注入
+<a id="DIコンテナ"></a>
+## DIコンテナ
 
-クラス名がタイプヒントされた引数を指定すると、そのクラスのインスタンスを自動的に生成し、引数として渡してくれる。  
-Laravelに組み込まれたDIコンテナが担う機能の一つで、 依存性注入と言う。  
-DIコンテナとは、 依存性注入を実行してくれる便利な「自動インスタンス化マシン」のようなもの。   
+Laravelに組み込まれた機能で、クラス名がタイプヒントされた引数を指定するとそのクラスのインスタンスを自動的に生成し、引数として渡してくれる。  
 
-### 明示的なDIコンテナへの登録について
-* コアコンポーネント(Laravelフレームワーク自体に組み込まれており、特別な設定なしにすぐに利用できるクラス)は、最初からDIコンテナに暗黙的に登録されている。
-* 自作したServices、Actions、Common等のディレクトリ内のクラスは、依存関係や再利用性などを考慮して、基本的にはDIコンテナに登録することを推奨。
-* DTOディレクトリ下のクラスは、純粋なデータコンテナである場合はDIコンテナに登録する必要はない。
-
+### ※以下の場合は、LaravelのDIコンテナでクラスを明示的にバインドする必要がある
+1. インターフェースを使用していて、具体的な実装を指定する必要がある場合。
+1. Laravelパッケージを開発している場合。
+1. クラスに単純なインスタンス化以上のもの (特定の構成、ファクトリ パターン、カスタム構築ロジックなど) が必要な場合。
 
 ### DIコンテナに登録する方法
 サービスプロバイダのregisterメソッド内で、クラスをDIコンテナに登録する方法が最も一般的  
@@ -2236,13 +2233,7 @@ namespace App\Providers;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Contracts\Foundation\Application;
 
-use App\Services\Actions\Binder\IndexAction;
-use App\Services\Actions\Binder\StoreAction;
-use App\Services\Actions\Binder\EditAction;
-use App\Services\Actions\Binder\UpdateAction;
-use App\Services\Actions\Binder\ConfirmDestroyAction;
-use App\Services\Actions\Binder\DestroyAction;
-use Illuminate\Session\SessionManager;
+// 中略
 
 class BinderServiceProvider extends ServiceProvider
 {
@@ -2255,28 +2246,8 @@ class BinderServiceProvider extends ServiceProvider
         // 第一引数：登録するクラスを指定
         // 第二引数：登録するクラスのインスタンスを返すクロージャを指定。
         // 登録するクラスのインスタンス作成時に、コンストラクタに渡すインスタンスが必要な場合は$app->make()を使用。
-        $this->app->bind(IndexAction::class, function (Application $app) {
-            return new IndexAction($app->make(SessionManager::class));
-        });
-
-        $this->app->bind(StoreAction::class, function (Application $app) {
-            return new StoreAction($app->make(SessionManager::class));
-        });
-
-        $this->app->bind(EditAction::class, function (Application $app) {
-            return new EditAction($app->make(SessionManager::class));
-        });
-
-        $this->app->bind(UpdateAction::class, function (Application $app) {
-            return new UpdateAction($app->make(SessionManager::class));
-        });
-
-        $this->app->bind(ConfirmDestroyAction::class, function (Application $app) {
-            return new ConfirmDestroyAction($app->make(SessionManager::class));
-        });
-
-        $this->app->bind(DestroyAction::class, function (Application $app) {
-            return new DestroyAction($app->make(SessionManager::class));
+        $this->app->bind(FooAction::class, function (Application $app) {
+            return new FooAction($app->make(BarBaz::class));
         });
     }
 
@@ -2290,10 +2261,25 @@ class BinderServiceProvider extends ServiceProvider
 }
 ```
 
+<a id="サービスプロバイダ"></a>
+## サービスプロバイダ
+作成コマンド:  
 
-### 参考サイト
-[Laravelサービスプロバイダを解剖](https://zenn.dev/kou_hikaru/articles/84d364152e8ba9)
-[サービスコンテナ・サービスプロバイダ・依存性注入の仕組みを整理した](https://zenn.dev/104/articles/2aa14172ddaa86)
+`php artisan make:provider FooServiceProvider`
+
+サービスプロバイダは、全てbootstrap/providers.phpファイルへ登録する。  
+※コマンドでサービスプロバイダを作成した場合は自動で登録される。  
+
+例：
+```php
+<?php
+
+return [
+    App\Providers\AppServiceProvider::class,
+    App\Providers\FooServiceProvider::class,
+    App\Providers\BarServiceProvider::class,
+];
+```
 
 
 <a id="リクエスト"></a>
@@ -2929,30 +2915,6 @@ class StoreWelfareUserFormatter
     }
 }
 ```
-
-
-<a id="サービスプロバイダ"></a>
-## サービスプロバイダ
-作成コマンド:  
-
-`php artisan make:provider BinderServiceProvider`
-
-リソースごとにプロバイダを作成すると、関心が分離され分かりやすい。  
-AppServiceProviderは汎用プロバイダとして使う感じで。  
-サービスプロバイダは、全てbootstrap/providers.phpファイルへ登録する。  
-※コマンドでサービスプロバイダを作成した場合は自動で登録される。  
-
-例：
-```php
-<?php
-
-return [
-    App\Providers\AppServiceProvider::class,
-    App\Providers\BinderServiceProvider::class,
-    App\Providers\NoteServiceProvider::class,
-];
-```
-
 
 
 <a id="ビュー"></a>
