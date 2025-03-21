@@ -3720,3 +3720,50 @@ class memberTest extends TestCase
 
 
 
+
+
+
+
+
+
+
+必須級
+Composer
+Configuration
+Artisan Console
+
+Routing
+FormRequest
+Controller
+Blade Templates
+Livewire
+
+Service
+
+Model
+Migration
+seeder
+factory
+
+DI Container
+Middleware
+Service Provider
+
+Auth
+
+
+
+
+
+
+
+
+
+準必須級
+キャッシュ (Cache)
+イベント (Events)
+キュー (Queues)
+アセット (Assets)
+
+
+
