@@ -56,6 +56,43 @@
 <a id="構造"></a>
 ## 構造
 
+
+
+必須級  
+Composer  
+Configuration  
+Artisan Console  
+  
+Routing  
+FormRequest  
+Controller  
+Blade Templates  
+Livewire  
+  
+Service  
+  
+Model  
+Migration  
+seeder  
+factory  
+  
+DI Container  
+Middleware  
+Service Provider  
+  
+Auth  
+    
+  
+  
+準必須級  
+キャッシュ (Cache)  
+イベント (Events)  
+キュー (Queues)  
+アセット (Assets)  
+
+
+
+
 ### フロントエンド的処理
 * 枠組み(Laravel)
     * コントローラー
@@ -3715,55 +3752,6 @@ class memberTest extends TestCase
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-必須級
-Composer
-Configuration
-Artisan Console
-
-Routing
-FormRequest
-Controller
-Blade Templates
-Livewire
-
-Service
-
-Model
-Migration
-seeder
-factory
-
-DI Container
-Middleware
-Service Provider
-
-Auth
-
-
-
-
-
-
-
-
-
-準必須級
-キャッシュ (Cache)
-イベント (Events)
-キュー (Queues)
-アセット (Assets)
 
 
 
