@@ -542,7 +542,8 @@ global a, b
 # 列挙した識別子を、一つ外側のスコープ(グローバルを除く)の変数として解釈するよう指定する。
 nonlocal a, b, c
 
-
+# 型エイリアスを定義する。
+type Number = int | float
 
 
 # 複合文 (compound statement)
