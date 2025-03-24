@@ -43,6 +43,7 @@
     * [lang](#lang)
     * [サービス](#サービス)
     * [ビュー](#ビュー)
+        * [Livewire](#Livewire)
     * [Breeze](#Breeze)
     * [Breezejp](#Breezejp)
     * [ミドルウェア](#ミドルウェア)
@@ -3099,6 +3100,177 @@ resources/views/components/button.blade.phpへBladeファイルを作成する�
     <button type="submit">削除</button>
 </form>
 ```
+
+
+<a id="Livewire"></a>
+## Livewire
+
+
+[公式サイト](https://livewire.laravel.com/)
+
+
+
+従来のコントローラをほぼ完全に回避し
+Livewireコンポーネントだけを使用して、
+Laravelアプリケーション全体を構築するアプローチも極めて有力
+
+
+
+
+### Livewireをインストールするコマンド
+Laravelアプリのルートディレクトリから、次のコマンドを実行。
+`composer require livewire/livewire`
+
+### コンポーネントを組み込む親のViewを作成し、アノテーションを追記する
+* headタグの最後に@livewireStyles
+* bodyタグの最後に@livewireScripts
+```php
+<html>
+<head>
+    ...
+
+    @livewireStyles
+</head>
+<body>
+    ...
+ 
+    @livewireScripts
+</body>
+</html>
+```
+
+### コンポーネントを生成するコマンド
+`php artisan make:livewire counter-sample`
+このコマンドで次の2つのファイルが生成される。
+
+#### app/Http/Livewire/CounterSample.php
+```php
+<?php
+namespace App\Livewire;
+
+use Livewire\Component;
+
+class CounterSample extends Component
+{
+    // CounterSample.phpファイルにはrenderメソッドがある。
+    // view関数で、同時に作成されるcounter-sample.blade.phpファイルが指定されている。
+    public function render()
+    {
+        return view('livewire.counter-sample');
+    }
+}
+```
+
+#### resources/views/livewire/counter-sample.blade.php
+```php
+<div>
+    {{-- Success is as dangerous as failure. --}}
+</div>
+```
+
+### コンポーネントを組み込む
+```php
+<head>
+    ...
+    @livewireStyles
+</head>
+<body>
+    // コンポーネントはBladeのincludeのようなもの
+    // Bladeビューのどこにでも挿入でき、レンダリングされる。
+    <livewire:counter-sample /> 
+ 
+    ...
+ 
+    @livewireScripts
+</body>
+</html>
+
+```
+
+
+
+
+
+### カウンター機能を追加してみる
+
+```php
+<?php
+ 
+namespace App\Livewire;
+ 
+use Livewire\Component;
+ 
+class CounterSample extends Component
+{
+    public $count = 1;
+ 
+    public function increment()
+    {
+        $this->count++;
+    }
+ 
+    public function decrement()
+    {
+        $this->count--;
+    }
+ 
+    // renderメソッドの主な実行タイミング
+    // 最初のレンダリング時。パブリック変数には初期値が適用される。
+    // イベントでトリガーされたメソッドの実行完了時に、パブリック変数が変更されていた場合に再レンダリング
+    // 再レンダリング時はDOMの差分(textContent部分など)のみ更新される。
+    public function render()
+    {
+        return view('livewire.counter-sample');
+    }
+}
+```
+```php
+<div>
+    <h1>{{ $count }}</h1>
+    <button wire:click="increment">+</button>
+    <button wire:click="decrement">-</button>
+</div>
+```
+
+
+
+最初のページの読み込み
+
+
+
+はい、それは非常に正確な言い方です。の与える（）メソッドは、パブリック プロパティの変更を引き起こしたメソッドの実行が完了した後に実行されます。
+
+繰り返しになりますが、さらに正確に言うと、
+
+イベントトリガー方法:イベント（ワイヤー:クリックまたはワイヤー:送信) は、Livewire コンポーネントのパブリック メソッドをトリガーします。
+
+メソッドの実行:メソッドが実行され、パブリック プロパティが変更される可能性があります。
+
+メソッドが完了しました:方法実行が完了プロパティを変更するだけでは不十分で、メソッド全体が終了する必要があります。
+
+Livewire が変更を検出:メソッドが完了すると、Livewire はコンポーネントを検査して、パブリック プロパティが変更されたかどうかを確認します。
+
+条件付きレンダリング:
+
+もし少なくとも1つパブリック プロパティが変更されると、Livewire は再レンダリングをスケジュールします。
+
+もしいいえパブリックプロパティが変更された場合、Livewireはない再レンダリングします。これは重要な最適化です。
+
+与える（）実行：の与える（）メソッドが呼び出され、新しいビューが生成されます。
+
+DOM の差分と更新:Livewire は新しいビューを以前のビューと比較し、必要な変更のみでブラウザの DOM を効率的に更新します。
+
+したがって、はい、あなたは正しいです。トリガーされたメソッドの実行の完了は、Livewireがプロパティの変更をチェックし、潜在的に次のメソッドを呼び出すタイミングを決定する重要なタイミング要因です。与える（）方法。
+
+
+
+
+
+
+
+Livewire スターターキット
+
+
 
 
 
