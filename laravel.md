@@ -3105,45 +3105,27 @@ resources/views/components/button.blade.phpへBladeファイルを作成する�
 <a id="Livewire"></a>
 ## Livewire
 
+**※コントローラをほぼ完全に回避し、Livewireコンポーネントだけを使用してLaravelアプリケーション全体を構築するアプローチも極めて有力**
 
 [公式サイト](https://livewire.laravel.com/)
 
-
-
-従来のコントローラをほぼ完全に回避し
-Livewireコンポーネントだけを使用して、
-Laravelアプリケーション全体を構築するアプローチも極めて有力
-
-
-
-
-### Livewireをインストールするコマンド
-Laravelアプリのルートディレクトリから、次のコマンドを実行。
+### インストール
+Laravelアプリのルートディレクトリから、次のコマンドを実行。  
 `composer require livewire/livewire`
 
-### コンポーネントを組み込む親のViewを作成し、アノテーションを追記する
-* headタグの最後に@livewireStyles
-* bodyタグの最後に@livewireScripts
-```php
-<html>
-<head>
-    ...
 
-    @livewireStyles
-</head>
-<body>
-    ...
- 
-    @livewireScripts
-</body>
-</html>
-```
 
-### コンポーネントを生成するコマンド
-`php artisan make:livewire counter-sample`
-このコマンドで次の2つのファイルが生成される。
 
-#### app/Http/Livewire/CounterSample.php
+### コンポーネントの生成
+
+コマンド  
+`php artisan make:livewire counter-sample`   
+※サブディレクトリも生成したい場合  
+`php artisan make:livewire posts.create-post`  
+
+このコマンドを実行すると、以下の2つのファイルが生成される。
+
+#### 1.app/Livewire下にコンポーネントのクラス
 ```php
 <?php
 namespace App\Livewire;
@@ -3152,8 +3134,8 @@ use Livewire\Component;
 
 class CounterSample extends Component
 {
-    // CounterSample.phpファイルにはrenderメソッドがある。
-    // view関数で、同時に作成されるcounter-sample.blade.phpファイルが指定されている。
+    // render()メソッド内で実行されるview関数で、同時に作成されるコンポーネントのBladeビューが指定されている。
+    // コンポーネントクラスと対になるBladeビューを返すだけならば、render()メソッドを完全に省略できる。
     public function render()
     {
         return view('livewire.counter-sample');
@@ -3161,12 +3143,160 @@ class CounterSample extends Component
 }
 ```
 
-#### resources/views/livewire/counter-sample.blade.php
+#### 2.resources/views/livewire下にコンポーネントのBladeビュー
 ```php
 <div>
     {{-- Success is as dangerous as failure. --}}
 </div>
 ```
+
+### インラインコンポーネントの生成
+
+コンポーネントがかなり小さい場合は、インラインコンポーネントの使用を推奨。  
+インラインコンポーネントは単一のファイルであり、クラスのrender()メソッド内にBladeビュー直接含まれている。  
+
+コンポーネントの生成コマンドに`--inline`フラグを追加する  
+例：  
+`php artisan make:livewire counter-sample --inline`  
+
+```php
+<?php
+ 
+namespace App\Livewire;
+ 
+use Livewire\Component;
+ 
+class CounterSample extends Component
+{
+    public function render()
+    {
+        return <<<'HTML' 
+        <div>
+            {{-- Your Blade template goes here... --}}
+        </div>
+        HTML;
+    }
+}
+
+```
+
+### カウンター機能を追加してみる
+
+```php
+<?php
+ 
+namespace App\Livewire;
+ 
+use Livewire\Component;
+ 
+class CounterSample extends Component
+{
+    // Livewireコンポーネントには、データを格納するプロパティがある。
+    // プロパティを追加するには、コンポーネントクラスでパブリック変数を宣言。
+    // パブリック変数とその値は、ビューコンポーネント内で自動的に利用できるようになる。
+    public $count = 1;
+ 
+    // パブリックメソッドはブラウザからトリガーできる。
+    public function increment()
+    {
+        $this->count++;
+    }
+ 
+    public function decrement()
+    {
+        $this->count--;
+    }
+ 
+    // レンダリングをするrenderメソッド
+    // renderメソッドの主な実行タイミング
+    // 1.最初のレンダリング時。パブリック変数には初期値が適用される。
+    // 2.イベントでトリガーされたメソッドの実行完了時に、パブリック変数が変更されていた場合に再レンダリング
+    // ※再レンダリング時はDOMの差分(textContent部分など)のみ更新される。
+    public function render()
+    {
+        return view('livewire.counter-sample');
+    }
+}
+```
+```php
+// コンポーネントのルートは1つの要素だけでなければならない(複数だとエラー)。
+// HTMLのコメントは別の要素としてカウントされるので、ルート要素の中に入れる。
+// フルページ・コンポーネントをレンダリングする際、ルート要素の外側にレイアウト・ファイル用の名前付きスロットを置くことができる。これらはコンポーネントがレンダリングされる前に削除される。
+<div>
+    // パブリック変数へのアクセス。
+    <h1>{{ $count }}</h1>
+    // クリックイベントでパブリックメソッドをトリガー
+    <button wire:click="increment">+</button>
+    <button wire:click="decrement">-</button>
+</div>
+```
+
+#### プロパティ以外のデータを、明示的にビューへ渡すこともできる。  
+例：  
+
+```php
+<?php
+ 
+namespace App\Livewire;
+ 
+use Illuminate\Support\Facades\Auth;
+use Livewire\Component;
+ 
+class CreatePost extends Component
+{
+    public $title;
+ 
+    public function render()
+    {
+        return view('livewire.create-post', [
+            'author' => Auth::user()->name,
+        ]);
+    }
+}
+```
+```php
+<div>
+    <h1>Title: {{ $title }}</h1>
+ 
+    <span>Author: {{ $author }}</span>
+</div>
+```
+
+
+
+
+### ループ表示
+
+ループ内に一意の属性がないと、要素を一致させることができず、問題が多数発生する可能性がある。
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 ### コンポーネントを組み込む
 ```php
@@ -3190,47 +3320,53 @@ class CounterSample extends Component
 
 
 
-
-### カウンター機能を追加してみる
-
+### コンポーネントのルートを登録する
 ```php
-<?php
- 
-namespace App\Livewire;
- 
-use Livewire\Component;
- 
-class CounterSample extends Component
-{
-    public $count = 1;
- 
-    public function increment()
-    {
-        $this->count++;
-    }
- 
-    public function decrement()
-    {
-        $this->count--;
-    }
- 
-    // renderメソッドの主な実行タイミング
-    // 最初のレンダリング時。パブリック変数には初期値が適用される。
-    // イベントでトリガーされたメソッドの実行完了時に、パブリック変数が変更されていた場合に再レンダリング
-    // 再レンダリング時はDOMの差分(textContent部分など)のみ更新される。
-    public function render()
-    {
-        return view('livewire.counter-sample');
-    }
-}
+use App\Livewire\CounterSample;
+
+Route::get('/counter', CounterSample::class);
 ```
+これで、コンポーネントがルートに割り当てられ、ユーザーが/counterアクセスすると、レンダリングされるようになる。
+
+
+### テンプレートレイアウトを作成する
+コンポーネントをレンダリングするためのHTMLレイアウトが必要。  
+デフォルトではLivewireは  
+resources/views/components/layouts/app.blade.php  
+ファイルを自動的に検索します。  
+※このファイルの作成コマンド  
+`php artisan livewire:layout`
 ```php
-<div>
-    <h1>{{ $count }}</h1>
-    <button wire:click="increment">+</button>
-    <button wire:click="decrement">-</button>
-</div>
+<!DOCTYPE html>
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+ 
+        <title>{{ $title ?? 'Page Title' }}</title>
+    </head>
+    <body>
+        {{ $slot }}
+    </body>
+</html>
 ```
+カウンターコンポーネントは、$slot上記のテンプレートの変数の代わりにレンダリングされる。  
+Livewire3以降では必要なフロントエンドアセット(@livewireStylesと@livewireScripts)が自動的に挿入される。  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
