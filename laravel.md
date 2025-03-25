@@ -3262,80 +3262,109 @@ class CreatePost extends Component
 </div>
 ```
 
-
-
-
 ### ループ表示
+テンプレート内で@foreachを使用する場合、ループによってレンダリングされる要素に一意のwire:key属性を追加する必要がある。  
+※wire:key属性が存在しないと、ループが変更されたときにLivewireは古い要素を新しい位置に適切にマッチさせることができず、問題を引き起こす可能性がある。  
+```php
+<div>
+    @foreach ($posts as $post)
+        // 例：投稿の配列をループし、wire:key属性を投稿のIDに設定する  
+        <div wire:key="{{ $post->id }}"> 
+            <!-- ... -->
+        </div>
+    @endforeach
+</div>
+```
 
-ループ内に一意の属性がないと、要素を一致させることができず、問題が多数発生する可能性がある。
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+ループによってLivewireコンポーネントをレンダリングする場合
+```php
+<div>
+    @foreach ($posts as $post)
+        // 方法1.コンポーネント属性:keyとしてキーを設定する
+        <livewire:post-item :$post :key="$post->id">
+        // 方法2.@livewireディレクティブを使用し、第3引数としてキーを渡す
+        @livewire(PostItem::class, ['post' => $post], key($post->id))
+    @endforeach
+</div>
+```
 
 
+### 入力をプロパティにバインドする
+Livewire の最も強力な機能の 1 つは「データ バインディング」です。これは、ページ上のフォーム入力とプロパティを自動的に同期させる機能です。
+
+※HTML ディレクティブを学ぶときに詳しくやるかな
 
 
+
+### アクションの呼び出し
+
+アクションは、Livewire コンポーネント内のメソッドであり、ユーザー操作を処理したり、特定のタスクを実行したりします。多くの場合、ページ上のボタンのクリックやフォームの送信に応答するのに役立ちます。
+
+
+※HTML ディレクティブを学ぶときに詳しくやるかな
+
+
+
+
+
+### コンポーネントのレンダリング
+コンポーネントをページ上にレンダリングする方法は2つある。
+
+1. 既存のBladeビューに挿入する
+1. フルページコンポーネントとしてルートに直接割り当てる
 
 
 ### コンポーネントを組み込む
 ```php
+<html>
 <head>
-    ...
-    @livewireStyles
 </head>
 <body>
-    // コンポーネントはBladeのincludeのようなもの
-    // Bladeビューのどこにでも挿入でき、レンダリングされる。
-    <livewire:counter-sample /> 
- 
-    ...
- 
-    @livewireScripts
+    // コンポーネントをBladeビューに挿入してレンダリングする、コンポーネントタグ。
+    <livewire:create-post />
+    // サブディレクトリ内にある場合
+    <livewire:editor-posts.create-post />
+
+    // コンポーネントの$titleプロパティに初期値を渡す場合
+    <livewire:create-post title="Initial Title" />
+    // 動的な値や変数を渡す必要がある場合。属性値にPHP式を記述できる。
+    <livewire:create-post :title="$initialTitle" />
 </body>
 </html>
-
 ```
-
-
-
-
-### コンポーネントのルートを登録する
 ```php
-use App\Livewire\CounterSample;
+<?php
+ 
+namespace App\Livewire;
+ 
+use Livewire\Component;
+ 
+class CreatePost extends Component
+{
+    public $title;
 
-Route::get('/counter', CounterSample::class);
+    // mountメソッドでプロパティに初期値を割り当てる
+    // コンストラクタみたいなもの
+    // 省略すると、渡された名前と一致するプロパティを自動的に設定する
+    public function mount($title = null)
+    {
+        $this->title = $title;
+    }
+ 
+    // ...
+}
 ```
-これで、コンポーネントがルートに割り当てられ、ユーザーが/counterアクセスすると、レンダリングされるようになる。
 
 
-### テンプレートレイアウトを作成する
-コンポーネントをレンダリングするためのHTMLレイアウトが必要。  
-デフォルトではLivewireは  
-resources/views/components/layouts/app.blade.php  
-ファイルを自動的に検索します。  
-※このファイルの作成コマンド  
-`php artisan livewire:layout`
+### フルページコンポーネント
+まず、フルページコンポーネントに必要なレイアウトを作成する。
+
+resources/views/components/layouts/app.blade.phpの作成コマンド  
+`php artisan livewire:layout`  
+※デフォルトでは、Livewireはこのファイルを自動的に検索して使用する。  
+コンポーネントは{{ $slot }}部分にレンダリングされる。    
+Livewire3以降では必要なフロントエンドアセット(@livewireStylesと@livewireScripts)が自動的に挿入される。     
+
 ```php
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
@@ -3350,8 +3379,75 @@ resources/views/components/layouts/app.blade.php
     </body>
 </html>
 ```
-カウンターコンポーネントは、$slot上記のテンプレートの変数の代わりにレンダリングされる。  
-Livewire3以降では必要なフロントエンドアセット(@livewireStylesと@livewireScripts)が自動的に挿入される。  
+ルートにコンポーネントを直接割り当て、ブラウザでパスにアクセスすると、CreatePostコンポーネントがフルページコンポーネントとしてレンダリングされる。
+```php
+use App\Livewire\CreatePost;
+ 
+Route::get('/posts/create', CreatePost::class);
+```
+
+
+特定のコンポーネントに別のレイアウトを使用するには、Livewireの#[Layout]属性にカスタムレイアウトの相対ビューパスを渡す。  
+<title>{{ $title ?? 'Page Title' }}</title>部分にタイトルを設定するには、#[Title]属性にページタイトルを渡す。  
+コンポーネントのプロパティを使用するタイトルなど、動的なタイトルを渡す必要がある場合は、->title()メソッドを使用する。  
+
+```php
+<?php
+
+namespace App\Livewire;
+ 
+use Livewire\Attributes\Layout;
+use Livewire\Component;
+
+// 方法1
+#[Layout('layouts.app')] // resources/views/layouts/app.blade.php
+#[Title('Create Post')] 
+class CreatePost extends Component
+{
+    // ...
+
+    // 方法2
+    #[Layout('layouts.app')] 
+    #[Title('Create Post')] 
+    public function render()
+    {
+        return view('livewire.create-post')
+            ->title('Create Post'); 
+    }
+}
+```
+
+ルートパラメータへのアクセス
+```php
+use App\Livewire\ShowPost;
+ 
+Route::get('/posts/{id}', ShowPost::class);
+```
+```php
+
+<?php
+ 
+namespace App\Livewire;
+ 
+use App\Models\Post;
+use Livewire\Component;
+ 
+class ShowPost extends Component
+{
+    public Post $post;
+
+    // 引数をルートパラメータ名と一致させる
+    public function mount($id) 
+    {
+        $this->post = Post::findOrFail($id);
+    }
+ 
+    public function render()
+    {
+        return view('livewire.show-post');
+    }
+}
+```
 
 
 
@@ -3363,40 +3459,6 @@ Livewire3以降では必要なフロントエンドアセット(@livewireStyles�
 
 
 
-
-
-
-
-
-
-
-最初のページの読み込み
-
-
-
-はい、それは非常に正確な言い方です。の与える（）メソッドは、パブリック プロパティの変更を引き起こしたメソッドの実行が完了した後に実行されます。
-
-繰り返しになりますが、さらに正確に言うと、
-
-イベントトリガー方法:イベント（ワイヤー:クリックまたはワイヤー:送信) は、Livewire コンポーネントのパブリック メソッドをトリガーします。
-
-メソッドの実行:メソッドが実行され、パブリック プロパティが変更される可能性があります。
-
-メソッドが完了しました:方法実行が完了プロパティを変更するだけでは不十分で、メソッド全体が終了する必要があります。
-
-Livewire が変更を検出:メソッドが完了すると、Livewire はコンポーネントを検査して、パブリック プロパティが変更されたかどうかを確認します。
-
-条件付きレンダリング:
-
-もし少なくとも1つパブリック プロパティが変更されると、Livewire は再レンダリングをスケジュールします。
-
-もしいいえパブリックプロパティが変更された場合、Livewireはない再レンダリングします。これは重要な最適化です。
-
-与える（）実行：の与える（）メソッドが呼び出され、新しいビューが生成されます。
-
-DOM の差分と更新:Livewire は新しいビューを以前のビューと比較し、必要な変更のみでブラウザの DOM を効率的に更新します。
-
-したがって、はい、あなたは正しいです。トリガーされたメソッドの実行の完了は、Livewireがプロパティの変更をチェックし、潜在的に次のメソッドを呼び出すタイミングを決定する重要なタイミング要因です。与える（）方法。
 
 
 
