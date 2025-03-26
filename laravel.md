@@ -724,6 +724,18 @@ $table->primary('date'); // 主キーとして設定
 <a id="モデル"></a>
 ## モデル
 
+### 作成コマンド  
+例：  
+`php artisan make:model Folder`  
+
+`-ms`オプションを付けると、マイグレーションとSeederも同時に作成される。  
+`php artisan make:model Folder -ms`  
+
+モデルの全ての属性とリレーションを確認できるコマンド   
+`php artisan model:show ModelClass`
+
+
+
 ### 前提
 Laravelが提供するデータベース操作方法は以下の3つ。
 
@@ -803,18 +815,6 @@ class Folder extends Model
 $workLog = WorkLog::make(['date' => $dateString]);
 // ※モデルクラスには、インスタンスを生成するmakeメソッドが用意されている。
 ```
-
-
-### モデルの新規作成コマンド  
-`php artisan make:model モデル名`  
-例：  
-`php artisan make:model Folder`  
-
-
-
-### モデルの全ての属性とリレーションを確認できるコマンド   
-`php artisan model:show ModelClass`
-
 
 ### インスタンスメソッドとクラスメソッドの違い
 ```php
@@ -3114,10 +3114,7 @@ Laravelアプリのルートディレクトリから、次のコマンドを実�
 `composer require livewire/livewire`
 
 
-
-
 ### コンポーネントの生成
-
 コマンド  
 `php artisan make:livewire counter-sample`   
 ※サブディレクトリも生成したい場合  
@@ -3613,6 +3610,10 @@ Route::middleware(['auth', 'verified', WelfareUser::class])
 ## TailwindCSS
 
 ### 基本
+
+[Install Tailwind CSS with Laravel 解説ページ](https://tailwindcss.com/docs/installation/framework-guides/laravel/vite)
+
+
 
 ```html
 <head>
