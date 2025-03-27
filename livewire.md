@@ -5,6 +5,8 @@
     * [コンポーネント](#コンポーネント)
     * [プロパティ](#プロパティ)
     * [アクション](#アクション)
+    * [フォーム](#フォーム)
+    * [イベント](#イベント)
 
 
 <a id="はじめに"></a>
@@ -317,7 +319,7 @@ class CreatePost extends Component
 }
 ```
 
-ルートパラメータへのアクセス
+####　ルートパラメータへのアクセス
 ```php
 use App\Livewire\ShowPost;
  
@@ -353,9 +355,9 @@ class ShowPost extends Component
 <a id="プロパティ"></a>
 ## プロパティ
 
-プロパティは、Livewireコンポーネント内のデータを保存および管理する。  
-プロパティはコンポーネントクラスのパブリック変数として定義される。  
-サーバー側とクライアント側の両方でアクセスおよび変更できる。  
+* プロパティは、Livewireコンポーネント内のデータを保存および管理する。  
+* プロパティはコンポーネントクラスのパブリック変数として定義される。  
+* サーバー側とクライアント側の両方でアクセスおよび変更できる。  
 
 
 ```php
@@ -392,23 +394,22 @@ class ManageTodos extends Component
 }
 ```
 
-* サポートされているプロパティタイプ
-    * public $todos = []; // Array
-    * public $todo = ''; // String
-    * public $maxTodos = 10; // Integer
-    * public $showTodos = false; // Boolean
-    * public $todoFilter; // Null
-    * BackedEnum
-    * Illuminate\Support\Collection
-    * Illuminate\Database\Eloquent\Collection
-    * Illuminate\Database\Eloquent\Model
-    * DateTime
-    * Carbon\Carbon
-    * Illuminate\Support\Stringable
+### サポートされているプロパティタイプ
+* public $todos = []; // Array
+* public $todo = ''; // String
+* public $maxTodos = 10; // Integer
+* public $showTodos = false; // Boolean
+* public $todoFilter; // Null
+* BackedEnum
+* Illuminate\Support\Collection
+* Illuminate\Database\Eloquent\Collection
+* Illuminate\Database\Eloquent\Model
+* DateTime
+* Carbon\Carbon
+* Illuminate\Support\Stringable
 
 
-プロパティをロックする
-
+### プロパティをロックする
 ```php
 use Livewire\Attributes\Locked;
 use Livewire\Component;
@@ -424,7 +425,7 @@ class UpdatePost extends Component
 }
 ```
 
-計算プロパティ
+### 計算プロパティ
 ```php
 <?php
  
@@ -459,15 +460,10 @@ class ShowTodos extends Component
 ## アクション
 
 
-ボタンのクリックやフォームの送信などのフロントエンドのインタラクションによってトリガーできるコンポーネント上のメソッド
+ボタンのクリックやフォームの送信などのフロントエンドのインタラクションによってトリガーできる、コンポーネント上のメソッド。
 
 
 ```php
-// $refreshは、Livewireに組み込まれた特別なアクション
-// コンポーネントのrender()メソッドを再度実行する。
-// wire:modelによるバインディングなどがサーバーに適用されることに注意
-<button type="button" wire:click="$refresh">...</button>
-
 // 「wire:任意のブラウザイベント名」でイベントリスナーを設定
 // 「wire:confirm」で確認アラートを表示
 <button
@@ -479,7 +475,7 @@ class ShowTodos extends Component
 </button>
 ```
 
-特定のキーをリッスンする
+### 特定のキーをリッスンする
 ```php
 // ユーザーが検索ボックスに入力した後にEnterキーを押したときに検索を実行する
 <input wire:model="query" wire:keydown.enter="searchPosts">
@@ -512,7 +508,7 @@ class ShowTodos extends Component
 ※Livewireは、wire:submitアクションが処理されている間、submitボタンと<form>要素内のすべてのフォーム入力を自動的に無効にする。これにより、フォームが誤って2回送信されることはない。
 
 
-パラメータの受け渡し
+### パラメータの受け渡し
 ```php
 <?php
  
@@ -558,7 +554,7 @@ class ShowPosts extends Component
 ```
 
 
-依存性注入  
+### 依存性注入  
 例：
 ```php
 <?php
@@ -599,6 +595,159 @@ class ShowPosts extends Component
 </div>
 ```
 
+
+### マジックアクション
+メソッドを定義せずにコンポーネント内で一般的なタスクを実行できる。  
+テンプレートで定義されたイベントリスナー内で使用。  
+
+```php
+// コンポーネントのrender()メソッドを実行する。
+// wire:modelによるバインディングなどがサーバーに適用されることに注意
+<button type="button" wire:click="$refresh">...</button>
+
+// 子コンポーネントから親コンポーネントのアクションを呼び出す。
+<button wire:click="$parent.removePost({{ $post->id }})">Remove</button>
+
+// テンプレートから直接コンポーネントのプロパティを更新する。
+// 更新するプロパティと新しい値を引数として指定する。
+<button wire:click="$set('query', '')">Reset Search</button>
+
+// コンポーネントのブール型プロパティの真偽値を切り替える。
+// 切り替えるプロパティを引数として指定する。
+<button wire:click="$toggle('sortAsc')">
+    Sort {{ $sortAsc ? 'Descending' : 'Ascending' }}
+</button>
+```
+
+### プライベートメソッド
+コンポーネントクラス内のすべてのパブリックメソッドは、クライアントから呼び出すことができる。  
+メソッドをクライアント側から呼び出せないようにするには、privateかprotectedとして定義する。  
+
+
+
+<a id="フォーム"></a>
+## フォーム
+
+### コンポーネント内のシンプルなフォーム
+```php
+<?php
+ 
+namespace App\Livewire;
+ 
+use Livewire\Component;
+use App\Models\Post;
+ 
+class CreatePost extends Component
+{
+    #[Validate('required')]
+    public $title = '';
+ 
+    #[Validate('required')]
+    public $content = '';
+ 
+    public function save()
+    {
+        $this->validate(); 
+
+        Post::create(
+            $this->only(['title', 'content'])
+        );
+ 
+        session()->flash('status', 'Post successfully updated.');
+ 
+        return $this->redirect('/posts');
+    }
+ 
+    public function render()
+    {
+        return view('livewire.create-post');
+    }
+}
+```
+```php
+// submit時に$titleプロパティと$contentプロパティをバインドしする。
+<form wire:submit="save">
+    <input type="text" wire:model="title">
+    <div>
+        @error('title') <span class="error">{{ $message }}</span> @enderror 
+    </div>
+ 
+    <input type="text" wire:model="content">
+    <div>
+        @error('content') <span class="error">{{ $message }}</span> @enderror 
+    </div>
+ 
+    <button type="submit">Save</button>
+</form>
+```
+
+### フォームオブジェクト
+
+例えば大規模なフォームを扱っていて、そのすべてのプロパティや検証ロジックなどを別のクラスに抽出したい場合に使う。
+フォームオブジェクトを使用してすべてのフォーム関連コードを別のクラスにグループ化し、コンポーネントクラスをよりクリーンな状態に保つ。
+
+作成コマンド  
+例：app/Livewire/Forms/PostForm.phpを作成
+`php artisan livewire:form PostForm`
+
+※ゆくゆく必要になったら学ぶかも
+
+### updatedメソッドでリアルタイムフォーム保存
+※ゆくゆく必要になったら学ぶかも
+
+### 入力フィールドをBladeコンポーネントに抽出する
+```php
+<form wire:submit="save">
+    // 使用例
+    <x-input-text name="title" wire:model="title" /> 
+    // 使用例
+    <x-input-text name="content" wire:model="content" /> 
+ 
+    <button type="submit">Save</button>
+</form>
+```
+```php
+<!-- resources/views/components/input-text.blade.php -->
+ 
+// 呼び出し時に渡したname属性値を取り出して$nameとしてこのコンポーネント内で利用できるようにする。
+@props(['name'])
+ 
+// 呼び出し時に渡した属性と属性値を$attributesで受取る
+// ただし@props()で指定した属性は、$attributesでは受け取らない。
+<input type="text" name="{{ $name }}" {{ $attributes }}>
+ 
+<div>
+    @error($name) <span class="error">{{ $message }}</span> @enderror
+</div>
+```
+
+
+<a id="イベント"></a>
+## イベント
+
+開発者は、任意の名前のイベントを定義して発行できる  
+コンポーネント内のどこからでもdispatch()メソッドを使用してイベントを発行できる  
+ページ上の他のコンポーネントからそのイベントを購読できる。？？？？  
+
+### イベントのディスパッチ
+コンポーネントからイベントを発行するには、dispatch()メソッドを呼び出して、イベント名と、イベントと一緒に送信する追加データを渡す。
+```php
+use Livewire\Component;
+ 
+class CreatePost extends Component
+{
+    public function save()
+    {
+        // ...
+ 
+        // dispatch()メソッドでpost-createdイベントを発行
+        // このイベントを購読しているページ上の他のすべてのコンポーネントに通知される
+        // メソッドの第二引数としてデータを渡すことで、イベントとともに追加データを渡すことができる
+        $this->dispatch('post-created', title: $post->title);
+    }
+}
+
+```
 
 
 
