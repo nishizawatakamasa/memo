@@ -7,6 +7,7 @@
     * [アクション](#アクション)
     * [フォーム](#フォーム)
     * [イベント](#イベント)
+    * [ライフサイクルフック](#ライフサイクルフック)
 
 
 <a id="はじめに"></a>
@@ -299,6 +300,7 @@ Route::get('/posts/create', CreatePost::class);
 namespace App\Livewire;
  
 use Livewire\Attributes\Layout;
+use Livewire\Attributes\Title;
 use Livewire\Component;
 
 // 方法1
@@ -633,7 +635,8 @@ class ShowPosts extends Component
 <?php
  
 namespace App\Livewire;
- 
+
+use Livewire\Attributes\Validate; 
 use Livewire\Component;
 use App\Models\Post;
  
@@ -729,7 +732,7 @@ class CreatePost extends Component
 コンポーネント内のどこからでもdispatch()メソッドを使用してイベントを発行できる  
 ページ上の他のコンポーネントからそのイベントを購読できる。？？？？  
 
-### イベントのディスパッチ
+### イベントのディスパッチ(発行)
 コンポーネントからイベントを発行するには、dispatch()メソッドを呼び出して、イベント名と、イベントと一緒に送信する追加データを渡す。
 ```php
 use Livewire\Component;
@@ -744,13 +747,212 @@ class CreatePost extends Component
         // このイベントを購読しているページ上の他のすべてのコンポーネントに通知される
         // メソッドの第二引数としてデータを渡すことで、イベントとともに追加データを渡すことができる
         $this->dispatch('post-created', title: $post->title);
+
+        // 動的イベント名を設定する場合
+        $this->dispatch("post-updated.{$post->id}");
     }
 }
+```
 
+### イベントのリスニング(購読)
+
+
+```php
+use Livewire\Component;
+use Livewire\Attributes\On; 
+ 
+class Dashboard extends Component
+{
+    // #[On()]属性でpost-createdイベントを購読する
+    // 同イベントが発行されたとき、updatePostListメソッドが呼び出される。
+    // イベントとともに送信された追加データは、アクションの最初の引数として渡される。
+    #[On('post-created')] 
+    public function updatePostList($title)
+    {
+        // ...
+    }
+}
 ```
 
 
+### イベント名を動的に生成
+```php
+use Livewire\Component;
+ 
+class UpdatePost extends Component
+{
+    public function update()
+    {
+        // ...
+
+        // イベント名を動的に生成し、発行する
+        $this->dispatch("post-updated.{$post->id}"); 
+    }
+}
+```
+```php
+use Livewire\Component;
+use App\Models\Post;
+use Livewire\Attributes\On; 
+ 
+class ShowPost extends Component
+{
+    public Post $post;
+
+    // 名前が動的なイベントを購読する
+    // {post.id}部分は動的に解釈され、コンポーネントの$postプロパティのid属性値で置き換えられる。
+    #[On('post-updated.{post.id}')] 
+    public function refreshPost()
+    {
+        // ...
+    }
+
+    // ハードコーディングすることも可能
+    #[On('post-updated.3')]
+    public function refreshPost3()
+    {
+        // ...
+    }
+}
+```
+
+### 特定の子コンポーネントからのイベントをリッスンする
+
+※イベントは必要ないかもしれない
+イベントを使用して子から親の動作を呼び出す場合は、代わりに$parentBlade テンプレートで を使用することで、子から直接アクションを呼び出すことができます。
+
+例:
+```php
+<button wire:click="$parent.showCreatePostForm()">Create Post</button>
+```
+
+### イベント発行先を限定する
+
+```php
+use Livewire\Component;
+ 
+class CreatePost extends Component
+{
+    public function save()
+    {
+        // ...
+
+        // 特定の別コンポーネントにのみイベントを発行する。
+        $this->dispatch('post-created')->to(Dashboard::class);
+
+        // 自身にのみイベントを発行する。
+        $this->dispatch('post-created')->self();
+    }
+}
+```
+
+### Bladeテンプレートから直接イベントを発行する
+JavaScript関数を使用。  
+ボタンのクリックなどのユーザー操作からイベントをトリガーしたい場合に便利。  
+
+```php
+// ボタンがクリックされると、指定されたデータでshow-post-modalイベントが発行される。
+<button wire:click="$dispatch('show-post-modal', { id: {{ $post->id }} })">
+    EditPost
+</button>
+
+// 特定の別コンポーネントにのみイベントを発行する場合は、$dispatchTo()JavaScript関数を使用する。
+// ボタンがクリックされると、show-post-modalイベントがPostsコンポーネントにのみ発行される。
+<button wire:click="$dispatchTo('posts', 'show-post-modal', { id: {{ $post->id }} })">
+    EditPost
+</button>
+```
+
+
+<a id="ライフサイクルフック"></a>
+## ライフサイクルフック
 
 
 
+
+
+
+コンポーネント・ライフサイクル・フックを使用すると、コンポーネントの初期化、プロパティの更新、テンプレートのレンダリングなど、特定のイベントの前または後にアクションを実行できる。  
+すべてのフックメソッドで依存性注入を使用できる  
+
+### 利用可能なコンポーネント・ライフサイクル・フックの一覧
+|フック メソッド|説明|
+|-|-|
+|mount()|コンポーネントが最初に作成された時に一度だけ呼び出される。|
+|hydrate()|???コンポーネントが次のリクエストの開始時に再水和されるときにコールされます。|
+|boot()|1.コンポーネントが最初に作成された時に呼び出される。<br>2.コンポーネントがリクエストされるたびに毎回呼び出される|
+|updating()|コンポーネントのプロパティが更新される直前に呼び出される。|
+|updated()|コンポーネントのプロパティが更新された直後に呼び出される。|
+|render()|render() が呼び出される前に呼び出されます。|
+|rendered()|render() が呼び出された後に呼び出されます。|
+|dehydrate()|すべてのコンポーネントリクエストの最後にコールされます。|
+|exception($e, $stopPropagation)|例外が発生したときにコールされます。|
+
+
+
+
+
+
+
+### mount
+コンポーネントの初期化をする。  
+__construct()の用途に近い。  
+ただコンポーネントはネットワークリクエストのたびにインスタンス化されるので、__construct()を使うとリクエストの度に初期化が実行される事になってしまう。  
+コンポーネントが最初に作成された時に一度だけ初期化を行いたいからmount()を使う。  
+
+```php
+use Illuminate\Support\Facades\Auth;
+use Livewire\Component;
+ 
+class UpdateProfile extends Component
+{
+    public $name;
+ 
+    public $email;
+ 
+    public function mount()
+    {
+        // プロパティに初期値を設定したりするのに使う。
+        $this->name = Auth::user()->name;
+
+        $this->email = Auth::user()->email;
+    }
+ 
+    // ...
+}
+```
+```php
+use Livewire\Component;
+use App\Models\Post;
+ 
+class UpdatePost extends Component
+{
+    public $title;
+ 
+    public $content;
+
+    // パラメータとしてコンポーネントに渡されるデータを受け取れる。
+    public function mount(Post $post)
+    {
+        $this->title = $post->title;
+ 
+        $this->content = $post->content;
+    }
+ 
+    // ...
+}
+```
+
+### boot
+※Livewireの計算プロパティを使用する方がよい場合がよくある。
+
+### updating、updated
+```php
+// $property (string)：更新されるプロパティの名前を文字列で指定。※$nameなら"name"など。
+// $value：プロパティに設定されようとしている値
+public function updating($property, $value) {}
+// $property (string)：更新されたプロパティの名前を文字列で指定。※$nameなら"name"など。
+// $value：プロパティに設定された新しい値。
+public function updating($property, $value) {}
+```
 
