@@ -8,6 +8,7 @@
     * [フォーム](#フォーム)
     * [イベント](#イベント)
     * [ライフサイクルフック](#ライフサイクルフック)
+    * [コンポーネントのネスト](#コンポーネントのネスト)
 
 
 <a id="はじめに"></a>
@@ -879,18 +880,20 @@ JavaScript関数を使用。
 |フック メソッド|説明|
 |-|-|
 |mount()|コンポーネントが最初に作成された時に一度だけ呼び出される。|
-|hydrate()|???コンポーネントが次のリクエストの開始時に再水和されるときにコールされます。|
 |boot()|1.コンポーネントが最初に作成された時に呼び出される。<br>2.コンポーネントがリクエストされるたびに毎回呼び出される|
 |updating()|コンポーネントのプロパティが更新される直前に呼び出される。|
 |updated()|コンポーネントのプロパティが更新された直後に呼び出される。|
-|render()|render() が呼び出される前に呼び出されます。|
-|rendered()|render() が呼び出された後に呼び出されます。|
-|dehydrate()|すべてのコンポーネントリクエストの最後にコールされます。|
-|exception($e, $stopPropagation)|例外が発生したときにコールされます。|
+
+|rendering()|render()が呼び出される前に呼び出されます。|
+|rendered()|render()が呼び出された後に呼び出されます。|
+
+|hydrate()|コンポーネントが次のリクエストの最初にリハイドレイトされるときにコールされる。|
+|dehydrate()|すべてのコンポーネントリクエストの最後に呼び出される。|
+|exception($e, $stopPropagation)|例外が発生したときに呼び出される。|
 
 
 
-
+あまり知られておらず、あまり利用されていないフックです。ただし、特定のシナリオでは強力になる可能性があります。
 
 
 
@@ -948,11 +951,172 @@ class UpdatePost extends Component
 
 ### updating、updated
 ```php
-// $property (string)：更新されるプロパティの名前を文字列で指定。※$nameなら"name"など。
-// $value：プロパティに設定されようとしている値
-public function updating($property, $value) {}
-// $property (string)：更新されたプロパティの名前を文字列で指定。※$nameなら"name"など。
-// $value：プロパティに設定された新しい値。
-public function updating($property, $value) {}
+
+public function updating($property, $value) {
+    // $property (string)：更新されるプロパティの名前を文字列で指定。※$nameなら"name"など。
+    // $value：プロパティに設定されようとしている値
+}
+
+public function updated($property, $value) {
+    // $property (string)：更新されたプロパティの名前を文字列で指定。※$nameなら"name"など。
+    // $value：プロパティに設定された新しい値。
+}
 ```
+```php
+public $username = '';
+// メソッド名の一部としてプロパティ名を直接指定できる
+public function updatingUsername($value) {}
+public function updatedUsername($value) {}
+
+public $preferences = [];
+// プロパティが配列の場合は$key引数も持つ。
+public function updatingPreferences($value, $key) {
+    // $key:配列内で更新される値のキー
+}
+public function updatedPreferences($value, $key) {
+    // $key:配列内で更新された値のキー
+}
+```
+
+### rendering、rendered
+```php
+use Livewire\Component;
+use App\Models\Post;
+ 
+class ShowPosts extends Component
+{
+    public function render()
+    {
+        return view('livewire.show-posts', [
+            'post' => Post::all(),
+        ])
+    }
+ 
+    public function rendering($view, $data)
+    {
+        // 提供されたビューがレンダリングされる前に実行される。
+        //
+        // $view： レンダリングされようとしているビュー
+        // $data： ビューに提供されるデータ
+    }
+ 
+    public function rendered($view, $html)
+    {
+        // 提供されたビューがレンダリングされた後に実行される。
+        //
+        // $view： レンダリングされたビュー
+        // $html： 最終的にレンダリングされたHTML
+    }
+ 
+    // ...
+}
+```
+
+### exception
+エラーをキャッチし、エラーメッセージをカスタマイズしたり、特定の例外を無視することができる。  
+$errorをチェックし、$stopPropagationパラメータを使用してエラーをキャッチする。  
+```php
+use Livewire\Component;
+ 
+class ShowPost extends Component
+{
+    public function mount() 
+    {
+        $this->post = Post::find($this->postId);
+    }
+ 
+    public function exception($e, $stopPropagation) {
+        if ($e instanceof NotFoundException) {
+            $this->notify('Post is not found');
+            $stopPropagation();
+        }
+    }
+ 
+    // ...
+}
+```
+
+### traitの使用
+フックメソッドのプレフィックスに、それを宣言している現在のtraitのcamelCased名を付けることがサポートされているる。    
+この方法では、同じライフサイクルフックを使用する複数のtraitを持つことができ、メソッド定義の衝突を避けることができる。  
+
+```php
+use Livewire\Component;
+ 
+class CreatePost extends Component
+{
+    // 複数のトレイトを使用する場合、各トレイト内の全メソッドがプレフィックスの発火タイミングで実行される。
+    use HasPostForm;
+ 
+    // ...
+}
+```
+```php
+// 使用先のコンポーネントでは、それぞれのプレフィックスの発火タイミングで実行される。
+trait HasPostForm
+{
+    public $title = '';
+ 
+    public $content = '';
+ 
+    public function mountHasPostForm()
+    {
+        // ...
+    }
+ 
+    public function updatingHasPostForm()
+    {
+        // ...
+    }
+ 
+    public function updatedHasPostForm()
+    {
+        // ...
+    }
+ 
+    public function renderingHasPostForm()
+    {
+        // ...
+    }
+ 
+    public function renderedHasPostForm()
+    {
+        // ...
+    }
+ 
+    // ...
+}
+```
+
+<a id="コンポーネントのネスト"></a>
+## コンポーネントのネスト
+
+**Livewireコンポーネントは必要ないかもしれない**
+テンプレートの一部をネストされたLivewireコンポーネントに展開する前に、自問してみてください： このコンポーネント内のコンテンツは 「ライブ 」である必要があるか？そうでない場合、代わりにシンプルなBladeコンポーネントを作成することをお勧めします。Livewireコンポーネントは、そのコンポーネントがLivewireのダイナミックな性質から利益を得る場合、またはパフォーマンスに直接的な利益がある場合にのみ作成してください。
+
+
+Livewireのネストされたコンポーネントは、強力な機能ですが、安易に使用すると複雑さが増大し、パフォーマンスに悪影響を与える可能性があります。再利用性、関心の分離、独立した状態管理などの明確なメリットがある場合にのみ使用し、代替手段を検討した上で慎重に判断することが重要です。
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
