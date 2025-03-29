@@ -1,4 +1,4 @@
-# Livewire覚書
+# Livewire基礎知識の覚書
 
 * 目次
     * [はじめに](#はじめに)
@@ -9,6 +9,7 @@
     * [イベント](#イベント)
     * [ライフサイクルフック](#ライフサイクルフック)
     * [コンポーネントのネスト](#コンポーネントのネスト)
+    * [バリデーション](#バリデーション)
 
 
 <a id="はじめに"></a>
@@ -249,8 +250,6 @@ class CreatePost extends Component
     public $title;
 
     // mountメソッドでプロパティに初期値を割り当てる
-    // コンストラクタみたいなもの
-    // 省略すると、渡された名前と一致するプロパティを自動的に設定する
     public function mount($title = null)
     {
         $this->title = $title;
@@ -869,10 +868,6 @@ JavaScript関数を使用。
 ## ライフサイクルフック
 
 
-
-
-
-
 コンポーネント・ライフサイクル・フックを使用すると、コンポーネントの初期化、プロパティの更新、テンプレートのレンダリングなど、特定のイベントの前または後にアクションを実行できる。  
 すべてのフックメソッドで依存性注入を使用できる  
 
@@ -883,18 +878,11 @@ JavaScript関数を使用。
 |boot()|1.コンポーネントが最初に作成された時に呼び出される。<br>2.コンポーネントがリクエストされるたびに毎回呼び出される|
 |updating()|コンポーネントのプロパティが更新される直前に呼び出される。|
 |updated()|コンポーネントのプロパティが更新された直後に呼び出される。|
-
 |rendering()|render()が呼び出される前に呼び出されます。|
 |rendered()|render()が呼び出された後に呼び出されます。|
-
 |hydrate()|コンポーネントが次のリクエストの最初にリハイドレイトされるときにコールされる。|
 |dehydrate()|すべてのコンポーネントリクエストの最後に呼び出される。|
 |exception($e, $stopPropagation)|例外が発生したときに呼び出される。|
-
-
-
-あまり知られておらず、あまり利用されていないフックです。ただし、特定のシナリオでは強力になる可能性があります。
-
 
 
 ### mount
@@ -902,6 +890,7 @@ JavaScript関数を使用。
 __construct()の用途に近い。  
 ただコンポーネントはネットワークリクエストのたびにインスタンス化されるので、__construct()を使うとリクエストの度に初期化が実行される事になってしまう。  
 コンポーネントが最初に作成された時に一度だけ初期化を行いたいからmount()を使う。  
+省略すると、渡された名前と一致するプロパティを自動的に設定する。  
 
 ```php
 use Illuminate\Support\Facades\Auth;
@@ -1012,6 +1001,11 @@ class ShowPosts extends Component
 }
 ```
 
+### hydrate、dehydrate
+あまり知られておらず、あまり利用されていないフック。  
+ただし、特定のシナリオでは強力になる可能性がある。  
+
+
 ### exception
 エラーをキャッチし、エラーメッセージをカスタマイズしたり、特定の例外を無視することができる。  
 $errorをチェックし、$stopPropagationパラメータを使用してエラーをキャッチする。  
@@ -1091,32 +1085,155 @@ trait HasPostForm
 <a id="コンポーネントのネスト"></a>
 ## コンポーネントのネスト
 
-**Livewireコンポーネントは必要ないかもしれない**
-テンプレートの一部をネストされたLivewireコンポーネントに展開する前に、自問してみてください： このコンポーネント内のコンテンツは 「ライブ 」である必要があるか？そうでない場合、代わりにシンプルなBladeコンポーネントを作成することをお勧めします。Livewireコンポーネントは、そのコンポーネントがLivewireのダイナミックな性質から利益を得る場合、またはパフォーマンスに直接的な利益がある場合にのみ作成してください。
+**Livewireコンポーネントは必要ないかもしれない**  
+Livewireのネストされたコンポーネントは強力な機能だが、安易に使用すると複雑さが増大する。  
+そのため、再利用性、関心の分離、独立した状態管理などの明確なメリットがある場合にのみ使用する。  
+通常はシンプルなBladeコンポーネントを作成する。  
 
 
-Livewireのネストされたコンポーネントは、強力な機能ですが、安易に使用すると複雑さが増大し、パフォーマンスに悪影響を与える可能性があります。再利用性、関心の分離、独立した状態管理などの明確なメリットがある場合にのみ使用し、代替手段を検討した上で慎重に判断することが重要です。
+### Livewireコンポーネントをネストする方法
+親コンポーネントのBladeビューにそれを含めるだけ。
+```php
+<?php
+ 
+namespace App\Livewire;
+ 
+use Livewire\Component;
+ 
+class Dashboard extends Component
+{
+    public function render()
+    {
+        return view('livewire.dashboard');
+    }
+}
+```
+```php
+<div>
+    <h1>Dashboard</h1>
+ 
+    <livewire:todo-list /> 
+</div>
+```
+
+最初のレンダリング時、Dashboardコンポーネントは<livewire:todo-list />もその場でレンダリングする。  
+ネストされたコンポーネントはページ上で独立した独自のコンポーネントになるため、その後のDashboardコンポーネントに対するリクエスト時には再レンダリングされない。  
 
 
+### 親コンポーネントから子コンポーネントにデータを渡す
+```php
+<?php
+ 
+namespace App\Livewire;
+ 
+use Illuminate\Support\Facades\Auth;
+use Livewire\Component;
+ 
+class TodoList extends Component
+{
+    public function render()
+    {
+        return view('livewire.todo-list', [
+            'todos' => Auth::user()->todos,
+        ]);
+    }
+}
+```
+```php
+<div>
+    // 子コンポーネントのmount()メソッドを通じてそのデータを受け取ることができる。
+    <livewire:todo-count :todos="$todos" />
+    // ※以下の書き方でも同義
+    <livewire:todo-count :$todos /> 
+ 
+    <!-- ... -->
+</div>
+```
+```php
+<div>
+    // 文字列などの単純な静的値をコンポーネントに渡す場合、ステートメントの先頭のコロンを省略できる。
+    <livewire:todo-count :todos="$todos" label="Todo Count:" />
+    // $inlineブール値変数にtrue値を持たせてコンポーネントに渡す。
+    // コンポーネント・タグにinlineを単に記述する。
+    <livewire:todo-count :todos="$todos" inline />
+</div>
+```
+
+### ループ内で子要素をレンダリングする
+```php
+<div>
+    <h1>Todos</h1>
+ 
+    @foreach ($todos as $todo)
+        // キーは必須
+        <livewire:todo-item :$todo :key="$todo->id" />
+    @endforeach
+</div>
+```
+
+### Reactiveなプロパティ
+```php
+<?php
+ 
+namespace App\Livewire;
+ 
+use Livewire\Attributes\Reactive;
+use Livewire\Component;
+use App\Models\Todo;
+ 
+class TodoCount extends Component
+{
+    // #[Reactive]属性を$todosプロパティに適用
+    // 親コンポーネントで$todosが更新されると、TodoCount子コンポーネントも自動的に再レンダリングされる。
+    // ※本当に必要な場合のみ使うこと
+    #[Reactive] 
+    public $todos;
+ 
+    public function render()
+    {
+        return view('livewire.todo-count', [
+            'count' => $this->todos->count(),
+        ]);
+    }
+}
+```
+```php
+<div>
+    <h1>Todos:</h1>
+ 
+    <livewire:todo-count :$todos />
+ 
+    <!-- ... -->
+</div>
+```
 
 
+### wire:modelを使った子データへのバインド
+以下の実装で、親TodoListコンポーネントはTodoInputを他の入力要素と同じように扱い、wire:modelを使ってその値に直接バインドできるようになる。
+```php
+// 親コンポーネント
+class TodoList extends Component
+{
+    public $todo = '';
+}
+<div>
+    <livewire:todo-input wire:model="todo" /> 
+</div>
 
+// 子コンポーネント
+use Livewire\Attributes\Modelable;
+class TodoInput extends Component
+{
+    #[Modelable] 
+    public $value = '';
+}
+<div>
+    <input type="text" wire:model="value" >
+</div>
+```
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+### 保留
+* istening for events from children
+* 動的な子コンポーネント
+* 再帰コンポーネント
+* 子コンポーネントの再レンダリングを強制する
