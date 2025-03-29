@@ -321,7 +321,7 @@ class CreatePost extends Component
 }
 ```
 
-####　ルートパラメータへのアクセス
+#### ルートパラメータへのアクセス
 ```php
 use App\Livewire\ShowPost;
  

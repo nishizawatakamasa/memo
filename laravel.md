@@ -2004,6 +2004,9 @@ Route::patch() // PATCHに対応。
 Route::delete() // DELETEに対応。
 Route::options() // OPTIONSに対応。
 Route::middleware()
+// 直接ビューを表示するためのメソッド
+// viewに渡すデータを第三引数に指定する。
+Route::view('/about', 'pages.about', ['title' => '会社概要']);
 
 
 // ルーティング定義の例
