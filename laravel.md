@@ -3043,6 +3043,13 @@ resources/views/components/button.blade.phpへBladeファイルを作成する�
     <br>
     {{ $slot }} // あいうえお
 </div>
+
+
+// プリミティブ値(文字列や数値)をHTML属性を使用してコンポーネントに渡せる。例→title="タイトルです"
+// 変数は、最初に:を付けたHTML属性を使用してコンポーネントに渡せる。例→:message="$message"
+// ※親ビュー内の変数を子コンポーネント内でも使いたい場合は、明示的に渡す必要がある。
+// 子コンポーネント内では$titleや$messageというふうに使用する
+<x-alert type="error" title="タイトルです" :message="$message"/>
 ```
 
 
