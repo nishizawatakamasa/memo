@@ -719,6 +719,60 @@ $table->primary('date'); // 主キーとして設定
 
 
 
+### 既存テーブルへのカラム追加用マイグレーション
+
+作成コマンド例  
+`php artisan make:migration add_role_column_to_users_table --table=users`  
+
+実装例：
+```php
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    public function up(): void
+    {
+        Schema::table('users', function (Blueprint $table) {
+            $table->string('role')
+                ->after('name')
+                ->nullable()
+                ->default('user')
+                ->comment('権限');
+        });
+    }
+
+    public function down(): void
+    {
+        Schema::table('users', function (Blueprint $table) {
+            $table->dropColumn('role');
+        });
+    }
+};
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 <a id="モデル"></a>
 ## モデル
 
@@ -1055,6 +1109,12 @@ $users = User::query()
         $query->where('votes', '>', 100)
               ->orWhere('title', '=', 'Admin');
     })
+    ->get();
+
+// whereNot()メソッド
+// 否定条件を指定してフィルタをかける
+$users = User::query()
+    ->whereNot('role', 'admin')
     ->get();
 
 // orWhere()メソッド
@@ -3530,6 +3590,21 @@ class PostController extends Controller
 ```
 #### ゲートチェックの割り込み
 特定のユーザーにすべての機能を付与したい場合がある。beforeメソッドを使用して、他のすべての認可チェックの前に実行するクロージャを定義できる。
+
+
+#### ルートでcan:ミドルウェアとして使う
+定義
+```php
+Gate::define('staff-or-user', function (User $user) {
+    return in_array($user->role, [Role::STAFF->value, Role::USER->value], true);
+});
+```
+使用
+```php
+Route::middleware('can:staff-or-user')->group(function () {
+    Route::get('/working-time', DaioWorkingTime::class)->name('working_time');
+});
+```
 
 
 ### ポリシー
