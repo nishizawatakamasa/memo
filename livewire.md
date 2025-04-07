@@ -9,7 +9,7 @@
     * [イベント](#イベント)
     * [ライフサイクルフック](#ライフサイクルフック)
     * [コンポーネントのネスト](#コンポーネントのネスト)
-    * [バリデーション](#バリデーション)
+    * [テスト](#テスト)
 
 
 <a id="はじめに"></a>
@@ -1237,3 +1237,77 @@ class TodoInput extends Component
 * 動的な子コンポーネント
 * 再帰コンポーネント
 * 子コンポーネントの再レンダリングを強制する
+
+
+
+<a id="テスト"></a>
+## テスト
+
+コンポーネントファイルとテストファイルを同時生成するコマンド  
+※コンポーネントファイルが既に存在する場合、テストファイルのみが生成される  
+`php artisan make:livewire create-post --test`
+
+
+tests/Feature/Livewire/CreatePostTest.php。
+```php
+<?php
+
+namespace Tests\Feature\Livewire\Daio;
+
+use App\Models\User;
+use App\Livewire\Daio\HourlyWage;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Livewire\Livewire;
+use Tests\TestCase;
+use PHPUnit\Framework\Attributes\Test;
+
+// 基本的なスモークテスト
+class HourlyWageTest extends TestCase
+{
+    // このトレイトを使用すると、各テストが実行される前にデータベースがマイグレーションされ、テスト実行後に変更がロールバックされる。
+    use RefreshDatabase;
+
+    #[Test]
+    public function renders_successfully()
+    {
+        // コンポーネントを単体で直接インスタンス化し、その健全性をテストする
+        Livewire::test(HourlyWage::class)
+            ->assertStatus(200);
+    }
+
+    #[Test]
+    public function component_exists_on_the_page()
+    {
+        // テスト用ユーザーを作成
+        $user = User::factory()->create([
+            'role' => 'staff',
+        ]);
+
+        $this->actingAs($user) // テスト用ユーザーでログイン
+            ->get('/daio/hourly-wage') // エンドポイントにアクセス
+            ->assertSeeLivewire(HourlyWage::class) // コンポーネントが含まれており、正常にレンダリングされることを確認
+            ->assertOk(); // ステータスコードが200であることも確認するとより確実
+    }
+}
+```
+
+.env.testingファイル(手動で作成)
+```
+# アプリケーションキー (.envからコピー)
+APP_KEY=base64:xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx=
+```
+
+phpunit.xml
+```xml
+<!-- 以下の設定が書き込まれていることを確認 -->
+<env name="APP_ENV" value="testing"/>
+<env name="DB_CONNECTION" value="sqlite"/>
+<env name="DB_DATABASE" value=":memory:"/>
+<!-- ※設定内容の説明 -->
+<!-- SQLite インメモリデータベース -->
+<!-- データベースはメモリ上に作成され、テストが終了すると消滅する。 -->
+<!-- 物理的なファイルが作成されないため、手軽で高速。 -->
+```
+
+Livewireテストの実行コマンド  
+`php artisan test --filter Livewire`  
