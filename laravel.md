@@ -1495,8 +1495,12 @@ $flight->forceDelete();
 // 戻り値は、指定したカラムの値をキーとし、その値に対応するレコードのCollectionを持つ連想配列のようなCollection
 $collection->groupBy('カラム名');
 
-// 連想配列のキーでコレクションを並べ替える(昇順)。
-$collection->sortKeys();
+$collection->sort() // コレクションの値でソート。昇順。
+$collection->sortDesc() // 同上。降順。
+$collection->sortBy('カラム名') // 指定したカラムでコレクションをソート。昇順。
+$collection->sortByDesc('カラム名') // 同上。降順。
+$collection->sortKeys() // キーでコレクションをソート。昇順。
+$collection->sortKeysDesc() // 同上。降順。
 
 $collection->first(); // コレクションの最初の要素を取得。コレクションが空の場合はnullを返す。
 $collection->last(); // コレクションの最後の要素を取得。コレクションが空の場合はnullを返す。
