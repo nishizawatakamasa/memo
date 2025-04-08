@@ -986,12 +986,10 @@ HTML = """
 <button id="btn">格言を表示</button>
 <div id="msg"></div>
 """
-window = None
+
 # 最初に実行する関数)
-def bind(win):
-    window = win
-    btn = window.dom.get_elements("#btn")[0]
-    btn.on("click", on_click)
+def bind(window):
+    window.dom.get_elements("#btn")[0].on("click", on_click)
 # ボタンをクリックした時に実行する関数
 def on_click(e):
     msg = window.dom.get_elements("#msg")[0]
