@@ -10,6 +10,7 @@
     * [ライフサイクルフック](#ライフサイクルフック)
     * [コンポーネントのネスト](#コンポーネントのネスト)
     * [テスト](#テスト)
+    * [Voltコンポーネント](#Voltコンポーネント)
 
 
 <a id="はじめに"></a>
@@ -1272,7 +1273,7 @@ class HourlyWageTest extends TestCase
     {
         // コンポーネントを単体で直接インスタンス化し、その健全性をテストする
         Livewire::test(HourlyWage::class)
-            ->assertStatus(200);
+            ->assertOk(); // レスポンスが正常であることを確認（通常はステータスコード200）。
     }
 
     #[Test]
@@ -1286,7 +1287,7 @@ class HourlyWageTest extends TestCase
         $this->actingAs($user) // テスト用ユーザーでログイン
             ->get('/daio/hourly-wage') // エンドポイントにアクセス
             ->assertSeeLivewire(HourlyWage::class) // コンポーネントが含まれており、正常にレンダリングされることを確認
-            ->assertOk(); // ステータスコードが200であることも確認するとより確実
+            ->assertOk();
     }
 }
 ```
@@ -1311,3 +1312,56 @@ phpunit.xml
 
 Livewireテストの実行コマンド  
 `php artisan test --filter Livewire`  
+
+
+<a id="Voltコンポーネント"></a>
+## Voltコンポーネント
+
+VoltServiceProvider内でVoltにマウントされているディレクトリのいずれかに.blade.phpファイルを配置することで、Voltコンポーネントを作成できる。
+
+クラスベースのVoltコンポーネントと、そのテストファイルを生成するコマンド  
+`php artisan make:volt daio/working-time --class --test`  
+
+### クラスベースのVoltコンポーネント
+```php
+<?php
+ 
+use Livewire\Volt\Component;
+ 
+new
+#[Layout('layouts.guest')] // クラス属性はnewキーワードの後に​​定義する
+#[Title('Login')]
+class extends Component {
+    // このクラス内では、従来のLivewire構文を使用して、Livewireのすべての機能を利用できる。
+    // 基本的にrender()メソッドは不要(コンポーネントが再レンダリングされる条件は同じ)。
+    // render()メソッドを明示的に書くケースは、別のBladeファイルを使いたい場合やレンダリングするビューを動的に切り替えたい場合。
+    // 計算プロパティの値は、ファイル内のBlade部分で「$this->propertyName」のようにアクセスできる。
+    public $count = 0;
+ 
+    public function increment()
+    {
+        $this->count++;
+    }
+} ?>
+
+// 単一のルート要素でラップすることが推奨される。
+<div>
+    <h1>{{ $count }}</h1>
+    <button wire:click="increment">+</button>
+</div>
+```
+
+### テスト
+```php
+<?php
+
+// コンポーネントの指定は、WorkingTime::classではなく'daio.working-time'のように。
+Volt::test('daio.working-time')->assertOk();
+```
+### フルページコンポーネント
+```php
+use Livewire\Volt\Volt;
+ 
+Volt::route('/daio/working-time', 'daio.working-time')->name('daio.working_time');
+
+```
