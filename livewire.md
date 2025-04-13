@@ -442,6 +442,7 @@ class ShowTodos extends Component
 {
     // Eloquent制約はリクエスト間で保持されないので、計算プロパティとして定義する。
     // そうすると、その場で評価される動的プロパティ($this->todos)としてアクセスできる
+    // テンプレート内でも「$this->todos」のように、$thisオブジェクトからアクセスする必要がある。
     // クラス内でも、$this->todos()のようにメソッドとして呼ぶよりパフォーマンス上の利点がある。
     #[Computed] 
     public function todos()
