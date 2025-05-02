@@ -72,7 +72,7 @@ indent_size = 2
 
 
 ## doc
-
+[inertiaドキュメント](https://inertiajs.com/)
 
 最初のリクエストは、通常のフルページブラウザリクエスト
 
