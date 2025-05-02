@@ -9,28 +9,101 @@
 ## はじめに
 
 
-PHPとComposerをインストール
-Composer経由でLaravelインストーラーをインストール
-`composer global require laravel/installer`
 
-Laravelの新規プロジェクト作成
-`laravel new example-app`
-starter kitを聞かれたらReactを選択します
-認証方法を聞かれたらLaravel's build-in authenticationを選択します
-テストに使うフレームワークを聞かれたらPestを選択
-`npm install`と`npm run build`するか聞かれたらyes
+## Laravel 12 React Starter Kitの始め方
+1. PHPとComposerをインストール
+1. `composer global require laravel/installer`を実行-Composer経由でLaravelインストーラーをインストール
+1. `laravel new example-app`を実行-Laravelの新規プロジェクト作成
+1. starter kitを聞かれたらReactを選択
+1. 認証方法を聞かれたらLaravel's build-in authenticationを選択
+1. テストに使うフレームワークを聞かれたらPestを選択
+1. `npm install`と`npm run build`を実行するか聞かれたらyesを選択
+1. `composer require askdkc/breezejp --dev`を実行-Breezejpをインストール
+1. `php artisan breezejp`を実行-必要な言語ファイルの出力
+
+## git clone時
+`composer install`を実行-バックエンド（PHP）の依存関係をインストール  
+`npm install`を実行-フロントエンド（JavaScript）の依存関係をインストール(package.jsonを元にnode_modulesにインストール)  
+`cp .env.example .env`を実行-.env.exampleファイルをコピーして.envファイルを作成
+`php artisan key:generate`を実行-.env.exampleをコピーして.envを作成してもアプリケーションキーは設定されていないので、このコマンドで設定する。
+
+### 開発環境で開発を始める場合:
+`npm run dev`を実行-開発サーバーを起動し、ソースコードの変更を監視して自動的に再ビルド・ブラウザ更新を行ってくれる。  
+※`composer run dev`で、`npm run dev`と`php artisan serve`を同時に実行できる  
+### 本番環境にデプロイする場合、または開発環境で本番ビルドを試したい場合:
+`npm run build`を実行  
+
+
+
+
+## .prettierrc設定
+コードフォーマッターPrettierがどのようにコードをフォーマットするかのルールを指定する
+```json
+  {
+    // インデント幅をスペース2つ分に設定
+    "tabWidth": 2,
+    //  複数行にわたる配列やオブジェクトの末尾にカンマが自動で挿入される
+    "trailingComma": "es5",
+    // アロー関数の引数が1つの場合でも、常に括弧 () で囲むように設定
+    "arrowParens": "always",
+  }
+```
+
+`npm run format`-設定を適用する
+
+## .editorconfig設定
+インデント幅などを設定できる
+```
+[*.{json,js,jsx,ts,tsx}]
+indent_size = 2
+```
+
+## pushする前に
+この5つのコマンドで確認  
+`npm run lint`  
+`npm run format`  
+`npm run types`  
+`php artisan test`  
+`./vendor/bin/pint`  
+
+
+
+React の世界では、UI もまたプログラム（JavaScript）によって動的に生成される「データ」や「値」の一種として扱われる
 
 
 構成
-resources/ts/Pages:
+resources/js/Pages:
 Laravelのコントローラーから Inertia::render() で指定されるフルページコンポーネント（.tsx ファイル）を格納します。
 例: Users/Index.tsx, Users/Show.tsx, Dashboard.tsx, Auth/Login.tsx
-resources/ts/Components:
+resources/js/Components:
 再利用可能な部分的なUIコンポーネント（入れ子になるコンポーネント、.tsx ファイル）を格納します。
 例: Button.tsx, Modal.tsx, TextInput.tsx, UserAvatar.tsx
-resources/ts/Layouts (もし使う場合):
+resources/js/Layouts (もし使う場合):
 アプリケーション全体で共有される永続レイアウトコンポーネント（.tsx ファイル）を格納します。
 例: AuthenticatedLayout.tsx, GuestLayout.tsx
+
+
+
+
+
+
+
+ReactのJSX（HTMLのように見える構文）の中で、JavaScriptの変数や式（計算結果、関数の戻り値など）を使いたい場合は、その部分を波括弧 {} で囲みます。
+これにより、Reactは {} の中身を「ここはHTMLのテキストではなく、JavaScriptのコードとして評価（実行）して、その結果をここに表示（埋め込み）するんだな」と認識します。
+
+
+
+### 画像
+結論・推奨
+ロゴ、アイコン、UI要素の一部として使う静的な画像:
+resources/js/assets/images/ に置き、Reactコンポーネント内で import するのがベストプラクティスです（特にVite使用時）。
+ユーザーがアップロードした画像、DBなどで管理される動的な画像:
+storage/app/public/ に保存し、Laravel側で生成した公開URLを props でReactに渡し、そのURLを src に指定します。
+非常に単純なケースや、ビルドプロセスを通したくない場合:
+public/images/ に置き、ルートからの絶対パス /images/your-image.png で指定することも可能です。
+多くの場合、UIコンポーネントで直接使う静的画像は1番目の方法（resources/js 以下に置いて import）を使うのが最もモダンで堅牢な方法と言えるでしょう。
+
+
 
 
 
