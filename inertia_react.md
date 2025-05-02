@@ -68,6 +68,187 @@ indent_size = 2
 
 
 
+
+
+
+## doc
+
+
+最初のリクエストは、通常のフルページブラウザリクエスト
+
+以降のリクエストはすべてJSON 応答
+
+
+
+
+通常、アプリケーション内の各ページには専用のコントローラー / ルートと、対応するJavaScriptコンポーネントが存在する。
+
+コントローラー
+```php
+
+use Inertia\Inertia;
+
+class UserController extends Controller
+{
+    public function show(User $user)
+    {
+        // ページをレンダリング
+        // User/Show ページは通常、resources/js/Pages/User/Show.jsxにあるファイルに対応する
+        return Inertia::render('User/Show', [
+          'user' => $user
+        ]);
+    }
+}
+```
+コンポーネント
+```jsx
+// resources/js/Pages/User/Show.jsx
+
+import Layout from './Layout'
+import { Head } from '@inertiajs/react'
+
+// ページはアプリケーションのコントローラーからpropsとしてデータを受け取る。
+export default function Welcome({ user }) {
+  return (
+    // ページコンテンツを<Layout>コンポーネントで囲んでいる
+    <Layout>
+      <Head title="Welcome" />
+      <h1>Welcome</h1>
+      <p>Hello {user.name}, welcome to your first Inertia app!</p>
+    </Layout>
+  )
+}
+```
+
+レイアウトの作成
+```jsx
+import { Link } from '@inertiajs/react'
+
+// <Layout>コンポーネント
+export default function Layout({ children }) {
+  return (
+    <main>
+      <header>
+        <Link href="/">Home</Link>
+        <Link href="/about">About</Link>
+        <Link href="/contact">Contact</Link>
+      </header>
+      <article>{children}</article>
+    </main>
+  )
+}
+```
+
+
+
+
+
+
+永続的なレイアウト
+ポッドキャストのウェブサイトでオーディオプレーヤーを再生し続けたい場合や、ページを移動してもサイドバーナビゲーションのスクロール位置を維持したい場合など
+
+
+
+
+
+リダイレクト
+```php
+class UsersController extends Controller
+{
+    public function index()
+    {
+        return Inertia::render('Users/Index', [
+            'users' => User::all(),
+        ]);
+    }
+
+    public function store(Request $request)
+    {
+        User::create(
+            $request->validate([
+                'name' => ['required', 'max:50'],
+                'email' => ['required', 'max:50', 'email'],
+            ])
+        );
+
+        // リダイレクトを返す
+        return to_route('users.index');
+    }
+}
+```
+
+
+速記ルート
+「FAQ」や「About」ページなど、対応するコントローラー メソッドを必要としないページがある場合は、Route::inertia()メソッドを介してコンポーネントに直接ルーティングできる。
+```jsx
+Route::inertia('/about', 'About');
+```
+
+
+
+
+
+タイトルとメタ
+ヘッドコンポーネント
+<head>要素を追加するには、<Head>コンポーネントを使用
+```jsx
+import { Head } from '@inertiajs/react'
+
+<Head>
+  <title>Your page title</title>
+  <meta name="description" content="Your page description" />
+</Head>
+
+// タイトルだけなら略して書ける
+<Head title="Your page title" />
+```
+
+
+リンク
+Inertiaアプリ内で他のページへのリンクを作成するには、通常、Inertia<Link> コンポーネントを使う
+<a>リンクのラップで、ページ全体の再読み込みを防ぐ。
+デフォルトでは、Inertia はリンクをアンカー<a>要素としてレンダリングするが、
+asプロパティを使用してタグを変更することもできる
+dataプロパティを使用してリクエストに追加データを指定できる
+```jsx
+import { Link } from '@inertiajs/react'
+
+<Link href="/logout" method="post" as="button" data={{ foo: bar }}>Logout</Link>
+```
+
+
+手動訪問
+```jsx
+import { router } from '@inertiajs/react'
+
+router.get(url, data, options)
+router.post(url, data, options)
+router.put(url, data, options)
+router.patch(url, data, options)
+router.delete(url, options)
+router.reload(options) // Uses the current URL
+```
+
+
+
+
+フォームの送信
+フォーム送信をインターセプトしてからInertia を使ってリクエストを行う
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 React の世界では、UI もまたプログラム（JavaScript）によって動的に生成される「データ」や「値」の一種として扱われる
 
 
