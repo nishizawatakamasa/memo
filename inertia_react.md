@@ -218,15 +218,50 @@ import { Link } from '@inertiajs/react'
 
 
 手動訪問
-```jsx
+```ts
 import { router } from '@inertiajs/react'
 
-router.get(url, data, options)
-router.post(url, data, options)
-router.put(url, data, options)
-router.patch(url, data, options)
-router.delete(url, options)
-router.reload(options) // Uses the current URL
+// 全てurl引数のみ必須
+
+// 汎用メソッド
+router.visit(url, {
+  method: 'get',
+  data: {},
+  replace: false,
+  preserveState: false,
+  preserveScroll: false,
+  only: [],
+  except: [],
+  headers: {},
+  errorBag: null,
+  forceFormData: false,
+  queryStringArrayFormat: 'brackets',
+  async: false,
+  showProgress: true,
+  fresh: false,
+  reset: [],
+  preserveUrl: false,
+  prefetch: false,
+  onCancelToken: cancelToken => {},
+  onCancel: () => {},
+  onBefore: visit => {},
+  onStart: visit => {},
+  onProgress: progress => {},
+  onSuccess: page => {},
+  onError: errors => {},
+  onFinish: visit => {},
+  onPrefetching: () => {},
+  onPrefetched: () => {},
+})
+
+// 特化メソッド
+router.get(url, data, Omit<VisitOptions, 'method' | 'data'>)
+router.post(url, data, Omit<VisitOptions, 'method' | 'data'>)
+router.put(url, data, Omit<VisitOptions, 'method' | 'data'>)
+router.patch(url, data, Omit<VisitOptions, 'method' | 'data'>)
+router.delete(url, options?: Omit<VisitOptions, 'method'>)
+// Uses the current URL
+router.reload(options?: Omit<VisitOptions, 'preserveScroll' | 'preserveState'>)
 ```
 
 
@@ -234,6 +269,100 @@ router.reload(options) // Uses the current URL
 
 フォームの送信
 フォーム送信をインターセプトしてからInertia を使ってリクエストを行う
+
+
+
+
+
+
+
+部分的なリロード
+
+
+* コントローラーは通常通り実行される
+* サーバーから特定のpropsのみを受け取って更新
+* Reactが差分のみを再レンダリング
+
+```jsx
+import { router } from '@inertiajs/react'
+
+
+
+// props のキーに対応するキーの配列を指定
+// 特定のpropsのみ
+router.reload({ only: ['users'] })
+// 特定のpropsを除く
+router.reload({ except: ['users'] })
+
+
+
+```
+
+```php
+// Partial reload の際、クロージャで囲むと必要なデータだけを遅延評価して取得できる。
+return Inertia::render('Users/Index', [
+    'users' => fn () => User::all(),
+    'companies' => fn () => Company::all(),
+]);
+
+
+return Inertia::render('Users/Index', [
+    // 常に評価される
+    'users' => User::all()、
+    // 必要なときだけ評価される
+    'users' => fn () => User::all()、
+
+    // only で呼ばれた時だけのピンポイント登板。
+    'users' => Inertia::optional(fn () => User::all())、
+    // 基本スタメンだけど、except でお休みできるし、only で呼ばれなければ出番なし。
+    'users' => Inertia::always(User::all())、
+]);
+
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+## React
+
+
+
+
+
+コア概念
+
+
+* コンポーネント
+  * Reactアプリはコンポーネント(UIの部品)で構成されている。
+  * コンポーネントは、JSXを返すJavaScript関数として定義する。
+  * JSXは、JavaScriptがHTMLに化けたマークアップ構文。JSの値(式)を`{}`で埋め込める。
+  * 埋め込んだ値がtrue, false, true, null, undefinedの場合は何もレンダリングしない。
+  * JSXの配列は兄弟要素としてレンダリングされる
+  * 配列内の各要素をmap等でレンダリングする際には、兄弟の中でそれを一意に識別するためのkey属性(文字列または数値)を設定する必要がある。
+  * 単一の要素しか返せないので、透明なラッパーとして<></>のようなタグで囲むこともある
+  * export default キーワードは、ファイル内のメインコンポーネントを指定している。
+* Props
+* State
+* フック
+* イベント処理
+* 条件付きレンダリング
+* リストとキー
+
+
+
+
+
 
 
 

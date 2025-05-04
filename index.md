@@ -18,7 +18,7 @@
         * [plotly.express](./plotly_express.md)
         * scikit-learn
     * AIアルゴリズム
-        * 線形回帰
+        * [テーブルデータ教師あり](./table_supervised.md)
     * 数学
         * 微分
         * 線形代数
