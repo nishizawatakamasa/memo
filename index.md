@@ -61,5 +61,8 @@
 * Linux
 * Docker
 * クラウド
+    * Render
+    * Cloudflare Pages
+    * Neon(DBaaS)
 * CI/CD
 CI/CDは、何か特定の技術を指すものではなく、ソフトウェアの変更を常にテストし、自動で本番環境に適用できるような状態にしておく開発手法のことをいう。
