@@ -206,8 +206,8 @@ import { Head } from '@inertiajs/react'
 
 リンク
 Inertiaアプリ内で他のページへのリンクを作成するには、通常、Inertia<Link> コンポーネントを使う
-<a>リンクのラップで、ページ全体の再読み込みを防ぐ。
-デフォルトでは、Inertia はリンクをアンカー<a>要素としてレンダリングするが、
+アンカーリンクのラップで、ページ全体の再読み込みを防ぐ。
+デフォルトでは、Inertia はリンクをアンカー要素としてレンダリングするが、
 asプロパティを使用してタグを変更することもできる
 dataプロパティを使用してリクエストに追加データを指定できる
 ```jsx
@@ -255,10 +255,10 @@ router.visit(url, {
 })
 
 // 特化メソッド
-router.get(url, data, Omit<VisitOptions, 'method' | 'data'>)
-router.post(url, data, Omit<VisitOptions, 'method' | 'data'>)
-router.put(url, data, Omit<VisitOptions, 'method' | 'data'>)
-router.patch(url, data, Omit<VisitOptions, 'method' | 'data'>)
+router.get(url, data, options?: Omit<VisitOptions, 'method' | 'data'>)
+router.post(url, data, options?: Omit<VisitOptions, 'method' | 'data'>)
+router.put(url, data, options?: Omit<VisitOptions, 'method' | 'data'>)
+router.patch(url, data, options?: Omit<VisitOptions, 'method' | 'data'>)
 router.delete(url, options?: Omit<VisitOptions, 'method'>)
 // Uses the current URL
 router.reload(options?: Omit<VisitOptions, 'preserveScroll' | 'preserveState'>)
@@ -267,36 +267,58 @@ router.reload(options?: Omit<VisitOptions, 'preserveScroll' | 'preserveState'>)
 
 
 
-フォームの送信
-フォーム送信をインターセプトしてからInertia を使ってリクエストを行う
+フォームの送信  
 
+```jsx
+import { useForm } from '@inertiajs/react'
 
+// useForm は、フォームのデータを内部で状態として管理する
+const { data, setData, post, processing, errors } = useForm({
+  // 各データ名と、初期値を指定
+  email: '',
+  password: '',
+  remember: false,
+})
 
+// フォーム送信をインターセプトしてからInertiaを使ってリクエストを行う
+function submit(e) {
+  // フォームのデフォルト動作をキャンセルする
+  e.preventDefault()
+  post('/login')
+}
 
+return (
+  <form onSubmit={submit}>
+    <input type="text" value={data.email} onChange={e => setData('email', e.target.value)} />
+    {errors.email && <div>{errors.email}</div>}
+    <input type="password" value={data.password} onChange={e => setData('password', e.target.value)} />
+    {errors.password && <div>{errors.password}</div>}
+    <input type="checkbox" checked={data.remember} onChange={e => setData('remember', e.target.checked)} /> Remember Me
+    <button type="submit" disabled={processing}>Login</button>
+  </form>
+)
+```
 
 
 
 部分的なリロード
-
-
 * コントローラーは通常通り実行される
 * サーバーから特定のpropsのみを受け取って更新
 * Reactが差分のみを再レンダリング
 
+
+
+
 ```jsx
 import { router } from '@inertiajs/react'
-
-
 
 // props のキーに対応するキーの配列を指定
 // 特定のpropsのみ
 router.reload({ only: ['users'] })
 // 特定のpropsを除く
 router.reload({ except: ['users'] })
-
-
-
 ```
+
 
 ```php
 // Partial reload の際、クロージャで囲むと必要なデータだけを遅延評価して取得できる。
@@ -304,7 +326,6 @@ return Inertia::render('Users/Index', [
     'users' => fn () => User::all(),
     'companies' => fn () => Company::all(),
 ]);
-
 
 return Inertia::render('Users/Index', [
     // 常に評価される
@@ -317,31 +338,33 @@ return Inertia::render('Users/Index', [
     // 基本スタメンだけど、except でお休みできるし、only で呼ばれなければ出番なし。
     'users' => Inertia::always(User::all())、
 ]);
-
-
 ```
 
 
 
 
 
-
-
-
-
-
-
-
-
+usePage
+Link
+useForm(内部でrouter使用)
+router
+useRemember
 
 ## React
 
+
+useState
+useEffect
+
+useContext
+useRef
+useCallback
+useMemo
 
 
 
 
 コア概念
-
 
 * コンポーネント
   * Reactアプリはコンポーネント(UIの部品)で構成されている。
@@ -370,20 +393,12 @@ return Inertia::render('Users/Index', [
 
 
 
-
-
-
-
-
-
-
-
 React の世界では、UI もまたプログラム（JavaScript）によって動的に生成される「データ」や「値」の一種として扱われる
 
 
 構成
 resources/js/Pages:
-Laravelのコントローラーから Inertia::render() で指定されるフルページコンポーネント（.tsx ファイル）を格納します。
+Laravelのコントローラーから Inertia::render() で指定されるフルページコンポーネント（.tsx ファイル）を格納
 例: Users/Index.tsx, Users/Show.tsx, Dashboard.tsx, Auth/Login.tsx
 resources/js/Components:
 再利用可能な部分的なUIコンポーネント（入れ子になるコンポーネント、.tsx ファイル）を格納します。
@@ -395,11 +410,6 @@ resources/js/Layouts (もし使う場合):
 
 
 
-
-
-
-ReactのJSX（HTMLのように見える構文）の中で、JavaScriptの変数や式（計算結果、関数の戻り値など）を使いたい場合は、その部分を波括弧 {} で囲みます。
-これにより、Reactは {} の中身を「ここはHTMLのテキストではなく、JavaScriptのコードとして評価（実行）して、その結果をここに表示（埋め込み）するんだな」と認識します。
 
 
 
