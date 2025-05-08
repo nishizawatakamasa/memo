@@ -2,12 +2,13 @@
 
 * 目次
     * [はじめに](#はじめに)
+    * [inertia](#inertia)
+    * [React](#React)
 
 
 
 <a id="はじめに"></a>
 ## はじめに
-
 
 
 ## Laravel 12 React Starter Kitの始め方
@@ -67,25 +68,87 @@ indent_size = 2
 `./vendor/bin/pint`  
 
 
+<a id="inertia"></a>
+## inertia
 
-
-
-
-## doc
 [inertiaドキュメント](https://inertiajs.com/)
 
-最初のリクエストは、通常のフルページブラウザリクエスト
+### フルページコンポーネント
 
-以降のリクエストはすべてJSON 応答
+* 最初のリクエストは、通常のフルページブラウザリクエスト
+* 以降のリクエストはすべてJSON 応答
+* 通常、アプリケーション内の各ページには専用のコントローラー / ルートと、対応するJavaScriptコンポーネントが存在する。
+* フルページコンポーネントを作成がInertiaの基本的なアプローチ
+* 各Laravelルートが特定のReactコンポーネントに対応する
+* Laravel ルーティング: 通常通り、routes/web.php などでルートを定義
+* Laravel コントローラー:リクエストを処理し、必要なデータを準備
+* return Inertia::render() を使ってレスポンスを返す。このメソッドの第一引数には、表示したいReactコンポーネントの名前を指定し、第二引数にはそのコンポーネントに渡したいデータ（props）を連想配列で指定。
+* フルページコンポーネント内でUIを部分的なコンポーネントに分割し、入れ子にすることは、コードを整理し、保守性や再利用性を高めるための標準的で推奨されるプラクティス。
+* Inertia + React 環境では、Reactコンポーネントは手動で作成するのが標準的な方法
+
+構成
+* resources/js/Pages:
+* Laravelのコントローラーから Inertia::render() で指定されるフルページコンポーネント（.tsx ファイル）を格納
+* 例: Users/Index.tsx, Users/Show.tsx, Dashboard.tsx, Auth/Login.tsx
+* resources/js/Components:
+* 再利用可能な部分的なUIコンポーネント（入れ子になるコンポーネント、.tsx ファイル）を格納
+* 例: Button.tsx, Modal.tsx, TextInput.tsx, UserAvatar.tsx
+* resources/js/Layouts (もし使う場合):
+* アプリケーション全体で共有される永続レイアウトコンポーネント（.tsx ファイル）を格納
+* 例: AuthenticatedLayout.tsx, GuestLayout.tsx
 
 
-
-
-通常、アプリケーション内の各ページには専用のコントローラー / ルートと、対応するJavaScriptコンポーネントが存在する。
-
+#### 例1
 コントローラー
 ```php
+<?php
 
+namespace App\Http\Controllers;
+
+use App\Models\User;
+use Illuminate\Http\Request;
+use Inertia\Inertia; // Import Inertia
+
+class UserController extends Controller
+{
+    public function index()
+    {
+        $users = User::all();
+
+        // 'Users/Index' という名前のReactコンポーネントを
+        // 'users' というプロップスと共にレンダリングする
+        return Inertia::render('Users/Index', [
+            'users' => $users,
+        ]);
+    }
+}
+```
+コンポーネント
+```jsx
+// resources/js/Pages/Users/Index.jsx
+import React from 'react';
+import Layout from '@/Layouts/Layout'; // 例: 共通レイアウト
+
+export default function Index({ users }) { // コントローラーから渡された 'users'propsを受け取る
+  return (
+    <div>
+      <h1>Users</h1>
+      <ul>
+        {users.map(user => (
+          <li key={user.id}>{user.name} ({user.email})</li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
+// オプション: 永続レイアウトを設定
+Index.layout = page => <Layout children={page} title="User List" />;
+```
+
+#### 例2
+コントローラー
+```php
 use Inertia\Inertia;
 
 class UserController extends Controller
@@ -119,7 +182,6 @@ export default function Welcome({ user }) {
   )
 }
 ```
-
 レイアウトの作成
 ```jsx
 import { Link } from '@inertiajs/react'
@@ -139,19 +201,11 @@ export default function Layout({ children }) {
 }
 ```
 
-
-
-
-
-
-永続的なレイアウト
+### 永続的なレイアウト
 ポッドキャストのウェブサイトでオーディオプレーヤーを再生し続けたい場合や、ページを移動してもサイドバーナビゲーションのスクロール位置を維持したい場合など
 
 
-
-
-
-リダイレクト
+### リダイレクト
 ```php
 class UsersController extends Controller
 {
@@ -177,18 +231,14 @@ class UsersController extends Controller
 }
 ```
 
-
-速記ルート
+### 速記ルート
 「FAQ」や「About」ページなど、対応するコントローラー メソッドを必要としないページがある場合は、Route::inertia()メソッドを介してコンポーネントに直接ルーティングできる。
 ```jsx
 Route::inertia('/about', 'About');
 ```
 
 
-
-
-
-タイトルとメタ
+### タイトルとメタ
 ヘッドコンポーネント
 <head>要素を追加するには、<Head>コンポーネントを使用
 ```jsx
@@ -203,21 +253,19 @@ import { Head } from '@inertiajs/react'
 <Head title="Your page title" />
 ```
 
-
-リンク
-Inertiaアプリ内で他のページへのリンクを作成するには、通常、Inertia<Link> コンポーネントを使う
-アンカーリンクのラップで、ページ全体の再読み込みを防ぐ。
-デフォルトでは、Inertia はリンクをアンカー要素としてレンダリングするが、
-asプロパティを使用してタグを変更することもできる
-dataプロパティを使用してリクエストに追加データを指定できる
+### リンク
+* Inertiaアプリ内で他のページへのリンクを作成するには、通常、Inertia<Link> コンポーネントを使う
+* アンカーリンクのラップで、ページ全体の再読み込みを防ぐ。
+* デフォルトでは、Inertia はリンクをアンカー要素としてレンダリングするが、
+* asプロパティを使用してタグを変更することもできる
+* dataプロパティを使用してリクエストに追加データを指定できる
 ```jsx
 import { Link } from '@inertiajs/react'
 
 <Link href="/logout" method="post" as="button" data={{ foo: bar }}>Logout</Link>
 ```
 
-
-手動訪問
+### 手動訪問
 ```ts
 import { router } from '@inertiajs/react'
 
@@ -265,9 +313,7 @@ router.reload(options?: Omit<VisitOptions, 'preserveScroll' | 'preserveState'>)
 ```
 
 
-
-
-フォームの送信  
+### フォームの送信  
 
 ```jsx
 import { useForm } from '@inertiajs/react'
@@ -299,14 +345,10 @@ return (
 )
 ```
 
-
-
-部分的なリロード
+### 部分的なリロード
 * コントローラーは通常通り実行される
 * サーバーから特定のpropsのみを受け取って更新
 * Reactが差分のみを再レンダリング
-
-
 
 
 ```jsx
@@ -318,7 +360,6 @@ router.reload({ only: ['users'] })
 // 特定のpropsを除く
 router.reload({ except: ['users'] })
 ```
-
 
 ```php
 // Partial reload の際、クロージャで囲むと必要なデータだけを遅延評価して取得できる。
@@ -341,8 +382,7 @@ return Inertia::render('Users/Index', [
 ```
 
 
-
-
+### 大事っぽい
 
 usePage
 Link
@@ -350,23 +390,23 @@ useForm(内部でrouter使用)
 router
 useRemember
 
+### 画像
+結論・推奨  
+ロゴ、アイコン、UI要素の一部として使う静的な画像:  
+resources/js/assets/images/ に置き、Reactコンポーネント内で import するのがベストプラクティスです（特にVite使用時）。  
+ユーザーがアップロードした画像、DBなどで管理される動的な画像:  
+storage/app/public/ に保存し、Laravel側で生成した公開URLを props でReactに渡し、そのURLを src に指定します。  
+非常に単純なケースや、ビルドプロセスを通したくない場合:  
+public/images/ に置き、ルートからの絶対パス /images/your-image.png で指定することも可能です。  
+多くの場合、UIコンポーネントで直接使う静的画像は1番目の方法（resources/js 以下に置いて import）を使うのが最もモダンで堅牢な方法と言えるでしょう。  
+
+<a id="React"></a>
 ## React
 
-
-useState
-useEffect
-
-useContext
-useRef
-useCallback
-useMemo
+[クイックスタート](https://ja.react.dev/learn)
 
 
-
-
-コア概念
-
-* コンポーネント
+* コア概念
   * Reactアプリはコンポーネント(UIの部品)で構成されている。
   * コンポーネントは、JSXを返すJavaScript関数として定義する。
   * JSXは、JavaScriptがHTMLに化けたマークアップ構文。JSの値(式)を`{}`で埋め込める。
@@ -375,152 +415,89 @@ useMemo
   * 配列内の各要素をmap等でレンダリングする際には、兄弟の中でそれを一意に識別するためのkey属性(文字列または数値)を設定する必要がある。
   * 単一の要素しか返せないので、透明なラッパーとして<></>のようなタグで囲むこともある
   * export default キーワードは、ファイル内のメインコンポーネントを指定している。
-* Props
-* State
-* フック
-* イベント処理
-* 条件付きレンダリング
 
 
-
-
-
-
-
-
-
-
-
-
-React の世界では、UI もまたプログラム（JavaScript）によって動的に生成される「データ」や「値」の一種として扱われる
-
-
-構成
-resources/js/Pages:
-Laravelのコントローラーから Inertia::render() で指定されるフルページコンポーネント（.tsx ファイル）を格納
-例: Users/Index.tsx, Users/Show.tsx, Dashboard.tsx, Auth/Login.tsx
-resources/js/Components:
-再利用可能な部分的なUIコンポーネント（入れ子になるコンポーネント、.tsx ファイル）を格納します。
-例: Button.tsx, Modal.tsx, TextInput.tsx, UserAvatar.tsx
-resources/js/Layouts (もし使う場合):
-アプリケーション全体で共有される永続レイアウトコンポーネント（.tsx ファイル）を格納します。
-例: AuthenticatedLayout.tsx, GuestLayout.tsx
-
-
-
-
-
-
-
-### 画像
-結論・推奨
-ロゴ、アイコン、UI要素の一部として使う静的な画像:
-resources/js/assets/images/ に置き、Reactコンポーネント内で import するのがベストプラクティスです（特にVite使用時）。
-ユーザーがアップロードした画像、DBなどで管理される動的な画像:
-storage/app/public/ に保存し、Laravel側で生成した公開URLを props でReactに渡し、そのURLを src に指定します。
-非常に単純なケースや、ビルドプロセスを通したくない場合:
-public/images/ に置き、ルートからの絶対パス /images/your-image.png で指定することも可能です。
-多くの場合、UIコンポーネントで直接使う静的画像は1番目の方法（resources/js 以下に置いて import）を使うのが最もモダンで堅牢な方法と言えるでしょう。
-
-
-
-
-
-Inertia + React 環境では、Reactコンポーネントは手動で作成するのが標準的な方法
-
-
-フルページコンポーネントを作成がInertiaの基本的なアプローチです。
-各Laravelルートが特定のReactコンポーネントに対応する
-
-```php
-<?php
-
-namespace App\Http\Controllers;
-
-use App\Models\User;
-use Illuminate\Http\Request;
-use Inertia\Inertia; // Import Inertia
-
-class UserController extends Controller
-{
-    public function index()
-    {
-        $users = User::all();
-
-        // 'Users/Index' という名前のReactコンポーネントを
-        // 'users' というプロップスと共にレンダリングする
-        return Inertia::render('Users/Index', [
-            'users' => $users,
-        ]);
-    }
-}
-```
+### イベント処理
+コンポーネントの中でイベントハンドラ関数を宣言することで、イベントに応答できる
 ```jsx
-// resources/js/Pages/Users/Index.jsx
-import React from 'react';
-import Layout from '@/Layouts/Layout'; // 例: 共通レイアウト
+const MyButton = () => {
 
-export default function Index({ users }) { // コントローラーから渡された 'users' プロップスを受け取る
+  const handleClick = () => {
+    alert('You clicked me!');
+  }
+
   return (
-    <div>
-      <h1>Users</h1>
-      <ul>
-        {users.map(user => (
-          <li key={user.id}>{user.name} ({user.email})</li>
-        ))}
-      </ul>
-    </div>
+    <button onClick={handleClick}>
+      Click me
+    </button>
+  );
+}
+```
+
+### state
+コンポーネントに情報を「記憶」させる
+```jsx
+// React から useState をインポート
+import { useState } from 'react';
+
+// 同じコンポーネントを複数の場所でレンダーした場合、それぞれが独自のstateを持つ。
+const MyButton = () => {
+  // useStateからはstateと、それを更新するための関数を得られる。
+  // 名前は何でもいいが、慣習的には [something, setSomething] のように記述する。
+  // useStateには初期値を渡す
+  const [count, setCount] = useState(0);
+
+  const handleClick = () => {
+    // stateが更新されると、再レンダリングがなされる(ただし関数の完了までは待つ)
+    setCount(count + 1);
+  }
+
+  return (
+    <button onClick={handleClick}>
+      Clicked {count} times
+    </button>
+  );
+}
+```
+
+### フック
+
+useで始まる関数は、フック (Hook) と呼ばれる。
+* useState
+* useEffect
+* useContext
+* useRef
+* useCallback
+* useMemo
+
+
+### props
+コンポーネントはpropsと呼ばれる任意の入力を受け取ることができる。
+
+```jsx
+function MyButton({ count, onClick }) {
+  return (
+    <button onClick={onClick}>
+      Clicked {count} times
+    </button>
   );
 }
 
-// オプション: 永続レイアウトを設定
-Index.layout = page => <Layout children={page} title="User List" />;
-```
 
+export default function MyApp() {
+  const [count, setCount] = useState(0);
 
+  function handleClick() {
+    setCount(count + 1);
+  }
 
-Laravel ルーティング: 通常通り、routes/web.php などでルートを定義します。
-Laravel コントローラー:
-リクエストを処理し、必要なデータを準備します。
-return Inertia::render() を使ってレスポンスを返します。このメソッドの第一引数には、表示したいReactコンポーネントの名前を指定し、第二引数にはそのコンポーネントに渡したい**データ（プロップス）**を連想配列で指定します。
-
-フルページコンポーネント内でUIを部分的なコンポーネントに分割し、入れ子にすることは、コードを整理し、保守性や再利用性を高めるための標準的で推奨されるプラクティス。
-
-
-Reactコンポーネントをアロー関数で書く
-
-
-
-
-
-
-
-
-return Inertia::render('Users/Index', [
-    'foo' => $foo,
-    'bar' => $bar,
-    'baz' => $baz,
-]);
-
-
-
-import React from 'react';
-
-// 引数の部分で直接キー名を指定して受け取る
-const UsersIndex = ({ foo, bar, baz }) => {
   return (
     <div>
-      {/* 直接変数名でアクセスできる */}
-      <div>Hello, {foo}!</div>
-      <div>Hello, {bar}!</div>
-      <div>Hello, {baz}!</div>
+      <h1>Counters that update together</h1>
+      <MyButton count={count} onClick={handleClick} />
+      <MyButton count={count} onClick={handleClick} />
     </div>
   );
-};
+}
+```
 
-export default UsersIndex;
-
-
-フルページコンポーネントはresources/js/Pages内に、
-入れ子のコンポーネントは resources/js/Components内に、
-格納するのですか？
