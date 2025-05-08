@@ -318,31 +318,37 @@ router.reload(options?: Omit<VisitOptions, 'preserveScroll' | 'preserveState'>)
 ```jsx
 import { useForm } from '@inertiajs/react'
 
-// useForm は、フォームのデータを内部で状態として管理する
-const { data, setData, post, processing, errors } = useForm({
-  // 各データ名と、初期値を指定
-  email: '',
-  password: '',
-  remember: false,
-})
 
-// フォーム送信をインターセプトしてからInertiaを使ってリクエストを行う
-function submit(e) {
-  // フォームのデフォルト動作をキャンセルする
-  e.preventDefault()
-  post('/login')
+const MyForm = () => {
+  
+  // useFormは、フォームのデータを内部で状態として管理する(内部ではrouterを使用してHTTPリクエストを送信している)
+  const { data, setData, post, processing, errors } = useForm({
+    // 各データ名と、初期値を指定
+    email: '',
+    password: '',
+    remember: false,
+  })
+
+  // フォーム送信をインターセプトしてからInertiaを使ってリクエストを行う
+  const submit = (e) => {
+    // フォームのデフォルト動作をキャンセルする
+    e.preventDefault()
+    post('/login')
+  }
+  
+  return (
+    <form onSubmit={submit}>
+      <input type="text" value={data.email} onChange={e => setData('email', e.target.value)} />
+      {errors.email && <div>{errors.email}</div>}
+      <input type="password" value={data.password} onChange={e => setData('password', e.target.value)} />
+      {errors.password && <div>{errors.password}</div>}
+      <input type="checkbox" checked={data.remember} onChange={e => setData('remember', e.target.checked)} /> Remember Me
+      <button type="submit" disabled={processing}>Login</button>
+    </form>
+  )
 }
 
-return (
-  <form onSubmit={submit}>
-    <input type="text" value={data.email} onChange={e => setData('email', e.target.value)} />
-    {errors.email && <div>{errors.email}</div>}
-    <input type="password" value={data.password} onChange={e => setData('password', e.target.value)} />
-    {errors.password && <div>{errors.password}</div>}
-    <input type="checkbox" checked={data.remember} onChange={e => setData('remember', e.target.checked)} /> Remember Me
-    <button type="submit" disabled={processing}>Login</button>
-  </form>
-)
+export default MyForm;
 ```
 
 ### 部分的なリロード
@@ -385,9 +391,6 @@ return Inertia::render('Users/Index', [
 ### 大事っぽい
 
 usePage
-Link
-useForm(内部でrouter使用)
-router
 useRemember
 
 ### 画像
@@ -462,13 +465,18 @@ const MyButton = () => {
 
 ### フック
 
-useで始まる関数は、フック (Hook) と呼ばれる。
+useで始まる関数は、フック (Hook) と呼ばれる。※inertiaのuse○○も同じ。
 * useState
 * useEffect
 * useContext
 * useRef
 * useCallback
 * useMemo
+
+#### 基本
+* 関数コンポーネントのトップレベルで呼び出し、コンポーネントに特定の能力やデータをもたらす
+* Reactのフック：汎用的なコア機能。部品。
+* Inertiaのフック：高レベルな便利機能。内部でReactのフックを使ってる。
 
 
 ### props
