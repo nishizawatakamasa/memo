@@ -412,30 +412,13 @@ public/images/ に置き、ルートからの絶対パス /images/your-image.png
 * コア概念
   * Reactアプリはコンポーネント(UIの部品)で構成されている。
   * コンポーネントは、JSXを返すJavaScript関数として定義する。
-  * JSXは、JavaScriptがHTMLに化けたマークアップ構文。JSの値(式)を`{}`で埋め込める。
+  * JSXは、JavaScriptがHTMLに化けたマークアップ構文。JSの値(関数)を`{}`で埋め込める。
   * 埋め込んだ値がtrue, false, true, null, undefinedの場合は何もレンダリングしない。
   * JSXの配列は兄弟要素としてレンダリングされる
   * 配列内の各要素をmap等でレンダリングする際には、兄弟の中でそれを一意に識別するためのkey属性(文字列または数値)を設定する必要がある。
   * 単一の要素しか返せないので、透明なラッパーとして<></>のようなタグで囲むこともある
   * export default キーワードは、ファイル内のメインコンポーネントを指定している。
 
-
-### イベント処理
-コンポーネントの中でイベントハンドラ関数を宣言することで、イベントに応答できる
-```jsx
-const MyButton = () => {
-
-  const handleClick = () => {
-    alert('You clicked me!');
-  }
-
-  return (
-    <button onClick={handleClick}>
-      Click me
-    </button>
-  );
-}
-```
 
 ### state
 コンポーネントに情報を「記憶」させる
@@ -483,7 +466,7 @@ useで始まる関数は、フック (Hook) と呼ばれる。※inertiaのuse�
 コンポーネントはpropsと呼ばれる任意の入力を受け取ることができる。
 
 ```jsx
-function MyButton({ count, onClick }) {
+const MyButton = ({ count, onClick }) => {
   return (
     <button onClick={onClick}>
       Clicked {count} times
@@ -491,8 +474,7 @@ function MyButton({ count, onClick }) {
   );
 }
 
-
-export default function MyApp() {
+const MyApp = () => {
   const [count, setCount] = useState(0);
 
   function handleClick() {
@@ -507,5 +489,46 @@ export default function MyApp() {
     </div>
   );
 }
+
+export default  MyApp;
 ```
+
+### イベント処理
+コンポーネントの中でイベントハンドラ関数を宣言することで、イベントに応答できる
+```jsx
+const MyButton = () => {
+
+  const handleClick = () => {
+    alert('You clicked me!');
+  }
+
+  return (
+    <button onClick={handleClick}>
+      Click me
+    </button>
+  );
+}
+```
+
+* onから始まるイベントハンドラ属性（onClick, onChange, onSubmit など）に指定した関数には、必ずイベントオブジェクトが第一引数として渡される。
+* イベントオブジェクトを指す変数名には慣習的にeが使われる(eventやevtのこともある)。
+* このイベントオブジェクトには、イベントが発生した要素や、その時の状況に関する様々な情報が含まれている。
+* 渡されるイベントオブジェクトの型（種類）が異なる場合がある。
+  * onChange (input要素) -> ChangeEvent
+  * onClick (多くの要素) -> MouseEvent
+  * onSubmit (form要素) -> FormEvent (または SubmitEvent？違うかも)
+  * onKeyDown (多くの要素) -> KeyboardEvent
+  * など。
+* それぞれのイベントオブジェクトは、そのイベント特有のプロパティを持っている。
+* 例えば、KeyboardEvent には key や keyCode といったプロパティがあり、MouseEvent には clientX や clientY といったプロパティがある。
+
+
+例：  
+onChange: input要素の値が変更されたときに発生するイベント  
+e.target: イベントが発生したDOM要素（この場合は \<input> 要素）そのものを指す  
+
+
+#### イベントの伝搬を止めるためによく使われるメソッド
+* e.preventDefault()（フォームのデフォルト動作をキャンセル）
+* e.stopPropagation()（イベントのバブリングを停止）
 
