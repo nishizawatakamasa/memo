@@ -73,6 +73,24 @@ indent_size = 2
 
 [inertiaドキュメント](https://inertiajs.com/)
 
+### 有用ツール
+Headコンポーネント
+Linkコンポーネント
+Inertia::render()
+Home.layout = page => <Layout children={page} title="Welcome" />
+to_route()
+Route::inertia()
+router
+useForm()
+Inertia::defer()
+usePoll()
+Linkコンポーネントのprefetch
+WhenVisible
+Inertia::merge(),Inertia::deepMerge()
+useRemember
+usePage
+
+
 ### フルページコンポーネント
 
 * 最初のリクエストは、通常のフルページブラウザリクエスト
@@ -322,7 +340,8 @@ import { useForm } from '@inertiajs/react'
 const MyForm = () => {
   
   // useFormは、フォームのデータを内部で状態として管理する(内部ではrouterを使用してHTTPリクエストを送信している)
-  const { data, setData, post, processing, errors } = useForm({
+  // 任意で第一引数に一意のフォームキーを渡し、フォームデータとエラーを自動的にブラウザ履歴に保存できる
+  const { data, setData, post, processing, errors } = useForm('yourFormKey', {
     // 各データ名と、初期値を指定
     email: '',
     password: '',
@@ -387,11 +406,37 @@ return Inertia::render('Users/Index', [
 ]);
 ```
 
+### usePage
+表示しているページのURLとページコンポーネントの情報を取得できる。  
+この情報を利用することで現在表示しているページのリンクにclassを適用したりできる  
+```jsx
 
-### 大事っぽい
+import { Link, usePage } from "@inertiajs/react";
 
-usePage
-useRemember
+const NavBar = () => {
+    const { url, component } = usePage();
+    return (
+      // 略
+      <Link
+          href={route("user")}
+          className={url === "/user" ? "active" : ""}
+      >
+          User
+      </Link>
+      // 略
+    );
+};
+
+export default NavBar;
+```
+### useRemember
+* UIの状態をブラウザ履歴に保存する
+  * タブコンポーネントで最後に選択されていたタブ。
+  * アコーディオンメニューが開いているか閉じているかの状態。
+  * リストの表示件数やソート順、フィルター条件など。
+
+※フォームデータの場合はuseFormを使ったほうが簡潔
+
 
 ### 画像
 結論・推奨  
