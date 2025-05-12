@@ -73,22 +73,29 @@ indent_size = 2
 
 [inertiaドキュメント](https://inertiajs.com/)
 
-### 有用ツール
-Headコンポーネント
-Linkコンポーネント
-Inertia::render()
-Home.layout = page => <Layout children={page} title="Welcome" />
-to_route()
-Route::inertia()
-router
-useForm()
-Inertia::defer()
-usePoll()
-Linkコンポーネントのprefetch
-WhenVisible
-Inertia::merge(),Inertia::deepMerge()
-useRemember
-usePage
+### 基本技術
+
+* PHP側
+  * Inertia::render() ※基本レンダリング
+  * to_route() ※リダイレクト
+  * Route::inertia() ※コンポーネントに直接ルーティング
+  * Inertia::defer() ※特定のページデータの読み込みを最初のページレンダリング後まで延期
+  * Inertia::merge() ※propsを上書きする代わりに、マージする。ページネーションや無限スクロールで使う。
+  * Inertia::deepMerge() ※Inertia::merge()の深い処理版
+  * Inertia::share() ※共有データ。認証ユーザー情報、フラッシュメッセージ等、全ページで利用可能なデータを渡す
+* TypeScript側
+  * Home.layout = page => \<Layout ... /> ※永続レイアウト
+  * \<Head /> ※コンポーネント
+  * \<Link>/</Link> ※コンポーネント
+  * router ※手動訪問
+  * router.reload({ only: ['users'] }) ※Partial reloads
+  * useForm() ※フォーム。入力状態をブラウザ履歴に保存。errorsプロパティを使ったバリデーションエラーの表示。
+  * usePoll(2000) ※ミリ秒単位のポーリング
+  * Linkコンポーネントのprefetch ※先読みでデータを取得し30秒間キャッシュ
+  * WhenVisible ※無限スクロール時のデータの遅延読み込み
+  * useRemember ※UIの状態をブラウザ履歴に保存(フォームデータの場合はuseFormを使ったほうが簡潔)
+  * usePage ※表示中ページのURLやページコンポーネントの情報を取得できる。 
+
 
 
 ### フルページコンポーネント
@@ -409,6 +416,8 @@ return Inertia::render('Users/Index', [
 ### usePage
 表示しているページのURLとページコンポーネントの情報を取得できる。  
 この情報を利用することで現在表示しているページのリンクにclassを適用したりできる  
+
+サーバーから渡されたプロパティ (props)、とりわけ共有データ (props.shared 内の認証ユーザー情報やフラッシュメッセージなど) にアクセスする」 という点が最も頻繁に使われる重要な役割
 ```jsx
 
 import { Link, usePage } from "@inertiajs/react";
