@@ -73,7 +73,13 @@ indent_size = 2
 
 [inertiaドキュメント](https://inertiajs.com/)
 
-### 基本技術
+### 基本
+
+* Laravel(厨房)
+* Inertia(ウェイター)
+* React(ホール)
+
+基本的に、データ送信側ではInertiaの機能を使い、データ受信側ではそれぞれのフレームワーク(LaravelとReact)の標準的な方法で受け取る
 
 * PHP側
   * Inertia::render() ※基本レンダリング
@@ -83,6 +89,7 @@ indent_size = 2
   * Inertia::merge() ※propsを上書きする代わりに、マージする。ページネーションや無限スクロールで使う。
   * Inertia::deepMerge() ※Inertia::merge()の深い処理版
   * Inertia::share() ※共有データ。認証ユーザー情報、フラッシュメッセージ等、全ページで利用可能なデータを渡す
+  * HandleInertiaRequests ※ミドルウェア。Inertia::share() の主要な実装場所。
 * TypeScript側
   * Home.layout = page => \<Layout ... /> ※永続レイアウト
   * \<Head /> ※コンポーネント
