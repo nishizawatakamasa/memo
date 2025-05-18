@@ -348,6 +348,19 @@ router.reload(options?: Omit<VisitOptions, 'preserveScroll' | 'preserveState'>)
 ### フォームの送信  
 
 ```jsx
+
+
+const {
+  data,
+  data,
+} = useForm('yourFormKey', {
+    email: '',
+    password: '',
+    remember: false,
+});
+```
+
+```jsx
 import { useForm } from '@inertiajs/react'
 
 
@@ -477,12 +490,18 @@ public/images/ に置き、ルートからの絶対パス /images/your-image.png
   * 埋め込んだ値がtrue, false, true, null, undefinedの場合は何もレンダリングしない。
   * JSXの配列は兄弟要素としてレンダリングされる
   * 配列内の各要素をmap等でレンダリングする際には、兄弟の中でそれを一意に識別するためのkey属性(文字列または数値)を設定する必要がある。
-  * 単一の要素しか返せないので、透明なラッパーとして<></>のようなタグで囲むこともある
   * export default キーワードは、ファイル内のメインコンポーネントを指定している。
+
+### フラグメント
+* jsxは単一の要素しか返せないので、透明なラッパーとしてフラグメントで囲むこともある。
+* フラグメントにkey属性を指定する必要がある場合は、<React.Fragment key="...">...</React.Fragment>のように明示的に書く必要がある。※リストの要素としてフラグメントをレンダリングする場合など、key属性が必要になることがある。
+* key属性が不要な場合は、簡潔な<></>構文を使用できる。
+
 
 
 ### state
-コンポーネントに情報を「記憶」させる
+コンポーネントに情報を「記憶」させる  
+値が変更されたときに再レンダリングを引き起こしたい場合に使う  
 ```jsx
 // React から useState をインポート
 import { useState } from 'react';
@@ -509,18 +528,36 @@ const MyButton = () => {
 
 ### フック
 
-useで始まる関数は、フック (Hook) と呼ばれる。※inertiaのuse○○も同じ。
-* useState
-* useEffect
-* useContext
-* useRef
-* useCallback
-* useMemo
-
 #### 基本
+* useで始まる関数は、フック (Hook) と呼ばれる。※inertiaのuse○○も同じ。
 * 関数コンポーネントのトップレベルで呼び出し、コンポーネントに特定の能力やデータをもたらす
 * Reactのフック：汎用的なコア機能。部品。
 * Inertiaのフック：高レベルな便利機能。内部でReactのフックを使ってる。
+
+#### useState
+#### useEffect
+#### useContext
+
+
+#### useRef
+```tsx
+function App() {
+  // 値が変更されても再レンダリングを引き起こしたくない時に使う
+  // currentプロパティのみを持つオブジェクトを返す。
+  // 型と初期値を指定
+  const dragItemOriginalIndexRef = useRef<number | null>(null);
+
+  // currentプロパティは書き換えが可能
+  // currentプロパティが更新されても再レンダリングは発生しない
+  dragItemOriginalIndexRef.current = index;
+
+  const draggingItemOriginalIdx = dragItemOriginalIndexRef.current; 
+}
+```
+
+#### useCallback
+#### useMemo
+
 
 
 ### props
