@@ -1865,9 +1865,31 @@ if ($post->author()->isNot($user)) {
 <a id="イベント(モデル)"></a>
 ### イベント
 
+
+
+自動処理
+データベース操作の前後で自動的に特定の処理を実行できます
+
+通知の送信
+データの変更に応じて通知を送信したい場合
+
+
+
+
+主なイベントは以下の通りです。
+creating, created: レコード作成前、作成後
+updating, updated: レコード更新前、更新後
+deleting, deleted: レコード削除前、削除後
+
+
+
+
+
+
+
+
 モデルは以下のイベントをディスパッチする。  
 ※モデルに対する操作をフックできるようにしている。
-* retrieved
 * creating
 * created
 * updating
@@ -1881,7 +1903,8 @@ if ($post->author()->isNot($user)) {
 * forceDeleted
 * restoring
 * restored
-* replicating。
+* replicating
+* retrieved
 
 
 <a id="シーダー"></a>
@@ -3794,47 +3817,65 @@ middleware(ミドルウェア)を利用した制限
 
 
 
+### php artisan storage:link コマンドの働き
+ユーザーがアップロードした公開したいファイル（例: プロフィール画像、投稿された画像など）はstorageディレクトリ内のstorage/app/publicに保存することが推奨されている。  
+しかし、Webサーバーが外部からのリクエストに対して直接ファイルを提供できるのはpublicディレクトリ内のみである  
+そこで、`php artisan storage:link`コマンドを実行し、publicディレクトリ内にstorageという名前のシンボリックリンク（ショートカットのようなもの）を作成する。  
+この public/storage シンボリックリンクは、実際の storage/app/public ディレクトリを指し示す。  
+これにより、Webサーバーは public/storage を通じて storage/app/public ディレクトリ内のファイルにアクセスできるようになる。  
+例えば、storage/app/public/images/avatar.png というファイルを保存した場合、Webからは http://<ドメイン>/storage/images/avatar.png というURLでアクセスできるようになる。  
+これは asset('storage/images/avatar.png') ヘルパー関数などを使ってHTML内に記述できる。  
 
 
 
 
+```php
+
+// 設定された各ディスクを起点としてファイル操作を行うStorageファサード。
+use Illuminate\Support\Facades\Storage;
+
+// config/filesystems.phpでlocalディスクのrootがstorage_path('app/private')と設定されている場合
+Storage::disk('local')->put('example.txt', 'Contents');
+// で保存されるファイルは、サーバー上ではstorage/app/private/example.txtになる。
+
+// config/filesystems.phpでpublicディスクのrootがstorage_path('app/public')と設定されている場合
+Storage::disk('public')->put('images/photo.jpg', $contents); 
+// で保存されるファイルは、サーバー上ではstorage/app/public/images/photo.jpgになる。
 
 
 
-php artisan storage:link コマンドについて解説しますね。
-1. php artisan storage:link コマンドの働き
-このコマンドは、storage/app/public ディレクトリへのシンボリックリンクを public/storage に作成します。
-背景:
-Laravelのディレクトリ構成: Laravelでは、ユーザーがアップロードしたファイルなど、アプリケーションが生成するファイルは通常 storage ディレクトリ以下に保存されます。特に、公開したいファイル（例: プロフィール画像、投稿された画像など）は storage/app/public ディレクトリに保存することが推奨されています。
-Webサーバーからのアクセス: 通常、Webサーバー（NginxやApacheなど）は public ディレクトリをドキュメントルートとして設定します。これは、Webサーバーが外部からのリクエストに対して直接ファイルを提供できるのが public ディレクトリ内のみであることを意味します。
-課題: storage/app/public ディレクトリは public ディレクトリの外にあるため、そのままではWebブラウザから直接アクセスできません。
-解決策（storage:link の役割）:
-php artisan storage:link コマンドを実行すると、public ディレクトリ内に storage という名前のシンボリックリンク（ショートカットのようなもの）が作成されます。
-この public/storage シンボリックリンクは、実際の storage/app/public ディレクトリを指し示します。
-これにより、Webサーバーは public/storage を通じて storage/app/public ディレクトリ内のファイルにアクセスできるようになります。
-結果:
-例えば、storage/app/public/images/avatar.png というファイルを保存した場合、Webからは http://<あなたのドメイン>/storage/images/avatar.png というURLでアクセスできるようになります。これは asset('storage/images/avatar.png') ヘルパー関数などを使ってHTML内に記述できます。
-2. 実行頻度
-原則として、このコマンドはプロジェクトごとに一度だけ実行すれば良いです。
-一度シンボリックリンクが作成されれば、そのリンクはファイルシステム上に存在し続けます。アプリケーションのコードを変更したり、新しいファイルを storage/app/public にアップロードしたりしても、リンク自体を作り直す必要はありません。
-ただし、以下のような場合には再度実行する必要があります:
-新しい環境へのデプロイ: 新しいサーバーにアプリケーションをデプロイした場合や、Dockerコンテナを再構築した場合など、ファイルシステムが初期化される場合は、デプロイプロセスの一部として再度 php artisan storage:link を実行する必要があります。多くのデプロイスクリプトには、このコマンドが含まれています。
-リンクが削除された場合: 何らかの理由で public/storage シンボリックリンクが手動で削除されたり、壊れたりした場合は、再度コマンドを実行してリンクを再作成する必要があります。
-開発環境の再セットアップ: 開発環境をクローンし直したり、クリーンな状態から再構築したりした場合も、再度実行が必要です。
-まとめ
-php artisan storage:link は、storage/app/public 内のファイルをWebからアクセス可能にするために、public/storage というシンボリックリンクを作成するコマンドです。
-通常はプロジェクトのセットアップ時に一度だけ実行すれば十分ですが、デプロイ時や環境再構築時には再度実行が必要です。
-このコマンドは、Laravelでアップロードされたファイルを公開するための重要なステップとなります。
+// ?
+Storage::disk('public')->url('images/photo.jpg')
+// とすると、この相対パスから公開URL（例: http://your-app.test/storage/images/photo.jpg）が生成されます。
+```
+
+```php
+
+// 指定したキーに対応する、アップロードファイルのインスタンスを返す(存在しない場合はnull)。
+$request->file('avatar')
+// fileメソッドを使う前に、hasFileメソッドを使用してファイルが存在するかチェックしたほうがよい
+if ($request->hasFile('avatar')) {
+    // ...
+}
+
+// アップロードファイルのインスタンスにstore系メソッドを使うと、ファイルを簡単に保存できる。
+// 基本的にデフォルトのディスクを使用するが、最後の引数(オプション)でディスクを指定することもできる。
+// 第一引数に、ディスク下からの保存ディレクトリパスを指定
+// 非AS系はファイル名が自動生成される（ユニークなハッシュ値）。
+// As系のファイル名は{第二引数}.{アップロードされたファイルの拡張子}という形式になる
+// Publicly系を使うと、アップロード済みファイルをpublicの可視性で保存できる
+$path = $request->file('avatar')->store('avatars');
+$path = $request->file('avatar')->storePublicly('avatars', 'public');
+$path = $request->file('avatar')->storeAs('avatars', $request->user()->id);
+$path = $request->file('avatar')->storePubliclyAs('avatars', $request->user()->id, 'public');
 
 
 
+```
 
-
-
-
-
-
-
+todo
+▲ファイルの削除
+▲ディレクトリ
 
 
 <a id="テスト"></a>
