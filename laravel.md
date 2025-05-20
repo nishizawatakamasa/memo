@@ -3843,10 +3843,26 @@ Storage::disk('public')->put('images/photo.jpg', $contents);
 // で保存されるファイルは、サーバー上ではstorage/app/public/images/photo.jpgになる。
 
 
+// ファイルがディスクに存在するかどうかを判定
+Storage::disk('public')->exists('file.jpg')
+// ファイルがディスク存在していないことを判定
+Storage::disk('public')->missing('file.jpg')
 
-// ?
-Storage::disk('public')->url('images/photo.jpg')
-// とすると、この相対パスから公開URL（例: http://your-app.test/storage/images/photo.jpg）が生成されます。
+// ファイルを削除する
+Storage::disk('public')->delete('path/file.jpg');
+
+// 指定されたディレクトリ内のすべてのファイルの配列を返す。
+$files = Storage::files($directory);
+// 指定されたディレクトリ内とそのサブディレクトリ内のすべてのファイルの配列を返す。
+$files = Storage::allFiles($directory);
+// 指定されたディレクトリ内のすべてのディレクトリの配列を返す。
+$directories = Storage::directories($directory);
+// 指定されたディレクトリ内とそのサブディレクトリ内のすべてのディレクトリの配列を返す。
+$directories = Storage::allDirectories($directory);
+// 必要なサブディレクトリを含む、指定したディレクトリを作成
+Storage::makeDirectory($directory);
+// ディレクトリとそのすべてのファイルを削除
+Storage::deleteDirectory($directory);
 ```
 
 ```php
@@ -3861,21 +3877,16 @@ if ($request->hasFile('avatar')) {
 // アップロードファイルのインスタンスにstore系メソッドを使うと、ファイルを簡単に保存できる。
 // 基本的にデフォルトのディスクを使用するが、最後の引数(オプション)でディスクを指定することもできる。
 // 第一引数に、ディスク下からの保存ディレクトリパスを指定
-// 非AS系はファイル名が自動生成される（ユニークなハッシュ値）。
+// 非AS系のファイル名は{自動生成されたユニークなハッシュ値}.{アップロードされたファイルの拡張子}という形式になる。
 // As系のファイル名は{第二引数}.{アップロードされたファイルの拡張子}という形式になる
 // Publicly系を使うと、アップロード済みファイルをpublicの可視性で保存できる
+// 生成されたファイル名を含むパスを返す。
 $path = $request->file('avatar')->store('avatars');
 $path = $request->file('avatar')->storePublicly('avatars', 'public');
 $path = $request->file('avatar')->storeAs('avatars', $request->user()->id);
 $path = $request->file('avatar')->storePubliclyAs('avatars', $request->user()->id, 'public');
-
-
-
 ```
 
-todo
-▲ファイルの削除
-▲ディレクトリ
 
 
 <a id="テスト"></a>

@@ -349,16 +349,69 @@ router.reload(options?: Omit<VisitOptions, 'preserveScroll' | 'preserveState'>)
 
 ```jsx
 
+type LoginForm = {
+  email: string,
+  password: string,
+  remember: boolean,
+}
 
+// useFormフックの戻り値である各プロパティとメソッドについて
 const {
+  // プロパティ
+
+  // フォームの現在の入力値を保持するオブジェクト。
+  // useFormを初期化した際のデフォルト値、またはsetDataによって更新された値が格納される。
+  // TFormはフォームで扱うデータの型(ここではLoginForm)を指す。
+  // dataは内部stateを参照したもの。そしてsetDataはその内部stateを更新する。よってsetDataによるdata更新で再レンダリングがなされる
+  // 再レンダリング時にdata値とinput入力値の整合性を保つため、input要素のvalue属性にdata値(data.emailのようにアクセス)を設定する。
+  data: TForm,
+  // フォームのデータが初期状態（デフォルト値、または reset()やsetDefaults()で最後に設定された値）から変更されたかどうかを示すブール値
+  // フォームが変更された場合にのみ「保存」ボタンを有効化する、などのUI制御に使える。
+  isDirty: boolean,
+  // サーバーサイド（Laravel）でのバリデーションエラーメッセージを格納するオブジェクト
+  // キーはフォームのフィールド名、値はそのフィールドのエラーメッセージ文字列
+  // Partialなので、エラーのないフィールドのキーは存在しない。
+  // 例えばerrors.emailでメールアドレスフィールドのエラーメッセージを取得できる。
+  errors: Partial<Record<keyof TForm, string>>,
+  
+  hasErrors: boolean,
   data,
   data,
-} = useForm('yourFormKey', {
-    email: '',
-    password: '',
-    remember: false,
+
+  // メソッド
+
+
+  setData,
+  data,
+  data,
+  data,
+  data,
+} = useForm<LoginForm>('yourFormKey', {
+  email: '',
+  password: '',
+  remember: false,
 });
 ```
+
+
+
+値をdata.emailのようにアクセスして、input要素のvalueにバインドする。
+
+再レンダリング時にdata値とinput入力値の整合性を保つため、input要素のvalue属性にdata値(data.emailのようにアクセス)を設定する。
+
+
+state が更新されると、Reactのコア機能によって自動的にコンポーネントが再レンダリングされ、UIが最新の状態に保たれます。
+
+
+
+
+
+
+
+
+
+
+
 
 ```jsx
 import { useForm } from '@inertiajs/react'
