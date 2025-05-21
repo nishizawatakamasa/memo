@@ -346,82 +346,21 @@ router.reload(options?: Omit<VisitOptions, 'preserveScroll' | 'preserveState'>)
 
 
 ### フォームの送信  
-
-```jsx
-
-type LoginForm = {
-  email: string,
-  password: string,
-  remember: boolean,
-}
-
-// useFormフックの戻り値である各プロパティとメソッドについて
-const {
-  // プロパティ
-
-  // フォームの現在の入力値を保持するオブジェクト。
-  // useFormを初期化した際のデフォルト値、またはsetDataによって更新された値が格納される。
-  // TFormはフォームで扱うデータの型(ここではLoginForm)を指す。
-  // dataは内部stateを参照したもの。そしてsetDataはその内部stateを更新する。よってsetDataによるdata更新で再レンダリングがなされる
-  // 再レンダリング時にdata値とinput入力値の整合性を保つため、input要素のvalue属性にdata値(data.emailのようにアクセス)を設定する。
-  data: TForm,
-  // フォームのデータが初期状態（デフォルト値、または reset()やsetDefaults()で最後に設定された値）から変更されたかどうかを示すブール値
-  // フォームが変更された場合にのみ「保存」ボタンを有効化する、などのUI制御に使える。
-  isDirty: boolean,
-  // サーバーサイド（Laravel）でのバリデーションエラーメッセージを格納するオブジェクト
-  // キーはフォームのフィールド名、値はそのフィールドのエラーメッセージ文字列
-  // Partialなので、エラーのないフィールドのキーは存在しない。
-  // 例えばerrors.emailでメールアドレスフィールドのエラーメッセージを取得できる。
-  errors: Partial<Record<keyof TForm, string>>,
-  
-  hasErrors: boolean,
-  data,
-  data,
-
-  // メソッド
-
-
-  setData,
-  data,
-  data,
-  data,
-  data,
-} = useForm<LoginForm>('yourFormKey', {
-  email: '',
-  password: '',
-  remember: false,
-});
-```
-
-
-
-値をdata.emailのようにアクセスして、input要素のvalueにバインドする。
-
-再レンダリング時にdata値とinput入力値の整合性を保つため、input要素のvalue属性にdata値(data.emailのようにアクセス)を設定する。
-
-
-state が更新されると、Reactのコア機能によって自動的にコンポーネントが再レンダリングされ、UIが最新の状態に保たれます。
-
-
-
-
-
-
-
-
-
-
-
-
-```jsx
+#### useFormフック
+```tsx
 import { useForm } from '@inertiajs/react'
 
-
 const MyForm = () => {
+
+  type LoginForm = {
+    email: string,
+    password: string,
+    remember: boolean,
+  }
   
   // useFormは、フォームのデータを内部で状態として管理する(内部ではrouterを使用してHTTPリクエストを送信している)
   // 任意で第一引数に一意のフォームキーを渡し、フォームデータとエラーを自動的にブラウザ履歴に保存できる
-  const { data, setData, post, processing, errors } = useForm('yourFormKey', {
+  const { data, setData, post, processing, errors } = useForm<LoginForm>('yourFormKey', {
     // 各データ名と、初期値を指定
     email: '',
     password: '',
@@ -449,6 +388,149 @@ const MyForm = () => {
 
 export default MyForm;
 ```
+
+
+#### useFormフックの戻り値(プロパティとメソッド)の詳細
+```tsx
+type LoginForm = {
+  email: string,
+  password: string,
+  remember: boolean,
+}
+
+const {
+  // プロパティ
+
+  // フォームの現在の入力値を保持するオブジェクト。
+  // useFormを初期化した際のデフォルト値、またはsetDataによって更新された値が格納される。
+  // TFormはフォームで扱うデータの型(ここではLoginForm)を指す。
+  // dataは内部stateを参照したもの。そしてsetDataはその内部stateを更新する。よってsetDataによるdata更新で再レンダリングがなされる
+  // 再レンダリング時にdata値とinput入力値の整合性を保つため、input要素のvalue属性にdata値(data.emailのようにアクセス)を設定する。
+  data: TForm,
+  // フォームのデータが初期状態（デフォルト値、または reset()やsetDefaults()で最後に設定された値）から変更されたかどうかを示すブール値
+  // フォームが変更された場合にのみ「保存」ボタンを有効化する、などのUI制御に使える。
+  isDirty: boolean,
+  // サーバーサイド（Laravel）でのバリデーションエラーメッセージを格納するオブジェクト
+  // キーはフォームのフィールド名、値はそのフィールドのエラーメッセージ文字列
+  // Partialなので、エラーのないフィールドのキーは存在しない。
+  // 例えばerrors.emailでメールアドレスフィールドのエラーメッセージを取得できる。
+  errors: Partial<Record<keyof TForm, string>>,
+  // errorsオブジェクトに何かしらのエラーメッセージが含まれているかどうかを示すブール値。
+  // エラーがある場合にエラーメッセージのサマリーを表示したり、UIのスタイルを変更したりするのに使える。
+  hasErrors: boolean,
+  // フォームが現在サーバーに送信処理中であるかどうかを示すブール値
+  // 送信開始時にtrueになり、レスポンスを受け取るとfalseになる。
+  // 送信中はボタンを無効化したり、ローディングインジケーターを表示したりするのに使える。
+  processing: boolean,
+  // ファイルアップロードを伴うフォーム送信の場合に、アップロードの進捗状況を表すオブジェクト。
+  // 通常、{ percentage: number, loaded: number, total: number } のようなプロパティを持つ。
+  // ファイルアップロードがない場合はnull。
+  // ファイルアップロードのプログレスバーを表示するのに使う。
+  progress: Progress | null,
+  // フォーム送信が成功したかどうかを示すブール値。
+  // 送信が成功するとtrueになる。この状態は、フォームがリセットされるか、再度送信が試みられるまで維持される。
+  // 送信成功後に永続的なフィードバック（例: 「設定が保存されました」というメッセージの表示）を行うのに使える。
+  wasSuccessful: boolean,
+  // フォーム送信が直近で成功した場合にtrueになるブール値。
+  // wasSuccessfulと似ているが、こちらは一定時間（デフォルトでは2秒）が経過すると自動的にfalseに戻る。
+  // 送信成功後に一時的なフィードバック（例: ボタンの見た目を一時的に変える、トースト通知を短時間表示する）を行うのに便利。
+  recentlySuccessful: boolean,
+
+
+  // メソッド
+
+  // フォームのデータを更新するためのメソッド。複数の方法で呼び出せる。詳細は後述。
+  setData: setDataByObject<TForm> & setDataByMethod<TForm> & setDataByKeyValuePair<TForm>,
+  // フォームデータをサーバーに送信する直前に、そのデータを加工・変換するためのコールバック関数を登録する。
+  // 送信前に不要なプロパティを削除したり、特定の形式（例: 日付フォーマット）に変換したり、新しいプロパティを追加したりする場合に使う。
+  // 例: transform(data => ({ ...data, password_confirmation: data.password })) ※パスワード確認フィールドを追加
+  transform: (callback: (data: TForm) => object) => void,
+  // 現在のdataの値を、フォームの新しいデフォルト値として設定する。reset()を呼び出した際に、この値に戻るようになる。
+  setDefaults(): void,
+  // 特定のフィールドのデフォルト値を新しい値で設定する。
+  setDefaults(field: keyof TForm, value: FormDataConvertible): void,
+  // 複数のフィールドのデフォルト値をオブジェクトでまとめて設定する。
+  // フォームがマウントされた後、APIから取得したデータなどで初期値を設定し、それを「リセット先」のデフォルト値としたい場合などに使う。
+  setDefaults(fields: Partial<TForm>): void,
+  // フォームのデータをデフォルト値（useFormの初期値、またはsetDefaultsで設定された値）に戻す。
+  // 引数にはリセットしたいフィールドのフィールド名を指定する。例: reset('email', 'password')
+  // 引数なしで実行すると全てのフィールドをリセットする。
+  reset: (...fields: (keyof TForm)[]) => void,
+  // フォームのバリデーションエラーメッセージをクリアする。
+  // 引数にはエラーメッセージをクリアしたいフィールドのフィールド名を指定する。例: reset('email', 'password')
+  // 引数なしで実行すると全てのフィールドのエラーメッセージをクリアする。
+  // ユーザーが入力値を修正した際に、対応するエラーメッセージを手動で消したい場合などに使う。
+  clearErrors: (...fields: (keyof TForm)[]) => void,
+  // 特定のフィールドに手動でエラーメッセージを設定する。
+  setError(field: keyof TForm, value: string): void,
+  // 複数のフィールドにエラーメッセージをオブジェクト形式でまとめて設定する。
+  // クライアントサイドでの独自のバリデーション結果を表示したい場合や、サーバーからのエラーとは別にエラーを設定したい場合に使う。
+  setError(errors: Record<keyof TForm, string>): void,
+  // 現在進行中のフォーム送信リクエストをキャンセルする。
+  // ユーザーが送信を中断したい場合や、タイムアウト処理などで使える。
+  cancel: () => void,
+  // フォームデータを指定されたHTTPメソッド（'get', 'post', 'put', 'patch', 'delete'）とURLでサーバーに送信する。
+  // options: 送信時の追加オプションを指定できる (後述)。
+  // 例: submit('post', '/users', { onSuccess: () => console.log('User created!') })
+  // ※内部的にはInertiaのルーター機能を使っている。router.get(...)、router.post(...)といった形で。
+  submit: (method: Method, url: string, options?: FormOptions) => void,
+  // submit('get', url, options) のショートカット
+  get: (url: string, options?: FormOptions) => void,
+  // submit('post', url, options) のショートカット
+  post: (url: string, options?: FormOptions) => void,
+  // submit('put', url, options) のショートカット
+  put: (url: string, options?: FormOptions) => void,
+  // submit('patch', url, options) のショートカット
+  patch: (url: string, options?: FormOptions) => void,
+  // submit('delete', url, options) のショートカット
+  // ????通常、データ本体はURLパラメータやリクエストボディではなく、URL自体でリソースを指す
+  delete: (url: string, options?: FormOptions) => void
+} = useForm<LoginForm>('yourFormKey', {
+  email: '',
+  password: '',
+  remember: false,
+});
+
+
+// setDataの呼び出し方
+// 1.特定のフィールドの値を更新する。
+setData('fieldName', value)
+// 例: 
+setData('email', e.target.value)
+// 2.複数のフィールドをオブジェクトでまとめて更新する。
+setData({ fieldName1: value1, fieldName2: value2 })
+// 例: 
+setData({ name: 'Taro', age: 30 })
+// 3.現在のデータに基づいて新しいデータを返すコールバック関数を使って更新する。
+setData(previousData => ({ ...previousData, fieldName: newValue }))
+// 例: 
+// ※jsのオブジェクトの値は後勝ち
+setData(prev => ({ ...prev, count: prev.count + 1 }))
+
+
+// options:で送信時の追加オプションを指定できる 
+// optionsはオブジェクトで、フォーム送信の挙動を細かく制御するためのコールバック関数や設定が含まれる。
+// 代表的なもの：
+post(url, {
+  // リクエストが成功した場合に実行されるコールバック。
+  onSuccess: (page: Page) => void,
+  // リクエストが失敗し、バリデーションエラーなどが返された場合に実行されるコールバック。
+  // 引数でエラーオブジェクトを受け取れる。
+  onError: (errors: Record<string, string>) => void,
+  // リクエストが成功したか失敗したかに関わらず、完了時に実行されるコールバック。
+  onFinish: (visit: Visit) => void,
+  // リクエスト開始時に実行されるコールバック。
+  onStart: (visit: Visit) => void,
+  // trueの場合、フォーム送信後もコンポーネントのローカルステートを保持する。
+  // デフォルトは false（POST/PUT/PATCH/DELETEの場合）または true（GETの場合）。
+  preserveState: boolean,
+  // trueの場合、フォーム送信後にページのスクロール位置を保持する。
+  preserveScroll: boolean,
+  // trueの場合、フォーム送信成功時にフォームデータをリセットする。デフォルトは true。
+  resetOnSuccess: boolean,
+})
+```
+
 
 ### 部分的なリロード
 * コントローラーは通常通り実行される
