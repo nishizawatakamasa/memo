@@ -671,8 +671,16 @@ const MyButton = () => {
 * Inertiaのフック：高レベルな便利機能。内部でReactのフックを使ってる。
 
 #### useState
-#### useEffect
 #### useContext
+
+
+#### useEffect
+```tsx
+// 第二引数に配列で渡したstateのうちのどれかが変化したとき、それに伴ったレンダリングの後に第一引数のコールバック関数が実行される。
+useEffect(() => {
+  setSelectedImageIndex(0); // 最初の画像を選択状態にする
+}, [foo, bar]);
+```
 
 
 #### useRef
