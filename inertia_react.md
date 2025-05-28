@@ -443,7 +443,7 @@ const {
   setData: setDataByObject<TForm> & setDataByMethod<TForm> & setDataByKeyValuePair<TForm>,
   // フォームデータをサーバーに送信する直前に、そのデータを加工・変換するためのコールバック関数を登録する。
   // 送信前に不要なプロパティを削除したり、特定の形式（例: 日付フォーマット）に変換したり、新しいプロパティを追加したりする場合に使う。
-  // 例: transform(data => ({ ...data, password_confirmation: data.password })) ※パスワード確認フィールドを追加
+  // 例: transform((data) => ({ ...data, password_confirmation: data.password })) ※パスワード確認フィールドを追加
   transform: (callback: (data: TForm) => object) => void,
   // 現在のdataの値を、フォームの新しいデフォルト値として設定する。reset()を呼び出した際に、この値に戻るようになる。
   setDefaults(): void,

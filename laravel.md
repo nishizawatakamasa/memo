@@ -2593,6 +2593,9 @@ class SampleRequest extends FormRequest
             // date：値を日付形式に指定
             // after_or_equal：特定の日付（この場合はtoday）以前の日付の入力を不可に（制限）する
             'due_date' => ['required', 'date', 'after_or_equal:today'],
+            // .(ドット)はネストされた属性へのアクセス。
+            // *(アスタリスク)はワイルドカード。
+            'images.*.file' => ['required', ...],
         ];
     }
     // ※バリデーションルールは配列とパイプで定義することもできる。
