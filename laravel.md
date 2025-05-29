@@ -3870,8 +3870,8 @@ Storage::deleteDirectory($directory);
 
 ```php
 
-// 指定したキーに対応する、アップロードファイルのインスタンスを返す(存在しない場合はnull)。
-$request->file('avatar')
+// 指定したキー(inputタグのname属性値)に対応する、アップロードファイルのインスタンスを返す(存在しない場合はnull)。
+$fileInstance = $request->file('avatar')
 // fileメソッドを使う前に、hasFileメソッドを使用してファイルが存在するかチェックしたほうがよい
 if ($request->hasFile('avatar')) {
     // ...
@@ -3884,10 +3884,10 @@ if ($request->hasFile('avatar')) {
 // As系のファイル名は{第二引数}.{アップロードされたファイルの拡張子}という形式になる
 // Publicly系を使うと、アップロード済みファイルをpublicの可視性で保存できる
 // 生成されたファイル名を含むパスを返す。
-$path = $request->file('avatar')->store('avatars');
-$path = $request->file('avatar')->storePublicly('avatars', 'public');
-$path = $request->file('avatar')->storeAs('avatars', $request->user()->id);
-$path = $request->file('avatar')->storePubliclyAs('avatars', $request->user()->id, 'public');
+$path = $fileInstance->store('avatars');
+$path = $fileInstance->storePublicly('avatars', 'public');
+$path = $fileInstance->storeAs('avatars', $request->user()->id);
+$path = $fileInstance->storePubliclyAs('avatars', $request->user()->id, 'public');
 ```
 
 
