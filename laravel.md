@@ -50,6 +50,7 @@
     * [セッション](#セッション)
     * [ユーザーアクションの認可](#ユーザーアクションの認可)
     * [ファイルのアップロード](#ファイルのアップロード)
+    * [イベント購読](#イベント購読)
     * [テスト](#テスト)
 
 
@@ -1277,10 +1278,14 @@ $queryBuilderInstance->when()
 // 全てのレコードを取得。
 // 戻り値はCollection(要素が見つからなかった場合は空のCollection)。
 $queryBuilderInstance->get();
+// 特定のカラムのみを取得したい場合。asでエイリアスも書ける。
+$queryBuilderInstance->get(['id', 'path as xxxxx']);
 
 // 最初のレコードを取得。
 // 戻り値はModelインスタンス(要素が見つからなかった場合はnull)。
 $queryBuilderInstance->first();
+// 特定のカラムのみを取得したい場合。asでエイリアスも書ける。
+$queryBuilderInstance->first(['id', 'path as xxxxx']);
 $queryBuilderInstance->firstOrFail(); // Modelインスタンスを返す。無いときはエラー(404)を返す。
 // Modelインスタンスを返す。無いときは指定クロージャを実行する。
 // クロージャの返却値がメソッドの結果とみなされる。
@@ -3889,6 +3894,83 @@ $path = $fileInstance->storePublicly('avatars', 'public');
 $path = $fileInstance->storeAs('avatars', $request->user()->id);
 $path = $fileInstance->storePubliclyAs('avatars', $request->user()->id, 'public');
 ```
+
+<a id="イベント購読"></a>
+## イベント購読
+
+
+注意
+* クエリを実行する場合、Eloquent のモデルイベント ( deleting, deleted など) は発火しない
+* モデルイベントは、モデルインスタンスに対して delete() メソッドが呼び出された場合にのみトリガーされる
+* クエリビルダの実行はデータベースに対して直接SQL文を発行するため、モデルのライフサイクルイベントをバイパスする。
+
+
+
+モデルの booted メソッド内でイベントリスナーを登録する
+```php
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Storage; // Storageファサードを追記
+
+class PostImage extends Model
+{
+    use HasFactory;
+
+    protected $fillable = [
+        'post_id',
+        'index',
+        'path',
+    ];
+
+    // (他のリレーションシップやメソッド)
+
+    /**
+     * モデルのブートメソッド
+     * モデルが初期化される際に呼び出される
+     *
+     * @return void
+     */
+    protected static function booted()
+    {
+        // static::deletedメソッドは、deletedイベントが発生したときに指定したクロージャ（無名関数）を実行する。
+        // クロージャには削除されたモデルインスタンス ($postImage) が渡される。
+        static::deleted(function (PostImage $postImage) {
+
+            // pathの存在チェック
+            if (is_null($postImage->path)) return;
+
+            // ファイルの存在チェック
+            if (Storage::disk('public')->missing($postImage->path)) return;
+
+            // ファイルを削除する
+            // ※特定のディスク（例: public, s3 など）を指定している場合
+            Storage::disk('public')->delete($postImage->path);
+
+            // config/filesystems.php の default で設定されたディスクを使用する場合
+            // Storage::delete($postImage->path);
+        });
+    }
+}
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
