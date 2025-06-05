@@ -4,6 +4,8 @@
     * [はじめに](#はじめに)
     * [inertia](#inertia)
     * [React](#React)
+    * [shadcn](#shadcn)
+
 
 
 
@@ -905,3 +907,12 @@ useCallback(fn, deps) は、deps（依存配列）が変わらない限り、fn�
 「関数のアドレスを固定する」ようなイメージです。
 いつ使うべき？
 React.memoで最適化された子コンポーネントに関数を渡すとき。 これが最も一般的なユースケースです。
+
+
+
+<a id="shadcn"></a>
+## shadcn
+
+コンポーネントをインストールするコマンド  
+例：  
+`npx shadcn@latest add textarea`
