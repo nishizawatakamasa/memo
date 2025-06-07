@@ -160,4 +160,17 @@ def next_hrefs2(select_prev_and_next_button: Callable[[], list[WebElement]], by_
         d.click(next_) if by_click else d.go_to(next_)
         hrefs.append(d.driver.current_url)
     return hrefs
+
+def parent(self, elem: WebElement | None) -> WebElement | None:
+    '''Get parent element.'''
+    return self._driver.execute_script('return arguments[0].parentElement;', elem) if elem else None
+
+def prev_sib(self, elem: WebElement | None) -> WebElement | None:
+    '''Get previous sibling element.'''
+    return self._driver.execute_script('return arguments[0].previousElementSibling;', elem) if elem else None
+
+def add_class(self, elems: list[WebElement], class_name: str) -> None:
+    '''Add a class to the specified web elements.'''
+    for elem in elems:
+        self._driver.execute_script(f'arguments[0].classList.add("{class_name}");', elem)
 ```
