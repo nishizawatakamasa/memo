@@ -2023,7 +2023,7 @@ fake()メソッドは、Laravelが提供するFakerライブラリを使って�
 ```php
 <?php
 fake()->text($maxNumOfChara) // テキスト（日本語非対応）
-fake()->realText() // テキスト（日本語対応）
+fake()->realText($maxNumOfChara) // テキスト（日本語対応）
 fake()->word() // 単語
 fake()->paragraph() // 複数の文章
 fake()->address() // 住所
