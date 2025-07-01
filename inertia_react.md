@@ -4,6 +4,7 @@
     * [はじめに](#はじめに)
     * [inertia](#inertia)
     * [React](#React)
+    * [TSの型](#TSの型)
     * [shadcn](#shadcn)
 
 
@@ -918,6 +919,87 @@ useCallback(fn, deps) は、deps（依存配列）が変わらない限り、fn�
 「関数のアドレスを固定する」ようなイメージです。
 いつ使うべき？
 React.memoで最適化された子コンポーネントに関数を渡すとき。 これが最も一般的なユースケースです。
+
+
+
+<a id="TSの型"></a>
+## TSの型
+
+TypeScriptの基本的な型一覧
+```ts
+// 文字列
+let name: string = "taro";
+
+// すべての数値。整数も少数も全部これ
+let age: number = 30;
+
+// 真偽値
+let isStudent: boolean = true;
+
+// オブジェクト
+let person: { name: string; age: number } = {
+  name: "hanako",
+  age: 25,
+};
+
+// 配列
+let numbers: number[] = [1, 2, 3, 4, 5];
+let fruits: string[] = ["apple", "banana", "cherry"];
+
+// タプル
+let person: [string, number] = ["hanako", 25];
+
+// Union型
+let value: string | number;
+value = "Hello";
+value = 42;
+
+// Literal型
+let status: "success" | "error";
+status = "success";
+status = "error";
+
+// function型
+let add: (x: number, y: number) => number;
+add = (a, b) => a + b;
+// 関数の引数がオブジェクトの場合
+let greet: (person: { name: string; age: number }) => string;
+greet = (person) => `私の名前は ${person.name} です。年齢は ${person.age} です`;
+
+// void型。関数が何も返さないことを表す。主に関数の戻り値の型として使用。
+function logMessage(message: string): void {
+  console.log(message);
+}
+
+// never型。絶対に値を持たない型。通常は無限ループや例外をスローする関数の戻り値の型として使用。
+function throwError(message: string): never {
+  throw new Error(message);
+}
+function infiniteLoop(): never {
+  while (true) {
+    // 無限ループ
+  }
+}
+```
+
+
+型エイリアス
+```ts
+// 型エイリアスを使用して、あらゆる型に名前を付けることができる。エイリアスを使用すると、エイリアスされた型を記述した場合と全く同じになる。
+
+type Point = {
+  x: number;
+  y: number;
+};
+ 
+function printCoord(pt: Point) {
+  console.log("The coordinate's x value is " + pt.x);
+  console.log("The coordinate's y value is " + pt.y);
+}
+
+type ID = number | string;
+```
+
 
 
 
