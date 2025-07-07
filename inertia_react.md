@@ -574,9 +574,47 @@ return Inertia::render('Users/Index', [
 ```
 
 ### usePage
+Inertia.jsが提供するReactのカスタムフック。  
+Laravel（サーバーサイド）から渡されたデータにReactコンポーネント内からアクセスするための橋渡し役。  
+LaravelのコントローラからInertiaに渡されるデータは、「ページオブジェクト」という特定の構造を持っている。  
+usePageフックを使うと、どのコンポーネントからでもこのページオブジェクトにアクセスできる。  
+
+```tsx
+import { type SharedData } from '@/types';
+import { Head, Link, usePage } from '@inertiajs/react';
+
+export default function Welcome() {
+  // <SharedData>はTypeScriptのジェネリクス機能。usePageフックが返すpropsオブジェクトの型定義を指定している。
+  // usePage() を呼び出すと、以下のようなプロパティを持つオブジェクトが返ってくる。
+  const page = usePage<SharedData>();
+
+  // 最も重要。Laravelから渡されたデータがすべてここに入っている。
+  // コントローラから渡されたデータと、全ページで共有されるデータ（Shared Data）が含まれる。
+  console.log(page.props);
+  //  現在のページのURL
+  console.log(page.url);
+  // 現在レンダリングされているReactコンポーネントの名前（例: 'Users/Index')。
+  console.log(page.component);
+  // アセットのバージョン。アセットが更新されたことを検知するために使う。
+  console.log(page.version);
+
+  // JavaScriptの分割代入
+  const { auth } = usePage<SharedData>().props;
+  return (
+    <nav>
+      // page.props.auth.userはログイン中のユーザーインスタンス。
+      // LaravelのAuth::user()の情報を単なるデータ(JavaScriptオブジェクト)としてフロントエンドに渡したもの。
+      // ※通常、LaravelのHandleInertiaRequestsミドルウェア内でその処理が行われる。shareメソッドの中の$request->user()はAuth::user()と同じ。
+      {page.props.auth.user ? () : ()}
+    </nav>
+  );
+}
+
+```
+
+情報2  
 表示しているページのURLとページコンポーネントの情報を取得できる。  
 この情報を利用することで現在表示しているページのリンクにclassを適用したりできる  
-
 サーバーから渡されたプロパティ (props)、とりわけ共有データ (props.shared 内の認証ユーザー情報やフラッシュメッセージなど) にアクセスする」 という点が最も頻繁に使われる重要な役割
 ```jsx
 
