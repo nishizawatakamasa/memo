@@ -307,6 +307,7 @@ import { router } from '@inertiajs/react'
 // 全てurl引数のみ必須
 
 // 汎用メソッド
+// ※第二引数のオブジェクトの型がVisitOptions
 router.visit(url, {
   method: 'get',
   data: {},
@@ -477,6 +478,7 @@ const {
   // options: 送信時の追加オプションを指定できる (後述)。
   // 例: submit('post', '/users', { onSuccess: () => console.log('User created!') })
   // ※内部的にはInertiaのルーター機能を使っている。router.get(...)、router.post(...)といった形で。
+  // ※type FormOptions = Omit<VisitOptions, 'data'>;
   submit: (method: Method, url: string, options?: FormOptions) => void,
   // submit('get', url, options) のショートカット
   get: (url: string, options?: FormOptions) => void,
