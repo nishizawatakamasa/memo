@@ -33,9 +33,9 @@
 ### 基本
 | | **線形回帰** | **ロジスティック回帰** |
 | :--- | :--- | :--- |
-| **モデル** | $h(\mathbf{x}') = \mathbf{w}'^T \mathbf{x}'$ | $p(\mathbf{x}') = \sigma(\mathbf{w}'^T \mathbf{x}')$ |
+| **モデル** | $h = \mathbf{θ}^T \mathbf{x}$ | $p = \sigma(\mathbf{θ}^T \mathbf{x})$ |
 | **損失関数** | $J = \frac{1}{2m} \sum (h - y)^2$ | $J = - \frac{1}{m} \sum [y \log(p) + (1-y)\log(1-p)]$ |
-| **勾配** | $\frac{\partial J}{\partial w'_j} = \frac{1}{m} \sum (h - y) x'_j$ | $\frac{\partial J}{\partial w'_j} = \frac{1}{m} \sum (p - y) x'_j$ |
+| **勾配** | $\frac{\partial J}{\partial θ_j} = \frac{1}{m} \sum (h - y) x_j$ | $\frac{\partial J}{\partial θ_j} = \frac{1}{m} \sum (p - y) x_j$ |
 
 
 
@@ -114,12 +114,35 @@ $$ L_{CE}(p, y) = - [ y \log(p) + (1-y) \log(1-p) ] $$
 
 
 
+$$
+\Large
+\begin{pmatrix}
+\theta_0 \\
+\theta_1 \\
+\vdots \\
+\theta_n
+\end{pmatrix}
+:=
+\begin{pmatrix}
+\theta_0 \\
+\theta_1 \\
+\vdots \\
+\theta_n
+\end{pmatrix}
+- \alpha
+\begin{pmatrix}
+\frac{\partial J}{\partial \theta_0} \\[1em]
+\frac{\partial J}{\partial \theta_1} \\[1em]
+\vdots \\[1em]
+\frac{\partial J}{\partial \theta_n}
+\end{pmatrix}
+$$
 
 
 
 
 
-
+$$ \theta_j := \theta_j - \alpha \frac{\partial J}{\partial \theta_j} $$
 
 
 
@@ -189,7 +212,7 @@ newパラメータベクトル　= oldパラメータベクトル + 学習率 * 
 
 
 
-
+この例えで言うと、あなたの洞察は「『方角と傾斜』という情報を、『歩幅』で調整して『次の座標への移動量』に翻訳している」と言い換えることができ、まさにその通りです。
 
 
 
