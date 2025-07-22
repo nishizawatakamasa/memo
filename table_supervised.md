@@ -98,117 +98,15 @@ $$ L_{CE}(p, y) = - [ y \log(p) + (1-y) \log(1-p) ] $$
 
 
 
-
-
-
-
-
-
-
-
 ### 勾配降下法
 
-
-
-
-
-
-
-$$
-\Large
-\begin{pmatrix}
-\theta_0 \\
-\theta_1 \\
-\vdots \\
-\theta_n
-\end{pmatrix}
-:=
-\begin{pmatrix}
-\theta_0 \\
-\theta_1 \\
-\vdots \\
-\theta_n
-\end{pmatrix}
-- \alpha
-\begin{pmatrix}
-\frac{\partial J}{\partial \theta_0} \\[1em]
-\frac{\partial J}{\partial \theta_1} \\[1em]
-\vdots \\[1em]
-\frac{\partial J}{\partial \theta_n}
-\end{pmatrix}
-$$
-
-
+#### パラメータ更新の式
 $$
 \boldsymbol{\theta} := \boldsymbol{\theta} - \alpha \nabla J(\boldsymbol{\theta})
 $$
 
-
-$$ \theta_j := \theta_j - \alpha \frac{\partial J}{\partial \theta_j} $$
-
-
-
-$$
-\begin{pmatrix}
-\theta_0 \\
-\theta_1 \\
-\vdots \\
-\theta_n
-\end{pmatrix}
-:=
-\begin{pmatrix}
-\theta_0 \\
-\theta_1 \\
-\vdots \\
-\theta_n
-\end{pmatrix}
-- \alpha
-\begin{pmatrix}
-\frac{\partial J}{\partial \theta_0} \\ \\
-\frac{\partial J}{\partial \theta_1} \\ \\
-\vdots \\ \\
-\frac{\partial J}{\partial \theta_n}
-\end{pmatrix}
-$$
-
-
-
-
-
-
-$$
-\left(
-\begin{array}{c}
-\theta_0 \\
-\theta_1 \\
-\vdots \\
-\theta_n
-\end{array}
-\right)
-=
-\left(
-\begin{array}{c}
-\theta_0 \\
-\theta_1 \\
-\vdots \\
-\theta_n
-\end{array}
-\right)
-- \alpha
-\left(
-\begin{array}{c}
-\frac{\partial J}{\partial \theta_0} \\ \\
-\frac{\partial J}{\partial \theta_1} \\ \\
-\vdots \\ \\
-\frac{\partial J}{\partial \theta_n}
-\end{array}
-\right)
-$$
-
-
-
-
-
+※わかりやすく
+![](./img/gradient-descent.png)
 
 
 
