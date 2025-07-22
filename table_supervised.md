@@ -139,14 +139,37 @@ $$
 $$
 
 
-
+$$
+\boldsymbol{\theta} := \boldsymbol{\theta} - \alpha \nabla J(\boldsymbol{\theta})
+$$
 
 
 $$ \theta_j := \theta_j - \alpha \frac{\partial J}{\partial \theta_j} $$
 
 
 
-
+$$
+\begin{pmatrix}
+\theta_0 \\
+\theta_1 \\
+\vdots \\
+\theta_n
+\end{pmatrix}
+:=
+\begin{pmatrix}
+\theta_0 \\
+\theta_1 \\
+\vdots \\
+\theta_n
+\end{pmatrix}
+- \alpha
+\begin{pmatrix}
+\frac{\partial J}{\partial \theta_0} \\ \\
+\frac{\partial J}{\partial \theta_1} \\ \\
+\vdots \\ \\
+\frac{\partial J}{\partial \theta_n}
+\end{pmatrix}
+$$
 
 
 
