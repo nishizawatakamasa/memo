@@ -176,8 +176,34 @@ $$
 
 
 
-
-
+$$
+\left(
+\begin{array}{c}
+\theta_0 \\
+\theta_1 \\
+\vdots \\
+\theta_n
+\end{array}
+\right)
+=
+\left(
+\begin{array}{c}
+\theta_0 \\
+\theta_1 \\
+\vdots \\
+\theta_n
+\end{array}
+\right)
+- \alpha
+\left(
+\begin{array}{c}
+\frac{\partial J}{\partial \theta_0} \\ \\
+\frac{\partial J}{\partial \theta_1} \\ \\
+\vdots \\ \\
+\frac{\partial J}{\partial \theta_n}
+\end{array}
+\right)
+$$
 
 
 
