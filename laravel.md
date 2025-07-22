@@ -7,6 +7,7 @@
     * [参考サイト](#参考サイト)
     * [便利なVSCodeの拡張機能](#便利なVSCodeの拡張機能)
     * [インストール](#インストール)
+    * [ide-helper](#ide-helper)
     * [gitからcloneする時](#gitからcloneする時)
     * [サーバー起動](#サーバー起動)
     * [.env.exampleの設定](#.env.exampleの設定)
@@ -243,6 +244,21 @@ app/Services/??????
 `composer create-project laravel/laravel [プロジェクト名]`  
 (プロジェクトを作るたびにlaravelをインストールする必要がある)  
 (基本的にはC:\xampp\htdocs内でコマンドを実行)  
+
+
+<a id="ide-helper"></a>
+## ide-helper
+
+### プロジェクトのルートディレクトリで実行
+`composer require --dev barryvdh/laravel-ide-helper`
+### 設定ファイルの公開
+`php artisan vendor:publish --provider="Barryvdh\LaravelIdeHelper\IdeHelperServiceProvider"`
+### メタファイルの生成
+`php artisan ide-helper:generate`
+### モデルのPHPDoc生成
+`php artisan ide-helper:models`
+
+
 
 <a id="gitからcloneする時"></a>
 ## gitからcloneする時
