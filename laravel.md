@@ -681,7 +681,8 @@ $table->time('column_name', $precision = 0); // hh:mm:ss
 $table->dateTime('column_name', $precision = 0); // YYYY-MM-DD hh:mm:ss
 $table->year('column_name'); // YYYY
 $table->datetimes(); // created_atとupdated_atの2列を作成する。
-$table->softDeletes('deleted_at', $precision = 0); // deleted_at カラムを追加
+$table->softDeletes('deleted_at', $precision = 0); // deleted_at カラムを追加(ここに書いてある引数はデフォルト値)
+
 
 // カラム定義 ブール型
 $table->boolean('column_name'); // 真偽値
