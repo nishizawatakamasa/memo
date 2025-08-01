@@ -1756,6 +1756,32 @@ $welfareUsers = $welfareUsers->load('posts');
 ```
 
 
+### 多対多リレーション
+```php
+
+// 多対多を定義するには、belongsToManyメソッドを使用します。
+// 第一引数に関連づけたいeloquentモデル、第二引数に中間テーブル名、第三引数に自分に向けられた外部テーブル、第四引数に相手に向けられた外部テーブルを定義します。
+// 第二引数以降は、省略可能です。
+
+// リレーションシップオブジェクト（クエリビルダ）BelongsToManyが返される。
+// このクエリビルダは、最終的にPostモデルを取得することを目的としているが、その過程で中間テーブルfavoritesを必ず利用する。
+$user->favoritePosts();
+
+// attach()やexists()のような特定のメソッドは、中間テーブルを直接操作する。
+// レコードを挿入
+$user->favoritePosts()->attach($post->id);
+// レコードを削除
+$user->favoritePosts()->detach($post->id);
+// クエリに合致するレコードが1件でも存在するかどうかをtrue/falseで返す
+$user->favoritePosts()->where('post_id', $post->id)->exists()
+
+
+// ユーザーがお気に入り登録したPostモデルのコレクションを取得
+$favoritePosts = $user->favoritePosts;
+```
+
+
+
 ### その他リレーション関連。
 ```php
 <?php
@@ -1793,10 +1819,6 @@ $hasOneInstance->save($modelInstance);
 // 主Modelインスタンスに関連するModelインスタンスを削除する。
 $hasOneInstance->delete();
 
-
-// 多対多を定義するには、belongsToManyメソッドを使用します。
-// 第一引数に関連づけたいeloquentモデル、第二引数に中間テーブル名、第三引数に自分に向けられた外部テーブル、第四引数に相手に向けられた外部テーブルを定義します。
-// 第二引数以降は、省略可能です。
 ```
 
 <a id="アクセサとミューテタ(モデル)"></a>
