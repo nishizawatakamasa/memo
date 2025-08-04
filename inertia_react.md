@@ -657,6 +657,124 @@ storage/app/public/ に保存し、Laravel側で生成した公開URLを props �
 public/images/ に置き、ルートからの絶対パス /images/your-image.png で指定することも可能です。  
 多くの場合、UIコンポーネントで直接使う静的画像は1番目の方法（resources/js 以下に置いて import）を使うのが最もモダンで堅牢な方法と言えるでしょう。  
 
+
+
+
+
+
+
+
+### paginate
+
+Laravelのpaginateメソッドから返され、Inertiaを介してReactコンポーネントに渡されるオブジェクトには、ページネーションを実装するための便利な情報が豊富に含まれている。
+
+#### コントローラー
+```php
+public function index()
+{
+    $posts = Post::query()
+        ->paginate(10);
+
+    return Inertia::render('buyer/post/index', ['posts' => $posts]);
+}
+```
+
+#### この場合のpostsが持つプロパティ
+```js
+{
+  // ページネーションされている全アイテムの総数
+   "total": 50,
+  //  1ページあたりに表示するアイテム数
+   "per_page": 15,
+  //  現在表示しているページの番号
+   "current_page": 1,
+  //  最後のページの番号。全アイテム数と1ページあたりの表示件数から計算される
+   "last_page": 4,
+   //  現在のページへの完全なURL
+   "current_page_url": "http://laravel-app/buyer/favorite/index?page=1",
+  //  最初のページへの完全なURL
+   "first_page_url": "http://laravel-app/buyer/favorite/index?page=1",
+  //  最後のページへの完全なURL
+   "last_page_url": "http://laravel-app/buyer/favorite/index?page=4",
+  //  次のページへの完全なURLです。現在のページが最終ページの場合はnull
+   "next_page_url": "http://laravel-app/buyer/favorite/index?page=2",
+  //  前のページへの完全なURLです。現在のページが最初のページの場合はnull
+   "prev_page_url": null,
+  //  ページネーションのベースとなるURLのパス
+   "path": "http://laravel-app/buyer/favorite/index",
+  //  現在のページに表示されている最初のアイテムが、全体の中で何番目かを示す数値
+   "from": 1,
+  //  現在のページに表示されている最後のアイテムが、全体の中で何番目かを示す数値
+   "to": 15,
+  //  現在のページに表示されるべきデータの配列
+   "data": [
+        {
+            // Record...
+        },
+        {
+            // Record...
+        }
+   ],
+   "links": [
+    {
+      // 該当ページに移動するための完全なURL
+      // Inertiaの<Link>コンポーネントのhref属性にこのurlを渡すことで、ページ遷移を実装
+      "url": "http://laravel-app/buyer/favorite/index?page=1",
+      // リンクに表示すべきテキスト（ラベル）を保持している。
+      "label": "&laquo; Previous",
+      // そのリンクが現在表示されているページかどうかを示すbool値
+      "active": true,
+    },
+   ],
+   
+}
+```
+
+#### 例えば、全5ページ中の2ページ目を表示している場合のlinks配列
+```js
+"links": [
+    { "url": "http://myapp.com/favorites?page=1", "label": "« Previous", "active": false },
+    { "url": "http://myapp.com/favorites?page=1", "label": "1", "active": false },
+    { "url": "http://myapp.com/favorites?page=2", "label": "2", "active": true },
+    { "url": "http://myapp.com/favorites?page=3", "label": "3", "active": false },
+    { "url": "http://myapp.com/favorites?page=4", "label": "4", "active": false },
+    { "url": "http://myapp.com/favorites?page=5", "label": "5", "active": false },
+    { "url": "http://myapp.com/favorites?page=3", "label": "Next »", "active": false }
+]
+```
+
+#### TS型定義例
+```ts
+
+export type PaginationLink = {
+  url: string | null;
+  label: string;
+  active: boolean;
+}
+
+export type PaginatedPosts = {
+  total: number;
+  per_page: number;
+  current_page: number;
+  last_page: number;
+  current_page_url: string;
+  first_page_url: string;
+  last_page_url: string;
+  next_page_url: string | null;
+  prev_page_url: string | null;
+  path: string;
+  from: number;
+  to: number;
+  data: Post[];
+  links: PaginationLink[];
+}
+```
+
+
+
+
+
+
 <a id="React"></a>
 ## React
 
