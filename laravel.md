@@ -1092,7 +1092,7 @@ ModelClass::upsert(
 // MariaDBとMySQLデータベースドライバは、upsertメソッドの第２引数を無視し、常にテーブルの"primary"および"unique"インデックスを既存レコードの検出に使用する。
 
 // ModelClass::updateOrCreateの「取得か作成」版。
-ModelClass::firstOrCreat();
+ModelClass::firstOrCreate();
 // ModelClass::updateOrCreateの「取得か新規インスタンスを作成」版。
 // Createするには、手作業でsaveメソッドを呼び出す必要がある。
 ModelClass::firstOrNew();
