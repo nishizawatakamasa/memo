@@ -1080,10 +1080,13 @@ React.memoで最適化された子コンポーネントに関数を渡すとき�
 
 
 
-<a id="TSの型"></a>
-## TSの型
+<a id="TypeSCript"></a>
+## TypeSCript
 
-TypeScriptの基本的な型一覧
+[サバイバイルTypeSCript](https://typescriptbook.jp/)
+
+
+### TypeScriptの基本的な型一覧
 ```ts
 // 文字列
 let name: string = "taro";
