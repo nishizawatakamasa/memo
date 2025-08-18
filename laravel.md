@@ -1734,6 +1734,8 @@ $outsideWorks = OutsideWork::query()
 // その他の書き方
 $queryBuilderInstance->with('posts')->get(); // 単独のリレーション
 $queryBuilderInstance->with('posts.comments')->get(); // ネストしたリレーション
+// 複数のネストしたリレーション。ドットで連結された中間にあるリレーションも自動的に読み込む。
+$queryBuilderInstance->with(['user.profile', 'replies.user.profile'])->get();
 // 指定したカラムのみ取得したい場合。※外部キーカラムを必ず含める必要がある。
 $queryBuilderInstance->with('posts:id,user_id,title')->get();
 // リレーション先のリレーションを指定する。省略した書き方。要素を「'リレーション' => 孫リレーションを指定する配列」とする。
@@ -1851,6 +1853,10 @@ class WorkLog extends Model
 
     // 中略
 
+    // EloquentのモデルやコレクションがJSONや配列に変換（シリアライズ）されるときにアクセサで作った仮想的なプロパティも含めたいのであれば、$appendsプロパティに追加しておく必要がある。
+    protected $appends = ['formatted_visiting_time'];
+
+
     // アクセサやミューテータのメソッド名をスネークケースにしたものが、Modelインスタンスのインスタンス変数としてアクセス可能になる。
 
     // ※'H:i:s'形式の時刻データを'H:i'形式に変換
@@ -1868,7 +1874,9 @@ class WorkLog extends Model
         return Attribute::make(
             // get引数にアロー関数を渡す。
             // ※無名関数でも可。
-            get: fn () => $this->formatTime($this?->visiting_time),
+            // $attributesはモデルの属性をすべて配列で持っている。主に「新しい仮想的な値の生成」に使用
+            // $valueにはformatted_visiting_timeカラムの値が入る。カラムが存在しなければnull。主に「既存の値の加工」に使用。
+            get: fn ($value, $attributes) => $this->formatTime($attributes['visiting_time']),
         );
     }
 
