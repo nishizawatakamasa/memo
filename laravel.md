@@ -3947,6 +3947,11 @@ $path = $fileInstance->storeAs('avatars', $request->user()->id);
 $path = $fileInstance->storePubliclyAs('avatars', $request->user()->id, 'public');
 ```
 
+```php
+// 特定のファイルのURLを取得。通常、指定されたパスの前に/storageを追加し、ファイルへの相対URLを返す。
+$url = Storage::url('file.jpg');
+```
+
 <a id="イベント購読"></a>
 ## イベント購読
 
