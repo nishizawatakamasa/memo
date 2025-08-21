@@ -470,6 +470,24 @@ $periods = CarbonPeriodImmutable::create(
 )->toArray()
 ```
 
+### 人間にとって分かりやすい、相対的な時間の表現に変換
+
+例えばdiffForHumansメソッドは、データベースに保存されている2023-10-27 10:30:00 のような形式の日時を、現在時刻と比較して以下のような文字列に変換してくれる。
+
+* 5分前
+* 2時間前
+* 3日前
+* 1ヶ月前
+* 2年後 (未来の日時にも対応)
+
+```php
+// diffForHumansはCarbonが提供する機能の一つ。
+// created_atやupdated_atといったカラムは、自動的にCarbonオブジェクトとして扱われる。
+// そのため、以下のように直接メソッドを呼び出すことができる。
+$modelInstance->created_at->diffForHumans();
+```
+
+
 ### 参考サイト
 [Carbonではなく「CarbonImmutable」を使う](https://qiita.com/kbys-fumi/items/b923cdfb09c8f5c35fce)  
 [全217件！Carbonで時間操作する実例](https://blog.capilano-fw.com/?p=867)  
@@ -1265,9 +1283,11 @@ $queryBuilderInstance->reorder()
 // orderBy()メソッドのようにカラムと方向を渡すと、既存の"order by"句をすべて削除してから、クエリにまったく新しい順序を適用できる。
 $queryBuilderInstance->reorder('カラム名', 'desc')
 
-// skip()、offset()は、何件目から取得するかを指定
-// take()、limit()は、最大何件取得するかを指定
+// skip()は、何件目から取得するかを指定
+// take()は、最大何件取得するかを指定
+$queryBuilderInstance->take(3)
 $queryBuilderInstance->skip(10)->take(5)
+// SQLライクなエイリアス
 $queryBuilderInstance->offset(5)->limit(10)
 
 // サブクエリをサポートしている関数
@@ -1769,6 +1789,24 @@ $welfareUsers = $welfareUsers->load('posts');
 // 多対多を定義するには、belongsToManyメソッドを使用します。
 // 第一引数に関連づけたいeloquentモデル、第二引数に中間テーブル名、第三引数に自分に向けられた外部テーブル、第四引数に相手に向けられた外部テーブルを定義します。
 // 第二引数以降は、省略可能です。
+// 中間テーブルへcreated_atおよびupdated_atタイムスタンプを自動記録させたい場合は、関係を定義するときにwithTimestampsメソッドを呼び出す。
+class User
+{
+    public function followings(): BelongsToMany
+    {
+    return $this->belongsToMany('App\User', 'follows', 'follower_id', 'followee_id')->withTimestamps();
+    }
+}
+
+class User
+{
+    public function followers(): BelongsToMany
+    {
+    return $this->belongsToMany('App\User', 'follows', 'followee_id', 'follower_id')->withTimestamps();
+    }
+}
+
+
 
 // リレーションシップオブジェクト（クエリビルダ）BelongsToManyが返される。
 // このクエリビルダは、最終的にPostモデルを取得することを目的としているが、その過程で中間テーブルfavoritesを必ず利用する。
@@ -1876,7 +1914,7 @@ class WorkLog extends Model
             // ※無名関数でも可。
             // $attributesはモデルの属性をすべて配列で持っている。主に「新しい仮想的な値の生成」に使用
             // $valueにはformatted_visiting_timeカラムの値が入る。カラムが存在しなければnull。主に「既存の値の加工」に使用。
-            get: fn ($value, $attributes) => $this->formatTime($attributes['visiting_time']),
+            get: fn ($value, $attributes) => $this->formatTime($this->visiting_time]),
         );
     }
 
@@ -1893,8 +1931,11 @@ class WorkLog extends Model
             set: fn (string $value) => $value . '★★★',
         );
     }
+    
 }
 ```
+* ゲッター（get）では、$this-><プロパティ名> を使うのがベストプラクティス。Eloquentのキャスト機能を最大限に活用できる。
+* セッター（set）では、無限ループを避けるために $attributes 配列への代入（または連想配列の返却）が必要になる場合がある。
 
 <a id="isとisNotメソッドで比較(モデル)"></a>
 ### isとisNotメソッドで比較
