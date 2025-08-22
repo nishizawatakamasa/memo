@@ -722,8 +722,11 @@ $table->foreign('user_id')->references('id')->on('users');
 // user_id という名前の unsignedBigInteger カラムを作成。
 // user_id を外部キーとして users テーブルの id カラムに関連付ける。
 $table->foreignId('user_id')->constrained();
+// follower_id を外部キーとして users テーブルの id カラムに関連付ける場合。
+$table->foreignId('follower_id')->constrained('users')->cascadeOnDelete();
 // 簡単な外部キー制約を作成する場合に使うとコードが簡潔になる。
 // ※カラム修飾子は、constrainedメソッドの前に呼び出す必要がある。
+
 
 // 外部キー参照している親カラムが削除されたとき、連動して削除されるようになる。
 $table->cascadeOnDelete();
@@ -1790,11 +1793,12 @@ $welfareUsers = $welfareUsers->load('posts');
 // 第一引数に関連づけたいeloquentモデル、第二引数に中間テーブル名、第三引数に自分に向けられた外部テーブル、第四引数に相手に向けられた外部テーブルを定義します。
 // 第二引数以降は、省略可能です。
 // 中間テーブルへcreated_atおよびupdated_atタイムスタンプを自動記録させたい場合は、関係を定義するときにwithTimestampsメソッドを呼び出す。
+// self::classは自クラス自身
 class User
 {
     public function followings(): BelongsToMany
     {
-    return $this->belongsToMany('App\User', 'follows', 'follower_id', 'followee_id')->withTimestamps();
+    return $this->belongsToMany(self::class, 'follows', 'follower_id', 'followee_id')->withTimestamps();
     }
 }
 
@@ -1802,7 +1806,7 @@ class User
 {
     public function followers(): BelongsToMany
     {
-    return $this->belongsToMany('App\User', 'follows', 'followee_id', 'follower_id')->withTimestamps();
+    return $this->belongsToMany(self::class, 'follows', 'followee_id', 'follower_id')->withTimestamps();
     }
 }
 
@@ -1823,6 +1827,14 @@ $user->favoritePosts()->where('post_id', $post->id)->exists()
 
 // ユーザーがお気に入り登録したPostモデルのコレクションを取得
 $favoritePosts = $user->favoritePosts;
+
+
+// Laravelのリレーションシップ（特に多対多）を使うと、内部的にSQLの JOIN という処理が行われる。
+// 複数のテーブルを一時的に合体させて、1つの大きな仮想テーブルを作るようなイメージ。
+// そのとき、各テーブルのidカラムはusers.idやfollows.idのようになることに注意。
+// 指定例：
+$isFollowing = $user->followees()->where('users.id', $post->user->id)->exists();
+
 ```
 
 
