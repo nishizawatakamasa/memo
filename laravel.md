@@ -1037,6 +1037,9 @@ $flight = $flight->replicate([
     'last_pilot_id'
 ]);
 
+// モデルインスタンスをネストまで含めて良しなに配列に変換してくれる。
+$postArray = $post->toArray();
+
 
 // 保留
 $modelInstance->fresh();
@@ -4002,7 +4005,7 @@ $path = $fileInstance->storePubliclyAs('avatars', $request->user()->id, 'public'
 
 ```php
 // 特定のファイルのURLを取得。通常、指定されたパスの前に/storageを追加し、ファイルへの相対URLを返す。
-$url = Storage::url('file.jpg');
+$url = Storage::url('avatars/no_avatar.png');
 ```
 
 <a id="イベント購読"></a>

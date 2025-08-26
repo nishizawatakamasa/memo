@@ -6,7 +6,7 @@
     * [React](#React)
     * [TSの型](#TSの型)
     * [shadcn](#shadcn)
-
+    * [Ziggy](#Ziggy)
 
 
 
@@ -1170,3 +1170,15 @@ type ID = number | string;
 コンポーネントをインストールするコマンド  
 例：  
 `npx shadcn@latest add textarea`
+
+
+
+<a id="Ziggy"></a>
+## Ziggy
+
+```tsx
+// Ziggyのroute()関数
+// Laravelのroute()ヘルパーとほぼ同じ使い勝手で
+// 名前付きルートからURLを生成する
+route('buyer.replies.destroy', reply.id):
+```
