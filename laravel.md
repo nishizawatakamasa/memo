@@ -36,6 +36,7 @@
     * [リダイレクト](#リダイレクト)
     * [GET/POST](#GET/POST)
     * [コントローラー](#コントローラー)
+    * [ページネート](#ページネート)
     * [DIコンテナ](#DIコンテナ)
     * [サービスプロバイダ](#サービスプロバイダ)
     * [リクエスト](#リクエスト)
@@ -2486,6 +2487,20 @@ class SampleController extends Controller
 Route::get('profile', [UserController::class, 'show'])->middleware(['auth', 'verified'])->name('profile.show');
 // 'auth'だの'verified'だのは、「bootstrap\app.php」と「Illuminate\Foundation\Configuration\Middleware;」を参考。
 ```
+
+<a id="ページネート"></a>
+## ページネート
+
+
+```php
+$posts = $query->paginate(10);
+// ページネーションリンクに絞り込み条件を含める
+// ※ページを送っても条件が保持さるように
+// 現在のページの検索条件やソート順をそのままページネーションリンクに引き継ぎたい場合は、常に withQueryString() を使用する。 より細かい制御が必要な場合にのみ appends() を検討するのがベストプラクティス。
+$posts->withQueryString();
+```
+
+
 
 <a id="DIコンテナ"></a>
 ## DIコンテナ
