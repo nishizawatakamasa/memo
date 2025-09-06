@@ -30,6 +30,7 @@
         * [アクセサとミューテタ(モデル)](#アクセサとミューテタ(モデル))
         * [isとisNotメソッドで比較(モデル)](#isとisNotメソッドで比較(モデル))
         * [イベント(モデル)](#イベント(モデル))
+        * [オブザーバー](#オブザーバー)
     * [シーダー](#シーダー)
     * [ファクトリー](#ファクトリー)
     * [ルーティング](#ルーティング)
@@ -2019,6 +2020,82 @@ deleting, deleted: レコード削除前、削除後
 * restored
 * replicating
 * retrieved
+
+
+<a id="オブザーバー"></a>
+## オブザーバー
+
+### 作成コマンド例  
+`php artisan make:observer PostObserver --model=Post`
+
+
+### 実装
+```php
+<?php
+
+namespace App\Observers;
+
+use App\Models\Post;
+use App\Models\Notification; // Notificationモデルをuseする
+
+class PostObserver
+{
+    /**
+     * Handle the Post "created" event.
+     *
+     * @param  \App\Models\Post  $post
+     * @return void
+     */
+    public function created(Post $post)
+    {
+        // 投稿したユーザー（出品者）を取得
+        $author = $post->user;
+
+        // 出品者のフォロワーを全て取得
+        $followers = $author->followers;
+
+        // 各フォロワーに対して通知レコードを作成する
+        foreach ($followers as $follower) {
+            Notification::create([
+                'user_id' => $follower->id, // 通知を受け取るのはフォロワー
+                'post_id' => $post->id,     // 通知対象は今回作成された投稿
+                'is_read' => false,        // 最初は「未読」
+            ]);
+        }
+    }
+
+    // ... 他のメソッドは省略 ...
+}
+
+```
+
+
+### 登録
+
+これで、出品者が投稿を保存する（Post::create(...) や $post->save() を行う）たびに、自動的にフォロワーへの通知が作成されるようになる。
+
+
+```php
+
+<?php
+
+namespace App\Providers;
+
+use Illuminate\Support\ServiceProvider;
+use App\Models\Post; // useする
+use App\Observers\PostObserver; // useする
+
+class AppServiceProvider extends ServiceProvider
+{
+    // ...
+
+    public function boot()
+    {
+        // PostモデルのイベントをPostObserverで監視する
+        Post::observe(PostObserver::class);
+    }
+}
+```
 
 
 <a id="シーダー"></a>
