@@ -1834,12 +1834,39 @@ $user->favoritePosts()->where('post_id', $post->id)->exists()
 $favoritePosts = $user->favoritePosts;
 
 
-// Laravelのリレーションシップ（特に多対多）を使うと、内部的にSQLの JOIN という処理が行われる。
+// Laravelのリレーションシップ（特に多対多）を使うと、内部的にSQLのJOIN処理が行われる。
 // 複数のテーブルを一時的に合体させて、1つの大きな仮想テーブルを作るようなイメージ。
-// そのとき、各テーブルのidカラムはusers.idやfollows.idのようになることに注意。
+// 名前が重複しているカラムを指定する際は、テーブル名.カラム名 のように明記する必要がある。
+// 例えば、各テーブルのidカラムはusers.idやfollows.idのようになる。
 // 指定例：
 $isFollowing = $user->followees()->where('users.id', $post->user->id)->exists();
+```
 
+### 仲介リレーション
+```php
+
+// 内部的にSQLのJOIN処理が行われるのは多対多と同じ。
+// 名前が重複しているカラムを指定する際は、テーブル名.カラム名 のように明記する必要がある。
+
+class User extends Authenticatable
+{
+    public function commentsOnThePost()
+    {
+        // 第1引数: 最終的に取得したいモデル (Comment)
+        // 第2引数: 中間にあるモデル (Post)
+        return $this->hasManyThrough(Comment::class, Post::class);
+    }
+}
+
+class Supplier extends Model
+{
+    public function userProfile(): HasOneThrough
+    {
+        // 最終的に欲しいモデル: Profile
+        // 中間にあるモデル: User
+        return $this->hasOneThrough(Profile::class, User::class);
+    }
+}
 ```
 
 
