@@ -4210,6 +4210,48 @@ class PostImage extends Model
 <a id="メール"></a>
 ## メール
 
+### 概要
+
+
+
+
+
+```php
+
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Models\Post;
+use App\Http\Requests\Buyer\Comment\StoreRequest;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\CommentNotification;
+
+class CommentController extends Controller
+{
+    public function store(StoreRequest $request, Post $post)
+    {
+        // 略
+
+        Mail::to($actor->email)->send(new CommentNotification('あなた', $validated['content'], $subject, $title, $postUrl));
+
+        // 略
+    }
+}
+
+```
+
+
+
+```php
+
+```
+
+
+
+```php
+
+```
 
 
 
@@ -4223,6 +4265,117 @@ class PostImage extends Model
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+以下のコードについて質問
+
+1. to()にはメアドを渡し、sendにはインスタンスを渡すんですね
+Mail::to($seller->email)->send(new CommentNotification($nickname, $validated['content'], $subject, $title, $postUrl));
+
+
+
+
+2. 
+<?php
+
+namespace App\Mail;
+
+use Illuminate\Bus\Queueable;
+use Illuminate\Mail\Mailable;
+use Illuminate\Queue\SerializesModels;
+
+class CommentNotification extends Mailable
+{
+    use Queueable, SerializesModels;
+
+    public string $nickname;
+    public string $content;
+    public string $subjectText;
+    public string $title;
+    public string $postUrl;
+
+    /**
+     * Create a new message instance.
+     */
+    public function __construct(
+        string $nickname,
+        string $content,
+        string $subjectText,
+        string $title,
+        string $postUrl,
+    )
+    {
+        $this->nickname = $nickname;
+        $this->content = $content;
+        $this->subjectText = $subjectText;
+        $this->title = $title;
+        $this->postUrl = $postUrl;
+    }
+
+    /**
+     * Build the message.
+     */
+    public function build(): self
+    {
+        return $this->subject($this->subjectText)
+            ->view('emails.comment.notification')
+            ->text('emails.comment.notification_plain'); // プレーンテキスト版;
+    }
+}
+
+
+
+
+3. buildメソッド内で返しているbladeファイル内で、インスタンス変数をそのまま使えるの？
+{{ $content }}
+
+
+
+
+
+
+1. Laravelで Mail::to('...')->send(...) のようなコードを実行
+1. Laravelがメール内容を生成
+1. config/mail.phpやconfig/services.phpの設定からドライバやMailgun用のAPIキーの情報が取得される。
+1. メールの内容をログに出力して確認したり(log)、メモリ上の配列に保存してテストしたり(array)、サービスのAPIを叩いて実際に送信したり(Mailgun)する。
+
+* メールを送信するための「方法」をドライバとして切り替えることができる
+* これにより、開発環境ではメールを実際には送らずにログに出力し、本番環境では高信頼なメール配信サービスを利用する、といった切り替えが .env ファイルの設定一つで簡単に行える
+
+
+### Mailgun
+
+* 本番環境ではMailgunが一番無難。
+    * 長年の運用実績があり、世界中の多くのサービスで採用されている。非常に信頼性が高い。
+    * ドメインとAPIキーを設定するだけで、比較的簡単に導入できる。
+    * Laravelコミュニティでの採用実績がNo.1。Laravelとの連携事例も豊富。
+    * 日本語・英語ともに情報が圧倒的に多く、トラブルシューティングしやすい。
+    * 高い到達率、詳細なログ、開封/クリック追跡など、必要な機能が一通り揃っている。
+    * 小規模なら十分手頃な価格帯。
+
+
+* 注意
+    * メールはLaravelが生成し、Mailgunのサーバーから送信される
+    * Googleは「@gmail.com からのメールは、必ずGoogleのサーバーから送信されなければならない」というルール（DMARCポリシー）を全世界に公開している。
+    * Mailgunのサーバーを使って From: user@gmail.com としてメールを送ろうとすると、受信側のサーバーは、次のように判断する。
+    * 「このメールは @gmail.com を名乗っているのに、Googleじゃない場所（Mailgunのサーバー）から来ているぞ…」
+    * 「これはGoogleが許可していない送信方法だ。偽物のなりすましメールの可能性が高い！」
+    * 結果として、そのメールは迷惑メールフォルダに直行するか、完全にブロックされてしまう。
+    * つまり、Mailgunなどのサービスを利用するには、自身が所有・管理している独自ドメイン（例: my-app.com）が必要になる。
 
 
 
