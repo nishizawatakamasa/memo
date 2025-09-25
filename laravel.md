@@ -1560,19 +1560,72 @@ if ($modelInstance->trashed()) {
     // ...
 }
 
-// ソフトデリートしたモデルを復元する(モデルのdeleted_atカラムをnullにする)。
+// ソフトデリートしたモデルインスタンスを復元する(モデルのdeleted_atカラムをnullにする)。
 $flight->restore();
-// クエリでwithTrashedメソッドを呼び出すと、ソフトデリートしたモデルをクエリの結果に含められる。
-// クエリでonlyTrashedメソッドを呼び出すと、ソフトデリートしたモデルのみを取得する。
-// クエリでrestoreメソッドを使用して、複数のモデルを復元することができる。
+// クエリでwithTrashedメソッドを呼び出すと、ソフトデリートしたレコードをクエリの結果に含められる。
+// クエリでonlyTrashedメソッドを呼び出すと、ソフトデリートしたレコードのみを取得する。
+// クエリでrestoreメソッドを使用して、複数のレコードを復元することができる。
 Flight::query()
     ->withTrashed()
     ->where('airline_id', 1)
     ->restore();
 
-// ソフトデリートされたモデルを完全に削除する。
+// ソフトデリートされたレコードを完全に削除する。
 $flight->forceDelete();
 ```
+
+
+
+
+#### ソフトデリートの連鎖
+※注意  
+データベースの外部キー制約 ON DELETE CASCADE はソフトデリートでは機能しない。なぜなら、ソフトデリートはSQLのDELETE文ではなく、deleted_atカラムを更新するUPDATE文だから。   
+そのため、ソフトデリートの連鎖にはLaravelのモデルイベントを利用する。  deletingイベントで子のレコードを削除し、restoringイベントで子のレコードを復元するのが一般的なパターン。 
+
+
+
+```php
+// app/Models/Comment.php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
+
+class Comment extends Model
+{
+    use SoftDeletes;
+
+    public function replies()
+    {
+        return $this->hasMany(Reply::class);
+    }
+
+    // 親モデルに、イベントをリッスンして子モデルを操作する処理を追加
+    protected static function booted()
+    {
+        // レコード削除時のイベント'deleting' をリッスンする
+        static::deleting(function ($comment) {
+            // 関連する返信も一緒に削除する
+            // replies()リレーション先のモデル(Reply)がSoftDeletesを使っていれば、
+            // このdelete()もソフトデリートになる。
+            $comment->replies()->delete();
+        });
+
+
+        // レコード復元時のイベント'restoring' をリッスンする
+        static::restoring(function ($comment) {
+            // ソフトデリート済みのリプライを含めて検索し、復元する
+            // onlyTrashed()を忘れずに
+            $comment->replies()->onlyTrashed()->restore();
+        });
+    }
+}
+```
+
+
+
+
 
 <a id="Eloquent\Collectionメソッド(モデル)"></a>
 ### Eloquent\Collectionメソッド
@@ -4198,163 +4251,159 @@ class PostImage extends Model
 
 
 
-
-
-
-
-
-
-
-
-
 <a id="メール"></a>
 ## メール
 
 ### 概要
 
 
-
-
-
 ```php
-
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Services\Actions\Seller\Post;
 
-use App\Models\Post;
-use App\Http\Requests\Buyer\Comment\StoreRequest;
+use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
+
 use Illuminate\Support\Facades\Mail;
-use App\Mail\CommentNotification;
+use App\Mail\NewPostNotification;
 
-class CommentController extends Controller
+class StoreAction
 {
-    public function store(StoreRequest $request, Post $post)
+    private function sendMail($id, $dataForStore)
     {
         // 略
 
-        Mail::to($actor->email)->send(new CommentNotification('あなた', $validated['content'], $subject, $title, $postUrl));
+        // 宛先のメアドを指定
+        Mail::to($follower->email)
+            // メールの件名、本文、デザインなどをクラスで定義
+            // インスタンス化し、メール本体を作成
+            // それをqueueで実際に送信する
+            ->queue(new NewPostNotification($nickname, $id, $dataForStore));
+            // sendでも送信できるが、queueだとキューを使って体感速度を劇的に向上させることができる
+            // queue() を使うには、send() と違って少しだけ準備が必要。
+            // QUEUE_CONNECTION=をdatabaseにする。
+            // php artisan queue:table と php artisan migrate を実行して、キューの仕事を入れておくためのテーブルを作成。
+            // ターミナルで php artisan queue:work というコマンドを実行しておく必要がある。このプロセスが、キューに登録された仕事を監視し、実行してくれる。（本番環境では、Supervisorなどのプロセス監視ツールでこのワーカーが常に起動している状態を保つ）
+        
+
+
+        // Mail::to('...')->queue(...)実行時の流れ
+        // Laravelがメール内容を生成
+        // config/mail.phpやconfig/services.phpの設定からドライバやMailgun用のAPIキーの情報が取得される。
+        // メールの内容をログに出力して確認したり(log)、メモリ上の配列に保存してテストしたり(array)、サービスのAPIを叩いて実際に送信したり(Mailgun)する。
+
+        // ※ドライバについて
+        // メールを送信するための「方法」をドライバとして切り替えることができる
+        // これにより、開発環境ではメールを実際には送らずにログに出力し、本番環境では高信頼なメール配信サービスを利用する、といった切り替えが .env ファイルの設定一つで簡単に行える
 
         // 略
     }
 }
-
 ```
-
-
 
 ```php
-
-```
-
-
-
-```php
-
-```
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-以下のコードについて質問
-
-1. to()にはメアドを渡し、sendにはインスタンスを渡すんですね
-Mail::to($seller->email)->send(new CommentNotification($nickname, $validated['content'], $subject, $title, $postUrl));
-
-
-
-
-2. 
 <?php
 
 namespace App\Mail;
 
-use Illuminate\Bus\Queueable;
-use Illuminate\Mail\Mailable;
-use Illuminate\Queue\SerializesModels;
+use Illuminate\Mail\Mailable; // メールを組み立てるための基本機能を提供するクラス
+use Illuminate\Bus\Queueable; // メール送信をバックグラウンド処理（キュー）させるための機能を提供するトレイト。
+use Illuminate\Queue\SerializesModels; //  キューを使う際にEloquentモデルを正しく扱うための機能を提供するトレイト。
 
-class CommentNotification extends Mailable
+class NewPostNotification extends Mailable
 {
     use Queueable, SerializesModels;
 
     public string $nickname;
-    public string $content;
-    public string $subjectText;
-    public string $title;
+    public array $dataForStore;
     public string $postUrl;
 
-    /**
-     * Create a new message instance.
-     */
-    public function __construct(
-        string $nickname,
-        string $content,
-        string $subjectText,
-        string $title,
-        string $postUrl,
-    )
+    public function __construct(string $nickname, $post, array $dataForStore)
     {
         $this->nickname = $nickname;
-        $this->content = $content;
-        $this->subjectText = $subjectText;
-        $this->title = $title;
-        $this->postUrl = $postUrl;
+        $this->dataForStore = $dataForStore;
+        $this->postUrl = route('seller.post.show', ['post' => $post->id]);
     }
 
-    /**
-     * Build the message.
-     */
+    // 実際にメールを組み立てる（ビルドする）役割
     public function build(): self
     {
-        return $this->subject($this->subjectText)
-            ->view('emails.comment.notification')
-            ->text('emails.comment.notification_plain'); // プレーンテキスト版;
+        return $this->subject("商品公開通知") // 件名を指定
+            // publicで宣言したインスタンス変数を、指定したbladeファイル内でそのまま使える
+            // HTML版とプレーンテキスト版を両方指定して、一緒に送信できる。
+            ->view('emails.new-post.notification_html') // ※HTML版;
+            ->text('emails.new-post.notification_plain'); // ※プレーンテキスト版;
+            // 受信者のメールクライアントは、まずHTML版を表示しようと試みる。もしHTMLを表示できる環境ならそちらを表示し、表示できない環境（または設定）であれば、代わりにプレーンテキスト版を表示する。
+        
+
+        // もっと簡潔な方法
+        return $this->subject("商品公開通知")
+            // markdown()メソッドは、1つのMarkdownファイルからHTML版とプレーンテキスト版の両方を自動的に生成してくれる
+            ->markdown('emails.new-post.notification_markdown'); // ※markdown版
     }
 }
+```
 
+プレーンテキスト版
+```blade.php
+フォロー中の{{ $nickname }}さんが商品を公開しました！
 
+{{ $dataForStore['recommend_point'] }}{{ $dataForStore['category'] }}{{ $dataForStore['variety'] }}{{ $dataForStore['quantity'] }}
+販売価格：￥{{ $dataForStore['price'] }}
+{{ $dataForStore['is_start_date_tentative'] ? '販売開始日(予定)' : '販売開始日' }}：{{ $dataForStore['sales_start_date'] }}
+{{ $dataForStore['is_end_date_tentative'] ? '販売終了日(予定)' : '販売終了日' }}：{{ $dataForStore['sales_end_date'] }}
 
+投稿URL：{{ $postUrl }}
+```
 
-3. buildメソッド内で返しているbladeファイル内で、インスタンス変数をそのまま使えるの？
-{{ $content }}
+markdown版の例
+```php
+@component('mail::message')
+# フォロー中の{{ $nickname }}さんが新しい商品を公開しました！
 
+@if(isset($thumbnailUrl) && $thumbnailUrl)
+{{-- 商品画像がある場合は表示する --}}
+<img src="{{ $thumbnailUrl }}" alt="商品画像" style="width: 100%; max-width: 400px; margin-bottom: 20px; border-radius: 8px;">
+@endif
 
+**「{{ $dataForStore['variety'] }}」**が出品されました。商品の詳細は以下の通りです。
 
+@component('mail::panel')
+{{-- 商品の主要な情報をパネルで目立たせる --}}
+**カテゴリー:** {{ $dataForStore['category'] }}<br>
+**品目:** {{ $dataForStore['variety'] }}<br>
+**数量:** {{ $dataForStore['quantity'] }}<br>
+@if($dataForStore['recommend_point'])
+**おすすめポイント:** {{ $dataForStore['recommend_point'] }}
+@endif
+@endcomponent
 
+---
 
+## 販売情報
 
-1. Laravelで Mail::to('...')->send(...) のようなコードを実行
-1. Laravelがメール内容を生成
-1. config/mail.phpやconfig/services.phpの設定からドライバやMailgun用のAPIキーの情報が取得される。
-1. メールの内容をログに出力して確認したり(log)、メモリ上の配列に保存してテストしたり(array)、サービスのAPIを叩いて実際に送信したり(Mailgun)する。
+<div style="font-size: 1.5em; font-weight: bold; margin-bottom: 20px; color: #d9534f;">
+    販売価格: ￥{{ number_format($dataForStore['price']) }}
+</div>
 
-* メールを送信するための「方法」をドライバとして切り替えることができる
-* これにより、開発環境ではメールを実際には送らずにログに出力し、本番環境では高信頼なメール配信サービスを利用する、といった切り替えが .env ファイルの設定一つで簡単に行える
+@component('mail::table')
+| 販売期間 | |
+|:----------|:----------|
+| {{ $dataForStore['is_start_date_tentative'] ? '販売開始日 (予定)' : '販売開始日' }} | {{ $dataForStore['sales_start_date'] }} |
+| {{ $dataForStore['is_end_date_tentative'] ? '販売終了日 (予定)' : '販売終了日' }} | {{ $dataForStore['sales_end_date'] }} |
+@endcomponent
+
+<br>
+
+@component('mail::button', ['url' => $postUrl, 'color' => 'success'])
+商品を詳しく見る
+@endcomponent
+
+今後とも{{ config('app.name') }}をよろしくお願いいたします。
+@endcomponent
+```
+
 
 
 ### Mailgun
