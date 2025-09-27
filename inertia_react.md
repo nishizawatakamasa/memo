@@ -351,6 +351,7 @@ router.reload(options?: Omit<VisitOptions, 'preserveScroll' | 'preserveState'>)
 
 ### フォームの送信  
 #### useFormフック
+要は、InertiaのrouterとReactのuseStateを自分で組み合わせて手動で行う面倒な処理（＝なんやかんや）を、まとめて便利にしてくれるヘルパー機能
 ```tsx
 import { useForm } from '@inertiajs/react'
 

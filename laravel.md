@@ -2763,7 +2763,7 @@ public function store(Request $request)
 {
     $folder = new Folder();
 
-    // ※$request->のあとにある変数名は、HTMLのタグのname属性で付けた名前。
+    // ※$request->のあとにある変数名は、HTMLのタグのname属性で付けた名前か、クエリパラメータ名。
     $folder->title = $request->title;
 
     // name="quantity[]"のようにname属性の最後に[]を付けた場合、その値はリクエストを受け取ったときに配列として扱われる。
@@ -2788,6 +2788,10 @@ public function store(Request $request)
 FormRequestクラスはIlluminate\Http\Requestクラスを継承している。    
 そのFormRequestクラスを継承したクラスを利用することで、簡単に認可・バリデーションを行える。    
 コントローラーからバリデーション処理を完全に切り離し、Fat Controller化を防ぐ効果もある。  
+
+**※「外部からの入力はすべて信頼しない」という原則を徹底する。**  
+**※クエリパラメータとフォームインプットの値は必ずここで明示的にバリデーションする。**  
+**※ルートパラメータは基本的に暗黙的にバリデーションされる。**  
 
 FormRequestの子クラスを作成するコマンド  
 `php artisan make:request SampleRequest`  
