@@ -962,7 +962,14 @@ function App() {
 
 #### useCallback
 #### useMemo
+第一引数はメモ化したい値を計算する関数。同じ引数に対して必ず同じ返り値を返す必要がある。  
+第二引数は依存配列。Reactは、依存配列の中の値が変更されたときだけuseMemo内の関数を再実行する。  
 
+```tsx
+import { useMemo } from 'react';
+
+const selectedRegionsSet = useMemo(() => new Set(selectedRegions), [selectedRegions]);
+```
 
 
 ### props
