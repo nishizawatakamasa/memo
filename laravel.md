@@ -776,6 +776,18 @@ $table->unique('email');
 $table->unique(['column_name1', 'column_name2', 'column_name3']);
 ```
 
+### カラム定義後のインデックス追加
+```php
+<?php
+// 特定カラムの値が同じレコードをひとまとめにして箱に入れ、その箱にラベルがってある感じ
+// 複合の場合は箱の中にさらに箱が入れ子になってるというイメージ
+
+// カラムを定義した後にインデックスを追加。
+$table->index('state');
+// 複合インデックスの場合は引数にカラム名の配列を渡す。
+$table->index(['account_id', 'created_at']);
+```
+
 ### カラム定義後の主キー設定
 ```php
 <?php
