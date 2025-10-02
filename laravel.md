@@ -1311,6 +1311,15 @@ $queryBuilderInstance->skip(10)->take(5)
 // SQLライクなエイリアス
 $queryBuilderInstance->offset(5)->limit(10)
 
+// 通常のクエリビルダでは書けない複雑なSQL条件を書きたい時に使う
+// 第一引数: 生のSQL文。`?`をプレースホルダーとして使う
+// 第二引数: `?`に順番にバインドされる値の配列
+// 第一引数の？に、第二引数の配列の値が順番にバインドされる
+// SQLインジェクションを防ぐため、必ず`?`を使って値をバインドする（直接文字列結合しない）
+$queryBuilderInstance->whereRaw("name = ?", [$userInput]); // 安全！
+
+
+
 // サブクエリをサポートしている関数
 select
 addSelect
