@@ -961,6 +961,33 @@ function App() {
 }
 ```
 
+
+```tsx
+// querySelectorみたいなイメージの用途もある
+// DOM要素への参照を取得して保持する
+const MyConversation = () => {
+
+  const messagesContainerRef = useRef<HTMLDivElement>(null);
+
+  const scrollToTop = () => {
+    if (messagesContainerRef.current) {
+      messagesContainerRef.current.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+      });
+    }
+  };
+
+  return (
+    <div ref={messagesContainerRef}></div>
+  );
+};
+```
+
+
+
+
+
 #### useCallback
 #### useMemo
 第一引数はメモ化したい値を計算する関数。同じ引数に対して必ず同じ返り値を返す必要がある。  
