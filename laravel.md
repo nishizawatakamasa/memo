@@ -2512,6 +2512,10 @@ return redirect()->route('tasks.index', [
 
 // 直前のURLにリダイレクト。
 return back();
+
+// フラッシュメッセージを設定
+return redirect()->route('seller.post.index_draft')->with('success', '下書きが保存されました!')
+
 ```
 ### 参考サイト
 [return view('cart.index');とreturn redirect()->route('cart.index');の違い](https://takuya-084-it.hatenablog.jp/entry/2023/11/14/083921)
