@@ -2509,6 +2509,8 @@ return redirect('URL');
 return redirect()->route('tasks.index', [
     'id' => $id
 ]);
+// エイリアス
+return to_route();
 
 // 直前のURLにリダイレクト。
 return back();
@@ -2518,6 +2520,7 @@ return redirect()->route('seller.post.index_draft')->with('success', '下書き�
 
 ```
 ### 参考サイト
+[Laravel 12.x HTTPリダイレクト](https://readouble.com/laravel/12.x/ja/redirects.html?header=%25E3%2583%25AA%25E3%2583%2580%25E3%2582%25A4%25E3%2583%25AC%25E3%2582%25AF%25E3%2583%2588%25E3%2581%25AE%25E4%25BD%259C%25E6%2588%2590)
 [return view('cart.index');とreturn redirect()->route('cart.index');の違い](https://takuya-084-it.hatenablog.jp/entry/2023/11/14/083921)
 
 
