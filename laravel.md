@@ -2674,6 +2674,36 @@ Route::get('profile', [UserController::class, 'show'])->middleware(['auth', 'ver
 // 'auth'だの'verified'だのは、「bootstrap\app.php」と「Illuminate\Foundation\Configuration\Middleware;」を参考。
 ```
 
+
+### コントローラー内で別のコントローラーメソッドを呼び出す例
+
+```php
+<?php
+
+namespace App\Http\Controllers;
+
+use Illuminate\Support\Facades\Gate;
+use App\Http\Controllers\Buyer\PostController as BuyerPostController;
+use App\Http\Controllers\Guest\PostController as GuestPostController;
+
+
+class HomeController extends Controller
+{
+    public function index()
+    {
+        if (Gate::allows('buyer')) {
+            return app()->call([app(BuyerPostController::class), 'index']);
+        }
+    
+        return app()->call([app(GuestPostController::class), 'index']);
+    }
+}
+```
+
+
+
+
+
 <a id="ページネート"></a>
 ## ページネート
 
