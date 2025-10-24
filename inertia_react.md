@@ -544,10 +544,11 @@ post(url, {
   onFinish: (visit: Visit) => void,
   // リクエスト開始時に実行されるコールバック。
   onStart: (visit: Visit) => void,
-  // trueの場合、フォーム送信後もコンポーネントのローカルステートを保持する。
-  // デフォルトは false（POST/PUT/PATCH/DELETEの場合）または true（GETの場合）。
+  // trueの場合、フォーム送信後もコンポーネントのローカルstateを保持する。
+  // falseの場合、ページ内のすべてのstateは初期値にリセットされる。
   preserveState: boolean,
   // trueの場合、フォーム送信後にページのスクロール位置を保持する。
+  // falseの場合、ページの最上部に戻る。
   preserveScroll: boolean,
   // trueの場合、フォーム送信成功時にフォームデータをリセットする。デフォルトは true。
   resetOnSuccess: boolean,
