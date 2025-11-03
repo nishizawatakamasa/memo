@@ -357,7 +357,9 @@ import { router } from '@inertiajs/react'
 // ※第二引数のオブジェクトの型がVisitOptions
 router.visit(url, {
   method: 'get',
-  data: {},
+  // dataにはプレーンなjsのオブジェクトを渡す。
+  // getならクエリパラメータ、postならリクエストボディとなる。
+  data: {}, 
   replace: false,
   preserveState: false,
   preserveScroll: false,
