@@ -1335,6 +1335,21 @@ $queryBuilderInstance->whereRaw("name = ?", [$userInput]); // 安全！
 
 
 
+// JSONカラムを操作する
+
+// preferencesというJSONカラムの中にある `dining` のさらにその中(この場合ネストしたオブジェクト)の `meal` というキーの値を抽出する。
+// そして、その値が文字列の `'salad'` と等しい（=）レコードを探す。
+$queryBuilderInstance->where('preferences->dining->meal', 'salad')
+
+// optionsというJSONカラムの中にある `languages` というキーの値（配列）をチェックする。
+// そして、その配列の要素の中に`'en'` という値が含まれているレコードを探す。
+// 値が配列ではない場合、通常は不一致扱いとなる
+$queryBuilderInstance->whereJsonContains('options->languages', 'en')
+
+
+
+
+
 // サブクエリをサポートしている関数
 select
 addSelect
@@ -1344,7 +1359,6 @@ orderBy
 // JOIN(結合)
 // UNION(結合)
 $queryBuilderInstance->whereNot()
-$queryBuilderInstance->whereJsonContains()
 $queryBuilderInstance->whereJsonLength()
 $queryBuilderInstance->whereExists()
 $queryBuilderInstance->whereFullText()
