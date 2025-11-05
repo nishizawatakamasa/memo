@@ -2934,6 +2934,21 @@ class SampleRequest extends FormRequest
             // 複数のルートパラメータをバリデーションしたい場合は、それぞれマージする必要がある。
             'category_id' => $this->route('category_id'),
         ]);
+
+        // cultivation_methodsが存在する場合、各値を真偽値に変換
+        if ($this->has('cultivation_methods')) {
+            // $this->merge()はドット記法に対応していない。
+            $this->merge([
+                'cultivation_methods' => [
+                    // $this->boolean()はドット記法に対応している
+                    // 'cultivation_methods.pesticide'のように直接ネストした値にアクセスできる
+                    'pesticide' => $this->boolean('cultivation_methods.pesticide'),
+                    'chemicalFertilizer' => $this->boolean('cultivation_methods.chemicalFertilizer'),
+                    'organicFertilizer' => $this->boolean('cultivation_methods.organicFertilizer'),
+                    'herbicide' => $this->boolean('cultivation_methods.herbicide'),
+                ]
+            ]);
+        }
     }
 
     // バリデーションルールを定義するメソッド。
