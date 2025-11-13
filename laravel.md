@@ -1071,6 +1071,7 @@ $flight = $flight->replicate([
 $postArray = $post->toArray();
 
 
+
 // 保留
 $modelInstance->fresh();
 $modelInstance->refresh();
@@ -1078,6 +1079,8 @@ $modelInstance->refresh();
 
 <a id="クラスメソッド(モデル)"></a>
 ### クラスメソッド
+
+**内部的にはクエリ実行メソッドである**
 
 ```php
 <?php
@@ -1196,7 +1199,7 @@ $users = User::query()
     ->toArray();
 
 // SQLの実行クエリを出力
-$queryBuilderInstance->dd()
+$queryBuilderInstance->dd();
 
 // 特定のカラムのみを取得するために使用。エイリアスも書ける。
 $queryBuilderInstance->select('カラム名', 'カラム名 as エイリアス')
@@ -1410,6 +1413,19 @@ $queryBuilderInstance->delete();
 $queryBuilderInstance->value('カラム名');
 // id列の値で単一のレコードを取得(要素が見つからなかった場合はnull)。
 $queryBuilderInstance->find(3);
+// id列の値で単一のレコードを取得(要素が見つからなかった場合はエラー(404))。
+
+
+// 以下3つはクラスメソッドと完全に同等
+$queryBuilderInstance->updateOrCreate(); 
+$queryBuilderInstance->upsert();
+$queryBuilderInstance->firstOrCreate();
+// ※リレーション経由の場合、外部キーは自動的に検索条件に含まれるため、わざわざ指定する必要はない。
+$reapplicant->tradename()->updateOrCreate(
+    [],
+    ['name' => $validated['tradename']]
+);
+
 
 $queryBuilderInstance->pluck('カラム名(バリュー)', 'カラム名(キー)※省略可'); // 第一引数をバリュー、第二引数(省略可)をキーとした配列を作ることができる。
 
