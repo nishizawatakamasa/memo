@@ -1835,6 +1835,10 @@ public function authStaffComments(): HasMany
     return $this->hasMany(StaffComment::class, 'user_member_id', 'id')
         ->where('staff_member_id', Auth::user()->getStaffMember()?->id);
 }
+
+// モデルのプロパティには全てスネークケースでアクセスする。
+// リレーションメソッド自体はキャメルで定義するが、動的プロパティでアクセスする場合はスネーク
+// ただし単にクエリビルダとしてリレーションを伸ばす場合はメソッド名のキャメルのまま。
 ```
 
 ### 紐付けたデータへのアクセス

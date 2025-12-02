@@ -14,9 +14,6 @@
 <a id="はじめに"></a>
 ## はじめに
 
-**要注意：LaravelからAPI(inertiaも内部ではAPI)でフロントにデータを渡す際は、自動でスネークケースにJSONシリアライズされる。**
-
-
 ### Laravel 12 React Starter Kitの始め方
 1. PHPとComposerをインストール
 1. `composer global require laravel/installer`を実行-Composer経由でLaravelインストーラーをインストール
