@@ -14,8 +14,10 @@
 <a id="はじめに"></a>
 ## はじめに
 
+**要注意：LaravelからAPI(inertiaも内部ではAPI)でフロントにデータを渡す際は、自動でスネークケースにJSONシリアライズされる。**
 
-## Laravel 12 React Starter Kitの始め方
+
+### Laravel 12 React Starter Kitの始め方
 1. PHPとComposerをインストール
 1. `composer global require laravel/installer`を実行-Composer経由でLaravelインストーラーをインストール
 1. `laravel new example-app`を実行-Laravelの新規プロジェクト作成
@@ -26,7 +28,7 @@
 1. `composer require askdkc/breezejp --dev`を実行-Breezejpをインストール
 1. `php artisan breezejp`を実行-必要な言語ファイルの出力
 
-## git clone時
+### git clone時
 `composer install`を実行-バックエンド（PHP）の依存関係をインストール  
 `npm install`を実行-フロントエンド（JavaScript）の依存関係をインストール(package.jsonを元にnode_modulesにインストール)  
 `cp .env.example .env`を実行-.env.exampleファイルをコピーして.envファイルを作成
