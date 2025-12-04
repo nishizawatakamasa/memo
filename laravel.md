@@ -531,7 +531,9 @@ $todayWorkLog?->activities
 ## Enum
 
 ### 基本
-複数の定数をまとめて管理できる機能。
+複数の定数をまとめて管理できる機能。  
+定数の進化版。システマチックな定数みたいなもの。  
+基本的に「あらかじめ用意しておいた値を返す」だけ。  
 
 ### Enumを作成するコマンド。
 `php artisan make:enum EnumName`  
@@ -543,7 +545,7 @@ $todayWorkLog?->activities
 実行すると、app配下にEnumが作成される。  
 app/Enumsディレクトリを作っておくと、app/Enums配下に作成先が変わる。
 
-### Enumの例
+### Enumの例1
 ```php
 <?php
 
@@ -564,6 +566,69 @@ use App\Enums\UserType;
 UserType::WELFARE_USER->value // '利用者'
 UserType::WELFARE_STAFF->value // '職員'
 ```
+
+### Enumの例2
+```php
+<?php
+
+enum Status: string
+{
+    case New = 'new';
+    case Paid = 'paid';
+    case Processing = 'processing';
+    case Registered = 'registered';
+    case Pending = 'pending';
+    case Cancelled = 'cancelled';
+
+    public function label(): string
+    {
+        // $this = 呼び出し元のcase
+        return match($this) {
+            self::New => '申請', // self::New の場合は '申請'
+            self::Paid => '支払済',
+            self::Processing => '着手',
+            self::Registered => '登録済',
+            self::Pending => '保留',
+            self::Cancelled => '解約済',
+        };
+    }
+
+    public static function options(): array
+    {
+        return array_map(fn($case) => [
+            'value' => $case->value,
+            'label' => $case->label(),
+        ], self::cases());
+    }
+}
+```
+```php
+<?php
+
+// 値の取得
+Status::New->value;  // 'new'
+Status::Paid->value; // 'paid'
+
+// 名前の取得
+Status::New->name;   // 'New'
+
+// 全ケースの取得
+Status::cases();  
+// [Status::New, Status::Paid, Status::Processing, ...]
+
+// 値からEnumに変換
+Status::from('new');      // Status::New（見つからないとエラー）
+Status::tryFrom('new');   // Status::New（見つからないとnull）
+
+
+Status::New->label();        // '申請'
+Status::Paid->label();       // '支払済'
+Status::Processing->label(); // '着手'
+```
+
+
+
+
 
 <a id="trait"></a>
 ## trait
