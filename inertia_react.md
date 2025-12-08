@@ -901,6 +901,8 @@ const { name, quote, auth, flash, ziggy, sidebarOpen, unreadNotificationCount } 
 <a id="React"></a>
 ## React
 
+**結局全てJSコードであり、JS空間。jsxは単なる「{}で値を埋め込めるシンタックスシュガー」に過ぎない。**
+
 [クイックスタート](https://ja.react.dev/learn)
 
 
