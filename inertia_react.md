@@ -913,6 +913,7 @@ const { name, quote, auth, flash, ziggy, sidebarOpen, unreadNotificationCount } 
   * 埋め込んだ値がtrue, false, true, null, undefinedの場合は何もレンダリングしない。
   * JSXの配列は兄弟要素としてレンダリングされる
   * 配列内の各要素をmap等でレンダリングする際には、兄弟の中でそれを一意に識別するためのkey属性(文字列または数値)を設定する必要がある。
+  * key属性はReactがコンポーネントに付ける個体識別番号やIDのようなもの。値が変わると新しいコンポーネントとして再マウントされる。当然内部ステートも初期状態になる。
   * export default キーワードは、ファイル内のメインコンポーネントを指定している。
 
 * コンポーネントの基本
