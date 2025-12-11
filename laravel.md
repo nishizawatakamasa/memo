@@ -1985,11 +1985,14 @@ $queryBuilderInstance->with([
 // ※当然だがSupport\Collectionにはloadメソッドが存在しないため、使用不可。
 // 戻り値は、 リレーションがロードされた状態の元のモデルインスタンス（もしくはコレクション）
 // 基本的に、指定できる引数の形式はwithメソッドと同じ
+// loadMissingメソッド(関係がまだロードされていない場合のみ、指定するリレーションをEagerロードする。基本的にこちらを使ったほうがパフォーマンスが良い。)
 $welfareUsers = User::query()
     ->where('user_type', UserType::WELFARE_USER->value)
     ->get();
-$welfareUsers = $welfareUsers->load('posts');
+$welfareUsers = $welfareUsers->loadMissing('posts');
 ```
+
+
 
 
 ### 多対多リレーション
