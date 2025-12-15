@@ -1,65 +1,65 @@
-# Laravel覚書
+# Laravel 覚書
 
-* 目次
-    * [MVC](#MVC)
-    * [構造](#構造)
-    * [設計思想](#設計思想)
-    * [図解](#図解)
-    * [参考サイト](#参考サイト)
-    * [便利なVSCodeの拡張機能](#便利なVSCodeの拡張機能)
-    * [インストール](#インストール)
-    * [ide-helper](#ide-helper)
-    * [gitからcloneする時](#gitからcloneする時)
-    * [サーバー起動](#サーバー起動)
-    * [.env.exampleの設定](#.env.exampleの設定)
-    * [XAMPPでMySQLが起動しない時の対処法](#XAMPPでMySQLが起動しない時の対処法)
-    * [namespace](#namespace)
-    * [日付操作(CarbonImmutable)](#日付操作(CarbonImmutable))
-    * [nullsafe演算子](#nullsafe演算子)
-    * [Enum](#Enum)
-    * [trait](#trait)
-    * [マイグレーション](#マイグレーション)
-    * [モデル](#モデル)
-        * [インスタンスメソッド(モデル)](#インスタンスメソッド(モデル))
-        * [クラスメソッド(モデル)](#クラスメソッド(モデル))
-        * [クエリビルダーメソッド(モデル)](#クエリビルダーメソッド(モデル))
-        * [クエリ実行メソッド(モデル)](#クエリ実行メソッド(モデル))
-        * [クエリスコープ(モデル)](#クエリスコープ(モデル))
-        * [ソフトデリート(モデル)](#ソフトデリート(モデル))
-        * [Eloquent\Collectionメソッド(モデル)](#Eloquent\Collectionメソッド(モデル))
-        * [リレーション(モデル)](#リレーション(モデル))
-        * [アクセサとミューテタ(モデル)](#アクセサとミューテタ(モデル))
-        * [isとisNotメソッドで比較(モデル)](#isとisNotメソッドで比較(モデル))
-        * [イベント(モデル)](#イベント(モデル))
-        * [オブザーバー](#オブザーバー)
-    * [シーダー](#シーダー)
-    * [ファクトリー](#ファクトリー)
-    * [ルーティング](#ルーティング)
-    * [リダイレクト](#リダイレクト)
-    * [GET/POST](#GET/POST)
-    * [コントローラー](#コントローラー)
-    * [ページネート](#ページネート)
-    * [DIコンテナ](#DIコンテナ)
-    * [サービスプロバイダ](#サービスプロバイダ)
-    * [リクエスト](#リクエスト)
-        * [バリデーションルール](#バリデーションルール)
-    * [lang](#lang)
-    * [サービス](#サービス)
-    * [ビュー](#ビュー)
-    * [Breeze](#Breeze)
-    * [Breezejp](#Breezejp)
-    * [ミドルウェア](#ミドルウェア)
-    * [TailwindCSS](#TailwindCSS)
-    * [Facade](#Facade)
-    * [セッション](#セッション)
-    * [ユーザーアクションの認可](#ユーザーアクションの認可)
-    * [ファイルのアップロード](#ファイルのアップロード)
-    * [イベント購読](#イベント購読)
-    * [メール](#メール)
-    * [テスト](#テスト)
-
+- 目次
+  - [MVC](#MVC)
+  - [構造](#構造)
+  - [設計思想](#設計思想)
+  - [図解](#図解)
+  - [参考サイト](#参考サイト)
+  - [便利な VSCode の拡張機能](#便利なVSCodeの拡張機能)
+  - [インストール](#インストール)
+  - [ide-helper](#ide-helper)
+  - [git から clone する時](#gitからcloneする時)
+  - [サーバー起動](#サーバー起動)
+  - [.env.example の設定](#.env.exampleの設定)
+  - [XAMPP で MySQL が起動しない時の対処法](#XAMPPでMySQLが起動しない時の対処法)
+  - [namespace](#namespace)
+  - [日付操作(CarbonImmutable)](<#日付操作(CarbonImmutable)>)
+  - [nullsafe 演算子](#nullsafe演算子)
+  - [Enum](#Enum)
+  - [trait](#trait)
+  - [マイグレーション](#マイグレーション)
+  - [モデル](#モデル)
+    - [インスタンスメソッド(モデル)](<#インスタンスメソッド(モデル)>)
+    - [クラスメソッド(モデル)](<#クラスメソッド(モデル)>)
+    - [クエリビルダーメソッド(モデル)](<#クエリビルダーメソッド(モデル)>)
+    - [クエリ実行メソッド(モデル)](<#クエリ実行メソッド(モデル)>)
+    - [クエリスコープ(モデル)](<#クエリスコープ(モデル)>)
+    - [ソフトデリート(モデル)](<#ソフトデリート(モデル)>)
+    - [Eloquent\Collection メソッド(モデル)](<#Eloquent\Collectionメソッド(モデル)>)
+    - [リレーション(モデル)](<#リレーション(モデル)>)
+    - [アクセサとミューテタ(モデル)](<#アクセサとミューテタ(モデル)>)
+    - [is と isNot メソッドで比較(モデル)](<#isとisNotメソッドで比較(モデル)>)
+    - [イベント(モデル)](<#イベント(モデル)>)
+    - [オブザーバー](#オブザーバー)
+  - [シーダー](#シーダー)
+  - [ファクトリー](#ファクトリー)
+  - [ルーティング](#ルーティング)
+  - [リダイレクト](#リダイレクト)
+  - [GET/POST](#GET/POST)
+  - [コントローラー](#コントローラー)
+  - [ページネート](#ページネート)
+  - [DI コンテナ](#DIコンテナ)
+  - [サービスプロバイダ](#サービスプロバイダ)
+  - [リクエスト](#リクエスト)
+    - [バリデーションルール](#バリデーションルール)
+  - [lang](#lang)
+  - [サービス](#サービス)
+  - [ビュー](#ビュー)
+  - [Breeze](#Breeze)
+  - [Breezejp](#Breezejp)
+  - [ミドルウェア](#ミドルウェア)
+  - [TailwindCSS](#TailwindCSS)
+  - [Facade](#Facade)
+  - [セッション](#セッション)
+  - [ユーザーアクションの認可](#ユーザーアクションの認可)
+  - [ファイルのアップロード](#ファイルのアップロード)
+  - [イベント購読](#イベント購読)
+  - [メール](#メール)
+  - [テスト](#テスト)
 
 <a id="MVC"></a>
+
 ## MVC
 
 ### 3+2
@@ -69,156 +69,151 @@
 1. その他便利ツール(モデルやビューなど)
 
 ※Inertia
-1. Ajax発火装置
-1. 内部JSONでクライアント構築
 
+1. Ajax 発火装置
+1. 内部 JSON でクライアント構築
 
 <a id="構造"></a>
+
 ## 構造
 
---------
+---
 
-* 基本設定  
-* リソース
-    * アクション
-        * ルーティング
-        * バリデーション
-        * ドメインロジック(モデル使用)
-        * ビュー
-* その他便利機能  
+- 基本設定
+- リソース
+  - アクション
+    - ルーティング
+    - バリデーション
+    - ドメインロジック(モデル使用)
+    - ビュー
+- その他便利機能
 
-----------
-
-
+---
 
 リソース(アクション)とレイヤー
 
-* アクション
-    * ルーティング
-    * バリデーション
-    * ドメインロジック(この中でモデルを使用)
-    * ビュー
+- アクション
+  - ルーティング
+  - バリデーション
+  - ドメインロジック(この中でモデルを使用)
+  - ビュー
 
-Laravelはリソース志向。  
+Laravel はリソース志向。  
 各レイヤーは密結合になっても良い。  
-Livewireもそういうアプローチ。  
+Livewire もそういうアプローチ。
 
 +基本設定  
-+その他便利機能  
++その他便利機能
 
 ※「同一リソース」でもコンテキストが異なればコントローラーを分けるのは有効
-
 
 必須級  
 Composer  
 Configuration  
-Artisan Console  
-  
+Artisan Console
+
 Routing  
 FormRequest  
 Controller  
 Blade Templates  
-Livewire  
-  
-Service  
-  
+Livewire
+
+Service
+
 Model  
 Migration  
 seeder  
-factory  
-  
+factory
+
 DI Container  
 Middleware  
-Service Provider  
-  
-Auth  
-    
-  
-  
+Service Provider
+
+Auth
+
 準必須級  
 キャッシュ (Cache)  
 イベント (Events)  
 キュー (Queues)  
-アセット (Assets)  
-
-
-
+アセット (Assets)
 
 ### フロントエンド的処理
-* 枠組み(Laravel)
-    * コントローラー
-* 機能(Laravel)
-    * ルーティング
-    * リクエスト
-    * ビュー
+
+- 枠組み(Laravel)
+  - コントローラー
+- 機能(Laravel)
+  - ルーティング
+  - リクエスト
+  - ビュー
 
 ### バックエンド的処理
-* 枠組み(自作)
-    * サービス
-* 機能(Laravel)
-    * DB操作
-        * モデル
-        * シーダー
-        * ファクトリー
-        * マイグレーション
-    * 認証・認可
-    * イベントリスナー
 
+- 枠組み(自作)
+  - サービス
+- 機能(Laravel)
+  - DB 操作
+    - モデル
+    - シーダー
+    - ファクトリー
+    - マイグレーション
+  - 認証・認可
+  - イベントリスナー
 
 <a id="設計思想"></a>
+
 ## 設計思想
+
 設計思想に沿った使い方をすることで、フレームワークの強みを最大限に活かすことができる。
 
-Laravelはどこまでもモノリス的でリソース志向  
+Laravel はどこまでもモノリス的でリソース志向  
 モノリスの中で、「リソース」や「アクション」という単位で概念を括る。  
-独立性が高いリソース群が複数ある場合は、モジュラモノリスがフィットする。  
-
+独立性が高いリソース群が複数ある場合は、モジュラモノリスがフィットする。
 
 ### モノリス
+
 アプリケーション全体を包括的に管理する。  
 フルスタックフレームワークである。  
 フレームワークが提供しうる機能は(ほぼ)全て用意されている。  
-開発者はビジネスロジック部分に集中できる。  
+開発者はビジネスロジック部分に集中できる。
 
-### Service層
-全てのビジネスロジック(データアクセスの処理も含む)をサービス内に書く。    
-Servicesディレクトリ内に、ActionsディレクトリとDtoディレクトリを作る。  
-Repository層は作らない。    
-モデル特有の処理はモデルに書く    
+### Service 層
 
-Actionsディレクトリ内では、各リソースごとにディレクトリを作り、各アクションごとにファイル(クラス)を作る。
+全てのビジネスロジック(データアクセスの処理も含む)をサービス内に書く。  
+Services ディレクトリ内に、Actions ディレクトリと Dto ディレクトリを作る。  
+Repository 層は作らない。  
+モデル特有の処理はモデルに書く
+
+Actions ディレクトリ内では、各リソースごとにディレクトリを作り、各アクションごとにファイル(クラス)を作る。
 
 サービスクラスの肥大化を避けるため、状況に応じて責務ごとに小さなサービスに分割する。
 
-Routing、Controller、FormRequest、Viewを「フロントエンド的処理」、  
+Routing、Controller、FormRequest、View を「フロントエンド的処理」、  
 Service(use Model)を「バックエンド的処理」として分離した形にする。
 
-Controllerの責務は  
+Controller の責務は  
 リクエストを受け取りバリデーションチェックする  
 サービスへ値を渡す  
 レスポンスを返す  
 の３つのみ。  
 例外は無し
 
-共通の処理は、Serviceディレクトリ直下に○○Service.phpとして作る。  
+共通の処理は、Service ディレクトリ直下に ○○Service.php として作る。  
 共通化(トレイト含む)は明確に有用な場合のみ。少しでも迷ったら共通化しない。
 
 app/Http/Requests/Post/StoreRequest.php  
 public function store(StoreRequest $request, StoreAction $action)
 
-
 ### DTO
+
 内部でデータを受け渡す際は、DTO（Data Transfer Object）を使用してひとまとめにする。  
-DTOは「適切なデータの抽象化と制御」という発想においてAPIと似ているが、APIを使うのはマイクロサービス的な考え方でありLaravelの設計思想とはやや異なる
-
-
-
+DTO は「適切なデータの抽象化と制御」という発想において API と似ているが、API を使うのはマイクロサービス的な考え方であり Laravel の設計思想とはやや異なる
 
 <a id="図解"></a>
-## 図解
-![図解2](./laravel.drawio.svg)  
-![図解1](./laravel_action.drawio.svg)  
 
+## 図解
+
+![図解2](./laravel.drawio.svg)  
+![図解1](./laravel_action.drawio.svg)
 
 1234
 
@@ -233,7 +228,6 @@ action
 
 request→action→dto→view
 
-
 app/Dto
 app/Dto/Actions
 app/Dto/Common
@@ -244,73 +238,91 @@ app/Services/Actions
 app/Services/Common
 app/Services/??????
 
-
 <a id="参考サイト"></a>
+
 ## 参考サイト
+
 [ベストプラクティス](https://github.com/alexeymezenin/laravel-best-practices/blob/master/japanese.md)
 
 <a id="便利なVSCodeの拡張機能"></a>
-## 便利なVSCodeの拡張機能
 
-* PHP Intelephense
-* laravel extension pack
+## 便利な VSCode の拡張機能
+
+- PHP Intelephense
+- laravel extension pack
 
 <a id="インストール"></a>
+
 ## インストール
 
-### カレントディレクトリにlaravelをインストールしてプロジェクトを自動生成するコマンド 
-`composer create-project laravel/laravel [プロジェクト名]`  
-(プロジェクトを作るたびにlaravelをインストールする必要がある)  
-(基本的にはC:\xampp\htdocs内でコマンドを実行)  
+### カレントディレクトリに laravel をインストールしてプロジェクトを自動生成するコマンド
 
+`composer create-project laravel/laravel [プロジェクト名]`  
+(プロジェクトを作るたびに laravel をインストールする必要がある)  
+(基本的には C:\xampp\htdocs 内でコマンドを実行)
 
 <a id="ide-helper"></a>
+
 ## ide-helper
 
 ### プロジェクトのルートディレクトリで実行
+
 `composer require --dev barryvdh/laravel-ide-helper`
+
 ### 設定ファイルの公開
+
 `php artisan vendor:publish --provider="Barryvdh\LaravelIdeHelper\IdeHelperServiceProvider"`
+
 ### メタファイルの生成
+
 `php artisan ide-helper:generate`
-### モデルのPHPDoc生成
+
+### モデルの PHPDoc 生成
+
 `php artisan ide-helper:models`
 
-
-
 <a id="gitからcloneする時"></a>
-## gitからcloneする時
+
+## git から clone する時
 
 ### 概要
-git cloneしてきたLaravelプロジェクトにはvendorディレクトリと.envファイルが含まれていないので、作成する必要がある。
-※vendorディレクトリと.envファイルは、通常Gitの管理下におかない(初期状態で.gitignoreに入っている)。
 
-### vendorディレクトリを作る
+git clone してきた Laravel プロジェクトには vendor ディレクトリと.env ファイルが含まれていないので、作成する必要がある。
+※vendor ディレクトリと.env ファイルは、通常 Git の管理下におかない(初期状態で.gitignore に入っている)。
+
+### vendor ディレクトリを作る
+
 下記のコマンドを実行する。  
 `composer install`
 
-### .envファイルを作る
-.env.exampleファイルを下記のコマンドでコピーして.envファイルを作成する。  
+### .env ファイルを作る
+
+.env.example ファイルを下記のコマンドでコピーして.env ファイルを作成する。  
 `cp .env.example .env`
 
 ### アプリケーションキーを初期化する
-.env.exampleをコピーして.envを作成してもアプリケーションキーは設定されていないので、下記コマンドで設定する。  
+
+.env.example をコピーして.env を作成してもアプリケーションキーは設定されていないので、下記コマンドで設定する。  
 `php artisan key:generate`
+
 #### ※アプリケーションキーとは？
-.envファイルのAPP_KEY=の項目。暗号化された値を安全に扱うためのもの。
 
-
+.env ファイルの APP_KEY=の項目。暗号化された値を安全に扱うためのもの。
 
 <a id="サーバー起動"></a>
+
 ## サーバー起動
 
-### サーバー起動コマンド  
+### サーバー起動コマンド
+
 `php artisan serve`
 
 <a id=".env.exampleの設定"></a>
-## .env.exampleの設定
 
-### .env.exampleファイル
+## .env.example の設定
+
+### .env.example ファイル
+
 ```
 APP_TIMEZONE=Asia/Tokyo #タイムゾーン設定
 
@@ -332,11 +344,11 @@ DB_COLLATION=utf8mb4_general_ci   # 追記：照合順序
 DB_CONNECTION=sqlite
 ```
 
-### .env.exampleの設定を.envにコピーする。  
+### .env.example の設定を.env にコピーする。
+
 `cp .env.example .env`
 
-
-### env関数
+### env 関数
 
 ```php
 // .envファイルやサーバーの環境変数に定義された値を取得する。
@@ -345,14 +357,15 @@ DB_CONNECTION=sqlite
 env('APP_TIMEZONE', 'UTC')
 ```
 
-
 ### config/app.php
+
 ```php
 // .envファイルのAPP_TIMEZONEに設定があればそちらを採用。なければ第二引数の'UTC'にする。
 'timezone' => env('APP_TIMEZONE', 'UTC'),
 ```
 
 ### config\database.php
+
 ```php
 
 'sqlite' => [
@@ -368,43 +381,46 @@ env('APP_TIMEZONE', 'UTC')
 ```
 
 <a id="XAMPPでMySQLが起動しない時の対処法"></a>
-## XAMPPでMySQLが起動しない時の対処法
 
-### 他で起動してるMySQLがないか確認
+## XAMPP で MySQL が起動しない時の対処法
 
-別のMySQLが動いていて、同じポートを使用しているとエラーになる。  
-デフォルトのポート「3306」が使われているかどうかの確認は、XAMPP Control Panelの「NetStat」からできる。  
+### 他で起動してる MySQL がないか確認
 
-別のMySQLが動いていた場合は終了させる。  
-管理者として実行したPowerShellで以下のコマンドを実行。   
+別の MySQL が動いていて、同じポートを使用しているとエラーになる。  
+デフォルトのポート「3306」が使われているかどうかの確認は、XAMPP Control Panel の「NetStat」からできる。
+
+別の MySQL が動いていた場合は終了させる。  
+管理者として実行した PowerShell で以下のコマンドを実行。  
 `net stop mysql82`  
-※82はmysqlのバージョンが8.2の場合。
+※82 は mysql のバージョンが 8.2 の場合。
 
-mysqld.exeが動いていた場合はタスクマネージャーで終了させる。
+mysqld.exe が動いていた場合はタスクマネージャーで終了させる。
 
 <a id="namespace"></a>
+
 ## namespace
 
-
-
-* オートローダーがクラスを探せるようにするための地図(目印)にすぎず、ディレクトリを跨いだ独自のスコープを形成しているわけではない。
-* 名前と階層をディレクトリ構成と一致させる。
-* オートローダーはnamespaceをファイルパスに変換し、対応するファイルを読み込む。
+- オートローダーがクラスを探せるようにするための地図(目印)にすぎず、ディレクトリを跨いだ独自のスコープを形成しているわけではない。
+- 名前と階層をディレクトリ構成と一致させる。
+- オートローダーは namespace をファイルパスに変換し、対応するファイルを読み込む。
 
 あるクラスを使用しようとしたとき
+
 1. そのクラスが現在のファイル内で定義されている場合：それをそのまま使用。オートロードは実行されない。
 1. そのクラスが現在のファイル内で定義されていない場合：オートローダーが起動し、名前空間に基づいてクラスを探しに行く。見つけたらそれを読み込んで使用。
 
-
 <a id="日付操作(CarbonImmutable)"></a>
+
 ## 日付操作(CarbonImmutable)
 
 ### 予備知識：日付操作で使う主なもの
-* 日付文字列 （型はstring）
-* タイムスタンプ 1970年1月1日00:00:00UTCからの経過秒数 （型はint）
-* Carbonインスタンス （型はCarbon）
+
+- 日付文字列 （型は string）
+- タイムスタンプ 1970 年 1 月 1 日 00:00:00UTC からの経過秒数 （型は int）
+- Carbon インスタンス （型は Carbon）
 
 ### 予備知識：主な関数
+
 ```php
 <?php
 
@@ -416,6 +432,7 @@ time() // 現在のタイムスタンプを返す
 ```
 
 ### クラスメソッド
+
 ```php
 <?php
 
@@ -426,6 +443,7 @@ CarbonImmutable::parse($carbonInstance) // カーボンインスタンスも指�
 ```
 
 ### インスタンスメソッド
+
 ```php
 <?php
 
@@ -463,20 +481,20 @@ $startCarbonInstance->diffInMinutes($endCarbonInstance); //差分を分数で取
 
 ### フォーマット文字
 
-[ドキュメント](https://www.php.net/manual/ja/datetime.format.php)  
+[ドキュメント](https://www.php.net/manual/ja/datetime.format.php)
 
-|主な文字|表すもの|
-|-|-|
-|Y|年（西暦の4桁） 例：2017|
-|m|月（2桁の月） 例：08|
-|d|日（2桁の日付） 例：21|
-|H|時間（2桁の24時間単位） 例：16|
-|i|分（2桁の分） 例：20|
-|s|秒（2桁の秒） 例：30|
-|D|曜日。3文字のテキスト形式。（Mon ～ Sun）|
+| 主な文字 | 表すもの                                   |
+| -------- | ------------------------------------------ |
+| Y        | 年（西暦の 4 桁） 例：2017                 |
+| m        | 月（2 桁の月） 例：08                      |
+| d        | 日（2 桁の日付） 例：21                    |
+| H        | 時間（2 桁の 24 時間単位） 例：16          |
+| i        | 分（2 桁の分） 例：20                      |
+| s        | 秒（2 桁の秒） 例：30                      |
+| D        | 曜日。3 文字のテキスト形式。（Mon ～ Sun） |
 
+### CarbonPeriodImmutable の使用
 
-### CarbonPeriodImmutableの使用
 ```php
 <?php
 // 特定の期間を配列で取得できる
@@ -490,13 +508,13 @@ $periods = CarbonPeriodImmutable::create(
 
 ### 人間にとって分かりやすい、相対的な時間の表現に変換
 
-例えばdiffForHumansメソッドは、データベースに保存されている2023-10-27 10:30:00 のような形式の日時を、現在時刻と比較して以下のような文字列に変換してくれる。
+例えば diffForHumans メソッドは、データベースに保存されている 2023-10-27 10:30:00 のような形式の日時を、現在時刻と比較して以下のような文字列に変換してくれる。
 
-* 5分前
-* 2時間前
-* 3日前
-* 1ヶ月前
-* 2年後 (未来の日時にも対応)
+- 5 分前
+- 2 時間前
+- 3 日前
+- 1 ヶ月前
+- 2 年後 (未来の日時にも対応)
 
 ```php
 // diffForHumansはCarbonが提供する機能の一つ。
@@ -505,16 +523,17 @@ $periods = CarbonPeriodImmutable::create(
 $modelInstance->created_at->diffForHumans();
 ```
 
-
 ### 参考サイト
-[Carbonではなく「CarbonImmutable」を使う](https://qiita.com/kbys-fumi/items/b923cdfb09c8f5c35fce)  
-[全217件！Carbonで時間操作する実例](https://blog.capilano-fw.com/?p=867)  
-[Carbonで日付操作(比較, 差分, format)](https://www.wakuwakubank.com/posts/421-php-carbon/)  
-[【PHP】DatetimeやCarbonの最大値/最小値取得、ソートを手軽に行う](https://pg.echo-s.net/%E3%80%90php%E3%80%91datetime%E3%82%84carbon%E3%81%AE%E6%9C%80%E5%A4%A7%E5%80%A4-%E6%9C%80%E5%B0%8F%E5%80%A4%E5%8F%96%E5%BE%97%E3%80%81%E3%82%BD%E3%83%BC%E3%83%88%E3%82%92%E6%89%8B%E8%BB%BD%E3%81%AB/)
+
+[Carbon ではなく「CarbonImmutable」を使う](https://qiita.com/kbys-fumi/items/b923cdfb09c8f5c35fce)  
+[全 217 件！Carbon で時間操作する実例](https://blog.capilano-fw.com/?p=867)  
+[Carbon で日付操作(比較, 差分, format)](https://www.wakuwakubank.com/posts/421-php-carbon/)  
+[【PHP】Datetime や Carbon の最大値/最小値取得、ソートを手軽に行う](https://pg.echo-s.net/%E3%80%90php%E3%80%91datetime%E3%82%84carbon%E3%81%AE%E6%9C%80%E5%A4%A7%E5%80%A4-%E6%9C%80%E5%B0%8F%E5%80%A4%E5%8F%96%E5%BE%97%E3%80%81%E3%82%BD%E3%83%BC%E3%83%88%E3%82%92%E6%89%8B%E8%BB%BD%E3%81%AB/)
 [CarbonPeriod ドキュメント](https://carbon.nesbot.com/docs/#api-period)
 
 <a id="nullsafe演算子"></a>
-## nullsafe演算子
+
+## nullsafe 演算子
 
 ```php
 <?php
@@ -525,27 +544,29 @@ $todayWorkLog->activities
 $todayWorkLog?->activities
 ```
 
-
-
 <a id="Enum"></a>
+
 ## Enum
 
 ### 基本
+
 複数の定数をまとめて管理できる機能。  
 定数の進化版。システマチックな定数みたいなもの。  
-基本的に「あらかじめ用意しておいた値を返す」だけ。  
+基本的に「あらかじめ用意しておいた値を返す」だけ。
 
-### Enumを作成するコマンド。
-`php artisan make:enum EnumName`  
+### Enum を作成するコマンド。
+
+`php artisan make:enum EnumName`
 
 オプション  
-`--string`：string型のBacked Enumを作成  
-`--int`：int型のBacked Enumを作成  
+`--string`：string 型の Backed Enum を作成  
+`--int`：int 型の Backed Enum を作成
 
-実行すると、app配下にEnumが作成される。  
-app/Enumsディレクトリを作っておくと、app/Enums配下に作成先が変わる。
+実行すると、app 配下に Enum が作成される。  
+app/Enums ディレクトリを作っておくと、app/Enums 配下に作成先が変わる。
 
-### Enumの例1
+### Enum の例 1
+
 ```php
 <?php
 
@@ -557,7 +578,9 @@ enum UserType: string
     case WELFARE_STAFF = '職員';
 }
 ```
-### Enumの値を呼び出す
+
+### Enum の値を呼び出す
+
 ```php
 <?php
 
@@ -567,7 +590,8 @@ UserType::WELFARE_USER->value // '利用者'
 UserType::WELFARE_STAFF->value // '職員'
 ```
 
-### Enumの例2
+### Enum の例 2
+
 ```php
 <?php
 
@@ -602,6 +626,7 @@ enum Status: string
     }
 }
 ```
+
 ```php
 <?php
 
@@ -613,7 +638,7 @@ Status::Paid->value; // 'paid'
 Status::New->name;   // 'New'
 
 // 全ケースの取得
-Status::cases();  
+Status::cases();
 // [Status::New, Status::Paid, Status::Processing, ...]
 
 // 値からEnumに変換
@@ -626,11 +651,8 @@ Status::Paid->label();       // '支払済'
 Status::Processing->label(); // '着手'
 ```
 
-
-
-
-
 <a id="trait"></a>
+
 ## trait
 
 ```php
@@ -650,6 +672,7 @@ trait CalculatorForUser
     }
 }
 ```
+
 ```php
 <?php
 
@@ -664,28 +687,29 @@ class CalculatorForGeneral
 ```
 
 <a id="マイグレーション"></a>
+
 ## マイグレーション
 
-Migrationを使うと、テーブルの作成とテーブル構造の定義ができる。ただしデータを入れることはできない。  
-操作がコードとして残るので、データベースのバージョン管理のような役割も果たす。  
+Migration を使うと、テーブルの作成とテーブル構造の定義ができる。ただしデータを入れることはできない。  
+操作がコードとして残るので、データベースのバージョン管理のような役割も果たす。
 
 ### 参考サイト
+
 [Laravel 11.x マイグレーション](https://readouble.com/laravel/11.x/ja/migrations.html)
 
+### マイグレーションファイルの新規作成コマンド
 
-### マイグレーションファイルの新規作成コマンド  
-`php artisan make:migration create_テーブル名_table --create=テーブル名`  
+`php artisan make:migration create_テーブル名_table --create=テーブル名`
 
 ※テーブル名は「格納したい物の名前の複数形」にするのが一般的な慣習。  
 例：  
-`php artisan make:migration create_work_logs_table --create=work_logs`  
-
+`php artisan make:migration create_work_logs_table --create=work_logs`
 
 ### マイグレーションの構造
 
-マイグレーションクラスには、upとdownの2つのメソッドを用意する。  
-upメソッドはデータベースに新しいテーブル、カラム、またはインデックスを追加するために使用する。  
-downメソッドでは、upメソッドによって実行する操作を逆にし、以前の状態へ戻す必要がある。  
+マイグレーションクラスには、up と down の 2 つのメソッドを用意する。  
+up メソッドはデータベースに新しいテーブル、カラム、またはインデックスを追加するために使用する。  
+down メソッドでは、up メソッドによって実行する操作を逆にし、以前の状態へ戻す必要がある。
 
 ```php
 <?php
@@ -736,6 +760,7 @@ return new class extends Migration
 ```
 
 ### カラムを定義
+
 ```php
 <?php
 
@@ -763,14 +788,14 @@ $table->id(); // $table->bigIncrements('id')のエイリアス。簡潔に書け
 // 合計○桁で小数点以下×桁の小数カラム
 // 合計桁数は初期値が10、最大値が65。
 // 小数点以下桁数は初期値が0、最大値が30。
-$table->decimal('column_name', 合計桁数int, 小数点以下桁数int); 
+$table->decimal('column_name', 合計桁数int, 小数点以下桁数int);
 
 // カラム定義 文字列型
 
 // VARCHAR(0~65535バイト)。
 // 第二引数で最大文字数を指定(省略すると255)
 // 長い文にはあまり適さない。
-$table->string('column_name', $length = 100); 
+$table->string('column_name', $length = 100);
 $table->tinyText('column_name'); // TINYTEXT(0~255バイト)
 $table->text('column_name'); // TEXT(0~65535バイト)
 $table->mediumText('column_name'); // MEDIUMTEXT(0~16777215バイト)
@@ -833,6 +858,7 @@ $table->jsonb('column_name'); // JSONB
 ```
 
 ### カラム修飾子
+
 ```php
 <?php
 $table->string('member_key')->primary(); // カラムの値を主キーに設定する。
@@ -846,6 +872,7 @@ $table->string('email')->unique(); // カラムの値が一意であることを
 ```
 
 ### カラム定義後のユニーク制約
+
 ```php
 <?php
 
@@ -857,6 +884,7 @@ $table->unique(['column_name1', 'column_name2', 'column_name3']);
 ```
 
 ### カラム定義後のインデックス追加
+
 ```php
 <?php
 // 特定カラムの値が同じレコードをひとまとめにして箱に入れ、その箱にラベルがってある感じ
@@ -869,6 +897,7 @@ $table->index(['account_id', 'created_at']);
 ```
 
 ### カラム定義後の主キー設定
+
 ```php
 <?php
 
@@ -880,26 +909,27 @@ $table->date('date')->comment('年月日'); // カラムを定義
 $table->primary('date'); // 主キーとして設定
 ```
 
-### マイグレーションの実行順序  
+### マイグレーションの実行順序
 
 外部キー制約を持つテーブルより先に、参照されるテーブルを作成する必要がある。  
-ファイル名の2023_03_04_215116_create_users_table.phpの数字部分が若い順にマイグレーションは実行される。  
+ファイル名の 2023_03_04_215116_create_users_table.php の数字部分が若い順にマイグレーションは実行される。  
 順序を変更したい場合は、このファイル名の数字部分を変更する。
 
-### マイグレーションの実行コマンド  
+### マイグレーションの実行コマンド
+
 `php artisan migrate`
 
-### 全てのテーブルを削除し、全てのマイグレーションを再実行するコマンド  
+### 全てのテーブルを削除し、全てのマイグレーションを再実行するコマンド
+
 `php artisan migrate:fresh`
-
-
 
 ### 既存テーブルへのカラム追加用マイグレーション
 
 作成コマンド例  
-`php artisan make:migration add_role_column_to_users_table --table=users`  
+`php artisan make:migration add_role_column_to_users_table --table=users`
 
 実装例：
+
 ```php
 <?php
 
@@ -929,71 +959,56 @@ return new class extends Migration
 };
 ```
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 <a id="モデル"></a>
+
 ## モデル
 
-### 作成コマンド  
+### 作成コマンド
+
 例：  
-`php artisan make:model Folder`  
+`php artisan make:model Folder`
 
-`-ms`オプションを付けると、マイグレーションとSeederも同時に作成される。  
-`php artisan make:model Folder -ms`  
+`-ms`オプションを付けると、マイグレーションと Seeder も同時に作成される。  
+`php artisan make:model Folder -ms`
 
-モデルの全ての属性とリレーションを確認できるコマンド   
+モデルの全ての属性とリレーションを確認できるコマンド  
 `php artisan model:show ModelClass`
 
-
-
 ### 前提
-Laravelが提供するデータベース操作方法は以下の3つ。
 
-* DBクラスと素のSQL
-    * テーブルに対して直接クエリを実行する。
-* DBクラスのクエリビルダ
-    * SQLの内容をPHPライクに記述し、内部でLaravelがクエリを作成する。
-    * テーブルに対して直接クエリを実行する。
-* Eloquent ORM
-    * Modelクラスを定義する必要がある。
-    * クエリビルダの全メソッドに加え、Eloquentの独自メソッドを使用できる。
-    * リレーションの定義、タイムスタンプの自動更新、アクセサとミューテタ等の便利機能がある。
+Laravel が提供するデータベース操作方法は以下の 3 つ。
 
-ここでは、主要な方法であるEloquent ORMの使用時に定義するModelクラスについて説明する。
+- DB クラスと素の SQL
+  - テーブルに対して直接クエリを実行する。
+- DB クラスのクエリビルダ
+  - SQL の内容を PHP ライクに記述し、内部で Laravel がクエリを作成する。
+  - テーブルに対して直接クエリを実行する。
+- Eloquent ORM
+  - Model クラスを定義する必要がある。
+  - クエリビルダの全メソッドに加え、Eloquent の独自メソッドを使用できる。
+  - リレーションの定義、タイムスタンプの自動更新、アクセサとミューテタ等の便利機能がある。
+
+ここでは、主要な方法である Eloquent ORM の使用時に定義する Model クラスについて説明する。
 
 ### データベースにおける用語
-* テーブル
-* レコード(一行分のデータ)
-* カラム(一列分のデータ)
-* フィールド(１つのデータ)
+
+- テーブル
+- レコード(一行分のデータ)
+- カラム(一列分のデータ)
+- フィールド(１つのデータ)
 
 ### モデルの概要
-* Modelクラス1つがテーブル1つに相当。
-* Modelインスタンスはレコードに相当。
-* Modelインスタンスの各インスタンス変数は、その行のフィールドデータに相当。
-* Collectionは複数行分のデータに相当(Modelインスタンスを複数格納する配列のようなもの)。  
-* テーブルの各レコードをModelインスタンスとして操作する。  
+
+- Model クラス 1 つがテーブル 1 つに相当。
+- Model インスタンスはレコードに相当。
+- Model インスタンスの各インスタンス変数は、その行のフィールドデータに相当。
+- Collection は複数行分のデータに相当(Model インスタンスを複数格納する配列のようなもの)。
+- テーブルの各レコードを Model インスタンスとして操作する。
 
 ※デフォルトでは、クラスはクラス名の複数形が名前になっているテーブルと紐づく。  
 ※テーブル名を明示的に指定することもできる。  
-例：  
+例：
+
 ```php
 <?php
 
@@ -1006,7 +1021,8 @@ class Folder extends Model
 }
 ```
 
-### モデルに定義できる代表的なプロパティ  
+### モデルに定義できる代表的なプロパティ
+
 ```php
 <?php
 
@@ -1034,6 +1050,7 @@ class Folder extends Model
 ```
 
 ### モデルをインスタンス化する際の特殊な挙動
+
 ```php
 <?php
 
@@ -1044,6 +1061,7 @@ $workLog = WorkLog::make(['date' => $dateString]);
 ```
 
 ### インスタンスメソッドとクラスメソッドの違い
+
 ```php
 <?php
 // インスタンスメソッドは、Modelインスタンス(レコード)から呼び出す。つまり、レコードに対しての処理。
@@ -1052,17 +1070,18 @@ $modelInstance->method();
 ModelClass::method();
 ```
 
-### VS Codeでメソッド補完
-VSCodeの拡張機能「PHP Intelephense」によって、モデルの基本メソッドが補完される。
+### VS Code でメソッド補完
+
+VSCode の拡張機能「PHP Intelephense」によって、モデルの基本メソッドが補完される。
 
 以下のコマンドを実行することで、自作モデルのメソッドも補完される  
 `composer require --dev barryvdh/laravel-ide-helper`  
 `php artisan clear-compiled`  
 `php artisan ide-helper:generate`  
-`php artisan ide-helper:models --nowrite`  
-
+`php artisan ide-helper:models --nowrite`
 
 <a id="インスタンスメソッド(モデル)"></a>
+
 ### インスタンスメソッド
 
 ```php
@@ -1080,7 +1099,7 @@ $modelInstance->save();
 $user = User::query()
     ->where('votes', '>', 100)
     ->orWhere('name', 'John')
-    ->first(); 
+    ->first();
 $user->name = 'hoge';
 $user->save();
 // 連想配列でモデルインスタンスに属性を設定。
@@ -1143,6 +1162,7 @@ $modelInstance->refresh();
 ```
 
 <a id="クラスメソッド(モデル)"></a>
+
 ### クラスメソッド
 
 **内部的にはクエリ実行メソッドである**
@@ -1254,6 +1274,7 @@ ModelClass::truncate();
 ```
 
 <a id="クエリビルダーメソッド(モデル)"></a>
+
 ### クエリビルダーメソッド
 
 [Laravel 11.x データベース：クエリビルダ](https://readouble.com/laravel/11.x/ja/queries.html)  
@@ -1450,6 +1471,7 @@ $queryBuilderInstance->when()
 ```
 
 <a id="クエリ実行メソッド(モデル)"></a>
+
 ### クエリ実行メソッド
 
 ```php
@@ -1494,7 +1516,7 @@ $queryBuilderInstance->find(3);
 
 
 // 以下3つはクラスメソッドと完全に同等
-$queryBuilderInstance->updateOrCreate(); 
+$queryBuilderInstance->updateOrCreate();
 $queryBuilderInstance->upsert();
 $queryBuilderInstance->firstOrCreate();
 // ※リレーション経由の場合、外部キーは自動的に検索条件に含まれるため、わざわざ指定する必要はない。
@@ -1528,13 +1550,14 @@ $queryBuilderInstance->cursor(); // 一括で全部処理しないようにし�
 ```
 
 <a id="クエリスコープ(モデル)"></a>
+
 ### クエリスコープ
 
 グローバルスコープの作成
 
 グローバルスコープを作成すると、指定したモデルですべてのクエリが同じ制約を受けるようになる。
 
-app/Models/Scopesディレクトリへグローバルスコープを生成するコマンド。  
+app/Models/Scopes ディレクトリへグローバルスコープを生成するコマンド。  
 `php artisan make:scope HogeScope`
 
 ```php
@@ -1563,6 +1586,7 @@ class HogeScope implements Scope
 ```
 
 グローバルスコープの登録
+
 ```php
 <?php
 
@@ -1584,7 +1608,9 @@ class User extends Model
     }
 }
 ```
+
 グローバルスコープを不適用にする。
+
 ```php
 <?php
 
@@ -1598,7 +1624,7 @@ User::query()
 // 任意のグローバルスコープを不適用にする。
 User::query()
     ->withoutGlobalScopes([
-        FirstScope::class, 
+        FirstScope::class,
         SecondScope::class,
     ])->get();
 ```
@@ -1646,7 +1672,9 @@ class User extends Model
     }
 }
 ```
+
 ローカルスコープの利用
+
 ```php
 <?php
 
@@ -1664,11 +1692,13 @@ $users = User::ofType('admin')->get();
 ```
 
 <a id="ソフトデリート(モデル)"></a>
+
 ### ソフトデリート
 
-モデルにdeleted_at属性がセットされ、レコードを削除した日時が保存される。実際にはデータベースから削除されない。 
-ソフトデリートされたモデルはすべてのクエリ結果から自動的に除外される。   
-有効にするには、Illuminate\Database\Eloquent\SoftDeletesトレイトをモデルに追加する。
+モデルに deleted_at 属性がセットされ、レコードを削除した日時が保存される。実際にはデータベースから削除されない。
+ソフトデリートされたモデルはすべてのクエリ結果から自動的に除外される。  
+有効にするには、Illuminate\Database\Eloquent\SoftDeletes トレイトをモデルに追加する。
+
 ```php
 <?php
 
@@ -1683,7 +1713,8 @@ class Flight extends Model
 }
 ```
 
-データベーステーブルにdeleted_atカラムを追加する必要がある。
+データベーステーブルに deleted_at カラムを追加する必要がある。
+
 ```php
 <?php
 
@@ -1717,15 +1748,11 @@ Flight::query()
 $flight->forceDelete();
 ```
 
-
-
-
 #### ソフトデリートの連鎖
+
 ※注意  
-データベースの外部キー制約 ON DELETE CASCADE はソフトデリートでは機能しない。なぜなら、ソフトデリートはSQLのDELETE文ではなく、deleted_atカラムを更新するUPDATE文だから。   
-そのため、ソフトデリートの連鎖にはLaravelのモデルイベントを利用する。  deletingイベントで子のレコードを削除し、restoringイベントで子のレコードを復元するのが一般的なパターン。 
-
-
+データベースの外部キー制約 ON DELETE CASCADE はソフトデリートでは機能しない。なぜなら、ソフトデリートは SQL の DELETE 文ではなく、deleted_at カラムを更新する UPDATE 文だから。  
+そのため、ソフトデリートの連鎖には Laravel のモデルイベントを利用する。 deleting イベントで子のレコードを削除し、restoring イベントで子のレコードを復元するのが一般的なパターン。
 
 ```php
 // app/Models/Comment.php
@@ -1748,6 +1775,8 @@ class Comment extends Model
     protected static function booted()
     {
         // レコード削除時のイベント'deleting' をリッスンする
+        // クロージャーには削除された直後のモデルインスタンスが渡される。
+        // メモリ上にはまだ存在し、すべての属性にアクセス可能。リレーションも使用可。
         static::deleting(function ($comment) {
             // 関連する返信も一緒に削除する
             // replies()リレーション先のモデル(Reply)がSoftDeletesを使っていれば、
@@ -1766,15 +1795,13 @@ class Comment extends Model
 }
 ```
 
-
-
-
-
 <a id="Eloquent\Collectionメソッド(モデル)"></a>
-### Eloquent\Collectionメソッド
 
-[Eloquent\Collectionメソッド](https://readouble.com/laravel/11.x/ja/eloquent-collections.html)  
-[Support\Collectionから継承されるメソッド。](https://readouble.com/laravel/11.x/ja/collections.html#available-methods)
+### Eloquent\Collection メソッド
+
+[Eloquent\Collection メソッド](https://readouble.com/laravel/11.x/ja/eloquent-collections.html)  
+[Support\Collection から継承されるメソッド。](https://readouble.com/laravel/11.x/ja/collections.html#available-methods)
+
 ```php
 <?php
 // クエリ実行等の手段で取得したCollectionから呼べるメソッド。
@@ -1846,16 +1873,17 @@ Collection::make($arrayable)
 <a id="リレーション(モデル)"></a>
 
 ### リレーションの概要
-1. 定義
-    * リレーションをModelクラスのインスタンスメソッドとして定義しておく。
-1. 紐付け
-    * クエリビルダーメソッドとしてwith()を使用し、リレーションを紐付ける。
-    * クエリ実行後に紐付けたいときは、取得したモデルインスタンス（もしくはコレクション）に対してload()を使用。
-1. アクセス
-    * 取得したモデルインスタンスのインスタンス変数のように、関連するモデルインスタンスやコレクションにアクセスできる。
 
+1. 定義
+   - リレーションを Model クラスのインスタンスメソッドとして定義しておく。
+1. 紐付け
+   - クエリビルダーメソッドとして with()を使用し、リレーションを紐付ける。
+   - クエリ実行後に紐付けたいときは、取得したモデルインスタンス（もしくはコレクション）に対して load()を使用。
+1. アクセス
+   - 取得したモデルインスタンスのインスタンス変数のように、関連するモデルインスタンスやコレクションにアクセスできる。
 
 ### 主なリレーション
+
 ```php
 <?php
 
@@ -1907,6 +1935,7 @@ public function authStaffComments(): HasMany
 ```
 
 ### 紐付けたデータへのアクセス
+
 ```php
 <?php
 
@@ -1929,6 +1958,7 @@ $user->workLogs
 ```
 
 ### with()、load()メソッド
+
 ```php
 <?php
 
@@ -1992,10 +2022,8 @@ $welfareUsers = User::query()
 $welfareUsers = $welfareUsers->loadMissing('posts');
 ```
 
-
-
-
 ### 多対多リレーション
+
 ```php
 
 // 多対多を定義するには、belongsToManyメソッドを使用します。
@@ -2047,6 +2075,7 @@ $isFollowing = $user->followees()->where('users.id', $post->user->id)->exists();
 ```
 
 ### 仲介リレーション
+
 ```php
 
 // 内部的にSQLのJOIN処理が行われるのは多対多と同じ。
@@ -2073,9 +2102,8 @@ class Supplier extends Model
 }
 ```
 
-
-
 ### その他リレーション関連。
+
 ```php
 <?php
 
@@ -2115,12 +2143,13 @@ $hasOneInstance->delete();
 ```
 
 <a id="アクセサとミューテタ(モデル)"></a>
+
 ### アクセサとミューテタ
 
-|||
-|:-|:-|
-|Accessor(アクセサ)|Modelのインスタンス変数から値を取得するときに自動で呼び出される処理(メソッド)。|
-|Mutator(ミューテタ)|Modelのインスタンス変数に値を格納するときに自動で呼び出される処理(メソッド)。|
+|                     |                                                                                  |
+| :------------------ | :------------------------------------------------------------------------------- |
+| Accessor(アクセサ)  | Model のインスタンス変数から値を取得するときに自動で呼び出される処理(メソッド)。 |
+| Mutator(ミューテタ) | Model のインスタンス変数に値を格納するときに自動で呼び出される処理(メソッド)。   |
 
 ```php
 
@@ -2179,14 +2208,16 @@ class WorkLog extends Model
             set: fn (string $value) => $value . '★★★',
         );
     }
-    
+
 }
 ```
-* ゲッター（get）では、$this-><プロパティ名> を使うのがベストプラクティス。Eloquentのキャスト機能を最大限に活用できる。
-* セッター（set）では、無限ループを避けるために $attributes 配列への代入（または連想配列の返却）が必要になる場合がある。
+
+- ゲッター（get）では、$this-><プロパティ名> を使うのがベストプラクティス。Eloquent のキャスト機能を最大限に活用できる。
+- セッター（set）では、無限ループを避けるために $attributes 配列への代入（または連想配列の返却）が必要になる場合がある。
 
 <a id="isとisNotメソッドで比較(モデル)"></a>
-### isとisNotメソッドで比較
+
+### is と isNot メソッドで比較
 
 ```php
 <?php
@@ -2209,58 +2240,48 @@ if ($post->author()->isNot($user)) {
 ```
 
 <a id="イベント(モデル)"></a>
+
 ### イベント
 
+```php
 
+// モデルインスタンス経由でイベントが発火する
+$model->delete();
+// 複数の場合
+$collection->each(function ($model) {
+    $model->delete();
+});
 
-自動処理
-データベース操作の前後で自動的に特定の処理を実行できます
+// クエリビルダー経由だとイベントが発火しない
+// クエリビルダーは直接SQLを実行するため、Eloquentのライフサイクルイベントをバイパスする
+$query->delete();
+```
 
-通知の送信
-データの変更に応じて通知を送信したい場合
+#### 使いどころ
+- 自動処理：データベース操作の前後で自動的に特定の処理を実行できます
+- 通知の送信：データの変更に応じて通知を送信したい場合
 
-
-
-
-主なイベントは以下の通りです。
-creating, created: レコード作成前、作成後
-updating, updated: レコード更新前、更新後
-deleting, deleted: レコード削除前、削除後
-
-
-
-
-
-
-
-
-モデルは以下のイベントをディスパッチする。  
-※モデルに対する操作をフックできるようにしている。
-* creating
-* created
-* updating
-* updated
-* saving
-* saved
-* deleting
-* deleted
-* trashed
-* forceDeleting
-* forceDeleted
-* restoring
-* restored
-* replicating
-* retrieved
-
+#### 主なイベント
+- creating, created: レコード作成前、作成後
+- updating, updated: レコード更新前、更新後
+- deleting, deleted: レコード削除前、削除後
+- saving, saved: レコード保存前、保存後（作成または更新の両方で発火）
+- trashed: ソフトデリート実行後
+- forceDeleting, forceDeleted: 物理削除前、物理削除後（完全削除）
+- restoring, restored: ソフトデリート復元前、復元後
+- replicating: レコード複製時（replicate メソッド使用時）
+- retrieved: レコード取得後（データベースから読み込まれた時）
 
 <a id="オブザーバー"></a>
+
 ## オブザーバー
 
-### 作成コマンド例  
+### 作成コマンド例
+
 `php artisan make:observer PostObserver --model=Post`
 
-
 ### 実装
+
 ```php
 <?php
 
@@ -2300,11 +2321,9 @@ class PostObserver
 
 ```
 
-
 ### 登録
 
 これで、出品者が投稿を保存する（Post::create(...) や $post->save() を行う）たびに、自動的にフォロワーへの通知が作成されるようになる。
-
 
 ```php
 
@@ -2328,20 +2347,23 @@ class AppServiceProvider extends ServiceProvider
 }
 ```
 
-
 <a id="シーダー"></a>
+
 ## シーダー
 
-Seederを使うと
-* データベースに初期データやテストデータを一斉に挿入できる。
+Seeder を使うと
 
-### シーダーファイルの新規作成コマンド  
+- データベースに初期データやテストデータを一斉に挿入できる。
+
+### シーダーファイルの新規作成コマンド
+
 `php artisan make:seeder シーダー名`  
 例：  
 `php artisan make:seeder FolderSeeder`  
-`php artisan make:seeder OutsideWorkLogSeeder`  
+`php artisan make:seeder OutsideWorkLogSeeder`
 
 ### シーダーファイルの解説
+
 ```php
 <?php
 
@@ -2376,7 +2398,8 @@ class FolderSeeder extends Seeder
 }
 ```
 
-DatabaseSeeder.phpから呼び出して使用できるよう、DatabaseSeederクラスに下記を追加。
+DatabaseSeeder.php から呼び出して使用できるよう、DatabaseSeeder クラスに下記を追加。
+
 ```php
 <?php
 // runメソッド内に追加する
@@ -2386,28 +2409,33 @@ $this->call([
 ]);
 ```
 
-### シーダーの実行コマンド  
+### シーダーの実行コマンド
+
 `php artisan db:seed`
-Seederを実行すると、対象のテーブルにデータがインサートされる。  
-実行コマンドがうまくいかない場合はComposerをオートロードしてから実行し直す。 
-### Composerをオートロードしてシーダーを認識させるコマンド
+Seeder を実行すると、対象のテーブルにデータがインサートされる。  
+実行コマンドがうまくいかない場合は Composer をオートロードしてから実行し直す。
+
+### Composer をオートロードしてシーダーを認識させるコマンド
+
 `composer dump-autoload`
 
-
 <a id="ファクトリー"></a>
+
 ## ファクトリー
 
 参考サイト：[ファクトリーの使い方](https://office54.net/iot/laravel/factory-test-data-create)
 
-Factoryを使うと、Seederよりも簡単に大量のテストデータを生成できる。
+Factory を使うと、Seeder よりも簡単に大量のテストデータを生成できる。
 
-### ファクトリーファイルの新規作成コマンド  
+### ファクトリーファイルの新規作成コマンド
+
 `php artisan make:factory モデル名Factory`  
 例：  
 `php artisan make:factory FolderFactory`  
-※database/factories内にFolderFactory.phpというファクトリーファイルが作成される。
+※database/factories 内に FolderFactory.php というファクトリーファイルが作成される。
 
 ### ファクトリーファイルの解説
+
 ```php
 <?php
 
@@ -2432,11 +2460,14 @@ class TaskFactory extends Factory
     }
 }
 ```
+
 ### fake()メソッド
-fake()メソッドは、Laravelが提供するFakerライブラリを使って、さまざまな種類のダミーデータを生成するために使用される。  
-※Fakerは、名前、住所、電話番号、テキスト、日付などのリアルなダミーデータを生成するライブラリ。
+
+fake()メソッドは、Laravel が提供する Faker ライブラリを使って、さまざまな種類のダミーデータを生成するために使用される。  
+※Faker は、名前、住所、電話番号、テキスト、日付などのリアルなダミーデータを生成するライブラリ。
 
 利用できるメソッド一覧
+
 ```php
 <?php
 fake()->text($maxNumOfChara) // テキスト（日本語非対応）
@@ -2465,6 +2496,7 @@ fake()->time() // 時分秒
 ```
 
 ### ファクトリーの実行
+
 ```php
 <?php
 // DatabaseSeeder.php
@@ -2505,8 +2537,8 @@ class DatabaseSeeder extends Seeder
 }
 ```
 
-
 <a id="ルーティング"></a>
+
 ## ルーティング
 
 ```php
@@ -2619,13 +2651,14 @@ require __DIR__ . '/binder.php';
 require __DIR__ . '/note.php';
 ```
 
-
 <a id="リダイレクト"></a>
+
 ## リダイレクト
 
 ### 基本
-ブラウザに新しいHTTPリクエストを発行させる。  
-※つまり、指定したURLに改めてアクセスする。
+
+ブラウザに新しい HTTP リクエストを発行させる。  
+※つまり、指定した URL に改めてアクセスする。
 
 ```php
 <?php
@@ -2648,55 +2681,63 @@ return back();
 return redirect()->route('seller.post.index_draft')->with('success', '下書きが保存されました!')
 
 ```
-### 参考サイト
-[Laravel 12.x HTTPリダイレクト](https://readouble.com/laravel/12.x/ja/redirects.html?header=%25E3%2583%25AA%25E3%2583%2580%25E3%2582%25A4%25E3%2583%25AC%25E3%2582%25AF%25E3%2583%2588%25E3%2581%25AE%25E4%25BD%259C%25E6%2588%2590)
-[return view('cart.index');とreturn redirect()->route('cart.index');の違い](https://takuya-084-it.hatenablog.jp/entry/2023/11/14/083921)
 
+### 参考サイト
+
+[Laravel 12.x HTTP リダイレクト](https://readouble.com/laravel/12.x/ja/redirects.html?header=%25E3%2583%25AA%25E3%2583%2580%25E3%2582%25A4%25E3%2583%25AC%25E3%2582%25AF%25E3%2583%2588%25E3%2581%25AE%25E4%25BD%259C%25E6%2588%2590)
+[return view('cart.index');と return redirect()->route('cart.index');の違い](https://takuya-084-it.hatenablog.jp/entry/2023/11/14/083921)
 
 <a id="GET/POST"></a>
+
 ## GET/POST
 
 ### GET
-* GETリクエストでは、主にURLパラメータであるクエリパラメータとルートパラメータが利用される。
-* クエリパラメータは?param1=value1&param2=value2の形式でURLの末尾に追加される。
-* ルートパラメータはURLパスの一部を利用する。
-* 基本的にformタグを使用してリクエストを送る。
-* また、GETリクエストはURLの中に情報を載せる方法なので、aタグでも送ることができる。
+
+- GET リクエストでは、主に URL パラメータであるクエリパラメータとルートパラメータが利用される。
+- クエリパラメータは?param1=value1&param2=value2 の形式で URL の末尾に追加される。
+- ルートパラメータは URL パスの一部を利用する。
+- 基本的に form タグを使用してリクエストを送る。
+- また、GET リクエストは URL の中に情報を載せる方法なので、a タグでも送ることができる。
 
 ### POST
-* POSTリクエストでは、主にボディパラメータが利用される。
-* ボディパラメータはメッセージボディに記述される。
-* メッセージボディとは?->HTTPリクエストの部品で、補足のメモ書きが書いてある場所。
-* 基本的にformタグを使用してリクエストを送る。
 
-### Laravelにおけるパラメータの使用法
-パラメータは、Illuminate\Http\Requestのインスタンスから呼び出して使用できる。  
+- POST リクエストでは、主にボディパラメータが利用される。
+- ボディパラメータはメッセージボディに記述される。
+- メッセージボディとは?->HTTP リクエストの部品で、補足のメモ書きが書いてある場所。
+- 基本的に form タグを使用してリクエストを送る。
+
+### Laravel におけるパラメータの使用法
+
+パラメータは、Illuminate\Http\Request のインスタンスから呼び出して使用できる。  
 ※注意：ルートパラメータはちょっと特殊
 
 <a id="コントローラー"></a>
+
 ## コントローラー
 
 ### 参考サイト
+
 [Laravel 11.x コントローラ](https://readouble.com/laravel/11.x/ja/controllers.html)
 
-
 ### 基本
-* コントローラーの役割
-    1. リクエストを受け取る
-    1. Modelへの処理指示
-    1. Viewを表示
+
+- コントローラーの役割
+  1. リクエストを受け取る
+  1. Model への処理指示
+  1. View を表示
 
 ※※重要！※※  
 **コントローラーは指示役に徹する。自分自身で一切処理は行わない。**  
-main関数みたいなイメージ。つまりまとめ役。
+main 関数みたいなイメージ。つまりまとめ役。
 
 作成コマンド  
 `php artisan make:controller SampleController`  
-アプリケーションのすべてのコントローラは、デフォルトでapp/Http/Controllersディレクトリへ設置される。
+アプリケーションのすべてのコントローラは、デフォルトで app/Http/Controllers ディレクトリへ設置される。
 
+#### View を表示
 
-#### Viewを表示
-view関数を使う
+view 関数を使う
+
 ```php
 <?php
 
@@ -2725,11 +2766,12 @@ return view('tasks.edit', [
 
 ```
 
-
 ### リソースコントローラ
+
 作成コマンド  
 `php artisan make:controller SampleController --resource`  
 (必ず使うというわけではないが、命名規則等を参考にしようかな。)
+
 ```php
 <?php
 
@@ -2792,17 +2834,19 @@ class SampleController extends Controller
     }
 }
 ```
+
 ### コントローラーミドルウェア
+
 ルーターとコントローラーの間でログイン処理等を実装できるもの。
 
 ミドルウェアはルートファイルの中で、コントローラのルートに対して指定する。※他の方法もある。
+
 ```php
 <?php
 
 Route::get('profile', [UserController::class, 'show'])->middleware(['auth', 'verified'])->name('profile.show');
 // 'auth'だの'verified'だのは、「bootstrap\app.php」と「Illuminate\Foundation\Configuration\Middleware;」を参考。
 ```
-
 
 ### コントローラー内で別のコントローラーメソッドを呼び出す例
 
@@ -2823,19 +2867,15 @@ class HomeController extends Controller
         if (Gate::allows('buyer')) {
             return app()->call([app(BuyerPostController::class), 'index']);
         }
-    
+
         return app()->call([app(GuestPostController::class), 'index']);
     }
 }
 ```
 
-
-
-
-
 <a id="ページネート"></a>
-## ページネート
 
+## ページネート
 
 ```php
 $posts = $query->paginate(10);
@@ -2845,21 +2885,23 @@ $posts = $query->paginate(10);
 $posts->withQueryString();
 ```
 
-
-
 <a id="DIコンテナ"></a>
-## DIコンテナ
 
-Laravelに組み込まれた機能で、クラス名がタイプヒントされた引数を指定するとそのクラスのインスタンスを自動的に生成し、引数として渡してくれる。  
+## DI コンテナ
 
-### ※以下の場合は、LaravelのDIコンテナでクラスを明示的にバインドする必要がある
+Laravel に組み込まれた機能で、クラス名がタイプヒントされた引数を指定するとそのクラスのインスタンスを自動的に生成し、引数として渡してくれる。
+
+### ※以下の場合は、Laravel の DI コンテナでクラスを明示的にバインドする必要がある
+
 1. インターフェースを使用していて、具体的な実装を指定する必要がある場合。
-1. Laravelパッケージを開発している場合。
+1. Laravel パッケージを開発している場合。
 1. クラスに単純なインスタンス化以上のもの (特定の構成、ファクトリ パターン、カスタム構築ロジックなど) が必要な場合。
 
-### DIコンテナに登録する方法
-サービスプロバイダのregisterメソッド内で、クラスをDIコンテナに登録する方法が最も一般的  
+### DI コンテナに登録する方法
+
+サービスプロバイダの register メソッド内で、クラスを DI コンテナに登録する方法が最も一般的  
 例：
+
 ```php
 <?php
 
@@ -2897,15 +2939,18 @@ class BinderServiceProvider extends ServiceProvider
 ```
 
 <a id="サービスプロバイダ"></a>
+
 ## サービスプロバイダ
-作成コマンド:  
+
+作成コマンド:
 
 `php artisan make:provider FooServiceProvider`
 
-サービスプロバイダは、全てbootstrap/providers.phpファイルへ登録する。  
-※コマンドでサービスプロバイダを作成した場合は自動で登録される。  
+サービスプロバイダは、全て bootstrap/providers.php ファイルへ登録する。  
+※コマンドでサービスプロバイダを作成した場合は自動で登録される。
 
 例：
+
 ```php
 <?php
 
@@ -2916,14 +2961,16 @@ return [
 ];
 ```
 
-
 <a id="リクエスト"></a>
+
 ## リクエスト
 
 ### Request
-LaravelはHTTPリクエストが来ると、このリクエストの情報をIlluminate\Http\Requestクラスのインスタンスにラップし、コントローラーメソッドの引数として依存性注入する。
 
-例：  
+Laravel は HTTP リクエストが来ると、このリクエストの情報を Illuminate\Http\Request クラスのインスタンスにラップし、コントローラーメソッドの引数として依存性注入する。
+
+例：
+
 ```php
 <?php
 
@@ -2940,10 +2987,12 @@ class SampleController extends Controller
     }
 }
 ```
-「Request $request」は、HTTPリクエストに関するすべての情報を持つオブジェクト。  
+
+「Request $request」は、HTTP リクエストに関するすべての情報を持つオブジェクト。  
 ユーザーが送信したデータ、リクエストメソッド、ファイル、ヘッダー情報などを取得、操作するために使用される。  
-Requestオブジェクトを使うことで、リクエストに関する情報を簡単かつ効率的に扱うことができる。  
-例：  
+Request オブジェクトを使うことで、リクエストに関する情報を簡単かつ効率的に扱うことができる。  
+例：
+
 ```php
 <?php
 public function store(Request $request)
@@ -2972,22 +3021,24 @@ public function store(Request $request)
 ```
 
 ### FormRequest
-FormRequestクラスはIlluminate\Http\Requestクラスを継承している。    
-そのFormRequestクラスを継承したクラスを利用することで、簡単に認可・バリデーションを行える。    
-コントローラーからバリデーション処理を完全に切り離し、Fat Controller化を防ぐ効果もある。  
+
+FormRequest クラスは Illuminate\Http\Request クラスを継承している。  
+その FormRequest クラスを継承したクラスを利用することで、簡単に認可・バリデーションを行える。  
+コントローラーからバリデーション処理を完全に切り離し、Fat Controller 化を防ぐ効果もある。
 
 **※「外部からの入力はすべて信頼しない」という原則を徹底する。**  
 **※クエリパラメータとフォームインプットの値は必ずここで明示的にバリデーションする。**  
-**※ルートパラメータは基本的に暗黙的にバリデーションされる。**  
+**※ルートパラメータは基本的に暗黙的にバリデーションされる。**
 
-FormRequestの子クラスを作成するコマンド  
+FormRequest の子クラスを作成するコマンド  
 `php artisan make:request SampleRequest`  
-これにより、app/Http/Requests/SampleRequest.phpが作成されます。  
-※命名例：PostControllerのstoreメソッドで使用したい場合→StorePostRequest  
-ディレクトリを作成し、その中に作成するコマンド   
-`php artisan make:request SelectMonthlyLog/IndexSelectMonthlyLogRequest`  
+これにより、app/Http/Requests/SampleRequest.php が作成されます。  
+※命名例：PostController の store メソッドで使用したい場合 →StorePostRequest  
+ディレクトリを作成し、その中に作成するコマンド  
+`php artisan make:request SelectMonthlyLog/IndexSelectMonthlyLogRequest`
 
-作成されるコードの例:  
+作成されるコードの例:
+
 ```php
 <?php
 
@@ -3124,20 +3175,18 @@ class SampleRequest extends FormRequest
 }
 ```
 
+#### FormRequest の子クラスを利用する方法
 
-
-#### FormRequestの子クラスを利用する方法
 コントローラのメソッドの引数に型ヒントとして指定すると、インスタンスが自動的に渡される。  
-**※これはFormRequest特有の挙動であり、依存性注入ではない。**  
+**※これは FormRequest 特有の挙動であり、依存性注入ではない。**
 
+#### 参考サイト(ルートパラメータを FormRequest でバリデーション)
 
+[【Laravel8】GET で取得したパラメーターを FormRequest でバリデーションをかける](https://yama-weblog.com/how-to-validate-get-parameter-in-laravel8/)  
+[Laravel ルートパラメータ：取得と活用方法](https://cyublog.com/articles/php-ja/laravel-route-parameters/)
 
-#### 参考サイト(ルートパラメータをFormRequestでバリデーション)  
-[【Laravel8】GETで取得したパラメーターをFormRequestでバリデーションをかける](https://yama-weblog.com/how-to-validate-get-parameter-in-laravel8/)  
-[Laravel ルートパラメータ：取得と活用方法](https://cyublog.com/articles/php-ja/laravel-route-parameters/)  
+例：
 
-
-例：  
 ```php
 <?php
 
@@ -3153,7 +3202,7 @@ class SampleController extends Controller
     public function store(SampleRequest $request)
     {
         // 以下全ての$validatedの中身は、['name' => 'nameの値', 'email' => 'emailの値']のような配列となる。
-        
+
         // バリデーション済みデータを取得
         $validated = $request->safe()->all();
         // バリデーション済みデータを取得(onlyで指定したパラメータのみ)
@@ -3172,14 +3221,14 @@ class SampleController extends Controller
     }
 }
 ```
-たったのこれだけで、コントローラのメソッド（ここではstore()）が呼び出される前にauthorize()、通った場合はrules()の処理が実行される。  
 
+たったのこれだけで、コントローラのメソッド（ここでは store()）が呼び出される前に authorize()、通った場合は rules()の処理が実行される。
 
 [バリデーションのための入力準備](https://readouble.com/laravel/11.x/ja/validation.html?header=%E3%83%95%E3%82%A9%E3%83%BC%E3%83%A0%E3%83%AA%E3%82%AF%E3%82%A8%E3%82%B9%E3%83%88%E3%83%90%E3%83%AA%E3%83%87%E3%83%BC%E3%82%B7%E3%83%A7%E3%83%B3#:~:text=email%20address%27%2C%0A%20%20%20%20%5D%3B%0A%7D-,%E3%83%90%E3%83%AA%E3%83%87%E3%83%BC%E3%82%B7%E3%83%A7%E3%83%B3%E3%81%AE%E3%81%9F%E3%82%81%E3%81%AE%E5%85%A5%E5%8A%9B%E6%BA%96%E5%82%99,-%E3%83%90%E3%83%AA%E3%83%87%E3%83%BC%E3%82%B7%E3%83%A7%E3%83%B3%E3%83%AB%E3%83%BC%E3%83%AB%E3%82%92)  
-[【保存版】バリデーションルールのまとめ](https://www.wakuwakubank.com/posts/376-laravel-validation/)  
-
+[【保存版】バリデーションルールのまとめ](https://www.wakuwakubank.com/posts/376-laravel-validation/)
 
 #### 追加処理
+
 ```php
 <?php
 // バリデーション前に処理を行う
@@ -3213,6 +3262,7 @@ public function withValidator(Validator $validator): void
 ```
 
 #### バリデーションエラーメッセージの表示
+
 ```php
 <?php
 
@@ -3240,12 +3290,12 @@ $errors->all()
 // ※$errorsはIlluminate\Support\ViewErrorBagのインスタンス。
 ```
 
-エラーメッセージの日本語化＆カスタマイズには2つの方法がある。
-1. Laravelの言語ファイルを作成＆設定する。
-1. FormRequestの子クラスで定義する。
-    1. messagesメソッドをオーバーライドする。
-    1. attributesメソッドをオーバーライド。
+エラーメッセージの日本語化＆カスタマイズには 2 つの方法がある。
 
+1. Laravel の言語ファイルを作成＆設定する。
+1. FormRequest の子クラスで定義する。
+   1. messages メソッドをオーバーライドする。
+   1. attributes メソッドをオーバーライド。
 
 ```php
 <?php
@@ -3267,10 +3317,10 @@ $errors->all()
 ```
 
 #### 参考サイト
-[LaravelのFormRequestをちゃんと理解する](https://laranote.jp/understanding-laravel-formrequest/)
 
+[Laravel の FormRequest をちゃんと理解する](https://laranote.jp/understanding-laravel-formrequest/)
 
-### oldヘルパ
+### old ヘルパ
 
 バリデーションで弾かれた場合でも、フォームの入力値を保持できる機能。
 
@@ -3290,195 +3340,211 @@ old(name属性値, 初期値)
 <input type="text" name="name[]" value="{{ old('name.2') }}">
 ```
 
-
 <a id="バリデーションルール"></a>
+
 ### バリデーションルール
 
-使用可能なバリデーションルールは全部で106個ある。  
+使用可能なバリデーションルールは全部で 106 個ある。  
 参考：[ドキュメント](https://readouble.com/laravel/11.x/ja/validation.html#rule-accepted)
 
-
 #### 基本的なルール
-|ルール|意味|
-|-|-|
-|integer|整数|
-|numeric|数値(少数可)|
-|string|文字列|
-|boolean|true、false、1、0、"1"、"0"。論理値として有効。|
-|email|メールアドレスの形式|
-|url|有効なURL。ルールのパラメータとして、プロトコルを指定することも可能。例 url:http,https|
-|active_url|実際にアクセス可能なURL|
-|array:foo,bar|PHPの配列タイプ。存在を許可するキーも指定できる。|
-|list|キーが0からの連番である配列|
-|json|有効なJSON文字列|
-|file|アップロードに成功したファイル。|
-|image|ファイルが画像（jpg、jpeg、png、bmp、gif、svg、webp）である。|
-|hex_color|有効な16進数カラーコード|
-|timezone|有効なタイムゾーン識別子|
-|ip|IPアドレス形式|
-|ipv4|IPv4アドレス形式|
-|ipv6|IPv6アドレス形式|
-|mac_address|MACアドレスとして正しい。|
-|ulid|有効なULID|
-|uuid|有効なUUID(RFC 4122の定めるバージョン1、3、4、5)|
+
+| ルール        | 意味                                                                                    |
+| ------------- | --------------------------------------------------------------------------------------- |
+| integer       | 整数                                                                                    |
+| numeric       | 数値(少数可)                                                                            |
+| string        | 文字列                                                                                  |
+| boolean       | true、false、1、0、"1"、"0"。論理値として有効。                                         |
+| email         | メールアドレスの形式                                                                    |
+| url           | 有効な URL。ルールのパラメータとして、プロトコルを指定することも可能。例 url:http,https |
+| active_url    | 実際にアクセス可能な URL                                                                |
+| array:foo,bar | PHP の配列タイプ。存在を許可するキーも指定できる。                                      |
+| list          | キーが 0 からの連番である配列                                                           |
+| json          | 有効な JSON 文字列                                                                      |
+| file          | アップロードに成功したファイル。                                                        |
+| image         | ファイルが画像（jpg、jpeg、png、bmp、gif、svg、webp）である。                           |
+| hex_color     | 有効な 16 進数カラーコード                                                              |
+| timezone      | 有効なタイムゾーン識別子                                                                |
+| ip            | IP アドレス形式                                                                         |
+| ipv4          | IPv4 アドレス形式                                                                       |
+| ipv6          | IPv6 アドレス形式                                                                       |
+| mac_address   | MAC アドレスとして正しい。                                                              |
+| ulid          | 有効な ULID                                                                             |
+| uuid          | 有効な UUID(RFC 4122 の定めるバージョン 1、3、4、5)                                     |
 
 #### 発展的なルール
-|ルール|意味|
-|-|-|
-|nullable|null値を許容|
-|in:値1,値2...|指定された値のリスト中に含まれている。|
-|not_in:値1,値2...|指定された値のリスト中に含まれていない。|
-|distinct|配列内に重複した値がない。|
-|contains:値1,値2,...|指定した値を全部含んでいる配列。|
-|filled|フィールドが存在する場合、空でない。|
-|multiple_of:値|値の倍数|
-|current_password|認証されているユーザーのパスワード|
-|confirmed|例えば、バリデーション中のフィールドが「password」の場合、「password_confirmation」フィールドが入力に存在し一致している必要がある。|
-|extensions:jpg,png|※例：ファイルの拡張子がjpgかpng。|
-|dimensions|ファイルが、パラメータに指定したサイズに合致。|
-|mimetypes:text/plain,...|ファイルのMIMEタイプが指定したもののどれか。|
-|mimes:foo,bar,...|ファイルが、指定した拡張子のいずれかに対応するMIMEタイプを持っている|
+
+| ルール                   | 意味                                                                                                                                |
+| ------------------------ | ----------------------------------------------------------------------------------------------------------------------------------- |
+| nullable                 | null 値を許容                                                                                                                       |
+| in:値 1,値 2...          | 指定された値のリスト中に含まれている。                                                                                              |
+| not_in:値 1,値 2...      | 指定された値のリスト中に含まれていない。                                                                                            |
+| distinct                 | 配列内に重複した値がない。                                                                                                          |
+| contains:値 1,値 2,...   | 指定した値を全部含んでいる配列。                                                                                                    |
+| filled                   | フィールドが存在する場合、空でない。                                                                                                |
+| multiple_of:値           | 値の倍数                                                                                                                            |
+| current_password         | 認証されているユーザーのパスワード                                                                                                  |
+| confirmed                | 例えば、バリデーション中のフィールドが「password」の場合、「password_confirmation」フィールドが入力に存在し一致している必要がある。 |
+| extensions:jpg,png       | ※例：ファイルの拡張子が jpg か png。                                                                                                |
+| dimensions               | ファイルが、パラメータに指定したサイズに合致。                                                                                      |
+| mimetypes:text/plain,... | ファイルの MIME タイプが指定したもののどれか。                                                                                      |
+| mimes:foo,bar,...        | ファイルが、指定した拡張子のいずれかに対応する MIME タイプを持っている                                                              |
 
 #### 必須
-|ルール|意味|
-|-|-|
-|required|フィールドが存在し、空でない。空判定：null,空文字列,空配列,空のCountableオブジェクト,パスのないアップロード済みファイル|
-|required_if:他のフィールド,値|required(他のフィールドが指定した値と等しい場合)|
-|required_if_accepted:他のフィールド|required(他のフィールドがacceptedの場合)|
-|required_if_declined:他のフィールド|required(他のフィールドがdeclinedの場合)|
-|required_unless:他のフィールド,値|required(他のフィールドが指定した値と等しくない場合)|
-|required_with:foo,bar,...|required(指定したフィールドのいずれかが存在する場合)|
-|required_with_all:foo,bar,...|required(指定したフィールド全てが存在する場合)|
-|required_without:foo,bar,...|required(指定した他のフィールドのどれか一つでも存在していない場合)|
-|required_without_all:foo,bar,...|required(指定した他のフィールドがすべて存在していない場合)|
-|required_array_keys:foo,bar,...|配列であり、指定したキーを含んでいることが必須|
+
+| ルール                              | 意味                                                                                                                      |
+| ----------------------------------- | ------------------------------------------------------------------------------------------------------------------------- |
+| required                            | フィールドが存在し、空でない。空判定：null,空文字列,空配列,空の Countable オブジェクト,パスのないアップロード済みファイル |
+| required_if:他のフィールド,値       | required(他のフィールドが指定した値と等しい場合)                                                                          |
+| required_if_accepted:他のフィールド | required(他のフィールドが accepted の場合)                                                                                |
+| required_if_declined:他のフィールド | required(他のフィールドが declined の場合)                                                                                |
+| required_unless:他のフィールド,値   | required(他のフィールドが指定した値と等しくない場合)                                                                      |
+| required_with:foo,bar,...           | required(指定したフィールドのいずれかが存在する場合)                                                                      |
+| required_with_all:foo,bar,...       | required(指定したフィールド全てが存在する場合)                                                                            |
+| required_without:foo,bar,...        | required(指定した他のフィールドのどれか一つでも存在していない場合)                                                        |
+| required_without_all:foo,bar,...    | required(指定した他のフィールドがすべて存在していない場合)                                                                |
+| required_array_keys:foo,bar,...     | 配列であり、指定したキーを含んでいることが必須                                                                            |
 
 #### 日付
-|ルール|意味|
-|-|-|
-|date|日付形式|
-|date_format:H:i|日付形式。フォーマット指定。|
-|date_equals:日付|指定の日付と同じ。|
-|after:日付|指定の日付より後。日付にバリデーション中の別のフィールドを指定することもできる。|
-|after_or_equal:日付|指定の日付より後か同じ。日付にバリデーション中の別のフィールドを指定することもできる。|
-|before:日付|指定の日付より前。日付にバリデーション中の別のフィールドを指定することもできる。|
-|before_or_equal:日付|指定の日付より前か同じ。日付にバリデーション中の別のフィールドを指定することもできる。|
+
+| ルール               | 意味                                                                                   |
+| -------------------- | -------------------------------------------------------------------------------------- |
+| date                 | 日付形式                                                                               |
+| date_format:H:i      | 日付形式。フォーマット指定。                                                           |
+| date_equals:日付     | 指定の日付と同じ。                                                                     |
+| after:日付           | 指定の日付より後。日付にバリデーション中の別のフィールドを指定することもできる。       |
+| after_or_equal:日付  | 指定の日付より後か同じ。日付にバリデーション中の別のフィールドを指定することもできる。 |
+| before:日付          | 指定の日付より前。日付にバリデーション中の別のフィールドを指定することもできる。       |
+| before_or_equal:日付 | 指定の日付より前か同じ。日付にバリデーション中の別のフィールドを指定することもできる。 |
 
 #### size、ケタ数
-|ルール|意味|
-|-|-|
-|size:値|指定した値と同じサイズ。サイズ：数値(整数も小数も。numericかintegerルールが必要)、文字列の長さ、配列の要素数、ファイルのキロバイト。|
-|digits:5|※例：5ケタの整数。|
-|digits_between:3,7|※例：3~7ケタの整数。|
-|decimal:1,3|※例：数値。小数点以下が1~3ケタ(9.9,9.99,9.999)。指定するケタ数は一つだけでもいい。|
-|max:値|値以下(sizeルール)|
-|min:値|値以上(sizeルール)|
-|between:0,9999|※例：0～9999の間|
-|max_digits:ケタ数|整数で、指定したケタ数以下|
-|min_digits:ケタ数|整数で、指定したケタ数以上|
-|gt:他のフィールド|他のフィールドより大きい(sizeルール)。２つのフィールドは同じタイプでなくてはならない。|
-|gte:他のフィールド|他のフィールドより大きいか同じ(sizeルール)。２つのフィールドは同じタイプでなくてはならない。|
-|lt:他のフィールド|他のフィールドより小さい(sizeルール)。２つのフィールドは同じタイプでなくてはならない。|
-|lte:他のフィールド|他のフィールドより小さいか同じ(sizeルール)。２つのフィールドは同じタイプでなくてはならない。|
+
+| ルール             | 意味                                                                                                                                    |
+| ------------------ | --------------------------------------------------------------------------------------------------------------------------------------- |
+| size:値            | 指定した値と同じサイズ。サイズ：数値(整数も小数も。numeric か integer ルールが必要)、文字列の長さ、配列の要素数、ファイルのキロバイト。 |
+| digits:5           | ※例：5 ケタの整数。                                                                                                                     |
+| digits_between:3,7 | ※例：3~7 ケタの整数。                                                                                                                   |
+| decimal:1,3        | ※例：数値。小数点以下が 1~3 ケタ(9.9,9.99,9.999)。指定するケタ数は一つだけでもいい。                                                    |
+| max:値             | 値以下(size ルール)                                                                                                                     |
+| min:値             | 値以上(size ルール)                                                                                                                     |
+| between:0,9999     | ※例：0 ～ 9999 の間                                                                                                                     |
+| max_digits:ケタ数  | 整数で、指定したケタ数以下                                                                                                              |
+| min_digits:ケタ数  | 整数で、指定したケタ数以上                                                                                                              |
+| gt:他のフィールド  | 他のフィールドより大きい(size ルール)。２つのフィールドは同じタイプでなくてはならない。                                                 |
+| gte:他のフィールド | 他のフィールドより大きいか同じ(size ルール)。２つのフィールドは同じタイプでなくてはならない。                                           |
+| lt:他のフィールド  | 他のフィールドより小さい(size ルール)。２つのフィールドは同じタイプでなくてはならない。                                                 |
+| lte:他のフィールド | 他のフィールドより小さいか同じ(size ルール)。２つのフィールドは同じタイプでなくてはならない。                                           |
 
 #### 英数字系
-|ルール|意味|
-|-|-|
-|alpha:ascii|a-z、A-Z|
-|alpha_num:ascii|a-z、A-Z、0-9|
-|alpha_dash:ascii|a-z、A-Z、0-9、-(ハイフン)、_(アンダースコア)|
-|ascii|アスキー文字|
+
+| ルール           | 意味                                           |
+| ---------------- | ---------------------------------------------- |
+| alpha:ascii      | a-z、A-Z                                       |
+| alpha_num:ascii  | a-z、A-Z、0-9                                  |
+| alpha_dash:ascii | a-z、A-Z、0-9、-(ハイフン)、\_(アンダースコア) |
+| ascii            | アスキー文字                                   |
 
 #### 正規表現
-|ルール|意味|
-|-|-|
-|regex:/^.+@.+$/i|※例：指定した正規表現にマッチする部分がある。注意：ルール指定時に\|区切り文字ではなく配列を使用すること。|
-|not_regex:/^.+$/i|※例：指定した正規表現にマッチする部分がない。注意：ルール指定時に\|区切り文字ではなく配列を使用すること。|
+
+| ルール            | 意味                                                                                                      |
+| ----------------- | --------------------------------------------------------------------------------------------------------- |
+| regex:/^.+@.+$/i  | ※例：指定した正規表現にマッチする部分がある。注意：ルール指定時に\|区切り文字ではなく配列を使用すること。 |
+| not_regex:/^.+$/i | ※例：指定した正規表現にマッチする部分がない。注意：ルール指定時に\|区切り文字ではなく配列を使用すること。 |
 
 #### テーブルのカラムに存在するか
-|ルール|意味|
-|-|-|
-|exists:テーブル,カラム|指定したテーブルのカラムに存在する値。カラムを指定しない場合はフィールド名が適用される。|
-|unique:テーブル,カラム|指定したテーブルのカラムに存在しない値。カラムを指定しない場合はフィールド名が適用される。|
+
+| ルール                 | 意味                                                                                       |
+| ---------------------- | ------------------------------------------------------------------------------------------ |
+| exists:テーブル,カラム | 指定したテーブルのカラムに存在する値。カラムを指定しない場合はフィールド名が適用される。   |
+| unique:テーブル,カラム | 指定したテーブルのカラムに存在しない値。カラムを指定しない場合はフィールド名が適用される。 |
 
 #### 他のフィールドとの比較
-|ルール|意味|
-|-|-|
-|same:他のフィールド|他のフィールドと同じ値|
-|different:他のフィールド|他のフィールドと異なった値。|
-|in_array:他のフィールド.*|他のフィールドの値のどれか。|
+
+| ルール                     | 意味                         |
+| -------------------------- | ---------------------------- |
+| same:他のフィールド        | 他のフィールドと同じ値       |
+| different:他のフィールド   | 他のフィールドと異なった値。 |
+| in_array:他のフィールド.\* | 他のフィールドの値のどれか。 |
 
 #### チェックされているかどうか、などに使うルール
-|ルール|意味|
-|-|-|
-|accepted|"yes"、"on"、1、"1"、true、"true"。チェックされているかどうか、などに使用。|
-|accepted_if:他のフィールド,値|accepted(他のフィールドが指定した値と等しい場合)|
-|declined|"no", "off", 0, "0", false, "false"。チェックされているかどうか、などに使用。|
-|declined_if:他のフィールド,値|declined(他のフィールドが指定した値と等しい場合)|
+
+| ルール                        | 意味                                                                          |
+| ----------------------------- | ----------------------------------------------------------------------------- |
+| accepted                      | "yes"、"on"、1、"1"、true、"true"。チェックされているかどうか、などに使用。   |
+| accepted_if:他のフィールド,値 | accepted(他のフィールドが指定した値と等しい場合)                              |
+| declined                      | "no", "off", 0, "0", false, "false"。チェックされているかどうか、などに使用。 |
+| declined_if:他のフィールド,値 | declined(他のフィールドが指定した値と等しい場合)                              |
 
 #### 大文字小文字
-|ルール|意味|
-|-|-|
-|uppercase|(大文字小文字の区別がある文字は)大文字|
-|lowercase|(大文字小文字の区別がある文字は)小文字|
 
-#### startとend
-|ルール|意味|
-|-|-|
-|starts_with:値1,値2,...|指定した値で始まる。|
-|ends_with:値1,値2,...|指定した値で終わる。|
-|doesnt_start_with:値1,値2,...|指定した値で始まらない。|
-|doesnt_end_with:値1,値2,...|指定した値で終わらない。|
+| ルール    | 意味                                   |
+| --------- | -------------------------------------- |
+| uppercase | (大文字小文字の区別がある文字は)大文字 |
+| lowercase | (大文字小文字の区別がある文字は)小文字 |
+
+#### start と end
+
+| ルール                          | 意味                     |
+| ------------------------------- | ------------------------ |
+| starts_with:値 1,値 2,...       | 指定した値で始まる。     |
+| ends_with:値 1,値 2,...         | 指定した値で終わる。     |
+| doesnt_start_with:値 1,値 2,... | 指定した値で始まらない。 |
+| doesnt_end_with:値 1,値 2,...   | 指定した値で終わらない。 |
 
 #### 存在する
-|ルール|意味|
-|-|-|
-|present|フィールドが存在する。|
-|present_if:他のフィールド,値|present(他のフィールドが指定した値と等しい場合)|
-|present_unless:他のフィールド,値|present(他のフィールドが指定した値と等しくない場合)|
-|present_with:foo,bar,...|present(指定したフィールドのいずれかが存在する場合)|
-|present_with_all:foo,bar,...|present(指定したフィールド全てが存在する場合)|
+
+| ルール                           | 意味                                                |
+| -------------------------------- | --------------------------------------------------- |
+| present                          | フィールドが存在する。                              |
+| present_if:他のフィールド,値     | present(他のフィールドが指定した値と等しい場合)     |
+| present_unless:他のフィールド,値 | present(他のフィールドが指定した値と等しくない場合) |
+| present_with:foo,bar,...         | present(指定したフィールドのいずれかが存在する場合) |
+| present_with_all:foo,bar,...     | present(指定したフィールド全てが存在する場合)       |
 
 #### 存在しない
-|ルール|意味|
-|-|-|
-|missing|フィールド自体が存在しない|
-|missing_if:他のフィールド,値|missing(他のフィールドが指定した値と等しい場合)|
-|missing_unless:他のフィールド,値|missing(他のフィールドが指定した値と等しくない場合)|
-|missing_with:foo,bar,...|missing(指定したフィールドのいずれかが存在する場合)|
-|missing_with_all:foo,bar,...|missing(指定したフィールド全てが存在する場合)|
+
+| ルール                           | 意味                                                |
+| -------------------------------- | --------------------------------------------------- |
+| missing                          | フィールド自体が存在しない                          |
+| missing_if:他のフィールド,値     | missing(他のフィールドが指定した値と等しい場合)     |
+| missing_unless:他のフィールド,値 | missing(他のフィールドが指定した値と等しくない場合) |
+| missing_with:foo,bar,...         | missing(指定したフィールドのいずれかが存在する場合) |
+| missing_with_all:foo,bar,...     | missing(指定したフィールド全てが存在する場合)       |
 
 #### 存在しないか、空
-|ルール|意味|
-|-|-|
-|prohibited|フィールドが存在しないか、空である。空判定：null,空文字列,空配列,空のCountableオブジェクト,パスのないアップロード済みファイル|
-|prohibited_if:他のフィールド,値|prohibited(他のフィールドが指定した値と等しい場合)|
-|prohibited_unless:他のフィールド,値|prohibited(他のフィールドが指定した値と等しくない場合)|
-|prohibits:他のフィールド,...|フィールドが存在し空でない場合、指定した全ての他のフィールドがprohibited|
+
+| ルール                              | 意味                                                                                                                            |
+| ----------------------------------- | ------------------------------------------------------------------------------------------------------------------------------- |
+| prohibited                          | フィールドが存在しないか、空である。空判定：null,空文字列,空配列,空の Countable オブジェクト,パスのないアップロード済みファイル |
+| prohibited_if:他のフィールド,値     | prohibited(他のフィールドが指定した値と等しい場合)                                                                              |
+| prohibited_unless:他のフィールド,値 | prohibited(他のフィールドが指定した値と等しくない場合)                                                                          |
+| prohibits:他のフィールド,...        | フィールドが存在し空でない場合、指定した全ての他のフィールドが prohibited                                                       |
 
 #### 除外
-|ルール|意味|
-|-|-|
-|exclude|バリデーション対象からも、リクエストデータからも除外される。|
-|exclude_if:他のフィールド,値|exclude(他のフィールドが指定した値と等しい場合)|
-|exclude_unless:他のフィールド,値|exclude(他のフィールドが指定した値と等しくない場合)|
-|exclude_with:他のフィールド|exclude(他のフィールドが存在する場合)|
-|exclude_without:他のフィールド|exclude(他のフィールドが存在しない場合)|
+
+| ルール                           | 意味                                                         |
+| -------------------------------- | ------------------------------------------------------------ |
+| exclude                          | バリデーション対象からも、リクエストデータからも除外される。 |
+| exclude_if:他のフィールド,値     | exclude(他のフィールドが指定した値と等しい場合)              |
+| exclude_unless:他のフィールド,値 | exclude(他のフィールドが指定した値と等しくない場合)          |
+| exclude_with:他のフィールド      | exclude(他のフィールドが存在する場合)                        |
+| exclude_without:他のフィールド   | exclude(他のフィールドが存在しない場合)                      |
 
 #### 特殊なルール
-|ルール|意味|
-|-|-|
-|bail|バリデーションに失敗した時点で、そのフィールドのバリデーションを中止する。|
+
+| ルール | 意味                                                                       |
+| ------ | -------------------------------------------------------------------------- |
+| bail   | バリデーションに失敗した時点で、そのフィールドのバリデーションを中止する。 |
 
 #### よくわからないルール
-|ルール|意味|
-|-|-|
-|enum|Rule::enumメソッドを使用。有効なenumの値が含まれているか|
-|sometimes|???よくわからない|
 
-
+| ルール    | 意味                                                        |
+| --------- | ----------------------------------------------------------- |
+| enum      | Rule::enum メソッドを使用。有効な enum の値が含まれているか |
+| sometimes | ???よくわからない                                           |
 
 以下のようなクラスメソッドでルールを指定することもある。
+
 ```php
 <?php
 Rule::foo();
@@ -3487,37 +3553,38 @@ Password::baz();
 ```
 
 #### 参考サイト
-[LaravelのFormRequestをちゃんと理解する](https://laranote.jp/understanding-laravel-formrequest/)
 
-
+[Laravel の FormRequest をちゃんと理解する](https://laranote.jp/understanding-laravel-formrequest/)
 
 <a id="lang"></a>
+
 ## lang
 
-lang/en作成コマンド
-`php artisan lang:publish`  
+lang/en 作成コマンド
+`php artisan lang:publish`
 
-lang/en/validation.phpファイル内に、各バリデーションルールの翻訳エントリーがある。  
-これらのメッセージは、アプリケーションのニーズに応じて自由に変更・修正する。  
+lang/en/validation.php ファイル内に、各バリデーションルールの翻訳エントリーがある。  
+これらのメッセージは、アプリケーションのニーズに応じて自由に変更・修正する。
 
-lang/jaディレクトリを作成して各ファイルをコピーし、日本語メッセージを設定することもできる。
-
-
-
+lang/ja ディレクトリを作成して各ファイルをコピーし、日本語メッセージを設定することもできる。
 
 <a id="サービス"></a>
+
 ## サービス
 
 ### 使い方
+
 app/Services ディレクトリを作成し、その配下にサービスファイルを作る。
 
 ### 用途
+
 用途は幅広い。以下は一例。
 
 コントローラーやブレードの中で呼び出す関数やプロパティを定義できる。
-処理をServiceに移行することで、コントローラの肥大化を防止する。
+処理を Service に移行することで、コントローラの肥大化を防止する。
 
 #### 例
+
 ```php
 <?php
 
@@ -3573,17 +3640,17 @@ class StoreWelfareUserFormatter
 }
 ```
 
-
 <a id="ビュー"></a>
+
 ## ビュー
 
-
 ### 参考サイト
-[Laravel 11.x Bladeテンプレート](https://readouble.com/laravel/11.x/ja/blade.html)  
+
+[Laravel 11.x Blade テンプレート](https://readouble.com/laravel/11.x/ja/blade.html)  
 [Laravel 11.x ヘルパ](https://readouble.com/laravel/11.x/ja/helpers.html)
 
-
 ### ヘルパ関数
+
 ```php
 <?php
 
@@ -3598,7 +3665,9 @@ url('/dashboard')
 ```
 
 ### データの表示
-{{ }}で囲むことにより、Bladeビューに渡すデータを表示できる。  
+
+{{ }}で囲むことにより、Blade ビューに渡すデータを表示できる。
+
 ```php
 <?php
 
@@ -3612,22 +3681,25 @@ url('/dashboard')
 ### レイアウト
 
 #### コンポーネント
-独立したUI要素を管理したり、複数のビューで再利用する場合に適している。  
-※ユーザー認証システムのBreezeでも使う。
 
-コンポーネントの作成には2つのアプローチがある。
-* クラスベースのコンポーネント(Bladeテンプレートとクラスを持つ)
-* 匿名コンポーネント(Bladeテンプレートのみを持つ)
+独立した UI 要素を管理したり、複数のビューで再利用する場合に適している。  
+※ユーザー認証システムの Breeze でも使う。
+
+コンポーネントの作成には 2 つのアプローチがある。
+
+- クラスベースのコンポーネント(Blade テンプレートとクラスを持つ)
+- 匿名コンポーネント(Blade テンプレートのみを持つ)
 
 とりあえず匿名コンポーネントでやってみる。
 
 匿名コンポーネントを作成するコマンド  
-resources/views/components/forms/input.blade.phpへBladeファイルを作成するコマンド。  
+resources/views/components/forms/input.blade.php へ Blade ファイルを作成するコマンド。  
 `php artisan make:component forms.input --view`  
-resources/views/components/button.blade.phpへBladeファイルを作成するコマンド。  
+resources/views/components/button.blade.php へ Blade ファイルを作成するコマンド。  
 `php artisan make:component button --view`  
 ※以下のようにフォルダ名に数字が含まれているとうまくレンダできないっぽい  
 `php artisan make:component h2.page-name --view`
+
 ```php
 <?php
 
@@ -3670,9 +3742,8 @@ resources/views/components/button.blade.phpへBladeファイルを作成する�
 <x-alert type="error" title="タイトルです" :message="$message"/>
 ```
 
-
-
 #### テンプレート継承
+
 各ページが同じレイアウトや構造を共有し、一部だけを変更する場合に適している。  
 ※コンポーネントの導入前にアプリケーションを構築するための主な方法だった。
 
@@ -3700,17 +3771,19 @@ resources/views/components/button.blade.phpへBladeファイルを作成する�
 @include('読み込むビュー名')
 
 ```
-* @extends()、@include()で読み込むビュー名について。
-    1. resources/viewsディレクトリ配下からのパス。
-    1. .blade.phpの拡張子は省略することができる。
-    1. ディレクトリの階層をドットで区切った形式でビュー名を指定。
 
+- @extends()、@include()で読み込むビュー名について。
+  1. resources/views ディレクトリ配下からのパス。
+  1. .blade.php の拡張子は省略することができる。
+  1. ディレクトリの階層をドットで区切った形式でビュー名を指定。
 
-### CSRFフィールド、Methodフィールド
-* CSRFフィールド：formの内部に@csrfと記述するだけでCSRF攻撃を防げる。※必要なのは基本的にPOSTリクエストの場合。  
-* Methodフィールド：HTMLフォームで許可されているのはGETリクエスト(データ取得)とPOSTリクエスト(データ送信)のみのため、フォームのPUT, PATCH, DELETE, OPTIONSリクエストを使う場合はPOST送信のフォームの中で@method関数を使用し、擬似的にリクエストを実現させる。
+### CSRF フィールド、Method フィールド
 
-例：  
+- CSRF フィールド：form の内部に@csrf と記述するだけで CSRF 攻撃を防げる。※必要なのは基本的に POST リクエストの場合。
+- Method フィールド：HTML フォームで許可されているのは GET リクエスト(データ取得)と POST リクエスト(データ送信)のみのため、フォームの PUT, PATCH, DELETE, OPTIONS リクエストを使う場合は POST 送信のフォームの中で@method 関数を使用し、擬似的にリクエストを実現させる。
+
+例：
+
 ```php
 <?php
 <form action="{{ route('hoges.destroy', ['id' => $id]) }}" method="POST">
@@ -3721,55 +3794,60 @@ resources/views/components/button.blade.phpへBladeファイルを作成する�
 ```
 
 <a id="Breeze"></a>
+
 ## Breeze
 
-### カレントディレクトリにLaravel Breezeをインストールするコマンド 
-`composer require laravel/breeze --dev`  
-`php artisan breeze:install`  
+### カレントディレクトリに Laravel Breeze をインストールするコマンド
 
+`composer require laravel/breeze --dev`  
+`php artisan breeze:install`
 
 #### ※質問：Which testing framework do you prefer?
+
 テストに使用するフレームワークを選択する
 
-* Pest (シンプル。初心者にも優しい。)
-* PHPUnit (多機能。習得には多少の時間がかかる。複雑なテストや高度なカスタマイズが必要な場合。)
+- Pest (シンプル。初心者にも優しい。)
+- PHPUnit (多機能。習得には多少の時間がかかる。複雑なテストや高度なカスタマイズが必要な場合。)
 
-
-### gitからcloneする時
+### git から clone する時
 
 #### 概要
-node_modulesディレクトリは通常Gitの管理下におかないため、リポジトリをクローンした後に再度インストールする必要がある。  
-※node_modulesにはプロジェクトに必要な依存関係がすべて含まれており、これがないとフロントエンドアセットがコンパイルできず、正しく機能しない。
 
-#### node_modulesディレクトリをインストールする方法
-以下のコマンドを実行して、必要なnodeモジュールをすべてインストールする。  
-`npm install`  
+node_modules ディレクトリは通常 Git の管理下におかないため、リポジトリをクローンした後に再度インストールする必要がある。  
+※node_modules にはプロジェクトに必要な依存関係がすべて含まれており、これがないとフロントエンドアセットがコンパイルできず、正しく機能しない。
+
+#### node_modules ディレクトリをインストールする方法
+
+以下のコマンドを実行して、必要な node モジュールをすべてインストールする。  
+`npm install`
 
 フロントエンドアセットをコンパイルする（オプションだが、通常は必要）  
 `npm run dev`  
 ※本番環境の場合  
-`npm run production`  
-  
-これらの手順を実行すると、Laravel Breezeアプリケーションが実行できるようになる。  
+`npm run production`
 
+これらの手順を実行すると、Laravel Breeze アプリケーションが実行できるようになる。
 
 <a id="Breezejp"></a>
+
 ## Breezejp
 
-Laravel Breezeを手軽に日本語化出来るパッケージ  
-Breezejpをインストールするコマンド  
+Laravel Breeze を手軽に日本語化出来るパッケージ  
+Breezejp をインストールするコマンド  
 `composer require askdkc/breezejp --dev`  
 必要な言語ファイルの出力を実行するコマンド  
 `php artisan breezejp`
 
-
 <a id="ミドルウェア"></a>
+
 ## ミドルウェア
 
 ### 参考サイト
+
 [Laravel 11.x ミドルウェア](https://readouble.com/laravel/11.x/ja/middleware.html)
 
 ### 特定のルートグループにミドルウェアを適用する方法
+
 ```php
 <?php
 // ※ミドルウェアは、リクエストがコントローラーやルートに到達する前に実行されるフィルターのようなもの。
@@ -3782,7 +3860,7 @@ Breezejpをインストールするコマンド
 // ※グループは入れ子にもできる。
 Route::middleware('guest')->group(function () {
     // 認証されていないユーザーのみがアクセスできるルート
-    
+
     Route::get('register', [RegisteredUserController::class, 'create'])
                 ->name('register');
 
@@ -3797,7 +3875,9 @@ Route::middleware('auth')->group(function () {
                 ->name('verification.notice');
 });
 ```
+
 ### 単一のルートにミドルウェアを適用する場合
+
 ```php
 <?php
 Route::get('/dashboard', function () {
@@ -3806,12 +3886,14 @@ Route::get('/dashboard', function () {
 ```
 
 ### ミドルウェアを自作する
+
 ミドルウェアを作成するコマンド  
 `php artisan make:middleware クラス名`
 
-実行するとapp/Http/Middleware配下にクラスが作られる。
+実行すると app/Http/Middleware 配下にクラスが作られる。
 
 ### ミドルウェアの例
+
 ```php
 <?php
 
@@ -3842,6 +3924,7 @@ class WelfareStaff
 ```
 
 ### ミドルウェアの使い方
+
 ```php
 <?php
 // Route::middleware()メソッドを使用
@@ -3854,21 +3937,18 @@ Route::middleware(WelfareUser::class)
 Route::middleware(['auth', 'verified', WelfareUser::class])
 ```
 
-
-
 <a id="TailwindCSS"></a>
+
 ## TailwindCSS
 
 ### 基本
 
 [Install Tailwind CSS with Laravel 解説ページ](https://tailwindcss.com/docs/installation/framework-guides/laravel/vite)
 
-
-
 ```html
 <head>
-    <!-- スタイルを適用したいbladeファイル（レイアウトを共通化するためのファイル）に以下を追記。 -->
-    @vite('resources/css/app.css')
+  <!-- スタイルを適用したいbladeファイル（レイアウトを共通化するためのファイル）に以下を追記。 -->
+  @vite('resources/css/app.css')
 </head>
 ```
 
@@ -3877,30 +3957,30 @@ Route::middleware(['auth', 'verified', WelfareUser::class])
 @tailwind components;
 
 /* 独自クラス（コンポーネント）を作成することもできる。 */
-.my-bgc{
-    @apply bg-green-300
+.my-bgc {
+  @apply bg-green-300;
 }
 
 @tailwind utilities;
 ```
 
-### VSCodeの便利な拡張機能
+### VSCode の便利な拡張機能
 
-|||
-|-|-|
-|Tailwind CSS IntelliSense|コードのutility classにカーソルを当てるとCSSの設定を確認することができる。|
-|PostCSS Language Support|エディタが@tailwindを正しく認識してくれるようになり、「Unknown at rule @tailwind」という警告と黄色い波線が消える。|
+|                           |                                                                                                                     |
+| ------------------------- | ------------------------------------------------------------------------------------------------------------------- |
+| Tailwind CSS IntelliSense | コードの utility class にカーソルを当てると CSS の設定を確認することができる。                                      |
+| PostCSS Language Support  | エディタが@tailwind を正しく認識してくれるようになり、「Unknown at rule @tailwind」という警告と黄色い波線が消える。 |
 
 ### 参考サイト
-* [Tailwind 公式サイト](https://tailwindcss.com/)
-* [Tailwind CSS Cheat Sheet](https://tailwindcomponents.com/cheatsheet/)
-* [Tailwind CSSで独自クラス（コンポーネント）を作成する](https://zenn.dev/takashi5816/articles/7d9d14a17a3ec0)
-* [初めてでもわかるTailwind CSS入門 基礎編](https://reffect.co.jp/html/tailwindcss-for-beginners)
-* [Vite + Tailwind CSS + Laravel Breezeを使った開発環境の構築](https://zenn.dev/nenenemo/articles/46d43854cd01c5)
 
-
+- [Tailwind 公式サイト](https://tailwindcss.com/)
+- [Tailwind CSS Cheat Sheet](https://tailwindcomponents.com/cheatsheet/)
+- [Tailwind CSS で独自クラス（コンポーネント）を作成する](https://zenn.dev/takashi5816/articles/7d9d14a17a3ec0)
+- [初めてでもわかる Tailwind CSS 入門 基礎編](https://reffect.co.jp/html/tailwindcss-for-beginners)
+- [Vite + Tailwind CSS + Laravel Breeze を使った開発環境の構築](https://zenn.dev/nenenemo/articles/46d43854cd01c5)
 
 <a id="Facade"></a>
+
 ## Facade
 
 ```php
@@ -3943,11 +4023,11 @@ Auth::id()
 
 ```
 
-
 <a id="セッション"></a>
+
 ## セッション
 
-Laravelでは、ユーザーに関する情報を一時的に保存するための状態管理ツールとしてセッションが提供されている。  
+Laravel では、ユーザーに関する情報を一時的に保存するための状態管理ツールとしてセッションが提供されている。  
 セッションは、短期的なデータ保存、ログイン状態の管理、フラッシュメッセージなどの表示に便利な機能。
 
 ```php
@@ -3992,28 +4072,30 @@ $this->session->flash('key', 'value');
 ```
 
 参考サイト  
-[Laravel 11.x HTTPセッション](https://readouble.com/laravel/11.x/ja/session.html)
-
-
-
+[Laravel 11.x HTTP セッション](https://readouble.com/laravel/11.x/ja/session.html)
 
 <a id="ユーザーアクションの認可"></a>
+
 ## ユーザーアクションの認可
 
 ### 参考サイト
+
 [Laravel 11.x 認可](https://readouble.com/laravel/11.x/ja/authorization.html)
 
 ### 基本
+
 主要な方法として、ゲートとポリシーがある。
-* ゲートは主に、特定のモデルに関連していないユーザのアクションに関してアクセス制限を行う時に使用する。
-* ポリシーはある特定のモデルに対して行うアクション(作成、更新、削除、閲覧等）に関してアクセス制限を行う。そのため、モデルごとに個別の独立したPolicyファイルを作成する。
-2つの方法を組み合わせながら、ユーザー単位での情報アクセス制限を柔軟に実現することができる。
+
+- ゲートは主に、特定のモデルに関連していないユーザのアクションに関してアクセス制限を行う時に使用する。
+- ポリシーはある特定のモデルに対して行うアクション(作成、更新、削除、閲覧等）に関してアクセス制限を行う。そのため、モデルごとに個別の独立した Policy ファイルを作成する。
+  2 つの方法を組み合わせながら、ユーザー単位での情報アクセス制限を柔軟に実現することができる。
 
 ※おまけ：ミドルウェアという手段もあり、ルート設定の段階で制限をかけたいときに使う。
 
-
 ### ゲート
-#### Gate::defineメソッド  
+
+#### Gate::define メソッド
+
 ```php
 // app\Providers\AppServiceProvider.php
 <?php
@@ -4062,7 +4144,9 @@ class AppServiceProvider extends ServiceProvider
     }
 }
 ```
-#### Bladeテンプレートを経由した認可
+
+#### Blade テンプレートを経由した認可
+
 ```php
 <?php
 // @canディレクティブを使用
@@ -4088,8 +4172,8 @@ class AppServiceProvider extends ServiceProvider
 @endcanany
 ```
 
+#### アビリティを認可するためのゲートメソッド。
 
-#### アビリティを認可するためのゲートメソッド。  
 ```php
 <?php
 
@@ -4139,40 +4223,46 @@ class PostController extends Controller
     }
 }
 ```
+
 #### ゲートチェックの割り込み
-特定のユーザーにすべての機能を付与したい場合がある。beforeメソッドを使用して、他のすべての認可チェックの前に実行するクロージャを定義できる。
 
+特定のユーザーにすべての機能を付与したい場合がある。before メソッドを使用して、他のすべての認可チェックの前に実行するクロージャを定義できる。
 
-#### ルートでcan:ミドルウェアとして使う
+#### ルートで can:ミドルウェアとして使う
+
 定義
+
 ```php
 Gate::define('staff-or-user', function (User $user) {
     return in_array($user->role, [Role::STAFF->value, Role::USER->value], true);
 });
 ```
+
 使用
+
 ```php
 Route::middleware('can:staff-or-user')->group(function () {
     Route::get('/working-time', DaioWorkingTime::class)->name('working_time');
 });
 ```
 
-
 ### ポリシー
 
 #### ポリシーの生成
-* コマンドを使用してポリシーを生成できる。
-* 生成するポリシーはapp/Policiesディレクトリへ配置される。
-* ※app/Policiesディレクトリが存在しない場合、Laravelが作成する。
-* 命名例：Postモデルは、PostPolicyポリシークラスに対応する。
+
+- コマンドを使用してポリシーを生成できる。
+- 生成するポリシーは app/Policies ディレクトリへ配置される。
+- ※app/Policies ディレクトリが存在しない場合、Laravel が作成する。
+- 命名例：Post モデルは、PostPolicy ポリシークラスに対応する。
 
 生成コマンド  
 `php artisan make:policy PostPolicy --model=Post`
 
 #### ポリシーの登録
-* 作成したPolicyをAppServiceProviderに登録する。  
-* Gate::policyメソッドを使用し、AppServiceProviderのbootメソッド内で、ポリシーと対応するモデルを登録できる。
-* AppServiceProvider.php中で紐付けされたPolicyは、自動検出される可能性のあるPolicyよりも優先的に扱われる。
+
+- 作成した Policy を AppServiceProvider に登録する。
+- Gate::policy メソッドを使用し、AppServiceProvider の boot メソッド内で、ポリシーと対応するモデルを登録できる。
+- AppServiceProvider.php 中で紐付けされた Policy は、自動検出される可能性のある Policy よりも優先的に扱われる。
 
 ```php
 <?php
@@ -4192,11 +4282,11 @@ public function boot(): void
 
 #### ポリシーの作成
 
-* ポリシークラスを登録したら、認可するアクションごとにメソッドを追加できる。
-* メソッドは、権限があるかどうかを示すbool値を返す必要がある。
-* ポリシーが認可するさまざまなアクションの必要に合わせ、ポリシーに追加のメソッドをどんどん定義できる。
-* ポリシーメソッドには任意の名前を付けることができる。
-* ポリシーを生成するときに--modelオプションを使用した場合、はじめからviewAny、view、create、update、delete、restore、forceDeleteアクションのメソッドが用意される。
+- ポリシークラスを登録したら、認可するアクションごとにメソッドを追加できる。
+- メソッドは、権限があるかどうかを示す bool 値を返す必要がある。
+- ポリシーが認可するさまざまなアクションの必要に合わせ、ポリシーに追加のメソッドをどんどん定義できる。
+- ポリシーメソッドには任意の名前を付けることができる。
+- ポリシーを生成するときに--model オプションを使用した場合、はじめから viewAny、view、create、update、delete、restore、forceDelete アクションのメソッドが用意される。
 
 ```php
 <?php
@@ -4219,10 +4309,11 @@ class PostPolicy
 ```
 
 #### モデルのないメソッド
+
 一部のポリシーメソッドは、現在認証済みユーザーのインスタンスのみを受け取る。  
-この状況は、createアクションを認可するばあいに頻繁に見かける。  
+この状況は、create アクションを認可するばあいに頻繁に見かける。  
 たとえば、ブログを作成している場合、ユーザーが投稿の作成を認可されているかを確認したい場合がある。  
-このような状況では、ポリシーメソッドはユーザーインスタンスのみを受け取る必要がある。  
+このような状況では、ポリシーメソッドはユーザーインスタンスのみを受け取る必要がある。
 
 ```php
 <?php
@@ -4239,7 +4330,8 @@ public function create(User $user): bool
 
 ※とりあえずこの優先順位でやってみる
 
-##### 優先順位1.Gateファサード経由(authorizeメソッドを利用した制限)
+##### 優先順位 1.Gate ファサード経由(authorize メソッドを利用した制限)
+
 ```php
 <?php
 
@@ -4278,20 +4370,21 @@ class PostController extends Controller
 }
 ```
 
+##### 優先順位 2.ユーザーモデル経由
 
+２つの便利なメソッド can と cannot が含まれています。
+can メソッドを利用した制限
 
-##### 優先順位2.ユーザーモデル経由
-２つの便利なメソッドcanとcannotが含まれています。
-canメソッドを利用した制限
-##### 優先順位3.ミドルウェア経由
+##### 優先順位 3.ミドルウェア経由
+
 middleware(ミドルウェア)を利用した制限
-##### 優先順位4.Bladeテンプレート経由
-@canおよび@cannotディレクティブを使用
 
+##### 優先順位 4.Blade テンプレート経由
 
+@can および@cannot ディレクティブを使用
 
-※ControllerメソッドとPolicyメソッドは関連を持っており、自動で紐づけることもできるが、一旦保留。  
-|Controllerメソッド|Policyメソッド|
+※Controller メソッドと Policy メソッドは関連を持っており、自動で紐づけることもできるが、一旦保留。  
+|Controller メソッド|Policy メソッド|
 |-|-|
 |index|viewAny|
 |show|view|
@@ -4301,28 +4394,21 @@ middleware(ミドルウェア)を利用した制限
 |update|update|
 |delete|delete|
 
-
-
-
 <a id="ファイルのアップロード"></a>
-## ファイルのアップロード
 
+## ファイルのアップロード
 
 [ドキュメント](https://readouble.com/laravel/12.x/ja/filesystem.html)
 
-
-
 ### php artisan storage:link コマンドの働き
-ユーザーがアップロードした公開したいファイル（例: プロフィール画像、投稿された画像など）はstorageディレクトリ内のstorage/app/publicに保存することが推奨されている。  
-しかし、Webサーバーが外部からのリクエストに対して直接ファイルを提供できるのはpublicディレクトリ内のみである  
-そこで、`php artisan storage:link`コマンドを実行し、publicディレクトリ内にstorageという名前のシンボリックリンク（ショートカットのようなもの）を作成する。  
+
+ユーザーがアップロードした公開したいファイル（例: プロフィール画像、投稿された画像など）は storage ディレクトリ内の storage/app/public に保存することが推奨されている。  
+しかし、Web サーバーが外部からのリクエストに対して直接ファイルを提供できるのは public ディレクトリ内のみである  
+そこで、`php artisan storage:link`コマンドを実行し、public ディレクトリ内に storage という名前のシンボリックリンク（ショートカットのようなもの）を作成する。  
 この public/storage シンボリックリンクは、実際の storage/app/public ディレクトリを指し示す。  
-これにより、Webサーバーは public/storage を通じて storage/app/public ディレクトリ内のファイルにアクセスできるようになる。  
-例えば、storage/app/public/images/avatar.png というファイルを保存した場合、Webからは http://<ドメイン>/storage/images/avatar.png というURLでアクセスできるようになる。  
-これは asset('storage/images/avatar.png') ヘルパー関数などを使ってHTML内に記述できる。  
-
-
-
+これにより、Web サーバーは public/storage を通じて storage/app/public ディレクトリ内のファイルにアクセスできるようになる。  
+例えば、storage/app/public/images/avatar.png というファイルを保存した場合、Web からは http://<ドメイン>/storage/images/avatar.png という URL でアクセスできるようになる。  
+これは asset('storage/images/avatar.png') ヘルパー関数などを使って HTML 内に記述できる。
 
 ```php
 
@@ -4334,7 +4420,7 @@ Storage::disk('local')->put('example.txt', 'Contents');
 // で保存されるファイルは、サーバー上ではstorage/app/private/example.txtになる。
 
 // config/filesystems.phpでpublicディスクのrootがstorage_path('app/public')と設定されている場合
-Storage::disk('public')->put('images/photo.jpg', $contents); 
+Storage::disk('public')->put('images/photo.jpg', $contents);
 // で保存されるファイルは、サーバー上ではstorage/app/public/images/photo.jpgになる。
 
 
@@ -4388,17 +4474,17 @@ $url = Storage::url('avatars/no_avatar.png');
 ```
 
 <a id="イベント購読"></a>
+
 ## イベント購読
 
-
 注意
-* クエリを実行する場合、Eloquent のモデルイベント ( deleting, deleted など) は発火しない
-* モデルイベントは、モデルインスタンスに対して delete() メソッドが呼び出された場合にのみトリガーされる
-* クエリビルダの実行はデータベースに対して直接SQL文を発行するため、モデルのライフサイクルイベントをバイパスする。
 
-
+- クエリを実行する場合、Eloquent のモデルイベント ( deleting, deleted など) は発火しない
+- モデルイベントは、モデルインスタンスに対して delete() メソッドが呼び出された場合にのみトリガーされる
+- クエリビルダの実行はデータベースに対して直接 SQL 文を発行するため、モデルのライフサイクルイベントをバイパスする。
 
 モデルの booted メソッド内でイベントリスナーを登録する
+
 ```php
 <?php
 
@@ -4450,18 +4536,11 @@ class PostImage extends Model
 
 ```
 
-
-
-
-
-
-
-
 <a id="メール"></a>
+
 ## メール
 
 ### 概要
-
 
 ```php
 <?php
@@ -4491,7 +4570,7 @@ class StoreAction
             // QUEUE_CONNECTION=をdatabaseにする。
             // php artisan queue:table と php artisan migrate を実行して、キューの仕事を入れておくためのテーブルを作成。
             // ターミナルで php artisan queue:work というコマンドを実行しておく必要がある。このプロセスが、キューに登録された仕事を監視し、実行してくれる。（本番環境では、Supervisorなどのプロセス監視ツールでこのワーカーが常に起動している状態を保つ）
-        
+
 
 
         // Mail::to('...')->queue(...)実行時の流れ
@@ -4541,7 +4620,7 @@ class NewPostNotification extends Mailable
             ->view('emails.new-post.notification_html') // ※HTML版;
             ->text('emails.new-post.notification_plain'); // ※プレーンテキスト版;
             // 受信者のメールクライアントは、まずHTML版を表示しようと試みる。もしHTMLを表示できる環境ならそちらを表示し、表示できない環境（または設定）であれば、代わりにプレーンテキスト版を表示する。
-        
+
 
         // もっと簡潔な方法
         return $this->subject("商品公開通知")
@@ -4552,6 +4631,7 @@ class NewPostNotification extends Mailable
 ```
 
 プレーンテキスト版
+
 ```blade.php
 フォロー中の{{ $nickname }}さんが商品を公開しました！
 
@@ -4563,7 +4643,8 @@ class NewPostNotification extends Mailable
 投稿URL：{{ $postUrl }}
 ```
 
-markdown版の例
+markdown 版の例
+
 ```php
 @component('mail::message')
 # フォロー中の{{ $nickname }}さんが新しい商品を公開しました！
@@ -4610,74 +4691,64 @@ markdown版の例
 @endcomponent
 ```
 
-
-
 ### メールテスト
 
-* log
-    メールを送信する代わりに、Laravelのログファイル（storage/logs/laravel.log）にメールの内容を出力する。
-* array
-    メールを送信せず、メモリ上の配列に保存する。PHPUnitなどを使った自動テストで、メールが意図通りに生成されたかを検証するのに使う。
-* Mailtrap / MailHog
-    開発用の「ダミーSMTPサーバー」ツール。Laravelからは通常のSMTPで送信する設定にし、送信先をこれらのツールに向けることで、実際に外部へメールが飛ぶことなく、専用の受信ボックスでメールの表示確認ができる。HTMLメールのレイアウト崩れなどを確認するのに最適。
-
-
+- log
+  メールを送信する代わりに、Laravel のログファイル（storage/logs/laravel.log）にメールの内容を出力する。
+- array
+  メールを送信せず、メモリ上の配列に保存する。PHPUnit などを使った自動テストで、メールが意図通りに生成されたかを検証するのに使う。
+- Mailtrap / MailHog
+  開発用の「ダミー SMTP サーバー」ツール。Laravel からは通常の SMTP で送信する設定にし、送信先をこれらのツールに向けることで、実際に外部へメールが飛ぶことなく、専用の受信ボックスでメールの表示確認ができる。HTML メールのレイアウト崩れなどを確認するのに最適。
 
 ### Mailgun
 
-* 本番環境ではMailgunが一番無難。
-    * 長年の運用実績があり、世界中の多くのサービスで採用されている。非常に信頼性が高い。
-    * ドメインとAPIキーを設定するだけで、比較的簡単に導入できる。
-    * Laravelコミュニティでの採用実績がNo.1。Laravelとの連携事例も豊富。
-    * 日本語・英語ともに情報が圧倒的に多く、トラブルシューティングしやすい。
-    * 高い到達率、詳細なログ、開封/クリック追跡など、必要な機能が一通り揃っている。
-    * 小規模なら十分手頃な価格帯。
+- 本番環境では Mailgun が一番無難。
 
+  - 長年の運用実績があり、世界中の多くのサービスで採用されている。非常に信頼性が高い。
+  - ドメインと API キーを設定するだけで、比較的簡単に導入できる。
+  - Laravel コミュニティでの採用実績が No.1。Laravel との連携事例も豊富。
+  - 日本語・英語ともに情報が圧倒的に多く、トラブルシューティングしやすい。
+  - 高い到達率、詳細なログ、開封/クリック追跡など、必要な機能が一通り揃っている。
+  - 小規模なら十分手頃な価格帯。
 
-* 注意
-    * メールはLaravelが生成し、Mailgunのサーバーから送信される
-    * Googleは「@gmail.com からのメールは、必ずGoogleのサーバーから送信されなければならない」というルール（DMARCポリシー）を全世界に公開している。
-    * Mailgunのサーバーを使って From: user@gmail.com としてメールを送ろうとすると、受信側のサーバーは、次のように判断する。
-    * 「このメールは @gmail.com を名乗っているのに、Googleじゃない場所（Mailgunのサーバー）から来ているぞ…」
-    * 「これはGoogleが許可していない送信方法だ。偽物のなりすましメールの可能性が高い！」
-    * 結果として、そのメールは迷惑メールフォルダに直行するか、完全にブロックされてしまう。
-    * つまり、Mailgunなどのサービスを利用するには、自身が所有・管理している独自ドメイン（例: my-app.com）が必要になる。
-
-
-
-
+- 注意
+  - メールは Laravel が生成し、Mailgun のサーバーから送信される
+  - Google は「@gmail.com からのメールは、必ず Google のサーバーから送信されなければならない」というルール（DMARC ポリシー）を全世界に公開している。
+  - Mailgun のサーバーを使って From: user@gmail.com としてメールを送ろうとすると、受信側のサーバーは、次のように判断する。
+  - 「このメールは @gmail.com を名乗っているのに、Google じゃない場所（Mailgun のサーバー）から来ているぞ…」
+  - 「これは Google が許可していない送信方法だ。偽物のなりすましメールの可能性が高い！」
+  - 結果として、そのメールは迷惑メールフォルダに直行するか、完全にブロックされてしまう。
+  - つまり、Mailgun などのサービスを利用するには、自身が所有・管理している独自ドメイン（例: my-app.com）が必要になる。
 
 <a id="テスト"></a>
+
 ## テスト
 
 ### 基本
 
 テストには二種類ある。
 
-* Featureテスト
-    * Laravel用に拡張されたTestCaseクラスを継承している
-    * use Tests\TestCase;
-    * Laravelの機能がテスト内で全て使える。
-    * 実行速度が遅い。
-* Unitテスト
-    * 素のPHPUnitのTestCaseクラスを継承している
-    * use PHPUnit\Framework\TestCase;
-    * Laravelの機能が使えず、素のPHPコードとしてのロジックテストを書くものになっている。
-    * 実行速度が早い。
-    * Laravelに依存しない形で書けるテストは極力Unitテストにするべき。
-
+- Feature テスト
+  - Laravel 用に拡張された TestCase クラスを継承している
+  - use Tests\TestCase;
+  - Laravel の機能がテスト内で全て使える。
+  - 実行速度が遅い。
+- Unit テスト
+  - 素の PHPUnit の TestCase クラスを継承している
+  - use PHPUnit\Framework\TestCase;
+  - Laravel の機能が使えず、素の PHP コードとしてのロジックテストを書くものになっている。
+  - 実行速度が早い。
+  - Laravel に依存しない形で書けるテストは極力 Unit テストにするべき。
 
 実行コマンド  
 `php artisan test`  
 `php artisan test --filter=UserFeatureTest`  
-`php artisan test --filter=UserFeatureTest::test_can_create_user`  
+`php artisan test --filter=UserFeatureTest::test_can_create_user`
 
+### Feature テスト
 
-
-### Featureテスト
-作成コマンド。tests/Featureディレクトリへ配置される。  
+作成コマンド。tests/Feature ディレクトリへ配置される。  
 `php artisan make:test UserTest`
-
 
 テストに使うリクエストメソッド
 
@@ -4691,7 +4762,9 @@ $this->put($uri, $data = [])
 // 指定したURIに対してDELETEリクエストを送る。
 $this->delete($uri)
 ```
+
 例：
+
 ```php
 <?php
 
@@ -4721,16 +4794,7 @@ class memberTest extends TestCase
 }
 ```
 
+### Unit テスト
 
-### Unitテスト
-作成コマンド。tests/Unitディレクトリへ配置される。  
+作成コマンド。tests/Unit ディレクトリへ配置される。  
 `php artisan make:test UserTest --unit`
-
-
-
-
-
-
-
-
-
