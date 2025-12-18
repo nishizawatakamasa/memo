@@ -2272,6 +2272,12 @@ $query->delete();
 - replicating: レコード複製時（replicate メソッド使用時）
 - retrieved: レコード取得後（データベースから読み込まれた時）
 
+#### deletingイベントとcascadeOnDeleteとの兼ね合い
+* deletingイベントはcascadeOnDeleteよりも先に実行される
+* cascadeOnDeleteは最後に発動するが、すでにレコードがなければ何も起きない。
+
+
+
 <a id="オブザーバー"></a>
 
 ## オブザーバー
