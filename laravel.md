@@ -2242,10 +2242,11 @@ if ($post->author()->isNot($user)) {
 <a id="イベント(モデル)"></a>
 
 ### イベント
-
+* 基本的には「インスタンスメソッド名」に対して、「〜ing（直前）」と「〜ed（直後）」のイベントが対になっている
+* インスタンスメソッド以外では発火しない
 ```php
 
-// モデルインスタンス経由でイベントが発火する
+// インスタンスメソッドで発火する
 $model->delete();
 // 複数の場合
 $collection->each(function ($model) {
@@ -2261,21 +2262,25 @@ $query->delete();
 - 自動処理：データベース操作の前後で自動的に特定の処理を実行できます
 - 通知の送信：データの変更に応じて通知を送信したい場合
 
-#### 主なイベント
-- creating, created: レコード作成前、作成後
-- updating, updated: レコード更新前、更新後
-- deleting, deleted: レコード削除前、削除後
-- saving, saved: レコード保存前、保存後（作成または更新の両方で発火）
-- trashed: ソフトデリート実行後
-- forceDeleting, forceDeleted: 物理削除前、物理削除後（完全削除）
-- restoring, restored: ソフトデリート復元前、復元後
-- replicating: レコード複製時（replicate メソッド使用時）
-- retrieved: レコード取得後（データベースから読み込まれた時）
+#### 主要なメソッドとイベントの対応表
+| 実行するメソッド | 直前のイベント (〜ing) | 直後のイベント (〜ed) | 役割・特徴 |
+| :--- | :--- | :--- | :--- |
+| **`save()`** | `saving` | `saved` | 保存（新規作成・更新の**両方**で発火） |
+| **`create()`** | `creating` | `created` | 新規作成時のみ発火 |
+| **`update()`** | `updating` | `updated` | 更新時のみ発火 |
+| **`delete()`** | `deleting` | `deleted` | 削除（ソフトデリート含む）時に発火 |
+| **`forceDelete()`** | `forceDeleting` | `forceDeleted` | 物理削除時のみ発火 |
+| **`restore()`** | `restoring` | `restored` | ソフトデリートからの復元時に発火 |
+
+#### `save()` は `create` / `update` を内包する
+`save()` メソッドを呼んだときは、以下のようにイベントが重なって発火する。
+*   **新規作成時:** `saving` → `creating` → (DB保存) → `created` → `saved`
+*   **更新時:** `saving` → `updating` → (DB保存) → `updated` → `saved`
+「どんな保存時でもログを残したい」なら `saved`、「新規登録時だけ処理したい」なら `created` を選ぶ、といった使い分け。
 
 #### deletingイベントとcascadeOnDeleteとの兼ね合い
 * deletingイベントはcascadeOnDeleteよりも先に実行される
 * cascadeOnDeleteは最後に発動するが、すでにレコードがなければ何も起きない。
-
 
 
 <a id="オブザーバー"></a>
