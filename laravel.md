@@ -1456,6 +1456,34 @@ select
 addSelect
 orderBy
 
+
+withCount, has, when
+// 追加
+whereHas
+ withWhereHas
+ exists / doesntExist
+
+ withSum / withAvg / withMax / withMin
+withCount の兄弟メソッドです。
+
+unless
+when の逆です。
+
+まとめ：次に覚えるべき優先順位
+whereHas / withWhereHas （リレーション絞り込みの超定番）
+exists （パフォーマンス意識の第一歩）
+load / loadMissing （パフォーマンス最適化）
+withSum などの集計系 （SQLの効率化）
+
+
+
+$postは既にEloquentモデルのインスタンス（ルートモデルバインディングで取得済み）
+load()はインスタンスメソッドで正しい（Eager Loading）
+しかし、withCount()はクエリビルダーのメソッドであり、インスタンスからは呼べません
+正しい書き方
+インスタンスに対してカウントをロードする場合は、loadCount()を使用します：
+
+
 // ※保留
 // JOIN(結合)
 // UNION(結合)
