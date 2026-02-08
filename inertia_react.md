@@ -909,7 +909,9 @@ const { name, quote, auth, flash, ziggy, sidebarOpen, unreadNotificationCount } 
 * コア概念
   * Reactアプリはコンポーネント(UIの部品)で構成されている。
   * コンポーネントは、JSXを返すJavaScript関数として定義する。
-  * JSXは、JavaScriptがHTMLに化けたマークアップ構文。JSの値(関数)を`{}`で埋め込める。
+  * JSXは、JavaScriptがHTMLに化けたマークアップ構文。JSの値を`{}`で埋め込める。
+  * `{}`内は「評価すると何らかの値を返すTS/JSのコード」を書く場所。即時関数でもいい。
+  * 値を返す、の定義が分かりにくかったら、「変数に代入できるか？」で考えるとわかりやすい。
   * 埋め込んだ値がtrue, false, true, null, undefinedの場合は何もレンダリングしない。
   * JSXの配列は兄弟要素としてレンダリングされる
   * 配列内の各要素をmap等でレンダリングする際には、兄弟の中でそれを一意に識別するためのkey属性(文字列または数値)を設定する必要がある。
