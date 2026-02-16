@@ -57,6 +57,7 @@
   - [イベント購読](#イベント購読)
   - [メール](#メール)
   - [テスト](#テスト)
+  - [Laravel Sail](#Laravel Sail)
 
 <a id="MVC"></a>
 
@@ -4837,3 +4838,18 @@ class memberTest extends TestCase
 
 作成コマンド。tests/Unit ディレクトリへ配置される。  
 `php artisan make:test UserTest --unit`
+
+
+
+
+<a id="Laravel Sail"></a>
+
+## Laravel Sail
+
+
+
+
+
+
+
+
