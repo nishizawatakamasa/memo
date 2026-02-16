@@ -57,7 +57,7 @@
   - [イベント購読](#イベント購読)
   - [メール](#メール)
   - [テスト](#テスト)
-  - [Laravel Sail](#Laravel Sail)
+  - [LaravelHerd](#LaravelHerd)
 
 <a id="MVC"></a>
 
@@ -4842,10 +4842,78 @@ class memberTest extends TestCase
 
 
 
-<a id="Laravel Sail"></a>
+<a id="LaravelHerd"></a>
 
-## Laravel Sail
+## LaravelHerd
 
+
+### Windowsネイティブ開発
+* Laravelプロジェクトを、Windowsの扱いやすい場所にクローンする
+* これからの作業には必ず WindowsのPowerShell を使う
+
+
+
+### Laravel Herd for Windows をダウンロード＆インストール。
+これだけで PHP, Nginx, Node.js が入る。
+
+チェック項目が二つ(両方ともチェックを入れてOK)
+* Automatically launch Herd on system startup
+    * 意味: PCを起動したとき、自動的にHerdも起動する。
+* Launch Herd minimized as system tray application
+    * 意味: 起動したとき、画面（ウィンドウ）を表示せず、右下のタスクトレイ（時計の横の小さいアイコンエリア）に収納した状態で始める。
+
+Herdのpathsに、Laravelプロジェクトの親フォルダを追加。※プロジェクト自身ではない。
+
+
+### DBngin をダウンロード＆インストール。
+これだけで MySQL が入る。
+
+
+* DBnginを起動:
+    * 「+」ボタンを押して「MySQL 8.0」あたりを選び、名前（例: laravel）をつけて作成。
+    * Port が 3306 になっていることを確認して Startを押す。
+
+### TablePlusをダウンロード＆インストール。
+* DBnginのサーバーリストの右側にあるボタンから、まずTablePlusをインストール。その後同じボタンからGUIを開ける
+* GUIの画面上部にある 「データベースのアイコン（円柱が3つ重なったような絵）」 をクリック。
+* データベース一覧が出るので、下にある 「+」 や 「New」 ボタンを押す。
+* 名前に laravel と入力する。
+* Encoding（文字コード）は utf8mb4 を選ぶ。
+* 「OK」 または 「Save」 を押す。
+
+
+
+### .env ファイルの修正:
+```.env
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=laravel
+DB_USERNAME=root
+DB_PASSWORD=
+# DBnginのデフォルトはパスワード空欄
+```
+
+
+
+
+### エイリアス設定(任意)
+```Powershell
+if (!(Test-Path $PROFILE)) { New-Item -Type File -Force $PROFILE }
+notepad $PROFILE
+```
+メモ帳が開くので、設定を書く
+```
+function gp { git pull }
+function pams { php artisan migrate:fresh --seed }
+function crd { composer run dev }
+```
+書き終わったら、保存（Ctrl+S）してメモ帳を閉じる。  
+コマンドで設定を読み込む
+
+```Powershell
+. $PROFILE
+```
 
 
 
