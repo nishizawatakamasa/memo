@@ -4885,6 +4885,9 @@ Herdのpathsに、Laravelプロジェクトの親フォルダを追加。※プ�
 
 ### .env ファイルの修正:
 ```.env
+# 自分のプロジェクト名を適用
+APP_URL=http://my-project.test
+
 DB_CONNECTION=mysql
 DB_HOST=127.0.0.1
 DB_PORT=3306
@@ -4904,9 +4907,9 @@ notepad $PROFILE
 ```
 メモ帳が開くので、設定を書く
 ```
-function gp { git pull }
+function gpl { git pull }
 function pams { php artisan migrate:fresh --seed }
-function crd { composer run dev }
+function nrd { npm run dev }
 ```
 書き終わったら、保存（Ctrl+S）してメモ帳を閉じる。  
 コマンドで設定を読み込む
