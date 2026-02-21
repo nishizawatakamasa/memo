@@ -4919,8 +4919,197 @@ function nrd { npm run dev }
 ```
 
 
+-----------------------------------------------------------
+zenn
 
 
 
 
 
+タイトル「すべてルーティングに書くところから始めるLaravel」
+
+Laravelのコアはとても単純
+ルーティングでURLと処理を紐づけるだけ
+このメソッド(HTTP Method: GET/POST/PUT/DELETE)で、このURLにリクエストが来たら、送られてきた値(もしあれば)を引数としてこの処理を動かす」という紐付け。
+Laravelのルーティングメソッドは、第1引数にURL文字列、第2引数に処理を受け取る。
+
+```php
+<?php
+
+use App\Models\Message;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Route;
+
+// 1. 掲示板の表示 (GET)
+Route::get('/', function () {
+    // モデルを使ってDBから全件取得し、ビューに渡す
+    return view('welcome', ['messages' => Message::all()]);
+});
+
+// 2. メッセージの投稿 (POST)
+Route::post('/post', function (Request $request) {
+    // 【バリデーション】入力チェック（空じゃないか）
+    $data = $request->validate(['content' => 'required']);
+
+    // 【モデル】DBへ保存（Messageモデルのcreateメソッドを使用）
+    Message::create($data);
+
+    return back();
+});
+```
+
+処理の中で使える便利な道具も用意されている
+バリデーション
+モデル
+ビュー
+
+必要に応じてこの処理部分を分割することがよくある
+コードを整理し、メンテナンスしやすくするため
+これはLaravelの機能ではなく、素のプログラミングでもやる単純な関心の分割
+慣習として分割層にはコントローラーやサービス、リポジトリといった名前を付けることが多いが、技術的にはどんな名前でも関係ない。
+
+
+補足
+周辺技術：Middleware、
+開発機能：Migration、Seeder
+
+
+
+
+
+-------
+
+
+すべてルーティングに書くところから始めるLaravel
+
+ここではLaravelを極限まで単純化してみます。
+
+Laravelのコアはとても単純
+
+Laravelの中心は、たったこれだけです。
+
+URLと処理を紐づけること。
+
+「このHTTPメソッドで、このURLにアクセスが来たら、この処理を動かす」
+
+それだけです。
+
+Laravelのルーティングメソッドは、
+
+第1引数：URL
+
+第2引数：実行する処理
+
+を受け取ります。
+
+use App\Models\Message;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Route;
+
+// 掲示板の表示
+Route::get('/', function () {
+    return view('welcome', [
+        'messages' => Message::all()
+    ]);
+});
+
+// メッセージ投稿
+Route::post('/post', function (Request $request) {
+
+    // 入力チェック（バリデーション）
+    $data = $request->validate([
+        'content' => 'required'
+    ]);
+
+    // DBに保存（モデル）
+    Message::create($data);
+
+    return back();
+});
+
+ここにLaravelの本質があります。
+
+処理の中で使える「道具」
+
+Laravelは、処理の中で便利な道具を使えるようにしてくれています。
+
+・モデル（Model）
+
+DBをPHPから扱いやすくする窓口。
+
+・バリデーション
+
+フォームの入力チェック。
+
+・ビュー（Blade / Inertia）
+
+画面にデータを渡す仕組み。
+
+Inertia + Reactを使っている場合は、
+
+Laravelはデータだけ渡し、
+実際の画面描画はReactが担当します。
+
+Laravelは「画面を作る」のではなく、
+「画面に渡すデータを用意する」役割です。
+
+処理は分割してもいい
+
+ルーティングにすべて書いても動きます。
+
+ただし、コードが長くなってきたら分割します。
+
+これはLaravel特有の技術ではありません。
+
+ただの整理です。
+
+慣習として
+
+Controller
+
+Service
+
+Repository
+
+などの名前が使われますが、
+
+技術的に特別な意味があるわけではありません。
+
+ただのクラスです。
+
+コアの外側にあるもの
+
+Laravelには、コア（URL→処理）以外の仕組みもあります。
+
+周辺技術
+
+Middleware
+処理が動く前後に割り込むフィルター。
+認証やログなどを担当します。
+
+開発を楽にする機能
+
+Migration
+DB構造をコードで管理する仕組み。
+
+Seeder
+初期データを流し込む仕組み。
+
+これらは「アプリの動作」そのものではなく、
+開発を楽にするための機能です。
+
+まとめ
+
+Laravelは巨大で難しそうに見えます。
+
+でも本質は、
+
+URLにアクセスが来たら、処理を実行する
+
+これだけです。
+
+あとは、その処理を楽に書くための道具があるだけ。
+
+まずはルーティングにすべて書くところから始めてみる。
+
+そこから整理していけば十分です。
