@@ -10,6 +10,7 @@
     * [pywebviewを使ったデスクトップアプリの作成](#pywebviewを使ったデスクトップアプリの作成)
     * [venvを使った仮想環境の作成](#venvを使った仮想環境の作成)
     * [Pyinstallerを使ったスクリプトのexe化](#Pyinstallerを使ったスクリプトのexe化)
+    * [uvコマンド](#uvコマンド)
     * [pipコマンド](#pipコマンド)
     * [Flitを使ったPyPIへのパッケージ公開](#Flitを使ったPyPIへのパッケージ公開)
     * [settings.jsonにモジュールの検索パスを追加する](#settings.jsonにモジュールの検索パスを追加する)
@@ -1042,6 +1043,62 @@ settings.jsonに設定
 * `--onefile` ： 関連ファイルを1つにまとめてexeファイルを作成する。
 * `--icon=../icon/fuga.ico`： exeファイルのアイコンを変更。*.icoファイルまでのパスを指定。
 * `--name=SimpleTube`： exeファイルの名前を指定できる。
+
+
+
+
+<a id="uvコマンド"></a>
+## uvコマンド
+
+
+uvをインストール
+curl -LsSf https://astral.sh/uv/install.sh | sh
+
+PATHを反映
+① .bashrc を開く
+nano ~/.bashrc
+② 最後にこれ追加
+export PATH="$HOME/.local/bin:$PATH"
+③ 保存して反映
+source ~/.bashrc
+
+# 開発環境作成
+下準備
+uv init
+
+ライブラリ追加
+uv add fastapi
+
+uv.lock(インストールするものが厳密に書かれてる)を元に完全同期
+uv sync
+
+.venv(インストールしたものが実際に入ってる場所)
+
+commitするもの：
+pyproject.toml
+uv.lock
+source code
+
+Jupyter 正しい手順
+① Jupyterを追加
+uv add jupyter ipykernel
+② kernel登録（1回だけ）
+uv run python -m ipykernel install --user --name myproj
+
+ipynbの場合、
+Interpreter → .venv/bin/pythonを選ぶ
+
+PyPI
+# TestPyPI
+uvx flit publish --repository testpypi
+# 本番
+uvx flit publish
+
+
+
+
+
+
 
 
 
