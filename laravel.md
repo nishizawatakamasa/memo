@@ -4768,96 +4768,8 @@ markdown 版の例
 <a id="テスト"></a>
 
 ## テスト
-**人間が手動でブラウザを開いて、ログインして、画面の数字を指差し確認する」という作業を、PHPのコードで記述してロボットにやらせているだけ**
-
-* assert は「予言」: 「こうなるはずだ」と予言を書く。
-* 一致すれば「Pass（合格）」: 予言通りなら静かに進む。
-* 外れれば「Fail（不合格）」: 予言が外れたら、そこで止まって理由を教えてくれる。
-
-
-
-
-
-結論から言うと、はい、その通りです。
-特に今回のような「Feature Test（機能テスト）」と呼ばれるHTTPテストでは、「1つの操作に対して、期待される結果をいくつかassertで並べる」のが基本のスタイルです。
-
-ただ、何でもかんでも1つのメソッドに詰め込めばいいわけではなく、ちょっとした「お作法」があります。
-
-1. なぜ「並べる」のが基本なのか？（効率の理由）
-
-テストコードには「準備（Arrange）」というステップがあります。
-
-ユーザーを作る
-
-権限を設定する
-
-申請データをDBに10件入れる
-
-この「準備」は、実はテストの中で一番処理が重い（時間がかかる）部分です。
-もし assert を1つ書くたびにメソッドを分けてしまうと、毎回「準備」をやり直すことになり、テストの実行時間がどんどん伸びてしまいます。
-
-そのため、**「同じ状況（準備）で作った結果に対して、複数の項目をチェックする」**ためにassertを並べるのは非常に合理的です。
-
-2. 「検問の連鎖」として考える
-
-Laravelのテスト（特にInertia）では、以下のような「流れるような（メソッドチェーン）」書き方がよく使われます。
-
-code
-PHP
-download
-content_copy
-expand_less
-$response->assertOk()             // 検問1: そもそも開けたか？
-    ->assertInertia(fn ($page) => $page
-        ->component('Dashboard')  // 検問2: ページは合ってるか？
-        ->has('users', 5)         // 検問3: データ件数は5件か？
-        ->where('auth.user.id', 1)// 検問4: ログイン中なのはID:1の人か？
-    );
-
-これは**「依存関係のあるチェック」**を並べています。
-
-検問1（アクセス失敗）なら、検問2（ページ名）を調べる必要はない。
-
-検問2（ページ間違い）なら、検問3（データ件数）を数える必要はない。
-
-このように、「1つの目的（このページが正しく表示されること）」を達成するための項目を並べるのが正解です。
-
-3. メソッドを「分ける」べき基準は？
-
-逆に、assertを並べずに**「別のテストメソッドにする」のはどんな時か？
-それは、「前提条件（インプット）」が変わる時**です。
-
-テスト1： 「管理者」でログインした場合 → 200 OK を期待するassert
-
-テスト2： 「一般ユーザー」でログインした場合 → 403 Forbidden を期待するassert
-
-テスト3： 「未ログイン」でアクセスした場合 → 302 Redirect を期待するassert
-
-これらを1つのメソッドに詰め込むと、「結局どの条件で失敗したのか」が分かりにくくなります。
-「1つのシナリオ（もし〜なら、こうなるはずだ）」ごとにメソッドを分ける、と覚えておくと綺麗に書けます。
-
-4. 「1つのテストにassertは1つだけ」という説について
-
-古いテストの格言や、非常に厳密な「Unit Test（単体テスト）」の世界では、「1つのテストメソッドにassertは1つだけにするべきだ」と言われることもあります。
-
-しかし、現代のLaravelやWeb開発における「Feature Test」では、そのルールを気にする必要はありません。
-「1つの画面を表示する」という1つの目的に対して、複数のassert（ステータス、コンポーネント名、データの中身）をセットで確認する方が、実務では圧倒的に効率が良いからです。
-
-まとめ
-
-基本は並べてOK: 1つのリクエストに対する「結果のチェックリスト」として並べる。
-
-流れるように書く: ステータス → ページ名 → データの中身 の順で、外側から内側へチェックしていく。
-
-条件が変わったら分ける: ログインする人や、送るデータ（インプット）が変わるなら、新しいメソッドを作る。
-
-あなたの書いたコード（RoutingAndRoleTest など）は、まさにこの「シナリオごとにメソッドが分かれ、その中で必要なassertが並んでいる」という理想的な形になっています！
-
-
-
-
-
-
+**人間が手動でブラウザを開いて、ログインして、画面の数字を指差し確認する」という作業を、PHPのコードで記述してロボットにやらせているだけ**  
+結局 『ログインして、ボタン（URL）を押して、結果を見る』 というような人間の動きをなぞっているだけ
 
 ### 基本
 
@@ -4885,20 +4797,149 @@ $response->assertOk()             // 検問1: そもそも開けたか？
 作成コマンド。tests/Feature ディレクトリへ配置される。  
 `php artisan make:test UserTest`
 
-テストに使うリクエストメソッド
+メソッド名は、test_から始まり、テストの内容がわかる名前にする（スネークケース推奨）。  
+例：public function test_user_can_submit_form()
 
+前提条件（インプット）が違うなら、メソッドを分ける
+
+* 黄金パターン
+    * 誰かが（actingAs）
+    * 何かをし（get/post/put/delete）
+    * responseが返る
+    * responseにassert繋げて検問の連鎖
+    * assertには「こうなるはずだ」と予言を書く。
+        * 予言通りならPass（合格）で静かに進む。
+        * 予言が外れたらFail（不合格）で止まって理由を教えてくれる。
+
+actingAs($user) は、「このリクエストを送る時は、この人がログインしている状態にしてね」という予約。  
+これを書かずに get() すると、「ゲスト（未ログイン）」として扱われる。  
+これを書いて get() すると、「ログイン済みユーザー」としてミドルウェア（auth）を通過できるようになる。  
+よくあるセット:
 ```php
-// 指定したURIに対してGETリクエストを送る。
-$this->get($uri)
-// 指定したURIに対してPOSTリクエストを送る。
-$this->post($uri, $data = [])
-// 指定したURIに対してPUTリクエストを送る。
-$this->put($uri, $data = [])
-// 指定したURIに対してDELETEリクエストを送る。
-$this->delete($uri)
+$this->get(...): // ゲストのテスト
+$this->actingAs($user)->get(...): // 一般ユーザーのテスト
+$this->actingAs($admin)->get(...): // 管理者のテスト
+```
+
+テストに使うリクエストメソッド
+```php
+// 指定したurlに対してGETリクエストを送る。
+$response = $this->get($url)
+// 指定したurlに対してPOSTリクエストを送る。
+$response = $this->post($url, $data = [])
+// 指定したurlに対してPUTリクエストを送る。
+$response = $this->put($url, $data = [])
+// 指定したurlに対してDELETEリクエストを送る。
+$response = $this->delete($url)
+```
+
+メソッド内では、検証したい複数の操作に対して、期待される結果を複数assertで並べられる
+```php
+$response->assertOk()             // 検問1: そもそも開けたか？
+    ->assertInertia(fn ($page) => $page
+        ->component('Dashboard')  // 検問2: ページは合ってるか？
+        ->has('users', 5)         // 検問3: データ件数は5件か？
+        ->where('auth.user.id', 1)// 検問4: ログイン中なのはID:1の人か？
+    );
+```
+これは**「依存関係のあるチェック」**を並べている。  
+検問1（アクセス失敗）なら、検問2（ページ名）を調べる必要はない。  
+検問2（ページ間違い）なら、検問3（データ件数）を数える必要はない。  
+このように、「1つの目的（このページが正しく表示されること）」を達成するための項目を並べるのが正解。  
+
+頻出assert(これだけ知っていれば8割のテストが書ける)
+```php
+// 1. 【必須】アクセス成功と権限のチェック
+// ルーティングの基本。すべてのテストの起点。
+
+// アクセスに成功したか。assertStatus(200)と同じ
+$response->assertOk()
+// 未ログイン時にログイン画面へ飛ばされたか、保存後に一覧画面へ戻ったか。
+$response->assertRedirect('/url')
+// 権限がないユーザーがアクセスして、しっかりブロックされたか。assertStatus(403)と同じ
+$response->assertForbidden()
+// 存在しないIDや、他人のデータにアクセスしたときに404になるか。assertStatus(404)と同じ
+$response->assertNotFound()
+
+// 2. 【必須】Inertia固有のチェック
+// React（フロントエンド）に正しくバトンを渡せているかを検証する
+// これらは $response->assertInertia(fn (Assert $page) => ...) の中で使う。
+
+// 超重要。 指定したReactコンポーネント（例: Admin/User/Index）が呼び出されているか。
+$page->component('ComponentName')
+// React側にその変数が存在するか。
+// has('users', 5) のように第2引数を入れると、リストの件数までチェックできる。
+$page->has('propName')
+// Propsの中身が期待通りの値か。例: ->where('auth.user.name', '山田太郎')
+$page->where('propName', 'value')
+// パスワードなど、フロントに渡してはいけないデータが含まれていないことを確認する。
+$page->missing('propName')
+
+// 3. 【重要】バリデーションエラーのチェック
+// フォーム送信（POST/PATCH）のテストで必須。
+
+// バリデーションに引っかかったか。
+// ['name' => 'The name field is required.'] のようにメッセージまで指定も可能。
+$response->assertSessionHasErrors(['field'])
+// エラーが一切なく、正常に処理されたことの確認。
+$response->assertSessionHasNoErrors()
+
+// 4. 【重要】データベースのチェック
+// 「保存ボタンを押してリダイレクトはされたけど、実はDBに保存されていなかった」という事故を防ぐ。
+
+// 指定したデータがDBに存在するか。保存処理のテストの最後に必ず書く。
+$response->assertDatabaseHas('table', ['column' => 'value'])
+// 削除処理のテストで、データが消えたことを確認する。
+$response->assertDatabaseMissing('table', ['column' => 'value'])
 ```
 
 例：
+```php
+    public function test_admin_receives_correct_filtered_count_for_buyer_applicant_index(): void
+    {
+        $admin = $this->createUserWithRole(Role::ADMIN->value);
+
+        // ---- カウントされるべきデータ（期待値に含まれる） ----
+        $this->createUserWithRole(Role::BUYER->value, ['status' => Status::New->value]);
+        $this->createUserWithRole(Role::BUYER->value, ['status' => Status::Processing->value]);
+
+        // ---- カウントされるべきではないデータ（ノイズ） ----
+        // buyer でも cancelled は初期表示の対象外
+        $this->createUserWithRole(Role::BUYER->value, ['status' => Status::Cancelled->value]);
+        $this->createUserWithRole(Role::BUYER->value, ['status' => Status::Cancelled->value]);
+        // role が seller の時点で buyer 一覧には含まれない
+        $this->createUserWithRole(Role::SELLER->value, ['status' => Status::New->value]);
+        $this->createUserWithRole(Role::SELLER->value, ['status' => Status::Registered->value]);
+
+        $response = $this->actingAs($admin)->get(route('admin.buyer_applicant.index'));
+
+        // Inertia props に入る件数が、期待どおり「2件」かを確認
+        $response->assertOk()
+            ->assertInertia(fn (Assert $page) => $page
+                ->component('admin/buyer-applicant/index')
+                ->where('applicants.total', 2)
+                ->has('applicants.data', 2)
+            );
+    }
+
+```
+
+```php
+    public function test_seller_can_access_seller_route_but_is_forbidden_from_admin_and_buyer_routes(): void
+    {
+        $seller = $this->createUserWithRole(Role::SELLER->value);
+
+        $this->actingAs($seller)
+            ->get(route('seller.profile.edit'))
+            ->assertStatus(200)
+            ->assertInertia(fn (Assert $page) => $page
+                ->component('seller/profile/edit')
+            );
+
+        $this->actingAs($seller)->get(route('admin.buyer_applicant.index'))->assertStatus(403);
+        $this->actingAs($seller)->get(route('buyer.profile.edit'))->assertStatus(403);
+    }
+```
 
 ```php
 <?php
@@ -4928,6 +4969,33 @@ class memberTest extends TestCase
     }
 }
 ```
+
+A. 一覧表示（GET）
+```php
+$response->assertOk()
+    ->assertInertia(fn (Assert $page) => $page
+        ->component('User/Index') // 1. 正しいページか
+        ->has('users.data', 15)   // 2. 1ページ15件表示か
+        ->where('filters.search', 'キーワード') // 3. 検索条件がReactに引き継がれているか
+    );
+```
+
+B. 新規保存（POST）
+```php
+$response = $this->actingAs($user)->post(route('user.store'), $data);
+
+$response->assertRedirect(route('user.index')); // 1. 一覧へ戻ったか
+$this->assertDatabaseHas('users', ['email' => 'test@example.com']); // 2. DBに保存されたか
+```
+
+C. バリデーション失敗
+```php
+$response = $this->post(route('user.store'), ['email' => 'invalid-email']);
+
+$response->assertSessionHasErrors(['email']); // 1. メール形式エラーが出たか
+```
+
+
 
 ### Unit テスト
 
