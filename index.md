@@ -11,6 +11,7 @@
         * [全般](./python.md)
         * [全般(外部サイト)](https://share.kokoronoki.net/nszw/summary/lang_spec/)
         * [スクレイピングコードレシピ](./scraping_code_recipe.md)
+        * [playwright](./playwright.md)
         * Selenium
         * NumPy
         * [pandas](./pandas.md)
