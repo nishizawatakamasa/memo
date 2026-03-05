@@ -1,6 +1,7 @@
 # Laravel 覚書
 
 - 目次
+  - [概要](#概要)
   - [MVC](#MVC)
   - [構造](#構造)
   - [設計思想](#設計思想)
@@ -58,6 +59,85 @@
   - [メール](#メール)
   - [テスト](#テスト)
   - [LaravelHerd](#LaravelHerd)
+
+<a id="概要"></a>
+
+## 概要
+Laravelは
+* トリガーからCallableを実行する。
+* Callable内で道具を使える。
+* 周辺機能でCallableを補助できる。
+ 
+### 初期化 init
+Service Provider
+ 
+### 色々よしなにやってくれる本体
+Service Container
+ 
+### 主なトリガー：
+* HTTP
+* CLI
+* Event
+* Queue
+* Scheduler
+* Broadcast
+* Notification
+ 
+### 実行対象（Callable群）(全部「呼ばれる対象」。)
+* Routeクロージャ
+* Controller
+* Command
+* Listener
+* Job
+* Migration
+* Seeder
+* Factory
+* Test
+ 
+### 道具（サービス群）
+* Model
+* View
+* Cache
+* Mail
+* Log
+* Storage
+* HTTP Client
+ 
+### 道具を使うための仕組み
+* DI
+* Facade
+* Helper
+ 
+### 周辺補助
+* Middleware
+* FormRequest
+* Policy
+* Observer
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 <a id="MVC"></a>
 

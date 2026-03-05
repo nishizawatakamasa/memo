@@ -1046,23 +1046,21 @@ settings.jsonに設定
 
 
 
-
 <a id="uvコマンド"></a>
 ## uvコマンド
-
 
 ### uvをインストール
 `curl -LsSf https://astral.sh/uv/install.sh | sh`
 
 ### PATHを反映
-① .bashrc を開く
-`nano ~/.bashrc`
-② 最後にこれ追加
+① .bashrc を開く  
+`nano ~/.bashrc`  
+② 最後にこれ追加  
 ```
 export PATH="$HOME/.local/bin:$PATH"
 ```
-③ 保存して反映
-`source ~/.bashrc`
+③ 保存して反映  
+`source ~/.bashrc`  
 
 ### 開発環境作成
 #### 下準備
@@ -1083,19 +1081,19 @@ export PATH="$HOME/.local/bin:$PATH"
 * source code
 
 ### Jupyter 正しい手順
-① Jupyterを追加
-`uv add jupyter ipykernel`
-② kernel登録（1回だけ）
-`uv run python -m ipykernel install --user --name myproj`
+① Jupyterを追加  
+`uv add jupyter ipykernel`  
+② kernel登録（1回だけ）  
+`uv run python -m ipykernel install --user --name myproj`  
+※`myproj`はリポジトリ名にすると管理しやすい(UVプロジェクトごとにkernelを使い分けるため)  
 
-ipynbの場合  
-Interpreter → .venv/bin/pythonを選ぶ
+### カーネル変更
+ipynbの場合、右上のカーネル名をクリックすると変更できる。  
+Interpreter → .venv/bin/pythonを選ぶ  
 
 ### PyPI
-TestPyPI
-`uvx flit publish --repository testpypi`
-本番
-`uvx flit publish`
+TestPyPI`uvx flit publish --repository testpypi`  
+本番`uvx flit publish`  
 
 
 

@@ -178,16 +178,20 @@ boolのSeries、列名、列名リスト、列名スライス
     * そのまま代入するだけ。
 * SeriesにSeriesを代入
     * index合わせ
+* SeriesにDataFrameを代入xxx
+    * df['col'] = 1列のDataFrame
+        * index合わせ
+    * その他は入らない
 * DataFrameにSeriesを代入
     * index合わせ※DataFrameのindexとは行ラベルを指す。
 * DataFrameにDataFrameを代入
     * indexとColumns合わせ
     * 特例1
-        * df[list] = df[list]
+        * df[list] = DataFrame
         * index合わせ。
         * Columnsは位置のみ合わせ
     * 特例2
-        * df[slice] = df[slice]
+        * df[slice] = DataFrame
         * indexとColumnsの位置のみ合わせ
 
 ### 方針
