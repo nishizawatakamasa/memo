@@ -178,7 +178,7 @@ boolのSeries、列名、列名リスト、列名スライス
     * そのまま代入するだけ。
 * SeriesにSeriesを代入
     * index合わせ
-* SeriesにDataFrameを代入xxx
+* SeriesにDataFrameを代入
     * df['col'] = 1列のDataFrame
         * index合わせ
     * その他は入らない
