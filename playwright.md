@@ -26,9 +26,6 @@ await page.goto('https://example.com')
 # DOM構築完了まで待つ（JS不要な静的サイトに最適）
 await page.goto('https://example.com', wait_until='domcontentloaded')
 
-# JS含めた全リソース読み込み完了まで待つ
-await page.goto('https://example.com', wait_until='networkidle')
-
 # 現在のURL
 page.url
 
@@ -86,9 +83,6 @@ await page.wait_for_selector('.result', timeout=10000)
 
 # 指定時間待機（固定スリープ）
 await page.wait_for_timeout(2000)  # 2秒
-
-# ネットワークが落ち着くまで待機
-await page.wait_for_load_state('networkidle')
 ```
 
 ---
@@ -175,11 +169,10 @@ await elem.scroll_into_view_if_needed()
 ```python
 # iframeの中の要素を取得
 frame = page.frame_locator('iframe#target')
+frame = page.frame_locator('iframe#target').nth(0)
 elem  = await frame.locator('.content').element_handle()
-
-# name属性で指定
-frame = page.frame(name='myframe')
-elem  = await frame.query_selector('.content')
+elems  = await frame.locator('.content').element_handles()
+frame.locator(".content").wait_for(timeout=10000)
 ```
 
 ---
