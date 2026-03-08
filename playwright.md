@@ -1,219 +1,150 @@
 # Playwright スクレイピング 頻出機能まとめ
 
----
 
-## 1. ブラウザ・ページの起動
 
 ```python
-from playwright.async_api import async_playwright
+from playwright.sync_api import sync_playwright
 
-async with async_playwright() as pw:
-    browser = await pw.chromium.launch(headless=False)
-    context = await browser.new_context(
+# ブラウザ・ページの起動
+with sync_playwright() as pw:
+    browser = pw.chromium.launch(headless=False)
+    context = browser.new_context(
         viewport={'width': 1920, 'height': 1080},
     )
-    page = await context.new_page()
-```
+    page = context.new_page()
 
----
-
-## 2. ナビゲーション
-
-```python
 # 基本遷移
-await page.goto('https://example.com')
+page.goto('https://example.com')
 
 # DOM構築完了まで待つ（JS不要な静的サイトに最適）
-await page.goto('https://example.com', wait_until='domcontentloaded')
+page.goto('https://example.com', wait_until='domcontentloaded')
 
 # 現在のURL
 page.url
 
 # 戻る・進む
-await page.go_back()
-await page.go_forward()
-```
+page.go_back()
+page.go_forward()
 
----
-
-## 3. 要素取得
-
-```python
 # 単一要素（ElementHandle）
-elem = await page.query_selector('h1')
+elem = page.query_selector('h1')
 
 # 複数要素
-elems = await page.query_selector_all('ul > li')
+elems = page.query_selector_all('ul > li')
 
 # 要素起点で絞り込む
-child = await elem.query_selector('.child')
+child = elem.query_selector('.child')
 
 # 存在チェック
-if await page.query_selector('.banner'):
+if page.query_selector('.banner'):
     ...
-```
 
----
-
-## 4. テキスト・属性の取得
-
-```python
 # textContent（非表示テキスト含む、改行・空白そのまま）
-text = await elem.evaluate('el => el.textContent')
+text = elem.evaluate('el => el.textContent')
 
 # innerText（表示されているテキストのみ、ある程度整形される）
-text = await elem.evaluate('el => el.innerText')
+text = elem.evaluate('el => el.innerText')
 
 # 属性値
-href = await elem.get_attribute('href')
-src  = await elem.get_attribute('src')
-cls  = await elem.get_attribute('class')
-```
+href = elem.get_attribute('href')
+src  = elem.get_attribute('src')
+cls  = elem.get_attribute('class')
 
----
 
-## 5. 待機
-
-```python
 # セレクタが出現するまで待機
-await page.wait_for_selector('.result')
-
 # タイムアウト指定（ミリ秒）
-await page.wait_for_selector('.result', timeout=10000)
+page.wait_for_selector('.result', timeout=10000)
 
-# 指定時間待機（固定スリープ）
-await page.wait_for_timeout(2000)  # 2秒
-```
-
----
-
-## 6. クリック・入力
-
-```python
 # クリック
-await page.click('button.submit')
-await elem.click()
+elem.click()
 
 # テキスト入力（既存テキストを消去してから入力）
-await page.fill('input[name="q"]', '検索ワード')
+elem.fill('検索ワード')
 
 # キー操作
-await page.keyboard.press('Enter')
-await page.keyboard.press('Tab')
-```
+page.keyboard.press('Enter')
+page.keyboard.press('Tab')
 
----
 
-## 7. ネットワーク制御
-
-```python
 # リソース種別でブロック（高速化）
-async def handler(route):
+def handler(route):
     if route.request.resource_type in {'image', 'font'}:
-        await route.abort()
+        route.abort()
     else:
-        await route.continue_()
+        route.continue_()
 
-await page.route('**/*', handler)
+page.route('**/*', handler)
 
 # 特定URLパターンをブロック
-await page.route('**/*.{png,jpg,gif}', lambda r: r.abort())
-```
+page.route('**/*.{png,jpg,gif}', lambda r: r.abort())
 
----
 
-## 8. レンダリング済みHTMLの取得
-
-```python
 # ページ全体のHTML（JS実行後のDOM）
-html = await page.content()
+html = page.content()
 
 # 特定要素のinnerHTML
-inner = await elem.inner_html()
-```
+inner = elem.inner_html()
 
----
-
-## 9. JavaScript実行
-
-```python
 # ページ上でJSを実行
-title = await page.evaluate('document.title')
+title = page.evaluate('document.title')
 
 # 要素に対してJSを実行
-text = await elem.evaluate('el => el.textContent.trim()')
+text = elem.evaluate('el => el.textContent.trim()')
 
 # 複雑なJS
-data = await page.evaluate('''() => {
+data = page.evaluate('''() => {
     return Array.from(document.querySelectorAll('a'))
         .map(a => a.href)
 }''')
-```
 
----
 
-## 10. スクロール
-
-```python
 # ページ最下部までスクロール（無限スクロール対策）
-await page.evaluate('window.scrollTo(0, document.body.scrollHeight)')
+page.evaluate('window.scrollTo(0, document.body.scrollHeight)')
 
 # 要素をビューに入れる
-await elem.scroll_into_view_if_needed()
-```
+elem.scroll_into_view_if_needed()
 
----
-
-## 11. iframe
-
-```python
-# iframeの中の要素を取得
+# iframe関連
 frame = page.frame_locator('iframe#target')
 frame = page.frame_locator('iframe#target').nth(0)
-elem  = await frame.locator('.content').element_handle()
-elems  = await frame.locator('.content').element_handles()
+elem  = frame.locator('.content').element_handle()
+elems  = frame.locator('.content').element_handles()
 frame.locator(".content").wait_for(timeout=10000)
-```
 
----
 
-## 12. 複数タブ・ポップアップ
-
-```python
 # 新しいタブが開くのを待ち受ける
-async with context.expect_page() as new_page_info:
-    await page.click('a[target="_blank"]')
-new_page = await new_page_info.value
-await new_page.wait_for_load_state()
-```
+# 「これから新しいタブが開くはずなので、開いたら捕まえておいて」という待ち受け宣言
+with context.expect_page() as new_page_info:
+    elem = page.query_selector('a[target="_blank"]')
+    # 実際にリンクをクリックして新タブを発生させる
+    elem.click()
+# 捕まえておいた新タブをPageオブジェクトとして取り出す
+new_page = new_page_info.value
+# 新タブのページ読み込みが完了するまで待つ
+new_page.wait_for_load_state()
+# これ以降は new_page を普通の page と同じように操作できる
+# pageとnew_pageはそれぞれ独立したPageオブジェクトなので、どちらに対してメソッドを呼ぶかで操作対象のタブが変わる。
+# タブを3つ以上開いた場合も同様で、変数名が違うだけで全部同じように扱える
 
----
 
-## 13. ダイアログ処理
+# イベントリスナーの登録
+# 。「〇〇が起きたらこの関数を実行して」という仕組み
+# page.on('イベント名', 実行する関数)
 
-```python
-# alert / confirm / prompt を自動で閉じる
+# ページ上でダイアログ（alert/confirm/prompt）が出たとき、自動でOKボタンを押す
 page.on('dialog', lambda dialog: dialog.accept())
+
+dialog.accept()   # OKボタン（confirmならYes、promptなら入力して確定）
+dialog.dismiss()  # キャンセルボタン
+
+# promptに文字列を入れて確定したい場合はこう書ける
+page.on('dialog', lambda dialog: dialog.accept('入力テキスト'))
+
+# ページ全体のスクショ
+page.screenshot(path='page.png', full_page=True)
+
+# 特定要素のスクショ
+elem.screenshot(path='elem.png')
 ```
 
----
 
-## 14. スクリーンショット（デバッグ用）
-
-```python
-# ページ全体
-await page.screenshot(path='page.png', full_page=True)
-
-# 特定要素
-await elem.screenshot(path='elem.png')
-```
-
----
-
-## 優先度まとめ
-
-| 優先度 | 機能 |
-|---|---|
-| ★★★ 必須 | ナビゲーション、要素取得、テキスト・属性取得、待機 |
-| ★★☆ 頻出 | ネットワーク制御、HTML取得、JavaScript実行、スクロール |
-| ★☆☆ 場面次第 | クリック・入力、iframe、複数タブ、ダイアログ |
