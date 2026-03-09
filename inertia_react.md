@@ -890,7 +890,8 @@ class HandleInertiaRequests extends Middleware
     }
 }
 ```
-shareメソッドで返すデータは、以下のようにSharedDataとしてフロントで受け取れる。
+shareメソッドで返すデータは、以下のようにSharedDataとしてフロントで受け取れる。  
+※すべてのInertiaページに共通データを渡す
 ```tsx
 const { name, quote, auth, flash, ziggy, sidebarOpen, unreadNotificationCount } = usePage<SharedData>().props;
 ```
