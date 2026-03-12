@@ -14,10 +14,10 @@
     * [attr^="value"] (valueで始まる)
     * [attr$="value"] (valueで終わる)
     * [attr|="value"] (正確にvalueと一致するか、 valueで始まり直後にハイフンが続く)
-    * [attr operator value i] (大文字と小文字を区別しなくなる。incensitive(鈍感)のi。)
+    * [attr operator value i] (大文字と小文字を区別しなくなる。insensitive(鈍感)のi。)
 * 疑似クラスセレクタ
     * ツリー構造疑似クラス
-        * :empty
+        * :empty ※空白文字のみの要素は空とみなされない
         * :nth-of-type()
         * :nth-last-of-type()
     * 関数疑似クラス
@@ -34,5 +34,5 @@
 
 ## 注意点
 * 密接時、全称と要素型はクラス、ID、擬似クラスの前に置く。
-* :has()を入れ子にはできない。
+* :has()の入れ子は可能だが、循環参照は不可。また、パフォーマンスも低下する。
 * 基本的に関数擬似クラスと疑似要素は相性悪い。
