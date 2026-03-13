@@ -83,7 +83,11 @@ indent_size = 2
 * フォームのデフォルト機能はe.preventDefault()で無効化する。
 * useFormのような便利機能も内部的には同じことをやっている。
 
-
+* Inertia + React の設計イメージ
+  * Pageに全部ベタ書きしたUIを想像(一枚岩イメージ)
+  * それをコンポーネントに分割
+  * 共有stateだけPageが持つ
+  * 局所stateはコンポーネントが持つ
 
 <a id="inertia"></a>
 ## inertia
@@ -974,6 +978,34 @@ const MyButton = () => {
 * 関数コンポーネントのトップレベルで呼び出し、コンポーネントに特定の能力やデータをもたらす
 * Reactのフック：汎用的なコア機能。部品。
 * Inertiaのフック：高レベルな便利機能。内部でReactのフックを使ってる。
+
+
+#### コンポーネントのロジック部分を切り出して共通化できる
+
+```ts
+function useCounter() {
+  const [count, setCount] = useState(0)
+
+  const increment = () => {
+    setCount(c => c + 1)
+  }
+
+  return { count, increment }
+}
+```
+```tsx
+export default function Page() {
+
+  const { count, increment } = useCounter()
+
+  return (
+    <button onClick={increment}>
+      {count}
+    </button>
+  )
+}
+```
+
 
 #### useState
 #### useContext
