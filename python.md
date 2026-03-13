@@ -1068,6 +1068,7 @@ export PATH="$HOME/.local/bin:$PATH"
 
 ### ライブラリ追加
 `uv add fastapi`
+`uv add pandas==2.2.0`
 
 ### uv.lock(インストールするものが厳密に書かれてる)を元に完全同期
 `uv sync`
