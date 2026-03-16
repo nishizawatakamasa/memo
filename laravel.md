@@ -3005,6 +3005,10 @@ class HomeController extends Controller
 
 ```php
 $posts = $query->paginate(10);
+// 第三引数pageNameにはページ番号のクエリパラメータ名を指定できる
+// 同一ページに複数のページネーションがある場合の区別用
+$posts = $query->paginate(10, pageName: 'reviews_page');
+
 // ページネーションリンクに絞り込み条件を含める
 // ※ページを送っても条件が保持さるように
 // 現在のページの検索条件やソート順をそのままページネーションリンクに引き継ぎたい場合は、常に withQueryString() を使用する。 より細かい制御が必要な場合にのみ appends() を検討するのがベストプラクティス。
