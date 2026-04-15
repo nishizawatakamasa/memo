@@ -1236,10 +1236,9 @@ $flight = $flight->replicate([
 // モデルインスタンスをネストまで含めて良しなに配列に変換してくれる。
 $postArray = $post->toArray();
 
-
-
-// 保留
-$modelInstance->fresh();
+// 同じ主キーでDBからもう一度読み直した「新しいモデルインスタンス」を戻り値として返す
+$updated = $modelInstance->fresh();
+// 同じ主キーでDBからもう一度読み直し、自分自身を更新する
 $modelInstance->refresh();
 ```
 

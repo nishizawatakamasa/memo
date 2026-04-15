@@ -49,6 +49,7 @@ PHP（実行）
 
 namespace Tests\Feature;
 
+use App\Models\User;
 use Tests\TestCase;
 
 class ExampleTest extends TestCase
@@ -58,7 +59,8 @@ class ExampleTest extends TestCase
      */
     public function test_the_application_returns_a_successful_response(): void
     {
-        $this->actingAs($admin)
+        $admin = User::factory()->create();
+        $this->actingAs($admin);
         $response = $this->get('admin/');
         $response->assertOk();
     }
@@ -333,13 +335,13 @@ $response->assertOk()             // 検問1: そもそも開けたか？
 // ルーティングの基本。すべてのテストの起点。
 
 // アクセスに成功したか。assertStatus(200)と同じ
-$response->assertOk()
+$response->assertOk();
 // 未ログイン時にログイン画面へ飛ばされたか、保存後に一覧画面へ戻ったか。
-$response->assertRedirect('/url')
+$response->assertRedirect('/url');
 // 権限がないユーザーがアクセスして、しっかりブロックされたか。assertStatus(403)と同じ
-$response->assertForbidden()
+$response->assertForbidden();
 // 存在しないIDや、他人のデータにアクセスしたときに404になるか。assertStatus(404)と同じ
-$response->assertNotFound()
+$response->assertNotFound();
 
 
 // 2. 【重要】バリデーションエラーのチェック
@@ -347,15 +349,15 @@ $response->assertNotFound()
 
 // バリデーションに引っかかったか。
 // ['name' => 'The name field is required.'] のようにメッセージまで指定も可能。
-$response->assertSessionHasErrors(['field'])
+$response->assertSessionHasErrors(['field']);
 // エラーが一切なく、正常に処理されたことの確認。
-$response->assertSessionHasNoErrors()
+$response->assertSessionHasNoErrors();
 
-// 4. 【重要】データベースのチェック
+// 4. 【重要】データベースのチェック（TestResponse ではなくテストクラス $this 向け）
 // 「保存ボタンを押してリダイレクトはされたけど、実はDBに保存されていなかった」という事故を防ぐ。
 
 // 指定したデータがDBに存在するか。保存処理のテストの最後に必ず書く。
-$response->assertDatabaseHas('table', ['column' => 'value'])
+$this->assertDatabaseHas('table', ['column' => 'value']);
 // 削除処理のテストで、データが消えたことを確認する。
-$response->assertDatabaseMissing('table', ['column' => 'value'])
+$this->assertDatabaseMissing('table', ['column' => 'value']);
 ```
