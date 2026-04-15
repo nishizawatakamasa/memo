@@ -146,27 +146,97 @@ $this->actingAs($user) は、「ログイン済みユーザー」をセットす
 セットしない場合はゲスト（未ログイン）状態。  
 Act工程で、「ログイン済みユーザー」としてミドルウェア（auth）を通過できるようになる。  
 
-よくあるセット:
+Arrange工程の主要メソッド・手段まとめ:
+
+#### 認証・ユーザー
+
 ```php
 // $thisを返す
-$this->actingAs($user) // 一般ユーザーのテスト
-$this->actingAs($admin) // 管理者のテスト
+$this->actingAs($user)           // 一般ユーザーとして認証
+$this->actingAs($user, 'admin')  // ガード指定で認証
 ```
 
-■ 誰が
-- actingAs（認証）
+---
 
-■ どんなデータがあるか
-- factory / create / seed
+#### Factory・データ準備
 
-■ リクエストの条件
-- session / headers / cookies
+```php
+// 基本
+User::factory()->create()               // DB保存あり
+Post::factory()->count(3)->create()     // 複数件作成
+User::factory()->make()                 // DB保存なし（単体テスト向け）
 
-■ 外部作用の制御
-- Event::fake / Mail::fake / Queue::fake
+// state 指定
+User::factory()->admin()->create()
+Post::factory()->published()->create()
 
-■ 環境
-- config / 時刻操作
+// リレーション付き
+User::factory()
+    ->hasPosts(3)
+    ->create()
+```
+
+---
+
+#### DB 状態管理
+
+> `use` はクラス上部に記述
+
+```php
+use RefreshDatabase;      // 毎テスト後に DB をロールバック（推奨）
+use DatabaseTransactions; // トランザクションで包んでロールバック
+
+$this->seed()                    // DatabaseSeeder を実行
+$this->seed(UserSeeder::class)   // 特定 Seeder を実行
+```
+
+---
+
+#### リクエスト環境の準備
+
+```php
+$this->withSession(['key' => 'val'])
+$this->withHeaders(['X-Foo' => 'bar'])
+$this->withHeaders(['Accept' => 'application/json'])  // JSON レスポンスを期待
+$this->withCookie('name', 'value')
+$this->withCookies([...])
+```
+
+---
+
+#### Fake・副作用の遮断
+
+> act より**前**に呼ぶ
+
+```php
+Event::fake()        // イベント発火を遮断
+Mail::fake()         // メール送信を遮断
+Notification::fake() // 通知を遮断
+Queue::fake()        // ジョブのキュー投入を遮断
+Storage::fake('s3')  // ファイルストレージを遮断
+Http::fake([...])    // 外部 HTTP 呼び出しを遮断
+```
+
+---
+
+#### 時刻操作
+
+```php
+$this->travelTo(now()->addDays(3)) // 指定日時に移動
+$this->travel(1)->days()           // 相対移動
+$this->freezeTime()                // 現在時刻を固定
+```
+
+---
+
+#### 設定・挙動制御
+
+```php
+$this->withoutExceptionHandling()           // 例外をそのまま投げる（デバッグ用）
+config(['app.debug' => true])               // テスト内で設定を上書き
+Gate::define('update-post', fn() => true)  // 認可ロジックをスタブ化
+route('posts.store')                        // 名前付きルートで URL 生成
+```
 
 
 ### Act
