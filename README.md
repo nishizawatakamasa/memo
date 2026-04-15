@@ -46,6 +46,7 @@
         * WordPress
         * Laravel
             * [全般](./laravel.md)
+            * [テスト](./laravel_test.md)
         * phpMyAdmin
     * SQL
         * MariaDB(MySQL)
