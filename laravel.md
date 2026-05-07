@@ -57,6 +57,7 @@
   - [ファイルのアップロード](#ファイルのアップロード)
   - [イベント購読](#イベント購読)
   - [メール](#メール)
+  - [DB::transaction](#DB::transaction)
   - [テスト](#テスト)
   - [LaravelHerd](#LaravelHerd)
   - [ERDを作成](#ERDを作成)
@@ -4849,14 +4850,121 @@ markdown 版の例
   - 結果として、そのメールは迷惑メールフォルダに直行するか、完全にブロックされてしまう。
   - つまり、Mailgun などのサービスを利用するには、自身が所有・管理している独自ドメイン（例: my-app.com）が必要になる。
 
+<a id="DB::transaction"></a>
+
+## DB::transaction
+
+### example
+```php
+use App\Models\Account; // 仮想例
+use App\Jobs\NotifyBalanceUpdated;// 仮想例
+use Illuminate\Support\Facades\DB;
+
+/**
+ * 残高から amount を引き落とし、コミット後にだけ通知ジョブを載せる例。
+ * 並行リクエストで二重引き落とししないよう、行をロックする。
+ */
+function withdraw(int $accountId, int $amount): void
+{
+    // DB操作を 「全部成功か、全部取り消し」 にしたいとき。中間状態を残したくない処理に使う。
+    // コールバックをtransactionで包む。※コールバックの戻り値がそのまま `DB::transaction` の戻り値になる。
+    // 完全に成功したとき(COMMIT)、初めてコールバックの処理が確定される
+    // 一か所でも失敗したとき(ROLLBACK)、コールバックの処理はすべてなかったことになる。
+    // DB::transaction を入れ子にした場合も、素直な入れ子の挙動イメージになる。
+    DB::transaction(function () use ($accountId, $amount): void {
+        $account = Account::query()
+            ->whereKey($accountId)
+            ->lockForUpdate() // 最終的な取得行(1行でも複数行でも)をロックし、transactionの終了まで他が触れないようにする。
+            ->firstOrFail();
+
+        if ($account->balance < $amount) {
+            throw new \RuntimeException('残高不足');
+        }
+
+        $account->decrement('balance', $amount);
+
+        // afterCommit：完全に成功したとき(COMMIT)のみ、コールバックが実行される。
+        // 実行タイミングはCOMMIT直後。
+        // メール送信やファイル削除などの、ロールバックしても取り消せない処理に使う(不整合を起こさないため)。
+        // トランザクションクロージャ内のどこに書いても同じだが、こだわりがないのならば最後尾がわかりやすい。
+        DB::afterCommit(function () use ($account): void {
+            NotifyBalanceUpdated::dispatch($account->id);
+        });
+    });
+}
+```
+
+
+
+
 <a id="テスト"></a>
 
 ## テスト
-**人間が手動でブラウザを開いて、ログインして、画面の数字を指差し確認する」という作業を、PHPのコードで記述してロボットにやらせているだけ**  
+
+[Laravel 12.x HTTPテスト ドキュメント](https://readouble.com/laravel/12.x/ja/http-tests.html)
+
+**人間が手動でブラウザを開いて、ログインして、画面の数字を指差し確認する」というような作業を、PHPのコードで記述してロボットにやらせているだけ**  
 結局 『ログインして、ボタン（URL）を押して、結果を見る』 というような人間の動きをなぞっているだけ
 
-### 基本
+### $this
+テストクラスのインスタンス$thisは、親クラスであるTestCaseの機能と性質を受け継いでいる
+#### 機能
+様々なテスト用メソッドなど
+#### 性質
+$thisは中にこういうのを持ってる
+* アプリケーション（Laravel本体）
+* 認証状態（actingAsで変更される）
+* セッション
+* HTTPクライアント的な機能（get/post）
+* DB接続
+* 各種テストヘルパ
+つまり「Laravelの世界」が丸ごと入ってる
 
+※ メソッドごとに新しいインスタンスが作られる  
+※ つまり$thisはメソッドごとに独立した一つの世界  
+※ メソッドが10個あれば、基本的に10回インスタンス化される  
+
+### Pest
+PestはPHPUnitの上に乗ってるラッパー、という位置づけ。
+#### イメージ
+Pest（書きやすい書き方）  
+   ↓  
+PHPUnit（実行エンジン）  
+   ↓  
+PHP（実行）  
+
+
+### イントロダクション
+```php
+<?php
+
+namespace Tests\Feature;
+
+use App\Models\User;
+use Tests\TestCase;
+
+class ExampleTest extends TestCase
+{
+    /**
+     * 基本のテスト例
+     */
+    public function test_the_application_returns_a_successful_response(): void
+    {
+        $admin = User::factory()->create();
+        $this->actingAs($admin);
+        $response = $this->get('admin/');
+        $response->assertOk();
+    }
+}
+```
+
+### ルートのキャッシュ
+アプリケーションに多くのルートファイルがある場合、テストケースにIlluminate\Foundation\Testing\WithCachedRoutesトレイトを追加すると、キャッシュを利用して効率をよくできる。
+
+
+
+
+### 種類
 テストには二種類ある。
 
 - Feature テスト
@@ -4889,16 +4997,29 @@ class ApplicantDataTest extends TestCase
 }
 ```
 
-
 ### Feature テスト
-
 作成コマンド。tests/Feature ディレクトリへ配置される。  
 `php artisan make:test UserTest`
 
 メソッド名は、test_から始まり、テストの内容がわかる名前にする（スネークケース推奨）。  
 例：public function test_user_can_submit_form()
 
-前提条件（インプット）が違うなら、メソッドを分ける
+
+### Unit テスト
+作成コマンド。tests/Unit ディレクトリへ配置される。  
+`php artisan make:test UserTest --unit`
+
+
+
+
+### AAA
+Laravelテストにおける定番パターン
+
+状況を準備(Arrange):ユーザー・DB・認証
+↓
+行動(Act):HTTP・メソッド実行
+↓
+結果を検証(Assert):レスポンス・DB・副作用（イベント・メール・通知・キューなど）
 
 * 黄金パターン
     * 誰かが（actingAs）
@@ -4909,17 +5030,113 @@ class ApplicantDataTest extends TestCase
         * 予言通りならPass（合格）で静かに進む。
         * 予言が外れたらFail（不合格）で止まって理由を教えてくれる。
 
-actingAs($user) は、「このリクエストを送る時は、この人がログインしている状態にしてね」という予約。  
-これを書かずに get() すると、「ゲスト（未ログイン）」として扱われる。  
-これを書いて get() すると、「ログイン済みユーザー」としてミドルウェア（auth）を通過できるようになる。  
-よくあるセット:
+### Arrange
+**前提条件（インプット）が違うなら、メソッドを分ける**
+$this->actingAs($user) は、「ログイン済みユーザー」をセットする。  
+セットしない場合はゲスト（未ログイン）状態。  
+Act工程で、「ログイン済みユーザー」としてミドルウェア（auth）を通過できるようになる。  
+
+Arrange工程の主要メソッド・手段まとめ:
+
+#### 認証・ユーザー
+
 ```php
-$this->get(...): // ゲストのテスト
-$this->actingAs($user)->get(...): // 一般ユーザーのテスト
-$this->actingAs($admin)->get(...): // 管理者のテスト
+// $thisを返す
+$this->actingAs($user)           // 一般ユーザーとして認証
+$this->actingAs($user, 'admin')  // ガード指定で認証
 ```
 
-テストに使うリクエストメソッド
+---
+
+#### Factory・データ準備
+
+```php
+// 基本
+User::factory()->create()               // DB保存あり
+Post::factory()->count(3)->create()     // 複数件作成
+User::factory()->make()                 // DB保存なし（単体テスト向け）
+
+// state 指定
+User::factory()->admin()->create()
+Post::factory()->published()->create()
+
+// リレーション付き
+User::factory()
+    ->hasPosts(3)
+    ->create()
+```
+
+---
+
+#### DB 状態管理
+
+> `use` はクラス上部に記述
+
+```php
+use RefreshDatabase;      // 毎テスト後に DB をロールバック（推奨）
+use DatabaseTransactions; // トランザクションで包んでロールバック
+
+$this->seed()                    // DatabaseSeeder を実行
+$this->seed(UserSeeder::class)   // 特定 Seeder を実行
+```
+
+---
+
+#### リクエスト環境の準備
+
+```php
+$this->withSession(['key' => 'val'])
+$this->withHeaders(['X-Foo' => 'bar'])
+$this->withHeaders(['Accept' => 'application/json'])  // JSON レスポンスを期待
+$this->withCookie('name', 'value')
+$this->withCookies([...])
+```
+
+---
+
+#### Fake・副作用の遮断
+
+> act より**前**に呼ぶ
+
+```php
+Event::fake()        // イベント発火を遮断
+Mail::fake()         // メール送信を遮断
+Notification::fake() // 通知を遮断
+Queue::fake()        // ジョブのキュー投入を遮断
+Storage::fake('s3')  // ファイルストレージを遮断
+Http::fake([...])    // 外部 HTTP 呼び出しを遮断
+```
+
+---
+
+#### 時刻操作
+
+```php
+$this->travelTo(now()->addDays(3)) // 指定日時に移動
+$this->travel(1)->days()           // 相対移動
+$this->freezeTime()                // 現在時刻を固定
+```
+
+---
+
+#### 設定・挙動制御
+
+```php
+$this->withoutExceptionHandling()           // 例外をそのまま投げる（デバッグ用）
+config(['app.debug' => true])               // テスト内で設定を上書き
+Gate::define('update-post', fn() => true)  // 認可ロジックをスタブ化
+route('posts.store')                        // 名前付きルートで URL 生成
+```
+
+
+### Act
+#### リクエストの作成
+* アプリケーションにリクエストを送信するには、テスト内でget、post、put、deleteメソッドを呼び出す。
+* これらのメソッドは、Illuminate\Testing\TestResponseのインスタンスを返す。
+* そのインスタンスはレスポンスの検査を可能にするさまざまな有用なアサートを提供している。
+* 通常、各テストはアプリケーションに対して 1 つのリクエストしか行わないようにする。１つのテストメソッドの中で複数のリクエストを実行すると、 予期せぬ動作が起きる可能性があるため。
+
+リクエストメソッド
 ```php
 // 指定したurlに対してGETリクエストを送る。
 $response = $this->get($url)
@@ -4931,6 +5148,61 @@ $response = $this->put($url, $data = [])
 $response = $this->delete($url)
 ```
 
+#### ファイルアップロードのテスト
+Illuminate\Http\UploadedFileクラスは、テスト用のダミーファイルまたは画像を生成するために使用できるfakeメソッドを提供している。  
+これをStorageファサードのfakeメソッドと組み合わせると、ファイルアップロードのテストが大幅に簡素化される。  
+たとえば、次の２つの機能を組み合わせて、アバターのアップロードフォームを簡単にテストできる。  
+
+
+
+### Assert
+#### Illuminate\Testing\TestResponseクラスが提供するアサート
+※get、post、put、deleteテストメソッドが返すレスポンスからアクセスできる。
+
+##### レスポンスのアサート
+###### 基本
+[一覧](https://readouble.com/laravel/12.x/ja/http-tests.html#assert-ok:~:text=%E5%8F%AF%E8%83%BD%E3%81%AA%E3%82%A2%E3%82%B5%E3%83%BC%E3%83%88-,%E3%83%AC%E3%82%B9%E3%83%9D%E3%83%B3%E3%82%B9%E3%81%AE%E3%82%A2%E3%82%B5%E3%83%BC%E3%83%88,-Laravel%E3%81%AEIlluminate)
+
+###### Inertia固有
+```php
+$response->assertInertia(fn (Assert $page) => ...)
+
+// Inertia固有のチェック
+// React（フロントエンド）に正しくバトンを渡せているかを検証する
+// これらは $response->assertInertia(fn (Assert $page) => ...) の中で使う。
+
+// 指定したReactコンポーネント（例: Admin/User/Index）が呼び出されているか。
+$page->component('ComponentName')
+// React側にその変数が存在するか。
+// has('users', 5) のように第2引数を入れると、リストの件数までチェックできる。
+$page->has('propName')
+// Propsの中身が期待通りの値か。例: ->where('auth.user.name', '山田太郎')
+$page->where('propName', 'value')
+// パスワードなど、フロントに渡してはいけないデータが含まれていないことを確認する。
+$page->missing('propName')
+```
+
+##### バリデーションのアサート
+```php
+// レスポンスに指定キーのバリデーションエラーがないことを宣言
+$response->assertValid();
+// レスポンスに指定キーのバリデーションエラーがあることを宣言
+$response->assertInvalid(['name', 'email']);
+```
+
+#### テストクラスのインスタンス($this)自体から呼び出すアサート
+##### 認証のアサート
+```php
+// ユーザーが認証済みであることを宣言します。
+$this->assertAuthenticated($guard = null);
+// ユーザーが認証されていないことを宣言します。
+$this->assertGuest($guard = null);
+// 特定のユーザーが認証済みであることを宣言します。
+$this->assertAuthenticatedAs($user, $guard = null);
+```
+
+
+#### ちょっとした解説
 メソッド内では、検証したい複数の操作に対して、期待される結果を複数assertで並べられる
 ```php
 $response->assertOk()             // 検問1: そもそも開けたか？
@@ -4951,178 +5223,31 @@ $response->assertOk()             // 検問1: そもそも開けたか？
 // ルーティングの基本。すべてのテストの起点。
 
 // アクセスに成功したか。assertStatus(200)と同じ
-$response->assertOk()
+$response->assertOk();
 // 未ログイン時にログイン画面へ飛ばされたか、保存後に一覧画面へ戻ったか。
-$response->assertRedirect('/url')
+$response->assertRedirect('/url');
 // 権限がないユーザーがアクセスして、しっかりブロックされたか。assertStatus(403)と同じ
-$response->assertForbidden()
+$response->assertForbidden();
 // 存在しないIDや、他人のデータにアクセスしたときに404になるか。assertStatus(404)と同じ
-$response->assertNotFound()
+$response->assertNotFound();
 
-// 2. 【必須】Inertia固有のチェック
-// React（フロントエンド）に正しくバトンを渡せているかを検証する
-// これらは $response->assertInertia(fn (Assert $page) => ...) の中で使う。
 
-// 超重要。 指定したReactコンポーネント（例: Admin/User/Index）が呼び出されているか。
-$page->component('ComponentName')
-// React側にその変数が存在するか。
-// has('users', 5) のように第2引数を入れると、リストの件数までチェックできる。
-$page->has('propName')
-// Propsの中身が期待通りの値か。例: ->where('auth.user.name', '山田太郎')
-$page->where('propName', 'value')
-// パスワードなど、フロントに渡してはいけないデータが含まれていないことを確認する。
-$page->missing('propName')
-
-// 3. 【重要】バリデーションエラーのチェック
+// 2. 【重要】バリデーションエラーのチェック
 // フォーム送信（POST/PATCH）のテストで必須。
 
 // バリデーションに引っかかったか。
 // ['name' => 'The name field is required.'] のようにメッセージまで指定も可能。
-$response->assertSessionHasErrors(['field'])
+$response->assertSessionHasErrors(['field']);
 // エラーが一切なく、正常に処理されたことの確認。
-$response->assertSessionHasNoErrors()
+$response->assertSessionHasNoErrors();
 
-// 4. 【重要】データベースのチェック
+// 4. 【重要】データベースのチェック（TestResponse ではなくテストクラス $this 向け）
 // 「保存ボタンを押してリダイレクトはされたけど、実はDBに保存されていなかった」という事故を防ぐ。
 
 // 指定したデータがDBに存在するか。保存処理のテストの最後に必ず書く。
-$response->assertDatabaseHas('table', ['column' => 'value'])
+$this->assertDatabaseHas('table', ['column' => 'value']);
 // 削除処理のテストで、データが消えたことを確認する。
-$response->assertDatabaseMissing('table', ['column' => 'value'])
-```
-
-例：
-```php
-    public function test_admin_receives_correct_filtered_count_for_buyer_applicant_index(): void
-    {
-        $admin = $this->createUserWithRole(Role::ADMIN->value);
-
-        // ---- カウントされるべきデータ（期待値に含まれる） ----
-        $this->createUserWithRole(Role::BUYER->value, ['status' => Status::New->value]);
-        $this->createUserWithRole(Role::BUYER->value, ['status' => Status::Processing->value]);
-
-        // ---- カウントされるべきではないデータ（ノイズ） ----
-        // buyer でも cancelled は初期表示の対象外
-        $this->createUserWithRole(Role::BUYER->value, ['status' => Status::Cancelled->value]);
-        $this->createUserWithRole(Role::BUYER->value, ['status' => Status::Cancelled->value]);
-        // role が seller の時点で buyer 一覧には含まれない
-        $this->createUserWithRole(Role::SELLER->value, ['status' => Status::New->value]);
-        $this->createUserWithRole(Role::SELLER->value, ['status' => Status::Registered->value]);
-
-        $response = $this->actingAs($admin)->get(route('admin.buyer_applicant.index'));
-
-        // Inertia props に入る件数が、期待どおり「2件」かを確認
-        $response->assertOk()
-            ->assertInertia(fn (Assert $page) => $page
-                ->component('admin/buyer-applicant/index')
-                ->where('applicants.total', 2)
-                ->has('applicants.data', 2)
-            );
-    }
-
-```
-
-```php
-    public function test_seller_can_access_seller_route_but_is_forbidden_from_admin_and_buyer_routes(): void
-    {
-        $seller = $this->createUserWithRole(Role::SELLER->value);
-
-        $this->actingAs($seller)
-            ->get(route('seller.profile.edit'))
-            ->assertStatus(200)
-            ->assertInertia(fn (Assert $page) => $page
-                ->component('seller/profile/edit')
-            );
-
-        $this->actingAs($seller)->get(route('admin.buyer_applicant.index'))->assertStatus(403);
-        $this->actingAs($seller)->get(route('buyer.profile.edit'))->assertStatus(403);
-    }
-```
-
-```php
-<!-- 必須カラムを満たしたユーザーを role 指定で作成するためのヘルパー -->
-    private function createUserWithRole(string $role, array $overrides = []): User
-    {
-        static $sequence = 1;
-
-        $base = [
-            'role' => $role,
-            'status' => Status::New->value,
-            'name' => 'テスト申請者' . $sequence,
-            'prefecture' => '長野県',
-            'city' => '長野市',
-            'town' => '若里',
-            'address_free' => '1-1-' . $sequence,
-            'phone_number' => '0800000000' . $sequence,
-            'email' => 'applicant-data-' . $sequence . '@example.com',
-        ];
-
-        if ($role === Role::BUYER->value) {
-            $base['buyer_type'] = 'individual';
-        }
-
-        if ($role === Role::SELLER->value) {
-            $base['seller_type'] = 'individual';
-        }
-
-        $sequence++;
-
-        return User::factory()->create(array_merge($base, $overrides));
-    }
-```
-
-```php
-<?php
-
-namespace Tests\Feature;
-
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
-use Tests\TestCase;
-
-class memberTest extends TestCase
-{
-    // メソッド名は、test_から始まり、テストの内容がわかる名前にする（スネークケース推奨）。
-    public function test_user_can_submit_form()
-    {
-        // 送信するデータを連想配列形式で第二引数に指定。
-        // フォームに入力されたデータを模倣している。
-        // $responseにリクエスト後のHTTPレスポンスを格納する。
-        $response = $this->post('/submit-form', [
-            'name' => 'John Doe',
-            'email' => 'john.doe@example.com',
-        ]);
-        // サーバーが正常なレスポンス（HTTPステータスコード）を返したか確認する。
-        // 意味：ステータスコード 200 は「リクエストが成功した」ことを示す。
-        // 意味：ステータスコード 302 は「リダイレクトが成功した」ことを示す。
-        $response->assertStatus(200);
-    }
-}
-```
-
-A. 一覧表示（GET）
-```php
-$response->assertOk()
-    ->assertInertia(fn (Assert $page) => $page
-        ->component('User/Index') // 1. 正しいページか
-        ->has('users.data', 15)   // 2. 1ページ15件表示か
-        ->where('filters.search', 'キーワード') // 3. 検索条件がReactに引き継がれているか
-    );
-```
-
-B. 新規保存（POST）
-```php
-$response = $this->actingAs($user)->post(route('user.store'), $data);
-
-$response->assertRedirect(route('user.index')); // 1. 一覧へ戻ったか
-$this->assertDatabaseHas('users', ['email' => 'test@example.com']); // 2. DBに保存されたか
-```
-
-C. バリデーション失敗
-```php
-$response = $this->post(route('user.store'), ['email' => 'invalid-email']);
-
-$response->assertSessionHasErrors(['email']); // 1. メール形式エラーが出たか
+$this->assertDatabaseMissing('table', ['column' => 'value']);
 ```
 
 
