@@ -2763,6 +2763,18 @@ route('work_log.create', [
 // 'http://127.0.0.1:8000/work-log/5?date=2024-09-16'
 
 
+// 以下のように、「ルートの URI に プレースホルダが1つ」で、そこに getRouteKey() の値が入るとき、
+Route::post('admin/buyer-applicant/send-email/{buyerApplicant}', [BuyerApplicantController::class, 'sendEmail'])
+    ->name('admin.buyer_applicant.send_email');
+// routeの第2引数にモデルをそのまま渡すと、{buyerApplicant} に申請者ユーザーのルートキー（だいたい id）が入ったURLになる。
+// PHPの変数名がルートの {buyerApplicant} と一致している必要はない。
+// モデルのクラス名も、ルートパラメータ名と一致する必要はない。
+// 重要なのは「ルートの URI に プレースホルダが1つ」で、そこに getRouteKey() の値が入ること。
+route('admin.buyer_applicant.send_email', $buyerApplicant)
+
+
+
+
 // Bladeテンプレート内でリンクを生成する場合は次のように使用する。
 <a href="{{ route('folders.edit', ['id' => $folder->id]) }}">編集</a>
 
