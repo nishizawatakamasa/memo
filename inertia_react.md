@@ -909,7 +909,14 @@ const { name, quote, auth, flash, ziggy, sidebarOpen, unreadNotificationCount } 
 <a id="React"></a>
 ## React
 
-**結局全てJSコードであり、JS空間。jsxは単なる「{}で値を埋め込めるシンタックスシュガー」に過ぎない。**
+**結局全てJSコードであり、JSの世界。ただし特殊hookやjsx糖衣などの、React特有の特殊機能が追加されている。jsxには{}でjs値を埋め込める。**
+
+- stateの種類は大きく3つ
+  - 表示情報そのもの（主役）
+  - 表示切替用の値（裏方）
+  - フォーム情報
+
+※計算で出せる値は state にしない。stateは「唯一の真実の源（single source of truth）」を最小化する。
 
 [クイックスタート](https://ja.react.dev/learn)
 
