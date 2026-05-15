@@ -3132,7 +3132,65 @@ class SampleController extends Controller
 
 「Request $request」は、HTTP リクエストに関するすべての情報を持つオブジェクト。  
 ユーザーが送信したデータ、リクエストメソッド、ファイル、ヘッダー情報などを取得、操作するために使用される。  
-Request オブジェクトを使うことで、リクエストに関する情報を簡単かつ効率的に扱うことができる。  
+Request オブジェクトを使うことで、リクエストに関する情報を簡単かつ効率的に扱うことができる。 
+
+
+
+Request $request が見られるもの：
+```php
+<?php
+// 1. ルートパラメータ
+// これ：
+Route::get('/users/{id}', ...)
+// URL：
+/users/123
+// A: 引数で受ける（よく見る）
+public function show(string $id)
+{
+
+}
+// Laravel が自動注入。
+// B: Request から取る
+public function show(Request $request)
+{
+    $id = $request->route('id');
+}
+// C: Model Binding（実務で多い）
+Route::get('/users/{user}', ...)
+public function show(User $user)
+{
+    // もうUserモデル
+}
+// 123 → DB引いて User が入る。
+
+// 2. defaults()
+// これも ルートパラメータ として入る。
+// URLに存在しない値を、ルートに裏で持たせる機能なので、URL側に {} は不要。
+// 普通のルートパラメータと同じ仕組みなので、メソッド単独引数で受けられるが、あまりやらない。
+Route::post('/support')->defaults('type', 'A')
+// 取得：
+$request->route('type')
+// ただし input() 系には普通入らない（重要）。
+$request->input('type') // null のことが多い
+$request->route('type') // A
+// ※ all() に混ざるケースもあるが、基本は「route 側」と考えたほうが事故らない。
+
+// 3. クエリパラメータ（GET）
+/users?page=2
+$request->page
+$request->query('page')
+$request->input('page')
+
+// 4. リクエストボディ（POST/PUT）
+// JSON や form-data
+{
+    "name": "taro"
+}
+$request->name
+$request->input('name')
+```
+
+
 例：
 
 ```php
