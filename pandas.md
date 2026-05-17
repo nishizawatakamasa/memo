@@ -294,7 +294,7 @@ Series[boolのSeries]
 |Series.str[2:9]||
 |Series.str.strip()||
 |Series.str.join(sep)||
-|★Series.str.normalize('NFKC')||
+|Series.str.normalize('NFKC')||
 |Series.str.zfill(6)|左側をゼロ埋めし、指定した文字数にする|
 |Series.str.get_dummies(sep='区切り文字')|文字列を区切り文字で分割し、ダミー変数化。DataFrameを返す。|
 
@@ -594,9 +594,24 @@ df = pd.concat([df1, df2, df3])
 ## 任意の関数を適用
 
 ### map
+
+
+- 引数に指定できるもの
+    - callable
+        1. 関数名、lambda
+        1. クラス名
+        1. \_\_call\_\_ があるインスタンス
+        - ※いずれもセルの値が唯一の位置引数として渡される
+    - mapper 
+        - 1.辞書
+        - 1.pd.Seriesインスタンス（「インデックス → 値」の対応表）
+            - ※セルの値を キー(インデックス)にして、対応する値に置き換える。
+            - ※キー(インデックス)にない値 → そのセルは NaN（欠損扱い）になる。
+            - ※pd.Seriesインスタンスが重複indexだとどれが選ばれるか紛らわしいので、ユニークにしておくとハマりにくい。
+
 |||
 |-|-|
-|Series.map(len)<br>Series.map(lambda x: func(x, 5))<br>DataFrame.map(len)<br>DataFrame.map(lambda x: hex(int(x)))|引数に指定した関数を各要素に適用する(新しいオブジェクトが返される)。<br>defで定義した関数やラムダ式も指定可能。<br>na_action='ignore'とすると、NaNは関数に渡されずに結果がそのままNaNとなる。|
+|Series.map(len)<br>Series.map(lambda x: func(x, 5))<br>Series.map({True: 'foo', 4: 7, 'bar': 'baz'})<br>Series.map(other_series)<br>DataFrame.map(len)<br>DataFrame.map(lambda x: hex(int(x)))<br>DataFrame.map({True: 'foo', 4: 7, 'bar': 'baz'})|引数に指定したcallableやmapperを各要素に適用する(新しいオブジェクトが返される)。<br>defで定義した関数やラムダ式も指定可能。<br>na_action='ignore'とすると、NaNは処理されず、そのままNaNとなる。|
 
 ### apply
 |||
