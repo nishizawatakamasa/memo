@@ -309,7 +309,7 @@ Series[boolのSeries]
 
 |||
 |-|-|
-|★DataFrame.replace({<br>'列名1': {'pat1': 'repl1', 'pat2': 'repl2'},<br>'列名2': {'pat3': 'repl3'},<br>})<br><br>★DataFrame.replace({'pat1': 'repl1', 'pat2': 'repl2'})<br>★Series.replace({'pat1': 'repl1', 'pat2': 'repl2'})|セル値の置換。文字列と数値に対して使える。<br>引数regexの初期値はFalse。Trueとすると正規表現での置換になる。<br>キャプチャグループを設定した場合、グループにマッチした文字列を1つ目から\1, \2, \3...とrepl内で使用できる。<br>replも基本的にraw文字列を使うのがベター。|
+|★Series.replace({'pat1': 'repl1', 'pat2': 'repl2'})<br><br>★DataFrame.replace({<br>'列名1': {'pat1': 'repl1', 'pat2': 'repl2'},<br>'列名2': {'pat3': 'repl3'},<br>})<br>★DataFrame.replace({'pat1': 'repl1', 'pat2': 'repl2'})|引数regexの初期値はFalse。その状態だと、セル値を完全一致で置換する。文字列以外も指定可能。<br><br>regex=Trueとすると、正規表現での部分文字列置換になる。<br>キャプチャグループを設定した場合、グループにマッチした文字列を1つ目から\1, \2, \3...とrepl内で使用できる。<br>replも基本的にraw文字列を使うのがベター。|
 
 #### インラインフラグ
 |||
