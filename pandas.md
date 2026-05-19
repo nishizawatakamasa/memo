@@ -292,6 +292,7 @@ Series[boolのSeries]
 |df['str1'] + ' in ' + df['str2']||
 |Series.str[2]||
 |Series.str[2:9]||
+|Series.str.len()||
 |Series.str.strip()||
 |Series.str.join(sep)||
 |Series.str.normalize('NFKC')||
