@@ -1484,6 +1484,21 @@ $users = User::query()
         ['updated_at', '>', 'created_at'],
     ])
     ->get();
+// ->whereColumn(foo, '指定カラム')としたとき、この'指定カラム'は「絞り込み判定される各レコードの指定カラム(の値)」というイメージで理解するとわかりやすい。
+
+
+// モデルの主キー（$primaryKey。省略時は id）で絞り込む。
+// 主キーカラム名を毎回書かなくてよい。where('id', $id) の代わりに使える。
+$queryBuilderInstance->whereKey(1)
+$queryBuilderInstance->whereKey([1, 2, 3]) // 複数の主キー値（whereIn と同様）
+$queryBuilderInstance->orWhereKey(1)
+// モデルインスタンスや Model の Collection を渡すと、その主キー値で絞り込む。
+$queryBuilderInstance->whereKey($user)
+$queryBuilderInstance->whereKey(User::where('active', true)->get())
+// $primaryKey が id 以外のときも、自動でそのカラムに対する条件になる。
+// $queryBuilderInstance->where('member_key', $accountId) と同等。
+$queryBuilderInstance->whereKey($accountId)->lockForUpdate()->firstOrFail();
+
 
 // クエリの結果を特定のカラムで並べ替える。
 // 第一引数は並べ替えるカラム。
@@ -1560,14 +1575,15 @@ $queryBuilderInstance->withCount('posts') // posts_countカラムが追加され
 
 // 「リレーション先が特定の条件を満たすかどうか」で絞り込む
 // 「公開中(is_published)」の投稿を1件でも持っているユーザーを取得
-$queryBuilderInstance->whereHas('posts', function ($query) {
-    $query->where('is_published', true);
+$queryBuilderInstance->whereHas('posts', function ($q) {
+    // この$qはリレーション先の'posts'に対するクエリである。
+    $q->where('is_published', true);
 })
 
 // whereHas ＋ Eagerロード
 // 「公開中」の投稿を持つユーザーを取得し、かつその投稿データも一緒に取得する
-$users = User::withWhereHas('posts', function ($query) {
-    $query->where('is_published', true);
+$users = User::withWhereHas('posts', function ($q) {
+    $q->where('is_published', true);
 })->get();
 // $users->first()->posts でデータにアクセス可能
 
@@ -2162,6 +2178,8 @@ class User
     }
 }
 
+
+// 中間テーブルは両テーブルをつなぐ接続アダプタで、そのアダプタの各接続に追加情報(pivot情報)も付与しておけるイメージ。
 
 
 // リレーションシップオブジェクト（クエリビルダ）BelongsToManyが返される。
