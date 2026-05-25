@@ -2053,7 +2053,7 @@ public function folder(): BelongsTo
 
 // hasOne()、hasMany()、belongsTo()の第二、第三引数は省略可能。省略した場合は従キーが「主Modelクラス名のスネークケース_id」、主キーが「id」となる。
 
-// ※すべてのリレーションの実態はクエリビルダなので、更に条件を追加できる。
+// ※すべてのリレーションの戻り値の実態はクエリビルダなので、更に条件を追加できる。
 public function authStaffComments(): HasMany
 {
     return $this->hasMany(StaffComment::class, 'user_member_id', 'id')
@@ -3154,7 +3154,7 @@ Request オブジェクトを使うことで、リクエストに関する情報
 
 
 
-Request $request が見られるもの：
+Request $request に入っているもの：
 ```php
 <?php
 // 1. ルートパラメータ
@@ -3206,8 +3206,19 @@ $request->input('page')
 }
 $request->name
 $request->input('name')
-```
 
+
+```
+Request $request からその場で取得できるもの：
+```php
+<?php
+
+// 「このリクエストでログインしている（認証済みの）ユーザー」
+$request->user()
+// Auth::user()でもいいが、$request->user()には以下の利点がある
+// 1.Request コンテキストが明確 — 「この HTTP リクエストの認証ユーザー」であることが読み取りやすい
+// 2.Facade を避けられる — 依存が $request に閉じる
+```
 
 例：
 
