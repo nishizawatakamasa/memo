@@ -2807,6 +2807,41 @@ require __DIR__ . '/binder.php';
 require __DIR__ . '/note.php';
 ```
 
+
+### Route::bind
+
+Route::bind は 「URL の {名前} を、コントローラーに渡す前に、決まった型（モデルなど）に変換する」 ための仕組み。  
+ルート引数の解決（ルートモデルバインディング）のカスタム版。   
+その解決の中で条件を満たさなければ abort(404) する、という使い方もできる。  
+例：
+```php
+
+<?php
+
+use App\Http\Controllers\Buyer\SellerProfileController;
+use App\Models\User;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Route;
+
+Route::middleware(['auth', 'can:buyer'])->group(function () {
+    Route::bind('sellerUser', function (string $id) {
+        // 出品者プロフィールは seller ロールのユーザーのみを対象にする。
+        $seller = User::query()->seller()->find($id);
+        // 対象外（buyer/admin）の ID やブロック済みは 404。
+        if ($seller === null || $seller->blocksUser((int) Auth::id())) {
+            abort(404);
+        }
+        // {sellerUser}に$sellerを渡す
+        return $seller;
+    });
+
+    Route::get('buyer/seller-profile/show/{sellerUser}', [SellerProfileController::class, 'show'])->name('buyer.seller_profile.show');
+    Route::get('buyer/seller-profile/{sellerUser}/reviews', [SellerProfileController::class, 'reviews'])->name('buyer.seller_profile.reviews');
+});
+
+```
+
+
 <a id="リダイレクト"></a>
 
 ## リダイレクト
