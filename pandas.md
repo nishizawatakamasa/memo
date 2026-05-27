@@ -665,6 +665,34 @@ pandasで欠損値を扱う場合、np.nanの使用が推奨されている。
 <a id="データ形式変換"></a>
 ## データ形式変換
 
+### 基本形
+```py
+# DataFrameの各行を要素とするアプローチを基本とする
+data = [
+    {'col_0': 0, 'col_1': 1, 'col_2': 2},
+    {'col_0': 3, 'col_1': 4, 'col_2': 5},
+    {'col_0': 6, 'col_1': 7, 'col_2': 8},
+]
+# 辞書をDataFrameに変換
+# 各要素(辞書)のキーが列名となり、値はそのまま値となる。
+df = pd.DataFrame(data)
+
+# read
+df = pd.read_parquet('test.parquet')
+df = pd.read_csv('test.csv')
+df = pd.read_clipboard() # 引数sepのデフォルト値は空白文字(sep=r'\s+')
+
+# to
+df.to_parquet('test.parquet')
+df.to_csv('test.csv', index=False)
+df.to_clipboard(index=False) # 引数sepのデフォルト値はタブ(sep=r'\t')
+
+# ※備考
+# parquet系の処理は uv add pyarrow が必要
+# clipboard系の処理の実態はcsv系。clipboard内に対しcsv系の処理を適用しているだけ。引数も基本的に同じ(ただし引数sepのデフォルト値は違う)。
+# csv(&clipboard)系の処理は、引数encodingで文字コードを指定できる(デフォルトは'utf-8')。DecodeやEncode周りのエラーが発生した場合、'shift-jis'、'cp932'、'utf-8-sig'などを指定することがある。。
+```
+
 ### pd.read_parquet
 ```py
 df = pd.read_parquet('hoge/fuga/piyo.parquet')
