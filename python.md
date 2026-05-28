@@ -54,10 +54,10 @@ None # 存在しないことを表すNoneType型の値。
 3.14_15_92
 
 # 文字列リテラル
-'hoge'
-"fuga"
+'foo'
+"bar"
 '''
-piyo
+baz
 '''
 
 # raw文字列
@@ -68,7 +68,7 @@ piyo
 # \r  復帰（CRLF系）
 # \\  バックスラッシュ
 # ※注意：正規表現関連の解析は「完成したPython文字列」を渡されたregexエンジンが独自に行うことであり、レイヤーが違う。regexエンジンはraw文字列かどうかに関心を持たない。
-r'hoge'
+r'foo'
 
 
 # 代入
@@ -107,7 +107,7 @@ a, b, *_ = (0, 1, 2, 3, 4) # 必要のない値は慣例的にアンダースコ
 
 # 展開した値を引数に指定すると、それぞれの値が個別の引数として渡される。
 # dictに**を付けて引数に指定すると、要素のキーが引数名、値が引数の値として展開されて、それぞれ個別の引数として渡される。
-hoge = fuga(*li, **di)
+foo = bar(*li, **di)
 
 
 # 可変長引数
@@ -115,7 +115,7 @@ hoge = fuga(*li, **di)
 # 関数定義で引数に*をつけると、複数の引数をタプルとして受け取る。
 # 関数定義で引数に**をつけると、複数のキーワード引数を辞書として受け取る。
 # 慣例として*args, **kwargsという名前が使われることが多い。
-def hoge(*args, **kwargs):
+def foo(*args, **kwargs):
     pass
 
 
@@ -1041,12 +1041,12 @@ settings.jsonに設定
 ## Pyinstallerを使ったスクリプトのexe化
 
 ### exe化したいスクリプトがあるディレクトリで以下のコマンドを実行。  
-`pyinstaller hoge.py --noconsole --onefile --icon=fuga.ico`
+`pyinstaller foo.py --noconsole --onefile --icon=bar.ico`
 
 ### 主なオプション
 * `--noconsole` ： コンソール（コマンドプロンプト）を表示しない。
 * `--onefile` ： 関連ファイルを1つにまとめてexeファイルを作成する。
-* `--icon=../icon/fuga.ico`： exeファイルのアイコンを変更。*.icoファイルまでのパスを指定。
+* `--icon=../icon/bar.ico`： exeファイルのアイコンを変更。*.icoファイルまでのパスを指定。
 * `--name=SimpleTube`： exeファイルの名前を指定できる。
 
 
@@ -1243,7 +1243,7 @@ from abc import ABCMeta, abstractmethod
 class BaseSe(metaclass=ABCMeta):
 
     @abstractmethod
-    def hoge(self):
+    def foo(self):
       pass
 ```
 

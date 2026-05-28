@@ -677,19 +677,20 @@ data = [
 # 各要素(辞書)のキーが列名となり、値はそのまま値となる。
 df = pd.DataFrame(data)
 
-# read
-df = pd.read_parquet('test.parquet')
-df = pd.read_csv('test.csv')
-df = pd.read_clipboard() # 引数sepのデフォルト値は空白文字(sep=r'\s+')
-
 # to
 df.to_parquet('test.parquet')
 df.to_csv('test.csv', index=False)
-df.to_clipboard(index=False) # 引数sepのデフォルト値はタブ(sep=r'\t')
+df.to_clipboard(index=False) # 引数sepのデフォルト値はタブ(sep='\t')
+
+# read
+df = pd.read_parquet('test.parquet')
+df = pd.read_csv('test.csv')
+df = pd.read_clipboard(sep='\t') # 引数sepのデフォルト値は空白文字(sep=r'\s+')
 
 # ※備考
 # parquet系の処理は uv add pyarrow が必要
 # clipboard系の処理の実態はcsv系。clipboard内に対しcsv系の処理を適用しているだけ。引数も基本的に同じ(ただし引数sepのデフォルト値は違う)。
+# csv(&clipboard)系の処理は「改行で各レコードを区切る」「各レコードの中で引数sepを適用」という別レイヤー処理をしている。
 # csv(&clipboard)系の処理は、引数encodingで文字コードを指定できる(デフォルトは'utf-8')。DecodeやEncode周りのエラーが発生した場合、'shift-jis'、'cp932'、'utf-8-sig'などを指定することがある。。
 ```
 
@@ -765,12 +766,12 @@ df.to_csv('hoge/fuga/piyo.csv',  sep=',', header=True, index=True, encoding=utf-
 
 ### df.to_clipboard
 ```py
-df.to_clipboard(excel=True, sep=r'\t', **kwargs)
+df.to_clipboard(excel=True, sep='\t', **kwargs)
 ```
 * 内部的にはto_csvが動いているため、基本的な引数や挙動はto_csvと同じ。
 * 違い
     * データはファイルとして出力されず、クリップボードにコピーされる。
-    * 引数sepのデフォルト値がタブ(sep=r'\t')
+    * 引数sepのデフォルト値がタブ(sep='\t')
     * excel=Falseとすると、print(df)で表示される文字列がそのままクリップボードに書き込まれる。
 
 ### df.to_excel
