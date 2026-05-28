@@ -101,7 +101,16 @@ DataFrame.columns.name = None # columns自体にタイトルをつける。※No
 |Series.to_numpy()|データ値属性(NumPy配列=ndarray)。|
 |Series.to_list()|シリーズをリストに変換。|
 |Series.to_dict()|シリーズを辞書に変換。|
-* Seriesをforループに適用するとその値が順に取得できる。
+|Series[3:15]|シリーズをスライスで取得※基準はindex番号であり、indexの名前ではない。|
+```py
+# Seriesをforループに適用するとその値が順に取得できる。
+for value in s:
+    ...
+
+# s.items()は反復可能なタプル（インデックス、値）を返す。
+for index, value in s.items():
+    ...
+```
 
 
 ### データ型
@@ -578,8 +587,10 @@ indicator=Trueとすると'_merge'という名前の列が追加され、both, l
 ### 基本
 ```py
 # コンキャット関数
-# キーには列名を使用する。
+# キーには列名が使用される。
+# indexラベルを0からの連番に振り直したい場合は、引数ignore_indexをTrueに指定する。
 df = pd.concat([df1, df2, df3])
+df = pd.concat([s1, s2, s3])
 ```
 
 ### 引数join
