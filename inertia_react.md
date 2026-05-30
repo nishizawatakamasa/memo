@@ -1016,6 +1016,35 @@ export default function Page() {
 
 #### useState
 #### useContext
+propsを何層も中継しなくても、コンポーネントツリーの下位で値を読める。  
+`createContext`でContextを作り、上位で`<Provider value={...}>`で値を渡し、`useContext`で最も近いProviderの`value`を取得する。  
+Providerがない場合は`createContext`の第2引数（デフォルト値）が使われる。
+
+```tsx
+import { createContext, useContext, useState } from 'react';
+
+type Theme = 'light' | 'dark';
+
+const ThemeContext = createContext<Theme>('light');
+
+const App = () => {
+  const [theme, setTheme] = useState<Theme>('light');
+
+  return (
+    <ThemeContext.Provider value={theme}>
+      <Toolbar onToggle={() => setTheme(t => (t === 'light' ? 'dark' : 'light'))} />
+    </ThemeContext.Provider>
+  );
+};
+
+const Toolbar = ({ onToggle }: { onToggle: () => void }) => {
+  const theme = useContext(ThemeContext);
+
+  return <button onClick={onToggle}>theme: {theme}</button>;
+};
+```
+
+* Pageが持つ共有state（Inertiaの`usePage().props`など）とは別に、Reactツリー内だけで共有したいUI用の値（テーマ、モーダルの開閉状態など）に向く。
 
 
 #### useEffect
@@ -1071,6 +1100,22 @@ const MyConversation = () => {
 
 
 #### useCallback
+第一引数はメモ化したい関数。第二引数は依存配列。依存配列の値が変わらない限り、同じ関数インスタンスを返す。  
+`useMemo`が「計算結果の値」、`useCallback`が「関数そのもの」を再利用するイメージ。  
+`useCallback(fn, deps)`は`useMemo(() => fn, deps)`とほぼ同じ。
+
+```tsx
+import { useCallback } from 'react';
+
+const handleClick = useCallback(() => {
+  console.log(count);
+}, [count]); // countが変わったときだけ関数を作り直す
+```
+
+* 子に関数をpropsで渡し、子が`React.memo`で最適化されているとき、親の再レンダリングのたびに子まで再描画されるのを防ぎたい場合に使う。
+* 詳しくは後述の「### useCallback」セクション参照。
+
+
 #### useMemo
 第一引数はメモ化したい値を計算する関数。同じ引数に対して必ず同じ返り値を返す必要がある。  
 第二引数は依存配列。Reactは、依存配列の中の値が変更されたときだけuseMemo内の関数を再実行する。  
