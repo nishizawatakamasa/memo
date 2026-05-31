@@ -20,6 +20,7 @@
     * [pivot_table](#pivot_table)
     * [crosstab](#crosstab)
     * [離散化](#離散化)
+    * [pipe](#pipe)
     * [その他](#その他)
 
 <a id="基本的なこと"></a>
@@ -974,6 +975,15 @@ def crosstab(
 
 * pd.cut()：データの間隔を基準にしてビン分割
 * pd.qcut()：データの個数を基準にしてビン分割
+
+
+
+<a id="pipe"></a>
+## pipe
+|||
+|-|-|
+|Series.pipe(lambda s: pd.to_numeric(s, errors='coerce'))|呼び出したSeries自身を引数の関数に渡し、戻り値を返す。メソッドチェーンを途切れさせないことが価値。|
+|DataFrame.pipe(lambda df: ...)|Series.pipe()と同じ発想。違いは、渡されるオブジェクトが Series か DataFrame かだけ。|
 
 
 
