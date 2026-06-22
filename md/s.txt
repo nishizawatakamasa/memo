@@ -1,0 +1,75 @@
+1
+
+meta_html　すでに魔法っぽいし、対の取得機能はありかも？
+
+read_meta(html_path) -> dict
+保存 HTML 先頭の quickquery:* meta を parse。extract 以外（clean.ipynb など）でも使える。
+
+2
+
+. read_meta(parser, prefix='quickquery:') ★
+meta_html で書くヘルパはあるのに読むヘルパが無く、抽出側で4回手書きしてます：
+
+'url_index': p.i('meta[name="quickquery:url_index"]').attr('content'),
+'saved_at':  p.i('meta[name="quickquery:saved_at"]').attr('content'),
+...
+meta_html の対になる read_meta を足すと、書き/読みが対称になり #1 の base_url 供給源にもなります。
+meta = read_meta(parser)  # {'url_index': ..., 'final_url': ...}
+p = quick_parser(parser, base_url=meta.get('final_url'))
+
+
+
+今:
+p.i('meta[name="quickquery:url_index"]').attr('content')
+こうなる:
+p.meta('url_index')  # 'quickquery:' プレフィックスを自動補完
+meta_html(...) で埋めて QuickParser で読むパターンが extract.py に何度も登場する。書く量が多い割に意味が薄い部分なので、対称 API として meta(name) を持たせると clean になる。
+
+
+
+3
+圧縮HTML（.html.gz）透過対応
+「生HTMLを真実として全部残す」コンセプトだと数万件でディスクが効いてきます。write_text/parse_html が拡張子で gzip を透過処理できると、コンセプト（保存して再抽出）を維持したまま容量を大きく削れます。selectolax は bytes を食えるので展開もシンプル。
+
+
+4
+ 型の Literal 化: w(..., state: str) は Literal['attached','visible','hidden','detached']、__getitem__ の返り値 union など。実害は薄いですが、from __future__ import annotations + 全部型付けの今の丁寧さと揃います。
+
+
+5
+. 空（None）に「なぜ空か」を記憶させる ─ Maybe with provenance
+今の null 安全は美しいけど、理由を捨てている。p.i('a').n('dd').text が None のとき、a が無かったのか dd が無かったのか分からない。数万件のデバッグでは、この「どこで途切れたか」こそが知りたい情報。
+思想：空ラッパに「どのセレクタまで生きてて、どこで死んだか」のパンくずを持たせる。例外は投げない（fail-soft 思想は維持）が、elem.trail で「a は取れたが n('dd') で消滅」と言える。__bool__ で分岐する今のスタイルを壊さず、Maybe を Either に近づけるだけ。#1 の coverage とも噛み合います。
+
+思想案: さらに踏み込むなら、extract 結果に 「取れなかった理由」 をメタとして持つ（quickquery:miss:価格=selector_miss など）。
+失敗 CSV も「エラー」ではなく サイトについてのデータ として位置づける。
+「完璧な scraper」より 不完全だが再現可能な観測 を価値の中心に置く。
+
+6
+context起動時に処理挟める引数？
+画像ブロックや、 cookies を復元
+
+
+
+
+
+7
+counter の上限
+for page_num in counter(max=500):  # 無限ループ防止
+crawl.py の for page_num in counter(): は便利ですが、サイト側の仕様変更で止まらないリスクがあるので、上限付きが安全。
+
+8
+今の meta は url_index / saved_at など。追加候補:
+quickquery:goto_status — HTTP ステータス
+
+9
+htmlをブラウザ起動してpage操作する方法あるか？
+
+10
+html取得時CSSも取れるだろうか？
+
+
+
+
+
+
