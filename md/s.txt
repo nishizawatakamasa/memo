@@ -7,26 +7,6 @@
 
 
 
-5
-. 空（None）に「なぜ空か」を記憶させる ─ Maybe with provenance
-今の null 安全は美しいけど、理由を捨てている。p.i('a').n('dd').text が None のとき、a が無かったのか dd が無かったのか分からない。数万件のデバッグでは、この「どこで途切れたか」こそが知りたい情報。
-思想：空ラッパに「どのセレクタまで生きてて、どこで死んだか」のパンくずを持たせる。例外は投げない（fail-soft 思想は維持）が、elem.trail で「a は取れたが n('dd') で消滅」と言える。__bool__ で分岐する今のスタイルを壊さず、Maybe を Either に近づけるだけ。#1 の coverage とも噛み合います。
-
-思想案: さらに踏み込むなら、extract 結果に 「取れなかった理由」 をメタとして持つ（quickquery:miss:価格=selector_miss など）。
-失敗 CSV も「エラー」ではなく サイトについてのデータ として位置づける。
-「完璧な scraper」より 不完全だが再現可能な観測 を価値の中心に置く。
-
-6
-context起動時に処理挟める引数？
-画像ブロックや、 cookies を復元
-
-
-
-
-8
-今の meta は url_index / saved_at など。追加候補:
-quickquery:goto_status — HTTP ステータス
-
 9
 htmlをブラウザ起動してpage操作する方法あるか？
 
