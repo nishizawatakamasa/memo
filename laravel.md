@@ -58,6 +58,7 @@
   - [イベント購読](#イベント購読)
   - [メール](#メール)
   - [DBトランザクション](#DBトランザクション)
+  - [定期削除](#定期削除)
   - [テスト](#テスト)
   - [LaravelHerd](#LaravelHerd)
   - [ERDを作成](#ERDを作成)
@@ -5038,6 +5039,280 @@ function withdraw(int $accountId, int $amount): void
     });
 }
 ```
+
+
+
+
+<a id="定期削除"></a>
+
+## 定期削除
+
+定期削除（Model Pruning）
+
+古い DB レコードを **定期的に自動で消す** ときの実装メモ。  
+Laravel 標準の **Model Pruning**（`Prunable` トレイト + `model:prune` コマンド）を使う。
+
+---
+
+### 1. これは何のため？
+
+「古くなったデータを、人が毎回消さなくても、決まったタイミングで DB から片付ける」ための仕組み。
+
+例:
+
+- 90 日より古いアクセスログ
+- 有効期限切れの一時データ
+- 作成から N ヶ月経った履歴
+
+**定期削除がやること:** DB のお掃除  
+**定期削除がやらないこと:**
+
+- 画面に出さないだけ → 一覧クエリの `where` で足りる
+- ユーザーがボタンで消す → コントローラの `delete()` で足りる
+
+この 3 つは別物。混同すると「画面では見えないのに DB には残ってる」みたいな状態になる。
+
+---
+
+### 2. ざっくり流れ
+
+```mermaid
+flowchart TD
+    A[データが作られる] --> B[created_at など基準日時が入る]
+    B --> C[普通に使われる]
+    C --> D{古くなった?}
+    D -->|まだ| C
+    D -->|古い| E[削除候補]
+    F[本番: 毎日 cron が schedule:run] --> G[model:prune が走る]
+    G --> E
+    E --> H[1件ずつ delete]
+```
+
+**自分で書く部分はだいたい 2 つ:**
+
+1. モデルに「何を古いとみなすか」（`prunable()`）
+2. いつ `model:prune` を走らせるか（`bootstrap/app.php` のスケジュール）
+
+あとは Laravel がコマンド実行時に勝手に削除してくれる。
+
+---
+
+### 3. `Prunable` トレイト — 何を書いて、何を書かなくていいか
+
+モデルに `use Prunable;` すると、Laravel の削除ロジックが使えるようになる。
+
+#### 自分で書くもの / 書かなくていいもの
+
+| 名前 | 自分で書く？ | 説明 |
+|------|-------------|------|
+| `use Prunable;` | **書く** | トレイトをモデルに付ける。これだけで削除機能の土台ができる |
+| `prunable()` | **書く（必須）** | 「どの行を消すか」を返すクエリ。**ここだけが必須の実装** |
+| `pruning()` | 書いてもいい（任意） | 1 件消す直前にやりたい処理（S3 のファイル削除など） |
+| `pruneAll()` | **書かない** | トレイト側に最初から入っている。`prunable()` の結果を少しずつ（チャンク）削除する処理。**触る必要なし** |
+| `model:prune` コマンド | **書かない** | Laravel 標準。スケジュールから呼ぶだけ |
+
+つまり **アプリ側が実装するのは基本 `prunable()` だけ**。  
+「削除の実行ループ」は Laravel が `pruneAll()` 経由でやってくれる。
+
+#### モデルの例
+
+```php
+use Illuminate\Database\Eloquent\Prunable;
+
+class ActivityLog extends Model
+{
+    use Prunable;
+
+    // ★ これだけ必須。「90日より古い行」を返す
+    public function prunable(): Builder
+    {
+        return static::query()
+            ->where('created_at', '<=', now()->subDays(90));
+    }
+
+    // ★ 任意。消す直前にファイル削除などしたいときだけ
+    protected function pruning(): void
+    {
+        // Storage::delete($this->path);
+    }
+}
+```
+
+`prunable()` が返すのは **削除対象の行を絞り込んだクエリ**。  
+`model:prune` がこれを見て、該当行を `delete()` する。
+
+`SoftDeletes` を使っていなければ **ゴミ箱ではなく DB から完全に消える**。
+
+---
+
+### 4. `Prunable` と `MassPrunable` の違い
+
+どちらも「古い行を消す」用。規模と要件で選ぶ。
+
+| | `Prunable` | `MassPrunable` |
+|--|-----------|----------------|
+| 消し方 | 1 件ずつ `delete()` | SQL の一括 DELETE |
+| モデルイベント | 走る | 走らない |
+| `pruning()` | 使える | 使えない |
+| 向いてるケース | 消す前にファイル削除などしたい | 件数が多くて速度優先 |
+
+**消す前に後始末が要るなら `Prunable`。** 単純に大量の行を捨てたいなら `MassPrunable`。
+
+---
+
+### 5. スケジュール登録（いつ自動実行するか）
+
+Laravel 12 では `bootstrap/app.php` に書く。
+
+```php
+->withSchedule(function (Schedule $schedule): void {
+    $schedule->command('model:prune', [
+        '--model' => [ActivityLog::class],  // このモデルだけ対象
+    ])
+        ->daily()                          // 1日1回
+        ->withoutOverlapping()             // 前回が終わってなければ次はスキップ
+        ->environments(['production']);    // 本番だけ（local では動かない）
+})
+```
+
+| 設定 | 何をしてるか |
+|------|-------------|
+| `model:prune` | Laravel 標準の削除コマンドを呼ぶ |
+| `--model` | 対象モデルを限定。付けないと Prunable 付き全モデルが対象になるので注意 |
+| `daily()` | 1 日 1 回。`hourly()` なども可 |
+| `withoutOverlapping()` | 前の実行が長引いてるとき二重実行しない |
+| `environments(['production'])` | local ではスケジュールに載せない |
+
+#### 本番で実際に動くまでの経路
+
+```
+サーバーの cron（毎分）
+  → php artisan schedule:run
+    → daily なら 1 日 1 回 model:prune
+      → ActivityLog::prunable() で対象を取得
+        → トレイト内の pruneAll() が 1 件ずつ delete()
+```
+
+**cron が無いとスケジュールは一切動かない。** 本番デプロイ時に要確認。
+
+#### 手動で試す（開発中）
+
+```bash
+php artisan model:prune --model=App\Models\ActivityLog
+```
+
+#### 削除タイミングについて
+
+「90 日経った瞬間に消える」わけではない。  
+`daily()` なら **次の実行タイミングまで最大 1 日くらい残る** ことがある。  
+即時性が必要なら `hourly()` や Job を検討。
+
+---
+
+### 6. `model:prune` が内部でやってること
+
+1. 対象モデルを決める（`--model` 指定 or Prunable 付き全モデル）
+2. 各モデルの `prunable()` を呼ぶ → 「消す行」のクエリが返る
+3. トレイトの `pruneAll()` が、クエリ結果をチャンクで回しながら 1 件ずつ `delete()`
+4. 任意で `pruning()` があれば、その直前に実行
+5. 何件消したかログに出す
+
+**3〜4 は自分で書かない。** `use Prunable` した時点で Laravel 側の処理。
+
+---
+
+### 7. 表示フィルタと定期削除は別
+
+よくあるパターン:
+
+- 一覧: `whereDate('created_at', '>=', now()->subDays(90))` → **古いのは画面に出さない**
+- 定期削除: `where('created_at', '<=', now()->subDays(90))` → **DB から消す**
+
+| | 表示フィルタ | 定期削除 |
+|--|-------------|---------|
+| 目的 | 見せない | 消す |
+| いつ | ページを開くたび | スケジュール（例: 1日1回） |
+| DB | 行は残る | 行が消える |
+
+`whereDate`（日付）と `where`（日時）を混ぜると、  
+**「画面にはもう出ないのに DB にはまだある」** 期間ができる。  
+仕様として OK か、判定を揃えるか、事前に決めておく。
+
+---
+
+### 8. テストの書き方（Pest）
+
+「ギリギリ消える行」と「ギリギリ残る行」を 1 秒差で作って、`model:prune` を叩く。
+
+```php
+test('model prune deletes records older than retention period only', function () {
+    // 90日 − 1秒 → 消えるはず
+    $old = ActivityLog::query()->create(['message' => 'old']);
+    $old->forceFill([
+        'created_at' => now()->subDays(90)->subSecond(),
+    ])->save();
+
+    // 90日 + 1秒 → 残るはず
+    $recent = ActivityLog::query()->create(['message' => 'recent']);
+    $recent->forceFill([
+        'created_at' => now()->subDays(90)->addSecond(),
+    ])->save();
+
+    $this->artisan('model:prune', ['--model' => [ActivityLog::class]]);
+
+    $this->assertModelMissing($old);
+    $this->assertModelExists($recent);
+});
+```
+
+`created_at` をいじるのは **テストだけ**。本番コードではやらない。
+
+---
+
+### 9. 実装するときのチェックリスト
+
+- [ ] モデルに `use Prunable` と `prunable()` を書いた
+- [ ] 消す基準になる列（`created_at` 等）がマイグレーションにある
+- [ ] `bootstrap/app.php` にスケジュールを書いた
+- [ ] `--model` で対象を限定した
+- [ ] 境界テストを書いた
+- [ ] 本番 cron（`schedule:run`）が動いてる
+- [ ] 手動削除ルートと役割が被ってないか確認した
+- [ ] 消す前にファイル削除などが要るなら `pruning()` を書いた
+
+---
+
+### 10. ハマりどころ
+
+| 症状 | だいたいの原因 |
+|------|---------------|
+| local で消えない | `environments(['production'])` で local は除外してる |
+| 本番でも消えない | cron / `schedule:run` が動いてない |
+| 想定と違う行が消える / 残る | `whereDate` と `where` の混在、秒単位の境界 |
+| 消えるのが 1 日遅い | `daily()` だから（仕様） |
+| 知らないモデルまで消えた | `--model` なしで `model:prune` を実行した |
+
+---
+
+### 11. 用語メモ
+
+| 用語 | ひとことで |
+|------|-----------|
+| Pruning | Laravel の「古いモデル行を定期削除」機能 |
+| `Prunable` | 削除対象を定義するトレイト。`pruneAll()` なども一緒についてくる |
+| `prunable()` | **自分で書く。** 消す行の条件 |
+| `pruning()` | **任意。** 1 件消す直前の処理 |
+| `pruneAll()` | **書かない。** トレイトが持ってる削除実行ロジック |
+| `model:prune` | **書かない。** Artisan コマンド。スケジュールから呼ぶ |
+
+---
+
+### 12. 公式ドキュメント
+
+- [Eloquent: Pruning Models](https://laravel.com/docs/eloquent#pruning-models)
+- [Task Scheduling](https://laravel.com/docs/scheduling)
+
+
 
 
 
