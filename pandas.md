@@ -15,10 +15,7 @@
     * [型変換](#型変換)
     * [欠損値の取り扱い](#欠損値の取り扱い)
     * [データ形式変換](#データ形式変換)
-    * [melt](#melt)
-    * [pivot](#pivot)
-    * [pivot_table](#pivot_table)
-    * [crosstab](#crosstab)
+    * [データ変形](#データ変形)
     * [離散化](#離散化)
     * [pipe](#pipe)
     * [その他](#その他)
@@ -815,81 +812,40 @@ df.to_markdown('hoge/fuga/piyo.md', index=True, mode='w')
 * [【保存版】Pandas2.0のread_csv関数の全引数、パフォーマンス、活用テクニックを完全解説する！](https://qiita.com/fujine/items/dbe2f5e4101d6299ff12#encoding)
 
 
-<a id="melt"></a>
-## melt
+<a id="データ変形"></a>
+## データ変形
 
-### 基本
-横持ちのDataFrameを縦持ちのDataFrameに再構築する(DB的になる)。  
-コンピュータにとってわかりやすい表になるイメージ。
+**変換の脳内アニメーションイメージ**  
+index,columns,valuesの3列縦持表<-->横持表
+
+- pivot_table / pivot
+    1. indexの値でデータを括ってまとめる
+    1. 同じ (index, columns) の組み合わせ重複を処理する
+        - pivot_tableの場合：集計
+        - pivotの場合：エラー
+    1. columns列とvalues列を、各indexごとに右に横倒しにする
+        - columnsは列見出し、valuesは値となる。
+        - 全ての列見出しの整合性をとり、indexとcolumnsの組み合わせが存在しないセルは欠損値となる。  
+- melt
+    1. 各index値に対し、行の値と列名を左に縦起こしにして対応させる。
+        - 各index値は、対応する縦起こしデータの行数分に広がり、増える。
+
+
+### pivot_table
+重複するエントリは集計される。  
+集計時、欠損値は存在しないものとして扱われる。    
+指定したindexとcolumnsの組み合わせの集計対象データが存在しない場合、欠損値となる。  
 ```py
-# DataFrameを三種類のカラム(id_vars, variable, value)に再構築して返す。
-df_melted = df.melt(
-    # 列名か列名リストを指定。指定した列はid_varsカラムとなり、meltされずにそのまま残る。
-    id_vars,
-    # 列名か列名リストを指定。指定した列の列名はvariableカラムとなり、値はvalueカラムとなる。
-    # デフォルトでは、id_varsとして設定されていないすべての列。
-    value_vars,
-    # variableカラムの列名を指定(デフォルトはcolumns自体のタイトルで、無い場合は'variable')。
-    var_name,
-    # valueカラムの列名を指定(デフォルトは'value')。
-    value_name,
-)
-```
-
-### 再構築したDataFrameのイメージ
-|id_vars|variable(列名はvar_name)|value(列名はvalue_name)|
-|-|-|-|
-|id_vars指定列(全列、全行)|value_vars指定列の列名(1列目)|value_vars指定列(1列目、全行)|
-|id_vars指定列(全列、全行)|value_vars指定列の列名(2列目)|value_vars指定列(2列目、全行)|
-|id_vars指定列(全列、全行)|value_vars指定列の列名(3列目)|value_vars指定列(3列目、全行)|
-|id_vars指定列(全列、全行)|value_vars指定列の列名(4列目)|value_vars指定列(4列目、全行)|
-|id_vars指定列(全列、全行)|value_vars指定列の列名(5列目)|value_vars指定列(5列目、全行)|
-
-
-### 参考サイト
-* [pandas.melt — pandas 2.2.2 documentation](https://pandas.pydata.org/docs/reference/api/pandas.melt.html)
-* [データフレームを再構築するPandasのMelt()関数のお話し](https://www.salesanalytics.co.jp/datascience/datascience021/)
-
-
-
-<a id="pivot"></a>
-## pivot
-
-重複するエントリがなく(あったらエラーが発生)、単にmeltの逆処理をしたい場合に使う。
-指定したindexとcolumnsの組み合わせの対象データが存在しない場合、その項目はNaNになる。    
-人間にとってわかりやすい表になるイメージ。
-
-
-```py
-# DataFrameの三種類のカラム(id_vars, variable, value)を橫持ちに再構築して返す。
-df_pivoted = df.pivot(
-    # id_varsに対応する列名リストを指定。
+df_pivoted = df.pivot_table(
+    # 列名を指定。必須。結果のindexとなる。
+    # ※列名リストも指定できるが複雑な特殊ケースのみ。
     index,
-    # variableに対応する列名を指定。
+    # 列名を指定。必須。結果のcolumnsとなる。
+    # ※列名リストも指定できるが複雑な特殊ケースのみ。
     columns,
-    # valueに対応する列名を指定。
-    values,
-).reset_index() # indexを振り直す。
-# columnsのタイトルを消す。
-df_pivoted.columns.name = None
-```
-
-
-<a id="pivot_table"></a>
-## pivot_table
-
-重複するエントリを集計したい場合に使う。
-指定したindexとcolumnsの組み合わせの集計対象データが存在しない場合、その項目の集計結果はNaNになる。
-使用前に欠損値の処理を済ませておくのが無難。  
-
-
-```py
-df_pt = df.pivot_table(
-    # 必須。列名か列名リストを指定。結果の行見出し。
-    index,
-    # 必須。列名か列名リストを指定。結果の列見出し。
-    columns,
-    # 列名か列名リストを指定。集計対象のデータ。デフォルトはindexとcolumnsに指定していないデータ型が数値の列全て。
+    # 列名を指定。集計対象のデータとなる。
+    # デフォルトはindexとcolumnsに指定していないデータ型が数値の列全て。
+    # ※列名リストも指定できるが複雑な特殊ケースのみ。
     values,
     # 集計方法を文字列で指定するか、自分で集計関数を定義して指定する。
     # 自作の集計関数は、引数でSeriesを受け取り、スカラー値を返す必要がある。
@@ -901,73 +857,48 @@ df_pt = df.pivot_table(
     # 'prod': 積。
     # 'min': 最小値。
     # 'max': 最大値。
-    # 'count': 要素の個数をカウント。pd.crosstab()と同様に、カテゴリごとの出現回数が算出できる。
+    # 'count': 要素の個数をカウント。
     # 'std': 標準偏差。
     # 'var': 分散。
     # 'first': 最初の値を取得。
     # 'last': 最後の値を取得。
     aggfunc,
+).reset_index() # indexを連番に振り直す(pivot_tableの引数で指定したindexを普通の列へ戻すため。そのほうが扱いやすいことが多い)。
+# columnsのタイトルを消す(pivot_tableの引数で指定したcolumnsの列名。ラベルが邪魔になることがあるので消す)。
+df_pivoted.columns.name = None
+```
 
-    # Trueとすると、小計と総計も算出できる。
-    margins: bool = False,
-    # 小計・総計の行ラベル・列ラベルを文字列で指定。デフォルトは'All'。
-    margins_name: Level = "All",
+### pivot
+重複するエントリがあった場合、エラーが発生する。  
+指定したindexとcolumnsの組み合わせの対象データが存在しない場合、欠損値となる。    
+```py
 
-    # 結果をソートするかどうかを指定。
-    sort: bool = True,
-    # 保留
-    observed: bool | lib.NoDefault = lib.no_default,
+df_pivoted = df.pivot(
+    index,
+    columns,
+    values,
+).reset_index()
+df_pivoted.columns.name = None
+```
+
+### melt
+pivotの逆処理のイメージ
+```py
+# DataFrameを三種類のカラム(id_vars, variable, value)に再構築して返す。
+df_melted = df.melt(
+    # 列名を指定。指定列はid_varsカラムとなる。
+    # ※列名リストも指定できるが複雑な特殊ケースのみ。
+    id_vars,
+    # 列名か列名リストを指定。指定列の列名がvariableカラムとなり、値がvalueカラムとなる。
+    # デフォルトでは、id_varsとして設定されていないすべての列。
+    value_vars,
+    # variableカラムの列名を指定(デフォルトはcolumns自体のタイトルで、無い場合は'variable')。
+    var_name,
+    # valueカラムの列名を指定(デフォルトは'value')。
+    value_name,
 )
 ```
 
-
-<a id="crosstab"></a>
-## crosstab
-
-### 基本
-```py
-# クロス集計表を作成する関数
-# crosstabで出来ることは基本的にpivot_tableでも出来るので、pivot_tableを使う。
-# ただし、crosstabだと結果を1に規格化（正規化）したりできる。
-df = pd.crosstab()
-```
-
-```py
-def crosstab(
-    # 行に表示するカテゴリ変数(Series、またはSeriesのリスト)
-    # Seriesのリストを指定した場合、Multiindexになる。
-    index,
-    # 列に表示するカテゴリ変数(Series、またはSeriesのリスト)
-    # Seriesのリストを指定した場合、Multiindexになる。
-    columns,
-    # index名をリストで指定。
-    # 要素数が、indexに指定したSeries数と一致する必要がある。
-    rownames=None,
-    # columns名をリストで指定。
-    # 要素数が、columnsに指定したSeries数と一致する必要がある。
-    colnames=None,
-    # Trueで集計表に小計を追加する。
-    margins: bool = False,
-    # 小計の項目名を文字列で指定。
-    margins_name: Hashable = "All",
-    # aggfuncで集計する量的変数(Series)。
-    # aggfuncを同時に指定する必要がある。
-    values=None,
-    # valuesを集計する方法を文字列で指定(主に'sum'、'max'、'min'、'mean'、'median')。
-    # valuesを同時に指定する必要がある。
-    aggfunc=None,
-    # True(初期値)だと、全てが欠損値の列を含めない。
-    # Falseだと含める。
-    dropna: bool = True,
-    # 全ての値を値の合計で割って正規化する。
-    # False(初期値)だと正規化されない。
-    # 'all'が渡されると全ての値が正規化される。
-    # 'index'が渡されると各行の値が正規化される。
-    # 'columns'が渡されると各列の値が正規化される。
-    # ※marginsがTrueの場合、小計値も正規化される。
-    normalize: bool = False,
-) -> DataFrame:
-```
 
 
 <a id="離散化"></a>
