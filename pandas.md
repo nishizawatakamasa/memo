@@ -309,7 +309,7 @@ Series[boolのSeries]
 ### 正規表現関連
 |||
 |-|-|
-|★Series.str.extract(pat)|最初のマッチ部分のみ抽出。<br>キャプチャ部分がそれぞれ列となったDataFrameを返す。 <br>キャプチャに名前を付けると、それがそのまま列名となる。|
+|★Series.str.extract(pat)|最初のマッチ部分のみ抽出。<br>キャプチャ部分がそれぞれ列となったDataFrameを返す。 <br>キャプチャに名前を付けると、それがそのまま列名となる。<br>キャプチャグループが1つの場合は、expand=FalseでSeriesに畳むこともできる。|
 |Series.str.extractall(pat)|すべてのマッチ部分を抽出。<br>キャプチャ部分がそれぞれ列となり、マッチ部分がそれぞれ行となったマルチインデックスのDataFrameを返す。<br>※マッチする部分が一つしかなくてもindexはマルチインデックスとなる。<br>キャプチャに名前を付けると、それがそのまま列名となる。|
 |Series.str.findall(pat)||
 |Series.str.replace(pat, repl, regex=True)|※ DataFrame.replace, Series.replaceのほうが便利。|
