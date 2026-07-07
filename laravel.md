@@ -1573,8 +1573,10 @@ $queryBuilderInstance->has('posts', '>=', 3)
 // withAvg: 平均
 // withMax: 最大
 // withMin: 最小
+// withExists: 存在有無（例: posts_exists）。1件以上あれば true、なければ false
 $queryBuilderInstance->withCount('posts') // posts_countカラムが追加される
     ->withSum('orders', 'price')  // orders_sum_priceカラムが追加される
+    ->withExists('posts')         // posts_existsカラムが追加される
 // すべてに load 版も存在する
 
 // 「指定したリレーション先を一件でも持っている」という条件で絞り込む
