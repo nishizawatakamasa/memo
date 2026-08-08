@@ -70,6 +70,10 @@
 <a id="概要"></a>
 
 ## 概要
+
+Laravel 情報4工程に対応
+
+
 Laravelは
 * トリガーからCallableを実行する。
 * Callable内で道具を使える。

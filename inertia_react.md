@@ -909,7 +909,9 @@ const { name, quote, auth, flash, ziggy, sidebarOpen, unreadNotificationCount } 
 <a id="React"></a>
 ## React
 
-**結局全てJSコードであり、JSの世界。ただし特殊hookやjsx糖衣などの、React特有の特殊機能が追加されている。jsxには{}でjs値を埋め込める。**
+**結局jsの世界、jsの処理、jsの値**
+
+全てJSコードであり、JSの世界。ただし特殊hookやjsx糖衣などの、React特有の特殊機能が追加されている。jsxには{}でjs値を埋め込める。
 
 - stateの種類は大きく3つ
   - 表示情報そのもの（主役）
