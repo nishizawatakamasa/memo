@@ -16,13 +16,13 @@ Text
 [開発者] 
    │ git push
    ▼
-[GitHub Actions (無料の強力なUbuntu環境)]
+[GitHub Actions]
    │ ① PHPライブラリ取得 (composer install)
    │ ② Reactのビルド (npm run build ➔ JS/CSSの静的ファイルを生成)
    │ ③ TreeliteのCコードをLinuxバイナリにコンパイル (gcc -O3)
    │ ④ Deployer を起動
    ▼ (SSH接続)
-[月300円のレンタルサーバー]
+[レンタルサーバー]
    │ ⑤ ファイル転送 ➔ シンボリックリンクを一瞬で切り替え (完了！)
 
 
