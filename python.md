@@ -12,7 +12,7 @@
     * [Pyinstallerを使ったスクリプトのexe化](#Pyinstallerを使ったスクリプトのexe化)
     * [uvコマンド](#uvコマンド)
     * [pipコマンド](#pipコマンド)
-    * [Flitを使ったPyPIへのパッケージ公開](#Flitを使ったPyPIへのパッケージ公開)
+    * [PyPIへのパッケージ公開](#PyPIへのパッケージ公開)
     * [settings.jsonにモジュールの検索パスを追加する](#settings.jsonにモジュールの検索パスを追加する)
     * [抽象基底クラス](#抽象基底クラス)
     * [参考サイト](#参考サイト)
@@ -1097,15 +1097,6 @@ export PATH="$HOME/.local/bin:$PATH"
 ipynbの場合、右上のカーネル名をクリックすると変更できる。  
 Interpreter → .venv/bin/pythonを選ぶ  
 
-### PyPI
-TestPyPI`uvx flit publish --repository testpypi`  
-本番`uvx flit publish`  
-
-
-
-
-
-
 
 
 
@@ -1133,94 +1124,39 @@ TestPyPI`uvx flit publish --repository testpypi`
 `pip show pandas` : パッケージに関する情報を出力  
 
 
-<a id="Flitを使ったPyPIへのパッケージ公開"></a>
-## Flitを使ったPyPIへのパッケージ公開
+<a id="PyPIへのパッケージ公開"></a>
+## PyPIへのパッケージ公開
 
 ### pyproject.tomlファイルを作成
 Pythonプロジェクトのビルドや依存関係の管理に使用される設定ファイル。  
 例：  
 ```pyproject.toml
 [build-system]
-requires = ["flit_core>=3.4"]
-build-backend = "flit_core.buildapi"
+requires = ["hatchling"]
+build-backend = "hatchling.build"
 
 [project]
 name = "quickdriver"
 version = "1.0.0"
-dependencies = [
-    "selenium >= 4.27.1",
-    "pandas >= 2.2.3",
-    "tqdm >= 4.67.1",
-    "pyarrow >= 16.1.0",
-]
-requires-python = ">=3.8"
-authors = [
-    {name = "nishizawatakamasa"}
-]
-description = "A wrapper for Selenium WebDriver that simplifies browser automation."
-readme = "README.md"
-license = "MIT"
-keywords = [
-    "selenium"
-]
-classifiers = [
-    "Programming Language :: Python :: 3",
-    "Operating System :: OS Independent"
-]
-
-[project.urls]
-repository = "https://github.com/nishizawatakamasa/quickdriver"
+...
 ```
 
-### ~/.pypircファイルを作成
-設定を書き込んでおけば、 Flitでパッケージをアップロードする際にURL・ユーザ名・パスワードなどの入力を省くことができる。
-```.pypirc
-[distutils]
-index-servers =
-  pypi
-  testpypi
+コマンド  
+`uv build`  
+`uv publish --token pypi-...`  
 
-[pypi]
-username: __token__
-password: <PyPI API token>
+ユーザー環境変数UV_PUBLISH_TOKENにPyPI の API トークン(pypi-...)を入れておけば  
+`uv build`  
+`uv publish`  
+で足りる。  
+ 
 
-[testpypi]
-repository = https://test.pypi.org/legacy/
-username: __token__
-password: <PyPI API token>
-```
-
-### venvで仮想環境を作成
-ディレクトリ構成の例
-```
-┣ venv
-┣ foo（パッケージ名）
-┃    ┣ __init__.py
-┃    ┗ foo.py
-┣ .gitignore
-┣ LICENSE
-┣ pyproject.toml
-┗ README.md
-```
-
-### 仮想環境内でコマンドを実行
-Flitをインストール。  
-`pip install flit`
-
-コードをTestPyPIにアップロード。  
-`flit publish --repository testpypi`
-
-コードをPyPIにアップロード。  
-`flit publish`
 
 
 ### バージョン更新のやりかた
 1. pyproject.tomlのバージョンを変更
 1. distディレクトリがある場合は削除
 1. アップロード手順を実行※バージョンの変更がないと失敗する
-
-
-[Flitドキュメント](https://flit.pypa.io/en/latest/)
 
 
 <a id="settings.jsonにモジュールの検索パスを追加する"></a>
