@@ -2,7 +2,7 @@
 
 * 目次
     * [SSH接続用に鍵認証の準備](#SSH接続用に鍵認証の準備)
-    * [デプロイ準備](#デプロイ準備)
+    * [デプロイ](#デプロイ)
     * [yml](#yml)
     * [デプロイ全容](#デプロイ全容)
 
@@ -86,64 +86,46 @@ Host coreserver-m45 # 登録名。いわばこの接続設定につけたニッ�
 
 
 
-<a id="デプロイ準備"></a>
-## デプロイ準備
+<a id="デプロイ"></a>
+## デプロイ
 
 
-プロジェクトルートで Deployer をインストール
-`composer require --dev deployer/deployer`
-
-プロジェクトのルートディレクトリに deploy.php(Deployerの設定) を作成
-
-
-サーバー側で公開フォルダの場所が固定されている場合、サブドメインを作るとpublic_html/sub.example.comのようなフォルダが自動生成されることがある。この場合はシンボリックリンクを作って解決する。
-
-まず、サーバーが自動生成したフォルダを削除。
-
-そこからcurrent/publicへのシンボリックリンクを作る。
-`ln -s /apps/jimonoyasai/current/public /home/user/public_html/sub.example.com`
-* コマンド解説：ln -s 飛ばす先 アクセスされる場所
-* ln：link（リンク）
-* -s：symbolic（シンボリック）
-これで、「サーバーは sub.example.com を見に行っているつもりだが、実際は current/public が表示される」という状態が作れる。
-
-
-
-サーバーのshared/.env
-をGUIで作成する
-
-
-
-yml内で機密情報を使う場合、直書きは危険なので、GitHub リポジトリに Secrets として登録しておいて、yml内で呼び出す。
-Settings（設定）→ Secrets and variables → Actions をクリック。
-「New repository secret」 ボタンを押し、1つずつ登録する。
-
-1
-SSH_PRIVATE_KEY(秘密鍵 の中身)
-SSH接続に必要
-秘密鍵の取得コマンド（ローカルPCのターミナルで実行）
-`cat ~/.ssh/id_ed25519_deploy`
-表示された`-----BEGIN OPENSSH PRIVATE KEY-----` から `-----END OPENSSH PRIVATE KEY-----` までを漏れなくコピーする
-
-2
-CORESERVER_API_KEY(コアサーバーの API KEY)
-SSH接続元のIP許可をとるために必要。
-GitHub Actionsで立ち上げた仮想マシンから、API通信で仮想マシンIP（毎回変わる）の許可をとるため
-
-
-
-
-
-
-
-
-
+- まず自分で用意するもの
+  - プロジェクトのルートディレクトリに .github/workflows/ci.yml を作成
+  - プロジェクトのルートディレクトリに deploy.php(Deployerの設定) を作成
+  - サーバーのデプロイ先に、ディレクトリと本番用 .env を自分で作成。/virtual/kokoronoki/apps/ymdr-attendance-management/shared/.env
+- デプロイ実行
+  - ci.yml内のon:内の条件によってデプロイ発火。
+- デプロイ成功後
+  - current/public/index.php があることを確認する
+  - サブドメインを作成する。その際、public_html/sub.example.comのようなサブドメイン用フォルダが自動生成されたら削除する。
+  - サブドメインのドキュメントルートからDeployerのcurrent/publicへのシンボリックリンクを作る。`ln -s /virtual/kokoronoki/apps/ymdr-attendance-management/current/public /virtual/kokoronoki/public_html/ymdr-attendance-management.kokoronoki.net`
+    - コマンド解説：ln -s 飛ばす先 アクセスされる場所
+    - ln：link（リンク）
+    - -s：symbolic（シンボリック）
+    これで、「サーバーは sub.example.com を見に行っているつもりだが、実際は current/public が表示される」という状態が作れる。
 
 
 <a id="yml"></a>
 ## yml
 
 .yml(ヤムル)は、設定ファイルなどでよく使われる「人間が読み書きしやすい」データ記述フォーマット。  
+
+yml内で機密情報を使う場合、直書きは危険なので、GitHub リポジトリに Secrets として登録しておいて、yml内で呼び出す。  
+Settings（設定）→ Secrets and variables → Actions をクリック。  
+「New repository secret」 ボタンを押し、1つずつ登録する。  
+
+1  
+SSH_PRIVATE_KEY(秘密鍵 の中身)  
+SSH接続に必要  
+秘密鍵の取得コマンド（ローカルPCのターミナルで実行）  
+`cat ~/.ssh/id_ed25519_deploy`  
+表示された`-----BEGIN OPENSSH PRIVATE KEY-----` から `-----END OPENSSH PRIVATE KEY-----` までを漏れなくコピーする  
+
+2  
+CORESERVER_API_KEY(コアサーバーの API KEY)  
+SSH接続元のIP許可をとるために必要。  
+GitHub Actionsで立ち上げた仮想マシンから、API通信で仮想マシンIP（毎回変わる）の許可をとるため  
 
 ```yml
 # YAMLの基本構文
