@@ -65,6 +65,7 @@
   - [Browserスクショテスト（Pest）](#Browserスクショテスト（Pest）)
   - [Browserテストgpull後](#Browserテストgpull後)
   - [LaravelHerd](#LaravelHerd)
+  - [DBngin](#DBngin)
   - [ERDを作成](#ERDを作成)
 
 <a id="概要"></a>
@@ -6024,6 +6025,37 @@ function nrd { npm run dev }
 ```Powershell
 . $PROFILE
 ```
+
+
+
+<a id="DBngin"></a>
+
+## DBngin
+
+
+### MariaDB
+特にWindows版のMariaDBでよく発生する既知の不具合。
+
+DBnginが「フォルダに my.cnf を作成する」処理を行ってから「MariaDBの初期化（mariadb-install-db）」を実行するため、「初期化しようとしたらDBngin自身が作った my.cnf のせいでフォルダが空じゃない」と怒られて失敗するという矛盾（バグ）が起きる。
+
+対処法：手動(コマンド)で初期化を終わらせる
+
+初期化用のプログラム（.exeファイル）がパソコンのどこにあるかを探すコマンド  
+`dir /s /b "%LOCALAPPDATA%\*mariadb-install-db.exe"`
+
+MariaDB作業場所のフォルダの中身を空にしておく  
+フォルダ例:C:\Users\user\AppData\Local\com.tinyapp.DBngin\Engines\mariadb\e91999dd-f150-4e2a-93eb-26e16252d114
+
+空のフォルダの中に、データベースに必要な最初の土台（管理用の初期データ）を作るコマンド。  
+例：  
+`"C:\Users\user\AppData\Local\com.tinyapp.DBngin\Binaries\mariadb\10.11.11\bin\mariadb-install-db.exe" --datadir="C:\Users\user\AppData\Local\com.tinyapp.DBngin\Engines\mariadb\e91999dd-f150-4e2a-93eb-26e16252d114"`
+
+コマンド解説  
+前半：初期化用のプログラムの指定  
+後半：MariaDB作業場所の指定  
+
+
+
 
 
 <a id="ERDを作成"></a>
