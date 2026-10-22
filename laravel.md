@@ -67,6 +67,7 @@
   - [LaravelHerd](#LaravelHerd)
   - [DBngin](#DBngin)
   - [ERDを作成](#ERDを作成)
+  - [typst](#typst)
 
 <a id="概要"></a>
 
@@ -6068,3 +6069,25 @@ ERDを作成
 `php artisan erd:generate`  
 ERD表示  
 WEBブラウザで http://...../laravel-erd/ にアクセス
+
+
+
+
+<a id="typst"></a>
+
+## typst
+
+PDF作成ツール
+
+githubから適切なものをインストール  
+
+Linux版の展開コマンド  
+`tar -xf typst-x86_64-unknown-linux-musl.tar.xz`  
+
+サーバーへ送るのはその中の typst(本体) だけ。例えば次へ置く。/virtual/kokoronoki/apps/ymdr-attendance-management/shared/bin/typst
+
+そのあとサーバーで chmod 755  
+例：`chmod 755 ~/apps/ymdr-attendance-management/shared/bin/typst`  
+
+
+

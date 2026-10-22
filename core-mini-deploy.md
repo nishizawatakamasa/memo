@@ -425,7 +425,20 @@ ssh -i ~/.ssh/id_ed25519_deploy kokoronoki@m45.coreserver.jp "/usr/local/bin/php
 ssh -i ~/.ssh/id_ed25519_deploy kokoronoki@m45.coreserver.jp "/usr/local/bin/php84cli /virtual/kokoronoki/apps/jimonoyasai/current/artisan db:seed --force"
 
 
----------------------
-ssh -i ~/.ssh/id_ed25519_deploy kokoronoki@m45.coreserver.jp "/usr/local/bin/php84cli /virtual/kokoronoki/apps/jimonoyasai/current/artisan migrate:fresh --seed --force"
+手動シーダー  
+/virtual/kokoronoki/apps/ymdr-attendance-management/current  
+の中で  
+`/usr/local/bin/php84cli artisan db:seed --force`
 
+意味  
+`/usr/local/bin/`は、サーバー管理者が入れたコマンドを置く定番ディレクトリ。Linux 全体で共有される場所で、ホーム（/virtual/kokoronoki/...）の外  
+`php84cli`はPHP 8.4 の CLI。コアサーバーの命名  
+
+
+---------------------
+ssh -i ~/.ssh/id_ed25519_deploy kokoronoki@m45.coreserver.jp "/usr/local/bin/php84cli /virtual/kokoronoki/apps/jimonoyasai/current/artisan migrate:fresh --seed --force
+
+--------------------
+設定姿焼きの焼き直し  
+`/usr/local/bin/php84cli artisan optimize`
 
